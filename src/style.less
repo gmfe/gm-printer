@@ -1,0 +1,17 @@
+.gm-printer {
+  outline: 1px dotted red;
+
+  &-page {
+
+  }
+}
+
+@media print {
+  .gm-printer {
+    outline: none;
+  }
+}
+
+@page {
+  margin: 0;
+}

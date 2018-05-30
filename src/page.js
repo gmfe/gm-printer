@@ -1,17 +1,29 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import {observer} from 'mobx-react';
+import printerStore from './store';
 
+@observer
 class Page extends React.Component {
+    constructor(props) {
+        super(props);
+        printerStore.setSize(props.size);
+    }
+
     render() {
+        const {children} = this.props;
+
         return (
-            <div></div>
+            <div className="gm-printer" style={{
+                width: printerStore.size.width,
+                height: printerStore.size.height
+            }}>
+                {children}
+            </div>
         );
     }
 }
 
-Page.propTypes = {
-    size: PropTypes.oneOf(['A4'])
-};
+Page.propTypes = {};
 
 Page.deaultProps = {};
 

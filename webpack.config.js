@@ -10,6 +10,14 @@ module.exports = {
         rules: [{
             test: /\.js$/,
             use: 'babel-loader'
+        }, {
+            test: /\.less$/,
+            use: [
+                'style-loader',
+                'css-loader',
+                'postcss-loader',
+                'less-loader'
+            ]
         }]
     }
 };

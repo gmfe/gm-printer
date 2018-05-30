@@ -1,15 +1,19 @@
-import React from 'react';
+import Printer from './printer';
+import Page from './page';
+import PageTop from './page_top';
+import PageBottom from './page_bottom';
+import PageHeader from './page_header';
+import PageFooter from './page_footer';
+import PageFixed from './page_fixed';
+import PageContent from "./page_content";
 
-class Printer extends React.Component {
-    render() {
-        return (
-            <div>adsf</div>
-        );
-    }
-}
-
-Printer.propTypes = {};
-
-Printer.deaultProps = {};
-
-export default Printer;
+export {
+    Printer,
+    Page,
+    PageTop,
+    PageHeader,
+    PageContent,
+    PageBottom,
+    PageFooter,
+    PageFixed
+};
