@@ -1,4 +1,4 @@
-import {observable, action, configure, toJS} from 'mobx';
+import {observable, action, configure, toJS, computed} from 'mobx';
 import _ from 'lodash';
 
 configure({enforceActions: true});
@@ -28,20 +28,29 @@ class PrinterStore {
 
     @observable
     ready = {
+        title: false,
         top: false,
         header: false,
-        content: false,
+        table: false,
         bottom: false,
         footer: false
     };
 
     @observable
     height = {
+        title: 0,
         top: 0,
         header: 0,
+        table: 0,
         bottom: 0,
         footer: 0
     };
+
+    @observable
+    table = {};
+
+    @observable
+    pageCount = 1;
 
     @action
     setSize(size) {
@@ -62,6 +71,11 @@ class PrinterStore {
         this.ready = Object.assign(this.ready, ready);
         this.height = Object.assign(this.height, height);
         console.log(toJS(this.ready), toJS(this.height));
+    }
+
+    @computed
+    get computedHeight() {
+        return this.height.title + this.height.top + this.height.header + this.height.table + this.height.bottom + this.height.footer;
     }
 }
 

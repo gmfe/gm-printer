@@ -23,6 +23,6 @@ class PageBottom extends React.Component {
 
 PageBottom.propTypes = {};
 
-PageBottom.deaultProps = {};
+PageBottom.defaultProps = {};
 
 export default PageBottom;

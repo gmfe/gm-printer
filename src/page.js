@@ -4,20 +4,19 @@ import printerStore from './store';
 
 @observer
 class Page extends React.Component {
-    constructor(props) {
-        super(props);
-        printerStore.setSize(props.size);
-    }
-
     render() {
         const {children} = this.props;
 
+        const {top, right, bottom, left} = printerStore.gap;
         return (
-            <div className="gm-printer" style={{
-                width: printerStore.size.width,
-                height: printerStore.size.height
+            <div className="gm-printer-page" style={{
+                width: `calc(${printerStore.size.width} - ${left} - ${right})`,
+                height: `calc(${printerStore.size.height} - ${top} - ${bottom})`,
+                padding: `${top} ${right} ${bottom} ${left}`
             }}>
-                {children}
+                <div className="gm-printer-page-inner">
+                    {children}
+                </div>
             </div>
         );
     }
@@ -25,6 +24,6 @@ class Page extends React.Component {
 
 Page.propTypes = {};
 
-Page.deaultProps = {};
+Page.defaultProps = {};
 
 export default Page;

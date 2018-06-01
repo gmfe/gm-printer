@@ -27,6 +27,6 @@ class PageHeader extends React.Component {
 
 PageHeader.propTypes = {};
 
-PageHeader.deaultProps = {};
+PageHeader.defaultProps = {};
 
 export default PageHeader;

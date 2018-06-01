@@ -23,6 +23,6 @@ class PageFooter extends React.Component {
 
 PageFooter.propTypes = {};
 
-PageFooter.deaultProps = {};
+PageFooter.defaultProps = {};
 
 export default PageFooter;

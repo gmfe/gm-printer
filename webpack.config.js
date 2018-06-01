@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+    mode: 'development',
     entry: './demo/index.js',
     output: {
         path: path.resolve('build'),
@@ -17,6 +18,12 @@ module.exports = {
                 'css-loader',
                 'postcss-loader',
                 'less-loader'
+            ]
+        }, {
+            test: /\.css$/,
+            use: [
+                'style-loader',
+                'css-loader'
             ]
         }]
     }

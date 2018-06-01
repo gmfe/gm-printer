@@ -5,28 +5,30 @@ import printerStore from './store';
 import {getHeight} from './util';
 
 @observer
-class PageTop extends React.Component {
+class PageTitle extends React.Component {
     componentDidMount() {
         const $dom = ReactDOM.findDOMNode(this);
 
         printerStore.setReady({
-            top: true
+            title: true
         }, {
-            top: getHeight($dom)
+            title: getHeight($dom)
         });
     }
 
     render() {
         return (
             <div>
-                <div style={{height: '50px'}}>Top</div>
+                <div style={{background: 'blue', height: '100px'}}>
+                    <div>配送单</div>
+                </div>
             </div>
         );
     }
 }
 
-PageTop.propTypes = {};
+PageTitle.propTypes = {};
 
-PageTop.defaultProps = {};
+PageTitle.defaultProps = {};
 
-export default PageTop;
+export default PageTitle;

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import printerStore from "./store";
+import Page from './page';
 
 class Printer extends React.Component {
     constructor(props) {
@@ -10,15 +11,40 @@ class Printer extends React.Component {
         printerStore.setGap(props.gap);
     }
 
-    render() {
-        const {children} = this.props;
+    componentDidMount() {
+        console.log(printerStore.computedHeight);
+    }
+
+    renderOnePage() {
+        const {
+            title,
+            header,
+            top,
+            table,
+            bottom,
+            footer,
+            fixed
+        } = this.props;
 
         return (
+            <Page>
+                {title}
+                {header}
+                {top}
+                {table}
+                {bottom}
+                {footer}
+                {fixed}
+            </Page>
+        );
+    }
+
+    render() {
+        return (
             <div className="gm-printer" style={{
-                width: printerStore.size.width,
-                height: printerStore.size.height
+                width: printerStore.size.width
             }}>
-                {children}
+                {this.renderOnePage()}
             </div>
         );
     }
@@ -29,7 +55,7 @@ Printer.propTypes = {
     gap: PropTypes.object
 };
 
-Printer.deaultProps = {
+Printer.defaultProps = {
     size: 'A4',
     gap: {
         top: '5mm',

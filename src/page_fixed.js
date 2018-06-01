@@ -10,6 +10,6 @@ class PageFixed extends React.Component {
 
 PageFixed.propTypes = {};
 
-PageFixed.deaultProps = {};
+PageFixed.defaultProps = {};
 
 export default PageFixed;
