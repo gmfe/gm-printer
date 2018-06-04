@@ -3,10 +3,18 @@ import _ from 'lodash';
 
 configure({enforceActions: true});
 
-const sizeMap = {
+const settingMap = {
     'A4': {
-        width: '794px', // '210mm',
-        height: '1123px' // '297mm'
+        size: {
+            width: '794px', // '210mm',
+            height: '1123px' // '297mm'
+        },
+        gap: {
+            top: '5mm',
+            right: '5mm',
+            bottom: '5mm',
+            left: '5mm'
+        }
     }
 };
 
@@ -16,25 +24,13 @@ class PrinterStore {
     sizeLabel = '';
 
     @observable
-    size = sizeMap.A4;
+    size = settingMap.A4.size;
 
     @observable
-    gap = {
-        top: '5mm',
-        right: '5mm',
-        bottom: '5mm',
-        left: '5mm'
-    };
+    gap = settingMap.A4.gap;
 
     @observable
-    ready = {
-        title: false,
-        top: false,
-        header: false,
-        table: false,
-        bottom: false,
-        footer: false
-    };
+    ready = false;
 
     @observable
     height = {
@@ -43,19 +39,43 @@ class PrinterStore {
         header: 0,
         table: 0,
         bottom: 0,
-        footer: 0
+        footer: 0,
+        page: 0
     };
 
     @observable
-    table = {};
+    table = {
+        head: {
+            widths: [],
+            height: 0
+        },
+        body: {
+            heights: []
+        }
+    };
 
     @observable
-    pageCount = 1;
+    page = 1;
+
+    @computed
+    get computedPage() {
+
+        const height = this.height.title
+            + this.height.top
+            + this.height.header
+            + this.height.table
+            + this.height.bottom
+            + this.height.footer;
+
+        const more = height > this.height.page;
+
+        return more;
+    }
 
     @action
     setSize(size) {
-        if (_.isString(size) && sizeMap[size]) {
-            this.size = sizeMap[size];
+        if (_.isString(size) && settingMap[size]) {
+            this.size = settingMap[size].size;
         } else if (_.isObject(size)) {
             this.size = size;
         }
@@ -63,19 +83,28 @@ class PrinterStore {
 
     @action
     setGap(gap) {
-        this.gap = gap;
+        if (_.isString(gap) && settingMap[gap]) {
+            this.gap = settingMap[gap].gap;
+        } else if (_.isObject(gap)) {
+            this.gap = gap;
+        }
     }
 
     @action
-    setReady(ready, height) {
-        this.ready = Object.assign(this.ready, ready);
+    setHeight(height) {
         this.height = Object.assign(this.height, height);
-        console.log(toJS(this.ready), toJS(this.height));
+        console.log(toJS(this.height));
     }
 
-    @computed
-    get computedHeight() {
-        return this.height.title + this.height.top + this.height.header + this.height.table + this.height.bottom + this.height.footer;
+    @action
+    setTable(table) {
+        this.table = table;
+        console.log(toJS(this.table));
+    }
+
+    @action
+    setReady(ready) {
+        this.ready = ready;
     }
 }
 

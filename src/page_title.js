@@ -9,9 +9,7 @@ class PageTitle extends React.Component {
     componentDidMount() {
         const $dom = ReactDOM.findDOMNode(this);
 
-        printerStore.setReady({
-            title: true
-        }, {
+        printerStore.setHeight({
             title: getHeight($dom)
         });
     }

@@ -12,10 +12,11 @@ class Printer extends React.Component {
     }
 
     componentDidMount() {
-        console.log(printerStore.computedHeight);
+        printerStore.setReady(true);
+
     }
 
-    renderOnePage() {
+    renderBefore() {
         const {
             title,
             header,
@@ -39,12 +40,16 @@ class Printer extends React.Component {
         );
     }
 
+    renderPage() {
+
+    }
+
     render() {
         return (
             <div className="gm-printer" style={{
                 width: printerStore.size.width
             }}>
-                {this.renderOnePage()}
+                {printerStore.ready ? this.renderPage() : this.renderBefore()}
             </div>
         );
     }
@@ -52,17 +57,12 @@ class Printer extends React.Component {
 
 Printer.propTypes = {
     size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-    gap: PropTypes.object
+    gap: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 };
 
 Printer.defaultProps = {
     size: 'A4',
-    gap: {
-        top: '5mm',
-        right: '5mm',
-        bottom: '5mm',
-        left: '5mm'
-    }
+    gap: 'A4'
 };
 
 export default Printer;

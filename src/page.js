@@ -1,9 +1,19 @@
 import React from 'react';
 import {observer} from 'mobx-react';
 import printerStore from './store';
+import ReactDOM from "react-dom";
+import {getHeight} from "./util";
 
 @observer
 class Page extends React.Component {
+    componentDidMount() {
+        const $dom = ReactDOM.findDOMNode(this);
+
+        printerStore.setHeight({
+            page: getHeight($dom)
+        });
+    }
+
     render() {
         const {children} = this.props;
 

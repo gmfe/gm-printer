@@ -7,9 +7,7 @@ class PageFooter extends React.Component {
     componentDidMount() {
         const $dom = ReactDOM.findDOMNode(this);
 
-        printerStore.setReady({
-            footer: true
-        }, {
+        printerStore.setHeight({
             footer: getHeight($dom)
         });
     }

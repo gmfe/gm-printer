@@ -9,9 +9,7 @@ class PageHeader extends React.Component {
     componentDidMount() {
         const $dom = ReactDOM.findDOMNode(this);
 
-        printerStore.setReady({
-            header: true
-        }, {
+        printerStore.setHeight({
             header: getHeight($dom)
         });
     }

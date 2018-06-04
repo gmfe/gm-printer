@@ -9,9 +9,7 @@ class PageTop extends React.Component {
     componentDidMount() {
         const $dom = ReactDOM.findDOMNode(this);
 
-        printerStore.setReady({
-            top: true
-        }, {
+        printerStore.setHeight({
             top: getHeight($dom)
         });
     }

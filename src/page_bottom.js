@@ -7,9 +7,7 @@ class PageBottom extends React.Component {
     componentDidMount() {
         const $dom = ReactDOM.findDOMNode(this);
 
-        printerStore.setReady({
-            bottom: true
-        }, {
+        printerStore.setHeight({
             bottom: getHeight($dom)
         });
     }
