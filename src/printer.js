@@ -68,7 +68,7 @@ class Printer extends React.Component {
         );
     }
 
-    renderTwoPage() {
+    renderMorePage() {
         const {
             title,
             header,
@@ -81,20 +81,34 @@ class Printer extends React.Component {
 
         return (
             <React.Fragment>
-                {_.map(printerStore.page, (p, i) => (
-                    <Page key={i} pageIndex={i}>
-                        {i === 0 ? title : null}
-                        {header}
-                        {i === 0 ? top : null}
-                        {React.cloneElement(table, {
-                            ...table.props,
-                            data: table.props.data.slice(p.begin, p.end)
-                        })}
-                        {i === (printerStore.page.length - 1) ? bottom : null}
-                        {footer}
-                        {fixed}
-                    </Page>
-                ))}
+                {_.map(printerStore.page, (p, i) => {
+
+                    if (p.bottomPage) {
+                        return (
+                            <Page key={i} pageIndex={i}>
+                                {header}
+                                {bottom}
+                                {footer}
+                                {fixed}
+                            </Page>
+                        );
+                    }
+
+                    return (
+                        <Page key={i} pageIndex={i}>
+                            {i === 0 ? title : null}
+                            {header}
+                            {i === 0 ? top : null}
+                            {React.cloneElement(table, {
+                                ...table.props,
+                                data: table.props.data.slice(p.begin, p.end)
+                            })}
+                            {i === (printerStore.page.length - 1) ? bottom : null}
+                            {footer}
+                            {fixed}
+                        </Page>
+                    );
+                })}
             </React.Fragment>
         );
     }
@@ -104,7 +118,7 @@ class Printer extends React.Component {
         if (pageLength === 1) {
             return this.renderOnePage();
         } else {
-            return this.renderTwoPage();
+            return this.renderMorePage();
         }
     }
 

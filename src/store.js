@@ -56,7 +56,7 @@ class PrinterStore {
     };
 
     @observable
-    page = []; // [{begin, end}]
+    page = []; // [{begin, end, bottomPage}]
 
 
     @action
@@ -205,6 +205,18 @@ class PrinterStore {
                 end: end - 1
             });
             oEnd = end;
+        }
+
+        // 如果最后一页高度不够
+        const lastHeight = this.height.header
+            + this.table.head.height + _.sum(this.table.body.heights.slice(page.slice(-1)[0].begin))
+            + this.height.bottom
+            + this.height.footer;
+
+        if (lastHeight > this.height.page) {
+            page.push({
+                bottomPage: true
+            });
         }
 
         this.page = page;
