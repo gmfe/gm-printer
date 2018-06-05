@@ -68,4 +68,4 @@ class App extends React.Component {
     }
 }
 
-ReactDOM.render(<App/>, widnow.document.getElementById('appContainer'));
+ReactDOM.render(<App/>, window.document.getElementById('appContainer'));
