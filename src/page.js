@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {observer} from 'mobx-react';
 import printerStore from './store';
 import ReactDOM from "react-dom";
@@ -16,15 +17,18 @@ class Page extends React.Component {
 
     render() {
         const {children} = this.props;
-
         const {top, right, bottom, left} = printerStore.gap;
+
         return (
             <div className="gm-printer-page" style={{
                 width: `calc(${printerStore.size.width} - ${left} - ${right})`,
                 height: `calc(${printerStore.size.height} - ${top} - ${bottom})`,
                 padding: `${top} ${right} ${bottom} ${left}`
             }}>
-                <div className="gm-printer-page-inner">
+                <div className="gm-printer-page-inner" style={{
+                    width: `calc(${printerStore.size.width} - ${left} - ${right})`,
+                    height: `calc(${printerStore.size.height} - ${top} - ${bottom})`
+                }}>
                     {children}
                 </div>
             </div>
@@ -32,7 +36,9 @@ class Page extends React.Component {
     }
 }
 
-Page.propTypes = {};
+Page.propTypes = {
+    pageIndex: PropTypes.number
+};
 
 Page.defaultProps = {};
 

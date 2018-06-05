@@ -3,7 +3,7 @@ import React from 'react';
 class PageFixed extends React.Component {
     render() {
         return (
-            <div>PageFixed</div>
+            <div className="gm-printer-fixed">PageFixed</div>
         );
     }
 }

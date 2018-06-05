@@ -14,7 +14,7 @@ class PageBottom extends React.Component {
 
     render() {
         return (
-            <div>PageBottom</div>
+            <div className="gm-printer-bottom">PageBottom</div>
         );
     }
 }

@@ -1,4 +1,4 @@
-import {observable, action, configure, toJS, computed} from 'mobx';
+import {observable, action, configure, toJS} from 'mobx';
 import _ from 'lodash';
 
 configure({enforceActions: true});
@@ -45,6 +45,7 @@ class PrinterStore {
 
     @observable
     table = {
+        data: [],
         head: {
             widths: [],
             height: 0
@@ -55,22 +56,8 @@ class PrinterStore {
     };
 
     @observable
-    page = 1;
+    page = []; // [{begin, end}]
 
-    @computed
-    get computedPage() {
-
-        const height = this.height.title
-            + this.height.top
-            + this.height.header
-            + this.height.table
-            + this.height.bottom
-            + this.height.footer;
-
-        const more = height > this.height.page;
-
-        return more;
-    }
 
     @action
     setSize(size) {
@@ -105,6 +92,76 @@ class PrinterStore {
     @action
     setReady(ready) {
         this.ready = ready;
+    }
+
+    @action
+    setPage() {
+        if (this._onePage()) {
+            return;
+        }
+
+        if (this._twoPage()) {
+            return;
+        }
+    }
+
+    _onePage() {
+        const height = this.height.title
+            + this.height.top
+            + this.height.header
+            + this.height.table
+            + this.height.bottom
+            + this.height.footer;
+
+        if (height > this.height.page) {
+            return false;
+        }
+
+        this.page = [{
+            begin: 0,
+            end: this.table.data.length
+        }];
+
+        console.log(JSON.stringify(toJS(this.page)));
+
+        return true;
+    }
+
+    _twoPage() {
+        const height = this.height.title
+            + this.height.top
+            + this.height.header
+            + this.height.table + this.table.head.height
+            + this.height.bottom
+            + this.height.footer;
+
+        if (height > (this.height.page * 2)) {
+            return false;
+        }
+
+        let cHeight = this.height.title
+            + this.height.header
+            + this.height.top
+            + this.table.head.height + this.table.body.heights[0]
+            + this.height.footer;
+        let end = 1;
+
+        while (cHeight < this.height.page) {
+            cHeight += this.table.body.heights[end];
+            end++;
+            console.log(end, cHeight);
+        }
+
+        this.page = [{
+            begin: 0,
+            end: end - 1
+        }, {
+            begin: end - 1,
+            end: this.table.data.length
+        }];
+
+        console.log(JSON.stringify(toJS(this.page)));
+        return true;
     }
 }
 

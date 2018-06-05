@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {
     Printer,
-    Page,
     PageTitle,
     PageHeader,
     PageTop,
@@ -13,15 +12,18 @@ import {
 } from '../src/index';
 import '../src/style.less';
 import 'normalize.css/normalize.css';
+import _ from 'lodash';
 
 let tableData = [{
     a: 'adfafa你们啊我们',
     b: '不是阿发发发飒飒发搜索asf',
     c: '地方啥愣是带饭了',
-    d: '我们的'
+    d: '我们的我们的我们的我们的',
+    e: '我们的我们的我们的我们的我们的',
+    f: '我们的我们的我们的我们的我们的'
 }];
 
-_.each(_.range(14), () => {
+_.each(_.range(18), () => {
     tableData.push(Object.assign({}, tableData[0]));
 });
 
@@ -41,13 +43,18 @@ class App extends React.Component {
                             name: '你好'
                         }, {
                             field: 'b',
-                            name: '你好',
-                            style: {width: '100px'}
+                            name: '你好'
                         }, {
                             field: 'c',
                             name: '你好'
                         }, {
                             field: 'd',
+                            name: '你好'
+                        }, {
+                            field: 'e',
+                            name: '你好'
+                        }, {
+                            field: 'f',
                             name: '你好'
                         }]}
                         data={tableData}
@@ -61,4 +68,4 @@ class App extends React.Component {
     }
 }
 
-ReactDOM.render(<App/>, document.getElementById('appContainer'));
+ReactDOM.render(<App/>, widnow.document.getElementById('appContainer'));

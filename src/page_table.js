@@ -7,6 +7,8 @@ import printerStore from "./store";
 
 class Table extends React.Component {
     componentDidMount() {
+        const {data} = this.props;
+
         const $table = ReactDOM.findDOMNode(this);
         const tHead = $table.querySelector('thead');
         const ths = tHead.querySelectorAll('th');
@@ -17,6 +19,7 @@ class Table extends React.Component {
         });
 
         printerStore.setTable({
+            data,
             head: {
                 height: getHeight(tHead),
                 widths: _.map(ths, th => getWidth(th))
@@ -38,14 +41,12 @@ class Table extends React.Component {
                 </tr>
                 </thead>
                 <tbody>
-                {_.map(data, (d, i) => {
-                    return (
-                        <tr key={i}>
-                            {_.map(columns, col => <td
-                                key={col.field}>{col.render ? col.render(d[col.field]) : d[col.field]}</td>)}
-                        </tr>
-                    );
-                })}
+                {_.map(data, (d, i) => (
+                    <tr key={i}>
+                        {_.map(columns, col => <td
+                            key={col.field}>{col.render ? col.render(d[col.field]) : d[col.field]}</td>)}
+                    </tr>
+                ))}
                 </tbody>
             </table>
         );
@@ -60,7 +61,9 @@ class TableReady extends React.Component {
             <table className="gm-printer-table">
                 <thead>
                 <tr>
-                    {_.map(columns, col => <th key={col.field} style={col.style}>{col.name}</th>)}
+                    {_.map(columns, (col, i) => <th key={col.field} style={Object.assign({}, col.style, {
+                        width: printerStore.table.head.widths[i]
+                    })}>{col.name}</th>)}
                 </tr>
                 </thead>
                 <tbody>

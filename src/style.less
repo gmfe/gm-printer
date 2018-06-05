@@ -1,11 +1,16 @@
 .gm-printer {
   outline: 1px dotted red;
+  margin: 10px auto;
 
   &-page {
-    position: relative;
-    border-bottom: 1px dotted yellow;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+    + .gm-printer-page {
+      margin-top: 10px;
+    }
 
     &-inner {
+      position: relative;
       outline: 1px dotted yellow;
     }
   }
@@ -13,13 +18,34 @@
 
 // table
 .gm-printer-table {
+  border-collapse: collapse;
   width: 100%;
   max-width: 100%;
+}
+
+// bottom
+.gm-printer-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+// fixed
+.gm-printer-fixed {
+  position: absolute;
 }
 
 @media print {
   .gm-printer {
     outline: none;
+    margin: 0;
+
+    &-page {
+      + .gm-printer-page {
+        margin-top: 0;
+      }
+    }
   }
 }
 
