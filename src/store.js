@@ -103,8 +103,11 @@ class PrinterStore {
         if (this._twoPage()) {
             return;
         }
+
+        this._morePage();
     }
 
+    @action
     _onePage() {
         const height = this.height.title
             + this.height.top
@@ -127,6 +130,7 @@ class PrinterStore {
         return true;
     }
 
+    @action
     _twoPage() {
         const height = this.height.title
             + this.height.top
@@ -139,26 +143,71 @@ class PrinterStore {
             return false;
         }
 
-        let cHeight = this.height.title
+        let oneHeight = this.height.title
             + this.height.header
             + this.height.top
             + this.table.head.height + this.table.body.heights[0]
             + this.height.footer;
-        let end = 1;
+        let oneEnd = 1;
 
-        while (cHeight < this.height.page) {
-            cHeight += this.table.body.heights[end];
-            end++;
-            console.log(end, cHeight);
+        while (oneHeight < this.height.page) {
+            oneHeight += this.table.body.heights[oneEnd];
+            oneEnd++;
+            console.log(oneEnd, oneHeight);
         }
 
         this.page = [{
             begin: 0,
-            end: end - 1
+            end: oneEnd - 1
         }, {
-            begin: end - 1,
+            begin: oneEnd - 1,
             end: this.table.data.length
         }];
+
+        console.log(JSON.stringify(toJS(this.page)));
+        return true;
+    }
+
+    @action
+    _morePage() {
+        let oneHeight = this.height.title
+            + this.height.header
+            + this.height.top
+            + this.table.head.height + this.table.body.heights[0]
+            + this.height.footer;
+        let end = 1, oEnd = 0;
+
+        const page = [];
+
+        while (oneHeight < this.height.page) {
+            oneHeight += this.table.body.heights[end];
+            end++;
+        }
+
+        page.push({
+            begin: oEnd,
+            end: end - 1
+        });
+        oEnd = end;
+
+        while (end <= this.table.data.length) {
+            let moreHeight = this.height.header
+                + this.table.head.height + this.table.body.heights[0]
+                + this.height.footer;
+
+            while (moreHeight < this.height.page) {
+                moreHeight += this.table.body.heights[end];
+                end++;
+            }
+
+            page.push({
+                begin: oEnd,
+                end: end - 1
+            });
+            oEnd = end;
+        }
+
+        this.page = page;
 
         console.log(JSON.stringify(toJS(this.page)));
         return true;

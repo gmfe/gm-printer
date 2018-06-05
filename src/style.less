@@ -1,10 +1,17 @@
+body {
+  background: whitesmoke;
+}
+
 .gm-printer {
   margin: 10px auto;
+  background: white;
 
   &-page {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
 
     + .gm-printer-page {
+      page-break-before: always;
       margin-top: 10px;
     }
 
@@ -37,12 +44,17 @@
 
 @media print {
   .gm-printer {
-    outline: none;
     margin: 0;
 
     &-page {
+      box-shadow: none;
+
       + .gm-printer-page {
         margin-top: 0;
+      }
+
+      &-inner {
+        outline: none;
       }
     }
   }

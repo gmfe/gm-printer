@@ -23,7 +23,7 @@ let tableData = [{
     f: '我们的我们的我们的我们的我们的'
 }];
 
-_.each(_.range(18), () => {
+_.each(_.range(50), () => {
     tableData.push(Object.assign({}, tableData[0]));
 });
 

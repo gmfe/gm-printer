@@ -14,7 +14,10 @@ class PageBottom extends React.Component {
 
     render() {
         return (
-            <div className="gm-printer-bottom">PageBottom</div>
+            <div className="gm-printer-bottom" style={{
+                background: 'green',
+                height: '400px'
+            }}>PageBottom</div>
         );
     }
 }

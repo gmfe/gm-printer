@@ -22,12 +22,12 @@ class Page extends React.Component {
         return (
             <div className="gm-printer-page" style={{
                 width: `calc(${printerStore.size.width} - ${left} - ${right})`,
-                height: `calc(${printerStore.size.height} - ${top} - ${bottom})`,
+                height: `calc(${printerStore.size.height} - ${top} - ${bottom} - 3px)`,
                 padding: `${top} ${right} ${bottom} ${left}`
             }}>
                 <div className="gm-printer-page-inner" style={{
                     width: `calc(${printerStore.size.width} - ${left} - ${right})`,
-                    height: `calc(${printerStore.size.height} - ${top} - ${bottom})`
+                    height: `calc(${printerStore.size.height} - ${top} - ${bottom} - 3px)`
                 }}>
                     {children}
                 </div>

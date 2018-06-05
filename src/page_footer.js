@@ -14,7 +14,8 @@ class PageFooter extends React.Component {
 
     render() {
         return (
-            <div className="gm-printer-footer" style={{height: '100px', background: 'rgba(0,0,0,.1)'}}>PageFooter</div>
+            <div className="gm-printer-footer"
+                 style={{height: '100px', background: 'black', color: 'white'}}>PageFooter</div>
         );
     }
 }

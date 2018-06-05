@@ -99,18 +99,12 @@ class Printer extends React.Component {
         );
     }
 
-    renderMorePage() {
-        return this.renderBefore();
-    }
-
     renderPage() {
         const pageLength = printerStore.page.length;
         if (pageLength === 1) {
             return this.renderOnePage();
-        } else if (pageLength === 2) {
-            return this.renderTwoPage();
         } else {
-            return this.renderMorePage();
+            return this.renderTwoPage();
         }
     }
 
