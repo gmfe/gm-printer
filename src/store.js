@@ -4,6 +4,7 @@ import _ from 'lodash';
 configure({enforceActions: true});
 
 const templateCache = {};
+const templateTableCache = {};
 
 const settingMap = {
     'A4': {
@@ -61,7 +62,7 @@ class PrinterStore {
     page = []; // [{begin, end, bottomPage}]
 
     data = {};
-    tableData = {};
+    tableData = [];
 
     @action
     setSize(size) {
@@ -242,11 +243,44 @@ class PrinterStore {
         }
         try {
             templateCache[text] = _.template(text)({
-                data: this.data,
-                tableData: this.tableData
+                data: this.data
             });
 
             return templateCache[text];
+        } catch (err) {
+            console.warn(err);
+            return text;
+        }
+    }
+
+    templateTable(text, i) {
+        // cache 下
+        if (templateTableCache[text]) {
+            return templateTableCache[text];
+        }
+        try {
+            templateTableCache[text] = _.template(text)({
+                data: this.data,
+                tableData: this.tableData[i]
+            });
+
+            return templateTableCache[text];
+        } catch (err) {
+            console.warn(err);
+            return text;
+        }
+    }
+
+    templatePagination(text, pageIndex) {
+        // 不cache page 会变
+        try {
+            return _.template(text)({
+                data: this.data,
+                pagination: {
+                    pageIndex: pageIndex + 1,
+                    count: this.page.length
+                }
+            });
         } catch (err) {
             console.warn(err);
             return text;

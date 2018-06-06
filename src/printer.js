@@ -41,7 +41,7 @@ class Printer extends React.Component {
                 <Top {...config.top}/>
                 <Table {...config.table} data={tableData}/>
                 <Bottom {...config.bottom}/>
-                <Footer {...config.footer}/>
+                <Footer {...config.footer} pageIndex={0}/>
                 <Fixed {...config.fixed}/>
             </Page>
         );
@@ -57,7 +57,7 @@ class Printer extends React.Component {
                 <Top {...config.top}/>
                 <Table {...config.table} data={tableData}/>
                 <Bottom {...config.bottom}/>
-                <Footer {...config.footer}/>
+                <Footer {...config.footer} pageIndex={0}/>
                 <Fixed {...config.fixed}/>
             </Page>
         );
@@ -78,7 +78,7 @@ class Printer extends React.Component {
                                 <Title {...config.title}/>
                                 <Header {...config.header}/>
                                 <Bottom {...config.bottom}/>
-                                <Footer {...config.footer}/>
+                                <Footer {...config.footer} pageIndex={i}/>
                                 <Fixed {...config.fixed}/>
                             </Page>
                         );
@@ -91,7 +91,7 @@ class Printer extends React.Component {
                             {i === 0 ? <Top {...config.top}/> : null}
                             <Table {...config.table} data={tableData.slice(p.begin, p.end)}/>
                             {i === (printerStore.page.length - 1) ? <Bottom {...config.bottom}/> : null}
-                            <Footer {...config.footer}/>
+                            <Footer {...config.footer} pageIndex={i}/>
                             <Fixed {...config.fixed}/>
                         </Page>
                     );

@@ -50,40 +50,81 @@ const config = {
     },
     table: {
         columns: [{
-            field: 'id',
-            text: 'Id',
-            style: {}
+            head: 'ID',
+            headStyle: {
+                textAlign: 'center'
+            },
+            text: '${tableData.id}',
+            style: {
+                textAlign: 'left'
+            }
         }, {
-            field: 'name',
-            text: '商品名'
+            head: '商品名',
+            text: '${tableData.name}',
+            style: {
+                textAlign: 'center'
+            }
         }, {
-            field: 'pinlei_title',
-            text: '品类'
+            head: '品类',
+            text: '${tableData.pinlei_title}',
+            style: {
+                textAlign: 'center'
+            }
         }, {
-            field: 'spu_name',
-            text: 'SPU'
+            head: 'SPU',
+            text: '${tableData.spu_name}',
+            style: {
+                textAlign: 'center'
+            }
+        }, {
+            head: '销售价格',
+            text: '${tableData.sale_price} ¥',
+            style: {
+                color: 'red'
+            }
         }]
     },
     bottom: {
         blocks: [{
-            text: '收货商户: ${data.resname}(${data.sid})',
+            text: '应付: ${data.real_price} ¥',
             style: {
                 position: 'absolute',
                 left: 0,
                 top: 0
             }
+        }, {
+            text: '出库签字：',
+            style: {
+                position: 'absolute',
+                left: 0,
+                top: 20
+            }
+        }, {
+            text: '配送签字：',
+            style: {
+                position: 'absolute',
+                left: '40%',
+                top: 20
+            }
+        }, {
+            text: '客户签字：',
+            style: {
+                position: 'absolute',
+                left: '70%',
+                top: 20
+            }
         }],
         style: {
-            height: 30
+            height: 50
         }
     },
     footer: {
         blocks: [{
-            text: 'footer',
+            text: '页 ${pagination.pageIndex}/${pagination.count}',
             style: {
                 position: 'absolute',
-                left: 0,
-                top: 0
+                top: 0,
+                right: 0
             }
         }],
         style: {

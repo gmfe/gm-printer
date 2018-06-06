@@ -37,14 +37,18 @@ class TableBefore extends React.Component {
             <table className="gm-printer-table">
                 <thead>
                 <tr>
-                    {_.map(columns, col => <th key={col.field} style={col.style}>{col.text}</th>)}
+                    {_.map(columns, (col, i) => <th key={i} style={col.headStyle}>{col.head}</th>)}
                 </tr>
                 </thead>
                 <tbody>
                 {_.map(data, (d, i) => (
                     <tr key={i}>
-                        {_.map(columns, col => <td
-                            key={col.field}>{col.render ? col.render(d[col.field]) : d[col.field]}</td>)}
+                        {_.map(columns, (col, j) => (
+                            <td
+                                style={col.style}
+                                key={j}
+                            >{printerStore.templateTable(col.text, i)}</td>
+                        ))}
                     </tr>
                 ))}
                 </tbody>
@@ -65,16 +69,20 @@ class TableReady extends React.Component {
             <table className="gm-printer-table">
                 <thead>
                 <tr>
-                    {_.map(columns, (col, i) => <th key={col.field} style={Object.assign({}, col.style, {
+                    {_.map(columns, (col, i) => <th key={i} style={Object.assign({}, col.headStyle, {
                         width: printerStore.table.head.widths[i]
-                    })}>{col.text}</th>)}
+                    })}>{col.head}</th>)}
                 </tr>
                 </thead>
                 <tbody>
                 {_.map(data, (d, i) => (
                     <tr key={i}>
-                        {_.map(columns, col => <td
-                            key={col.field}>{col.render ? col.render(d[col.field]) : d[col.field]}</td>)}
+                        {_.map(columns, (col, j) => (
+                            <td
+                                style={col.style}
+                                key={j}
+                            >{printerStore.templateTable(col.text, i)}</td>
+                        ))}
                     </tr>
                 ))}
                 </tbody>
