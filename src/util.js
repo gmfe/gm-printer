@@ -18,9 +18,6 @@ function getWidth(el) {
     return width - borderLeftWidth - borderRightWidth - paddingLeft - paddingRight;
 }
 
-window.getHeight = getHeight;
-window.getWidth = getWidth;
-
 export {
     getHeight,
     getWidth

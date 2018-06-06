@@ -1,0 +1,508 @@
+{
+  "code": 0,
+  "msg": "ok",
+  "data": [
+    {
+      "footerBlockLines": [
+        {
+          "content": [
+            {
+              "text": "\u9875\u7801",
+              "field": "_pageCount",
+              "bold": false,
+              "capital": false,
+              "alignment": "center",
+              "fontSize": 12
+            }
+          ],
+          "type": "columns"
+        }
+      ],
+      "is_system_default_template": false,
+      "headerBlockLines": [
+        {
+          "content": [
+            {
+              "text": "\u914d\u9001\u5355",
+              "bold": true,
+              "capital": false,
+              "fontSize": "18",
+              "alignment": "center"
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": "\u8ba2\u5355\u53f7",
+              "field": "id_PL"
+            },
+            {
+              "text": "\u5e8f\u53f7",
+              "field": "sort_id"
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": "\u4e0b\u5355\u65f6\u95f4",
+              "field": "date_time"
+            },
+            {
+              "text": "\u914d\u9001\u65f6\u95f4",
+              "field": "receive_time"
+            },
+            {
+              "text": "\u6253\u5370\u65f6\u95f4",
+              "field": "print_time"
+            }
+          ],
+          "type": "columns"
+        }
+      ],
+      "print_size": "A4",
+      "creator": "qzcs2",
+      "create_time": "2018-05-23T11:32:44",
+      "address_ids": [],
+      "topInfoBlockLines": [
+        {
+          "content": [
+            {
+              "text": "\u6536\u8d27\u5546\u6237",
+              "field": "resname"
+            },
+            {
+              "text": "\u6536\u8d27\u4eba",
+              "field": "receiver_name"
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": "\u8054\u7cfb\u7535\u8bdd",
+              "field": "receiver_phone"
+            },
+            {
+              "text": "\u6536\u8d27\u5730\u5740",
+              "field": "address"
+            }
+          ],
+          "type": "columns"
+        }
+      ],
+      "name": "9",
+      "is_default": false,
+      "productBlockHeader": {
+        "tr": [
+          {
+            "text": "\u5e8f\u53f7",
+            "field": "_index",
+            "width": "auto"
+          },
+          {
+            "text": "\u7c7b\u522b",
+            "field": "category_title_1",
+            "width": "auto"
+          },
+          {
+            "text": "\u5546\u54c1\u540d",
+            "field": "name",
+            "width": "*"
+          },
+          {
+            "text": "\u89c4\u683c",
+            "field": "specs",
+            "width": "auto"
+          },
+          {
+            "text": "\u4e0b\u5355\u6570",
+            "field": "quantity",
+            "width": "auto"
+          },
+          {
+            "text": "\u51fa\u5e93\u6570",
+            "field": "real_weight_std",
+            "width": "auto"
+          },
+          {
+            "text": "\u542b\u7a0e\u5355\u4ef7\uff08\u57fa\u672c\u5355\u4f4d\uff09",
+            "field": "std_sale_price",
+            "width": 42
+          },
+          {
+            "text": "\u5e94\u4ed8\u91d1\u989d\uff08\u542b\u7a0e\uff09",
+            "field": "real_item_price",
+            "width": "auto"
+          },
+          {
+            "text": "\u5907\u6ce8",
+            "field": "remark",
+            "width": "auto"
+          }
+        ],
+        "abnormals_detail": true,
+        "category_number": true,
+        "category_total": true
+      },
+      "id": 13376,
+      "bottomInfoBlockLines": [
+        {
+          "content": [
+            {
+              "text": "\u4e0b\u5355\u91d1\u989d",
+              "field": "total_price"
+            },
+            {
+              "text": "\u51fa\u5e93\u91d1\u989d",
+              "field": "real_price"
+            },
+            {
+              "text": "\u8fd0\u8d39",
+              "field": "freight"
+            },
+            {
+              "text": "\u5f02\u5e38\u91d1\u989d",
+              "field": "abnormal_money"
+            },
+            {
+              "text": "\u5e94\u4ed8\u91d1\u989d",
+              "field": "total_pay"
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [],
+          "type": "columns"
+        },
+        {
+          "content": [],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": ""
+            },
+            {
+              "text": ""
+            },
+            {
+              "text": ""
+            },
+            {
+              "text": ""
+            },
+            {
+              "text": "\u7b7e\u6536\u4eba",
+              "field": "_receiver_name"
+            }
+          ],
+          "type": "columns"
+        }
+      ]
+    },
+    {
+      "footerBlockLines": [
+        {
+          "content": [
+            {
+              "text": "\u9875\u7801",
+              "field": "_pageCount",
+              "bold": false,
+              "capital": false,
+              "alignment": "center",
+              "fontSize": 12
+            }
+          ],
+          "type": "columns"
+        }
+      ],
+      "is_system_default_template": false,
+      "headerBlockLines": [
+        {
+          "content": [],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": "    ",
+              "bold": false,
+              "capital": false,
+              "width": "",
+              "alignment": "left",
+              "height": "",
+              "fontSize": "18",
+              "sortNo": ""
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": "\u914d\u9001\u5355",
+              "bold": true,
+              "capital": false,
+              "width": "",
+              "alignment": "center",
+              "height": "",
+              "fontSize": "28",
+              "sortNo": ""
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": "\u8ba2\u5355\u53f7",
+              "field": "id_PL"
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": "\u4e0b\u5355\u65f6\u95f4",
+              "field": "date_time"
+            },
+            {
+              "text": "\u914d\u9001\u65f6\u95f4",
+              "field": "receive_time"
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [],
+          "type": "columns"
+        },
+        {
+          "content": [],
+          "type": "columns"
+        }
+      ],
+      "print_size": "\u4e8c\u5206\u7eb8",
+      "creator": "\u7cfb\u7edf",
+      "create_time": "2018-05-21T10:50:06",
+      "address_ids": [
+        52583,
+        54536,
+        54761,
+        56803,
+        60008,
+        60635,
+        66040,
+        66041,
+        66042,
+        66043,
+        66044,
+        66642,
+        69815,
+        70850,
+        74731,
+        74733,
+        82254
+      ],
+      "topInfoBlockLines": [
+        {
+          "content": [],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": "\u6536\u8d27\u5730\u5740",
+              "field": "address"
+            },
+            {
+              "text": "\u6536\u8d27\u5546\u6237",
+              "field": "resname"
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": "\u53f8\u673a\u540d\u79f0",
+              "field": "driver_name"
+            },
+            {
+              "text": "\u53f8\u673a\u7535\u8bdd",
+              "field": "driver_phone"
+            }
+          ],
+          "type": "columns"
+        }
+      ],
+      "name": "\u9ed8\u8ba4\u914d\u9001\u5355\u6a21\u677f",
+      "is_default": true,
+      "productBlockHeader": {
+        "tr": [
+          {
+            "text": "\u5e8f\u53f7",
+            "field": "_index",
+            "width": "auto"
+          },
+          {
+            "text": "\u5546\u54c1\u540d",
+            "field": "name",
+            "width": "*"
+          },
+          {
+            "text": "\u89c4\u683c",
+            "field": "specs",
+            "width": "auto"
+          },
+          {
+            "text": "\u4e0b\u5355\u6570",
+            "field": "quantity",
+            "bold": false,
+            "capital": false,
+            "width": "auto",
+            "alignment": "left",
+            "height": "",
+            "fontSize": "10",
+            "sortNo": ""
+          },
+          {
+            "text": "\u51fa\u5e93\u6570",
+            "field": "real_weight_std",
+            "bold": false,
+            "capital": false,
+            "width": "auto",
+            "alignment": "left",
+            "height": "",
+            "fontSize": 10,
+            "sortNo": ""
+          },
+          {
+            "text": "\u51fa\u5e93\u6570",
+            "field": "real_weight_sale",
+            "bold": false,
+            "capital": false,
+            "width": "auto",
+            "alignment": "left",
+            "height": "",
+            "fontSize": 10,
+            "sortNo": ""
+          },
+          {
+            "text": "\u4e0d\u542b\u7a0e\u5355\u4ef7",
+            "field": "sale_price_without_tax",
+            "width": "50px"
+          },
+          {
+            "text": "\u542b\u7a0e\u5355\u4ef7\uff08\u57fa\u672c\u5355\u4f4d\uff09",
+            "field": "std_sale_price",
+            "width": 42
+          },
+          {
+            "text": "\u542b\u7a0e\u5355\u4ef7\uff08\u9500\u552e\u5355\u4f4d\uff09",
+            "field": "sale_price",
+            "width": 42
+          },
+          {
+            "text": "\u5e94\u4ed8\u91d1\u989d\uff08\u542b\u7a0e\uff09",
+            "field": "real_item_price",
+            "width": 50
+          },
+          {
+            "text": "\u5546\u54c1\u7a0e\u989d",
+            "field": "tax",
+            "width": "auto"
+          },
+          {
+            "text": "\u5e94\u4ed8\u91d1\u989d\uff08\u4e0d\u542b\u7a0e\uff09",
+            "field": "real_item_price_without_tax",
+            "width": 50
+          },
+          {
+            "text": "\u5907\u6ce8",
+            "field": "remark",
+            "bold": false,
+            "capital": false,
+            "width": "auto",
+            "alignment": "center",
+            "height": "",
+            "fontSize": 10,
+            "sortNo": "7"
+          }
+        ],
+        "abnormals_detail": true,
+        "category_number": false,
+        "category_total": true
+      },
+      "id": 712,
+      "bottomInfoBlockLines": [
+        {
+          "content": [
+            {
+              "text": "\u4e0b\u5355\u91d1\u989d",
+              "field": "total_price"
+            },
+            {
+              "text": "\u51fa\u5e93\u91d1\u989d",
+              "field": "real_price"
+            },
+            {
+              "text": "\u8fd0\u8d39",
+              "field": "freight"
+            },
+            {
+              "text": "\u5e94\u4ed8\u91d1\u989d",
+              "field": "total_pay",
+              "bold": false,
+              "capital": false,
+              "width": "",
+              "alignment": "left",
+              "height": "",
+              "fontSize": 10,
+              "sortNo": ""
+            }
+          ],
+          "type": "columns"
+        },
+        {
+          "content": [],
+          "type": "columns"
+        },
+        {
+          "content": [],
+          "type": "columns"
+        },
+        {
+          "content": [
+            {
+              "text": ""
+            },
+            {
+              "text": ""
+            },
+            {
+              "text": ""
+            },
+            {
+              "text": "\u7b7e\u6536\u4eba",
+              "field": "_receiver_name"
+            }
+          ],
+          "type": "columns"
+        }
+      ]
+    }
+  ]
+}

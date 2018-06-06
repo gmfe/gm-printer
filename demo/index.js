@@ -12,52 +12,29 @@ import {
 } from '../src/index';
 import '../src/style.less';
 import 'normalize.css/normalize.css';
-import _ from 'lodash';
+import config from './config';
+import data from './data';
+import moment from 'moment';
 
-let tableData = [{
-    a: 'adfafa你们啊我们',
-    b: '不是阿发发发飒飒发搜索asf',
-    c: '地方啥愣是带饭了',
-    d: '我们的我们的我们的我们的',
-    e: '我们的我们的我们的我们的我们的',
-    f: '我们的我们的我们的我们的我们的'
-}];
+const nData = {
+    ...data,
 
-_.each(_.range(53), () => {
-    tableData.push(Object.assign({}, tableData[0]));
-});
-
-_.each(tableData, (v, i) => v.a = i + '_' + v.a);
+    receive_begin_time_t1: moment(data.receive_begin_time).format('MM-DD HH:mm'),
+    receive_end_time_t1: moment(data.receive_end_time).format('MM-DD HH:mm')
+};
 
 class App extends React.Component {
     render() {
         return (
             <div>
                 <Printer
-                    title={<PageTitle/>}
-                    header={<PageHeader/>}
-                    top={<PageTop/>}
+                    data={nData}
+                    title={<PageTitle {...config.title}/>}
+                    header={<PageHeader {...config.header}/>}
+                    top={<PageTop {...config.top}/>}
                     table={<PageTable
-                        columns={[{
-                            field: 'a',
-                            name: '你好'
-                        }, {
-                            field: 'b',
-                            name: '你好'
-                        }, {
-                            field: 'c',
-                            name: '你好'
-                        }, {
-                            field: 'd',
-                            name: '你好'
-                        }, {
-                            field: 'e',
-                            name: '你好'
-                        }, {
-                            field: 'f',
-                            name: '你好'
-                        }]}
-                        data={tableData}
+                        columns={config.table.columns}
+                        data={nData.details}
                     />}
                     bottom={<PageBottom/>}
                     footer={<PageFooter/>}

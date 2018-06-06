@@ -12,6 +12,8 @@ class Printer extends React.Component {
 
         printerStore.setSize(props.size);
         printerStore.setGap(props.gap);
+
+        printerStore.setData(props.data);
     }
 
     componentDidMount() {
@@ -96,7 +98,7 @@ class Printer extends React.Component {
 
                     return (
                         <Page key={i} pageIndex={i}>
-                            {i === 0 ? title : null}
+                            {title}
                             {header}
                             {i === 0 ? top : null}
                             {React.cloneElement(table, {

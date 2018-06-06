@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
@@ -26,5 +27,8 @@ module.exports = {
                 'css-loader'
             ]
         }]
-    }
+    },
+    plugins: [
+        new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/)
+    ]
 };

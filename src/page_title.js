@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import {observer} from 'mobx-react';
 import printerStore from './store';
@@ -15,17 +16,21 @@ class PageTitle extends React.Component {
     }
 
     render() {
+        const {text, style} = this.props;
         return (
             <div>
-                <div style={{background: 'blue', height: '100px'}}>
-                    <div>配送单</div>
+                <div style={style}>
+                    {printerStore.template(text)}
                 </div>
             </div>
         );
     }
 }
 
-PageTitle.propTypes = {};
+PageTitle.propTypes = {
+    text: PropTypes.string.isRequired,
+    style: PropTypes.object
+};
 
 PageTitle.defaultProps = {};
 

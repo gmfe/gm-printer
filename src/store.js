@@ -3,6 +3,8 @@ import _ from 'lodash';
 
 configure({enforceActions: true});
 
+const templateCache = {};
+
 const settingMap = {
     'A4': {
         size: {
@@ -58,6 +60,7 @@ class PrinterStore {
     @observable
     page = []; // [{begin, end, bottomPage}]
 
+    data = {};
 
     @action
     setSize(size) {
@@ -86,7 +89,6 @@ class PrinterStore {
     @action
     setTable(table) {
         this.table = table;
-        console.log(toJS(this.table));
     }
 
     @action
@@ -125,14 +127,12 @@ class PrinterStore {
             end: this.table.data.length
         }];
 
-        console.log(JSON.stringify(toJS(this.page)));
-
         return true;
     }
 
     @action
     _twoPage() {
-        const height = this.height.title
+        const height = this.height.title * 2
             + this.height.top
             + this.height.header
             + this.height.table + this.table.head.height
@@ -153,7 +153,6 @@ class PrinterStore {
         while (oneHeight < this.height.page) {
             oneHeight += this.table.body.heights[oneEnd];
             oneEnd++;
-            console.log(oneEnd, oneHeight);
         }
 
         this.page = [{
@@ -164,7 +163,6 @@ class PrinterStore {
             end: this.table.data.length
         }];
 
-        console.log(JSON.stringify(toJS(this.page)));
         return true;
     }
 
@@ -191,7 +189,8 @@ class PrinterStore {
         oEnd = end;
 
         while (end <= this.table.data.length) {
-            let moreHeight = this.height.header
+            let moreHeight = this.height.title
+                + this.height.header
                 + this.table.head.height + this.table.body.heights[0]
                 + this.height.footer;
 
@@ -208,7 +207,8 @@ class PrinterStore {
         }
 
         // 如果最后一页高度不够
-        const lastHeight = this.height.header
+        const lastHeight = this.height.title
+            + this.height.header
             + this.table.head.height + _.sum(this.table.body.heights.slice(page.slice(-1)[0].begin))
             + this.height.bottom
             + this.height.footer;
@@ -221,8 +221,29 @@ class PrinterStore {
 
         this.page = page;
 
-        console.log(JSON.stringify(toJS(this.page)));
         return true;
+    }
+
+    @action
+    setData(data) {
+        this.data = data;
+    }
+
+    template(text) {
+        // cache 下
+        if (templateCache[text]) {
+            return templateCache[text];
+        }
+        try {
+            templateCache[text] = _.template(text)({
+                data: this.data
+            });
+
+            return templateCache[text];
+        } catch (err) {
+            console.warn(err);
+            return text;
+        }
     }
 }
 

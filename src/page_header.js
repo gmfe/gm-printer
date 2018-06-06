@@ -1,8 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import {observer} from 'mobx-react';
 import printerStore from './store';
+import _ from 'lodash';
 import {getHeight} from './util';
+
 
 @observer
 class PageHeader extends React.Component {
@@ -15,16 +18,23 @@ class PageHeader extends React.Component {
     }
 
     render() {
+        const {blocks, style} = this.props;
+
         return (
-            <div>
-                <div style={{background: 'red', height: '100px'}}>PageHeader</div>
+            <div className="gm-printer-header">
+                <div style={style}>
+                    {_.map(blocks, (cell, i) => (
+                        <div key={i} style={cell.style}>{printerStore.template(cell.text)}</div>
+                    ))}
+                </div>
             </div>
         );
     }
 }
 
-PageHeader.propTypes = {};
-
-PageHeader.defaultProps = {};
+PageHeader.propTypes = {
+    blocks: PropTypes.array.isRequired,
+    style: PropTypes.object
+};
 
 export default PageHeader;

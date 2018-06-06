@@ -37,7 +37,7 @@ class Table extends React.Component {
             <table className="gm-printer-table">
                 <thead>
                 <tr>
-                    {_.map(columns, col => <th key={col.field} style={col.style}>{col.name}</th>)}
+                    {_.map(columns, col => <th key={col.field} style={col.style}>{col.text}</th>)}
                 </tr>
                 </thead>
                 <tbody>
@@ -57,13 +57,17 @@ class TableReady extends React.Component {
     render() {
         const {columns, data} = this.props;
 
+        if (data.length === 0) {
+            return null;
+        }
+
         return (
             <table className="gm-printer-table">
                 <thead>
                 <tr>
                     {_.map(columns, (col, i) => <th key={col.field} style={Object.assign({}, col.style, {
                         width: printerStore.table.head.widths[i]
-                    })}>{col.name}</th>)}
+                    })}>{col.text}</th>)}
                 </tr>
                 </thead>
                 <tbody>

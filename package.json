@@ -38,6 +38,7 @@
     "lodash": "^4.17.10",
     "mobx": "^4.3.0",
     "mobx-react": "^5.1.2",
+    "moment": "^2.22.2",
     "normalize.css": "^8.0.0",
     "postcss-loader": "^2.1.5",
     "precss": "^3.1.2",
