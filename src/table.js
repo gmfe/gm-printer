@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import {getHeight, getWidth} from "./util";
 import printerStore from "./store";
 
-class Table extends React.Component {
+class TableBefore extends React.Component {
     componentDidMount() {
         const {data} = this.props;
 
@@ -83,24 +83,24 @@ class TableReady extends React.Component {
     }
 }
 
-class PageTable extends React.Component {
+class Table extends React.Component {
     render() {
         const {columns, data} = this.props;
 
         return (
             <div>
                 {printerStore.ready ? <TableReady columns={columns} data={data}/> :
-                    <Table columns={columns} data={data}/>}
+                    <TableBefore columns={columns} data={data}/>}
             </div>
         );
     }
 }
 
-PageTable.propTypes = {
+Table.propTypes = {
     columns: PropTypes.array.isRequired,
     data: PropTypes.array.isRequired
 };
 
-PageTable.defaultProps = {};
+Table.defaultProps = {};
 
-export default PageTable;
+export default Table;

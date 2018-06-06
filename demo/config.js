@@ -32,7 +32,7 @@ const config = {
             }
         }],
         style: {
-            height: 50
+            height: 30
         }
     },
     top: {
@@ -45,13 +45,14 @@ const config = {
             }
         }],
         style: {
-            height: 20
+            height: 30
         }
     },
     table: {
         columns: [{
             field: 'id',
-            text: 'Id'
+            text: 'Id',
+            style: {}
         }, {
             field: 'name',
             text: '商品名'
@@ -62,6 +63,32 @@ const config = {
             field: 'spu_name',
             text: 'SPU'
         }]
+    },
+    bottom: {
+        blocks: [{
+            text: '收货商户: ${data.resname}(${data.sid})',
+            style: {
+                position: 'absolute',
+                left: 0,
+                top: 0
+            }
+        }],
+        style: {
+            height: 30
+        }
+    },
+    footer: {
+        blocks: [{
+            text: 'footer',
+            style: {
+                position: 'absolute',
+                left: 0,
+                top: 0
+            }
+        }],
+        style: {
+            height: 20
+        }
     }
 };
 

@@ -5,31 +5,39 @@ body {
 .gm-printer {
   margin: 10px auto;
   background: white;
+}
 
-  &-page {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
+// page
+.gm-printer-page {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 
-    + .gm-printer-page {
-      page-break-before: always;
-      margin-top: 10px;
-    }
-
-    &-inner {
-      position: relative;
-      outline: 1px dotted red;
-    }
+  + .gm-printer-page {
+    page-break-before: always;
+    margin-top: 10px;
   }
+
+  &-inner {
+    position: relative;
+    outline: 1px dotted red;
+  }
+}
+
+.gm-printer-title {
+  position: relative;
+  outline: 1px dotted blue;
 }
 
 // header
 .gm-printer-header {
   position: relative;
+  outline: 1px dotted blue;
 }
 
 // top
 .gm-printer-top {
   position: relative;
+  outline: 1px dotted blue;
 }
 
 // table
@@ -44,8 +52,14 @@ body {
   }
 }
 
-// bottom
+.gm-printer-bottom {
+  outline: 1px dotted blue;
+  position: relative;
+}
+
+// footer
 .gm-printer-footer {
+  outline: 1px dotted blue;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -54,24 +68,53 @@ body {
 
 // fixed
 .gm-printer-fixed {
+  outline: 1px dotted black;
   position: absolute;
 }
 
 @media print {
   .gm-printer {
     margin: 0;
+  }
 
-    &-page {
-      box-shadow: none;
+  .gm-printer-page {
+    box-shadow: none;
 
-      + .gm-printer-page {
-        margin-top: 0;
-      }
-
-      &-inner {
-        outline: none;
-      }
+    + .gm-printer-page {
+      margin-top: 0;
     }
+
+    &-inner {
+      outline: none;
+    }
+  }
+
+  .gm-printer-title {
+    outline: none;
+  }
+
+  // header
+  .gm-printer-header {
+    outline: none;
+  }
+
+  // top
+  .gm-printer-top {
+    outline: none;
+  }
+
+  .gm-printer-bottom {
+    outline: none;
+  }
+
+  // footer
+  .gm-printer-footer {
+    outline: none;
+  }
+
+  // fixed
+  .gm-printer-fixed {
+    outline: none;
   }
 }
 

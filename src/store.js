@@ -61,6 +61,7 @@ class PrinterStore {
     page = []; // [{begin, end, bottomPage}]
 
     data = {};
+    tableData = {};
 
     @action
     setSize(size) {
@@ -229,6 +230,11 @@ class PrinterStore {
         this.data = data;
     }
 
+    @action
+    setTableData(tableData) {
+        this.tableData = tableData;
+    }
+
     template(text) {
         // cache 下
         if (templateCache[text]) {
@@ -236,7 +242,8 @@ class PrinterStore {
         }
         try {
             templateCache[text] = _.template(text)({
-                data: this.data
+                data: this.data,
+                tableData: this.tableData
             });
 
             return templateCache[text];

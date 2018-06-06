@@ -1,19 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
-import {observer} from 'mobx-react';
-import printerStore from './store';
-import _ from 'lodash';
-import {getHeight} from './util';
-
+import PropTypes from "prop-types";
+import {getHeight} from "./util";
+import printerStore from "./store";
+import ReactDOM from "react-dom";
+import _ from "lodash";
+import {observer} from "mobx-react";
 
 @observer
-class PageHeader extends React.Component {
+class Footer extends React.Component {
     componentDidMount() {
         const $dom = ReactDOM.findDOMNode(this);
 
         printerStore.setHeight({
-            header: getHeight($dom)
+            footer: getHeight($dom)
         });
     }
 
@@ -21,7 +20,7 @@ class PageHeader extends React.Component {
         const {blocks, style} = this.props;
 
         return (
-            <div className="gm-printer-header">
+            <div className="gm-printer-footer">
                 <div style={style}>
                     {_.map(blocks, (cell, i) => (
                         <div key={i} style={cell.style}>{printerStore.template(cell.text)}</div>
@@ -32,9 +31,9 @@ class PageHeader extends React.Component {
     }
 }
 
-PageHeader.propTypes = {
+Footer.propTypes = {
     blocks: PropTypes.array.isRequired,
     style: PropTypes.object
 };
 
-export default PageHeader;
+export default Footer;

@@ -1,15 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-    Printer,
-    PageTitle,
-    PageHeader,
-    PageTop,
-    PageTable,
-    PageBottom,
-    PageFooter,
-    PageFixed
-} from '../src/index';
+import Printer from '../src/index';
 import '../src/style.less';
 import 'normalize.css/normalize.css';
 import config from './config';
@@ -29,16 +20,8 @@ class App extends React.Component {
             <div>
                 <Printer
                     data={nData}
-                    title={<PageTitle {...config.title}/>}
-                    header={<PageHeader {...config.header}/>}
-                    top={<PageTop {...config.top}/>}
-                    table={<PageTable
-                        columns={config.table.columns}
-                        data={nData.details}
-                    />}
-                    bottom={<PageBottom/>}
-                    footer={<PageFooter/>}
-                    fixed={<PageFixed/>}
+                    tableData={nData.details}
+                    config={config}
                 />
             </div>
         );

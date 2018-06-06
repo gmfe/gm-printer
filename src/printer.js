@@ -4,6 +4,14 @@ import PropTypes from "prop-types";
 import printerStore from "./store";
 import Page from './page';
 import _ from 'lodash';
+import Title from './title';
+import Top from './top';
+import Bottom from './bottom';
+import Header from './header';
+import Footer from './footer';
+import Fixed from './fixed';
+import Table from "./table";
+
 
 @observer
 class Printer extends React.Component {
@@ -14,6 +22,7 @@ class Printer extends React.Component {
         printerStore.setGap(props.gap);
 
         printerStore.setData(props.data);
+        printerStore.setTableData(props.tableData);
     }
 
     componentDidMount() {
@@ -23,62 +32,40 @@ class Printer extends React.Component {
     }
 
     renderBefore() {
-        const {
-            title,
-            header,
-            top,
-            table,
-            bottom,
-            footer,
-            fixed
-        } = this.props;
+        const {config, tableData} = this.props;
 
         return (
             <Page>
-                {title}
-                {header}
-                {top}
-                {table}
-                {bottom}
-                {footer}
-                {fixed}
+                <Title {...config.title}/>
+                <Header {...config.header}/>
+                <Top {...config.top}/>
+                <Table {...config.table} data={tableData}/>
+                <Bottom {...config.bottom}/>
+                <Footer {...config.footer}/>
+                <Fixed {...config.fixed}/>
             </Page>
         );
     }
 
     renderOnePage() {
-        const {
-            title,
-            header,
-            top,
-            table,
-            bottom,
-            footer,
-            fixed
-        } = this.props;
+        const {config, tableData} = this.props;
 
         return (
             <Page pageIndex={0}>
-                {title}
-                {header}
-                {top}
-                {table}
-                {bottom}
-                {footer}
-                {fixed}
+                <Title {...config.title}/>
+                <Header {...config.header}/>
+                <Top {...config.top}/>
+                <Table {...config.table} data={tableData}/>
+                <Bottom {...config.bottom}/>
+                <Footer {...config.footer}/>
+                <Fixed {...config.fixed}/>
             </Page>
         );
     }
 
     renderMorePage() {
         const {
-            title,
-            header,
-            top,
-            table,
-            bottom,
-            footer,
-            fixed
+            config, tableData
         } = this.props;
 
         return (
@@ -88,26 +75,24 @@ class Printer extends React.Component {
                     if (p.bottomPage) {
                         return (
                             <Page key={i} pageIndex={i}>
-                                {header}
-                                {bottom}
-                                {footer}
-                                {fixed}
+                                <Title {...config.title}/>
+                                <Header {...config.header}/>
+                                <Bottom {...config.bottom}/>
+                                <Footer {...config.footer}/>
+                                <Fixed {...config.fixed}/>
                             </Page>
                         );
                     }
 
                     return (
                         <Page key={i} pageIndex={i}>
-                            {title}
-                            {header}
-                            {i === 0 ? top : null}
-                            {React.cloneElement(table, {
-                                ...table.props,
-                                data: table.props.data.slice(p.begin, p.end)
-                            })}
-                            {i === (printerStore.page.length - 1) ? bottom : null}
-                            {footer}
-                            {fixed}
+                            <Title {...config.title}/>
+                            <Header {...config.header}/>
+                            {i === 0 ? <Top {...config.top}/> : null}
+                            <Table {...config.table} data={tableData.slice(p.begin, p.end)}/>
+                            {i === (printerStore.page.length - 1) ? <Bottom {...config.bottom}/> : null}
+                            <Footer {...config.footer}/>
+                            <Fixed {...config.fixed}/>
                         </Page>
                     );
                 })}
@@ -136,6 +121,10 @@ class Printer extends React.Component {
 }
 
 Printer.propTypes = {
+    data: PropTypes.object.isRequired,
+    tableData: PropTypes.array.isRequired,
+    config: PropTypes.object.isRequired,
+
     size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     gap: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 };

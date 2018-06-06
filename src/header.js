@@ -3,35 +3,38 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import {observer} from 'mobx-react';
 import printerStore from './store';
+import _ from 'lodash';
 import {getHeight} from './util';
 
+
 @observer
-class PageTitle extends React.Component {
+class Header extends React.Component {
     componentDidMount() {
         const $dom = ReactDOM.findDOMNode(this);
 
         printerStore.setHeight({
-            title: getHeight($dom)
+            header: getHeight($dom)
         });
     }
 
     render() {
-        const {text, style} = this.props;
+        const {blocks, style} = this.props;
+
         return (
-            <div>
+            <div className="gm-printer-header">
                 <div style={style}>
-                    {printerStore.template(text)}
+                    {_.map(blocks, (cell, i) => (
+                        <div key={i} style={cell.style}>{printerStore.template(cell.text)}</div>
+                    ))}
                 </div>
             </div>
         );
     }
 }
 
-PageTitle.propTypes = {
-    text: PropTypes.string.isRequired,
+Header.propTypes = {
+    blocks: PropTypes.array.isRequired,
     style: PropTypes.object
 };
 
-PageTitle.defaultProps = {};
-
-export default PageTitle;
+export default Header;

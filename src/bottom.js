@@ -1,18 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import {observer} from 'mobx-react';
-import printerStore from './store';
-import {getHeight} from './util';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import {getHeight} from "./util";
+import printerStore from "./store";
+import ReactDOM from "react-dom";
 import _ from "lodash";
 
-@observer
-class PageTop extends React.Component {
+class PageBottom extends React.Component {
     componentDidMount() {
         const $dom = ReactDOM.findDOMNode(this);
 
         printerStore.setHeight({
-            top: getHeight($dom)
+            bottom: getHeight($dom)
         });
     }
 
@@ -20,7 +18,7 @@ class PageTop extends React.Component {
         const {blocks, style} = this.props;
 
         return (
-            <div className="gm-printer-top">
+            <div className="gm-printer-bottom">
                 <div style={style}>
                     {_.map(blocks, (cell, i) => (
                         <div key={i} style={cell.style}>{printerStore.template(cell.text)}</div>
@@ -31,9 +29,11 @@ class PageTop extends React.Component {
     }
 }
 
-PageTop.propTypes = {
+PageBottom.propTypes = {
     blocks: PropTypes.array.isRequired,
     style: PropTypes.object
 };
 
-export default PageTop;
+PageBottom.defaultProps = {};
+
+export default PageBottom;

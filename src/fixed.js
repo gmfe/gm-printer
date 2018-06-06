@@ -1,6 +1,6 @@
 import React from 'react';
 
-class PageFixed extends React.Component {
+class Fixed extends React.Component {
     render() {
         return (
             <div className="gm-printer-fixed">PageFixed</div>
@@ -8,8 +8,6 @@ class PageFixed extends React.Component {
     }
 }
 
-PageFixed.propTypes = {};
+Fixed.propTypes = {};
 
-PageFixed.defaultProps = {};
-
-export default PageFixed;
+export default Fixed;
