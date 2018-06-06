@@ -12,6 +12,7 @@ import Footer from './footer';
 import Fixed from './fixed';
 import Table from "./table";
 
+// TODO add css and print config
 
 @observer
 class Printer extends React.Component {

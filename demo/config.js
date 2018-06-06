@@ -130,6 +130,18 @@ const config = {
         style: {
             height: 20
         }
+    },
+    fixed: {
+        blocks: [{
+            type: 'logo',
+            link: 'http://js.guanmai.cn/static_storage/json/common/logo/default/logo.pure.png',
+            style: {
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                height: 30
+            }
+        }]
     }
 };
 
