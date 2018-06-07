@@ -6,7 +6,6 @@ import printerStore from './store';
 import _ from 'lodash';
 import {getHeight} from './util';
 
-
 @observer
 class Header extends React.Component {
     componentDidMount() {

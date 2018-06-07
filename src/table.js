@@ -4,7 +4,9 @@ import _ from 'lodash';
 import ReactDOM from "react-dom";
 import {getHeight, getWidth} from "./util";
 import printerStore from "./store";
+import {observer} from "mobx-react/index";
 
+@observer
 class TableBefore extends React.Component {
     componentDidMount() {
         const {data} = this.props;

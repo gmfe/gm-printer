@@ -19,6 +19,8 @@ class Printer extends React.Component {
     constructor(props) {
         super(props);
 
+        printerStore.cleanTemplateCache();
+
         printerStore.setSize(props.size);
         printerStore.setGap(props.gap);
 

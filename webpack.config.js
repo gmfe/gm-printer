@@ -3,10 +3,13 @@ const path = require('path');
 
 module.exports = {
     mode: 'development',
-    entry: './demo/index.js',
+    entry: {
+        demo: './demo/index.js',
+        lib: './src/index.js'
+    },
     output: {
         path: path.resolve('build'),
-        filename: 'bundle.js'
+        filename: '[name].bundle.js'
     },
     module: {
         rules: [{
@@ -26,6 +29,15 @@ module.exports = {
                 'style-loader',
                 'css-loader'
             ]
+        }, {
+            test: /(fontawesome-webfont|glyphicons-halflings-regular|iconfont)\.(woff|woff2|ttf|eot|svg)($|\?)/,
+            use: [{
+                loader: 'url-loader',
+                options: {
+                    limit: 1024,
+                    name: 'font/[name].[hash:8].[ext]'
+                }
+            }]
         }]
     },
     plugins: [

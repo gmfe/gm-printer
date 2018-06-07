@@ -1,10 +1,10 @@
-import {observable, action, configure, toJS} from 'mobx';
+import {observable, action, configure} from 'mobx';
 import _ from 'lodash';
 
 configure({enforceActions: true});
 
-const templateCache = {};
-const templateTableCache = {};
+let templateCache = {};
+let templateTableCache = {};
 
 const settingMap = {
     'A4': {
@@ -85,7 +85,6 @@ class PrinterStore {
     @action
     setHeight(height) {
         this.height = Object.assign(this.height, height);
-        console.log(toJS(this.height));
     }
 
     @action
@@ -234,6 +233,11 @@ class PrinterStore {
     @action
     setTableData(tableData) {
         this.tableData = tableData;
+    }
+
+    cleanTemplateCache() {
+        templateCache = {};
+        templateTableCache = {};
     }
 
     template(text) {

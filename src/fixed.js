@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import _ from 'lodash';
+import {observer} from "mobx-react/index";
 
+@observer
 class Fixed extends React.Component {
     render() {
 
