@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom';
 import config from '../demo/config';
 import data from '../demo/data';
 import moment from 'moment';
-import {Flex} from 'react-gm';
 import '../node_modules/react-gm/src/index.less';
 import 'normalize.css/normalize.css';
-import Right from './right';
+import Config from '../config';
 
 const nData = {
     ...data,
@@ -16,38 +15,12 @@ const nData = {
 };
 
 class App extends React.Component {
-    componentDidMount() {
-
-
-        const $iframe = ReactDOM.findDOMNode(this.refIframe);
-        window.$iframe = $iframe;
-
-        const script = $iframe.contentWindow.document.createElement('script');
-        script.src = '/lib.bundle.js';
-        $iframe.contentWindow.document.body.append(script);
-
-        script.addEventListener('load', () => {
-            $iframe.contentWindow.render({
-                data: nData,
-                tableData: nData.details,
-                config
-            });
-        });
-    }
 
     render() {
         return (
-            <Flex>
-                <Flex flex column style={{minWidth: '850px', height: '100vh'}}>
-                    <iframe
-                        ref={ref => this.refIframe = ref}
-                        style={{border: 'none', width: '100%', height: '1000px'}}
-                    />
-                </Flex>
-                <div style={{width: '400px'}}>
-                    <Right config={config}/>
-                </div>
-            </Flex>
+            <div style={{height: '100vh', width: '100vw'}}>
+                <Config data={nData} config={config} tableData={nData.details}/>
+            </div>
         );
     }
 }

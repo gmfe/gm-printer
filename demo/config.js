@@ -10,7 +10,7 @@ const config = {
     },
     header: {
         blocks: [{
-            text: '配送时间: ${data.receive_begin_time_t1}~${data.receive_end_time_t1}',
+            text: '配送时间: ${data.receive_begin_time_t1} ~ ${data.receive_end_time_t1}',
             style: {
                 position: 'absolute',
                 left: 0,
