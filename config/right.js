@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {PanelBlock, PanelTitle, Panel} from './util';
+import {PanelBlock, PanelTitle, Panel} from './panel';
 
 class Right extends React.Component {
 

@@ -1,28 +1,7 @@
 import React from "react";
-import _ from "lodash";
 import PropTypes from "prop-types";
 import classNames from 'classnames';
-
-class Panel extends React.Component {
-    render() {
-        const {title, children} = this.props;
-
-        return (
-            <div className="gm-padding-5 gm-margin-10" style={{border: '1px solid black', position: 'relative'}}>
-                <div style={{position: 'absolute', top: '-6px', background: 'white', padding: '0 5px'}}>
-                    {title}
-                </div>
-                <div className="gm-padding-tb-5">
-                    {children}
-                </div>
-            </div>
-        );
-    }
-}
-
-Panel.propTypes = {
-    title: PropTypes.string.isRequired
-};
+import _ from 'lodash';
 
 class Text extends React.Component {
     handleChange = (e) => {
@@ -47,26 +26,143 @@ Text.propTypes = {
     onChange: PropTypes.func.isRequired
 };
 
-class Number extends React.Component {
-    handleChange = (e) => {
+// 10px => 10  10% => 10%
+class TextPX extends React.Component {
+    handleChange = (value) => {
         const {onChange} = this.props;
-        onChange(e.target.value);
+        if (value === '') {
+            onChange('');
+        } else if (value.endsWith('%')) {
+            onChange(value);
+        } else {
+            onChange(value + 'px');
+        }
     };
 
     render() {
-        const {value} = this.props;
+        const {value = '', block} = this.props;
+
+        let nValue = value;
+        if (value.endsWith('px')) {
+            nValue = value.replace(/px/g, '');
+        }
+
         return (
-            <input type="number" value={value} onChange={this.handleChange}
-                   style={{width: '100px'}}/>
+            <Text block={block} value={nValue} onChange={this.handleChange}/>
         );
     }
 }
 
-Number.propTypes = {
+TextPX.propTypes = {
+    block: PropTypes.bool,
     value: PropTypes.string,
     onChange: PropTypes.func.isRequired
 };
 
+const fontSizeList = [
+    '12px',
+    '14px',
+    '16px',
+    '18px',
+    '20px',
+    '22px',
+    '24px',
+    '26px',
+    '28px'
+];
+
+class Fonter extends React.Component {
+    handleChange = (type, value) => {
+        const {style, onChange} = this.props;
+
+        onChange({
+            ...style,
+            [type]: value
+        });
+    };
+
+    render() {
+        const {style} = this.props;
+
+        return (
+            <span className="gm-printer-config-fonter">
+                <select
+                    value={style.fontSize}
+                    onChange={e => this.handleChange('fontSize', e.target.value)}
+                >
+                    {_.map(fontSizeList, v => <option key={v} value={v}>{v.slice(0, -2)}</option>)}
+                </select>
+                &nbsp;
+                <span
+                    className={classNames("gm-printer-config-btn", {
+                        active: style.fontWeight === 'bold'
+                    })}
+                    style={{fontWeight: 'bold'}}
+                    onClick={() => this.handleChange('fontWeight', style.fontWeight === 'bold' ? '' : 'bold')}
+                >
+                    B
+                </span>
+                <span
+                    className={classNames("gm-printer-config-btn", {
+                        active: style.fontStyle === 'italic'
+                    })}
+                    style={{fontStyle: 'italic'}}
+                    onClick={() => this.handleChange('fontStyle', style.fontStyle === 'italic' ? '' : 'italic')}
+                >
+                    I
+                </span>
+                <span
+                    className={classNames("gm-printer-config-btn", {
+                        active: style.textDecoration === 'underline'
+                    })}
+                    style={{textDecoration: 'underline'}}
+                    onClick={() => this.handleChange('textDecoration', style.textDecoration === 'underline' ? '' : 'underline')}
+                >
+                    U
+                </span>
+            </span>
+        );
+    }
+}
+
+Fonter.propTypes = {
+    // fontSize: PropTypes.string,
+    // fontWeight: PropTypes.string,
+    // fontStyle: PropTypes.string,
+    // textDecoration: PropTypes.string,
+    style: PropTypes.object,
+    onChange: PropTypes.func.isRequired
+};
+
+class TextAlign extends React.Component {
+    render() {
+        const {value} = this.props;
+        return (
+            <span className="gm-printer-config-text-align">
+                <span
+                    className={classNames("gm-printer-config-btn", {
+                        active: value === 'left'
+                    })}
+                ><i className="glyphicon glyphicon-align-left"/></span>
+                <span
+                    className={classNames("gm-printer-config-btn", {
+                        active: value === 'center'
+                    })}
+                ><i className="glyphicon glyphicon-align-center"/></span>
+                <span
+                    className={classNames("gm-printer-config-btn", {
+                        active: value === 'right'
+                    })}
+                ><i className="glyphicon glyphicon-align-right"/></span>
+            </span>
+        );
+    }
+}
+
+TextAlign.propTypes = {
+    value: PropTypes.string,
+    onChange: PropTypes.func.isRequired
+};
 
 class Position extends React.Component {
     handleChange = (type, value) => {
@@ -83,14 +179,14 @@ class Position extends React.Component {
         return (
             <div onChange={this.handleChange}>
                 <div className="text-center">
-                    上 <Number value={top} onChange={this.handleChange.bind(this, 'top')}/>
+                    上 <TextPX value={top} onChange={this.handleChange.bind(this, 'top')}/>
                 </div>
                 <div className="text-center">
-                    左 <Number value={left} onChange={this.handleChange.bind(this, 'left')}/>
-                    <Number value={right} onChange={this.handleChange.bind(this, 'right')}/> 右
+                    左 <TextPX value={left} onChange={this.handleChange.bind(this, 'left')}/>
+                    <TextPX value={right} onChange={this.handleChange.bind(this, 'right')}/> 右
                 </div>
                 <div className="text-center">
-                    下 <Number value={bottom} onChange={this.handleChange.bind(this, 'bottom')}/>
+                    下 <TextPX value={bottom} onChange={this.handleChange.bind(this, 'bottom')}/>
                 </div>
             </div>
         );
@@ -107,37 +203,29 @@ class Style extends React.Component {
         });
     };
 
-    render() {
-        const {
-            style: {
-                height, width,
-                padding,
-                fontSize, fontWeight,
-                textAlign
-            }
-        } = this.props;
+    handleStyle = (style) => {
+        const {onChange} = this.props;
+        onChange(style);
+        console.log(style);
+    };
 
-        console.log(this.props.style);
+    render() {
+        const {style} = this.props;
 
         return (
             <div>
                 <div>
-                    高 <Number value={height} onChange={this.handleChange.bind(this, 'height')}/>
+                    高 <TextPX value={style.height} onChange={this.handleChange.bind(this, 'height')}/>
                 </div>
                 <div>
-                    宽 <Number value={width} onChange={this.handleChange.bind(this, 'width')}/>
+                    宽 <TextPX value={style.width} onChange={this.handleChange.bind(this, 'width')}/>
                 </div>
                 <div>
-                    对齐 <Text value={textAlign} onChange={this.handleChange.bind(this, 'textAlign')}/>
+                    字 <Fonter style={style} onChange={this.handleStyle}/> <TextAlign value={style.textAlign}
+                                                                                     onChange={this.handleChange.bind(this, 'textAlign')}/>
                 </div>
                 <div>
-                    字体大小 <Number value={fontSize} onChange={this.handleChange.bind(this, 'fontSize')}/>
-                </div>
-                <div>
-                    字体粗细 <Text value={fontWeight} onChange={this.handleChange.bind(this, 'fontWeight')}/>
-                </div>
-                <div>
-                    边距 <Number value={padding} onChange={this.handleChange.bind(this, 'padding')}/>
+                    边距 <TextPX value={style.padding} onChange={this.handleChange.bind(this, 'padding')}/>
                 </div>
 
             </div>
@@ -156,94 +244,8 @@ Style.propTypes = {
     width: PropTypes.bool
 };
 
-class PanelBlock extends React.Component {
-    handleBlockText = (index, text) => {
-        const {data, onUpdate} = this.props;
-
-        data.blocks[index].text = text;
-
-        onUpdate(data);
-    };
-
-    handleBlockStyle = (index, style) => {
-        const {data, onUpdate} = this.props;
-
-        data.blocks[index].style = style;
-
-        onUpdate(data);
-    };
-
-    handleStyle = (style) => {
-        const {data, onUpdate} = this.props;
-
-        onUpdate({
-            ...data,
-            style
-        });
-    };
-
-    render() {
-        const {title, data} = this.props;
-
-        return (
-            <Panel title={title}>
-                <Style style={data.style} onChange={this.handleStyle}/>
-                {_.map(data.blocks, (block, i) => (
-                    <div key={i} className="gm-padding-tb-5 gm-padding-left-10 gm-margin-tb-5"
-                         style={{borderTop: '1px dotted black'}}>
-                        <Text block value={block.text} onChange={this.handleBlockText.bind(this, i)}/>
-                        <Position style={block.style} onChange={this.handleBlockStyle.bind(this, i)}/>
-                        <Style style={block.style} onChange={this.handleBlockStyle.bind(this, i)}/>
-                    </div>
-                ))}
-            </Panel>
-        );
-    }
-}
-
-PanelBlock.propTypes = {
-    title: PropTypes.string.isRequired,
-    data: PropTypes.any.isRequired,
-    onUpdate: PropTypes.func.isRequired
-};
-
-class PanelTitle extends React.Component {
-    handleText = (text) => {
-        const {data, onUpdate} = this.props;
-        onUpdate({
-            ...data,
-            text
-        });
-    };
-
-    handleStyle = (style) => {
-        const {data, onUpdate} = this.props;
-        onUpdate({
-            ...data,
-            style
-        });
-    };
-
-    render() {
-        const {title, data} = this.props;
-
-        return (
-            <Panel title={title}>
-                <Text block value={data.text} onChange={this.handleText}/>
-                <Style style={data.style} onChange={this.handleStyle}/>
-            </Panel>
-        );
-    }
-}
-
-PanelTitle.propTypes = {
-    title: PropTypes.string.isRequired,
-    data: PropTypes.any.isRequired,
-    onUpdate: PropTypes.func.isRequired
-};
-
 export {
-    PanelBlock,
-    PanelTitle,
-    Panel
+    Style,
+    Position,
+    Text
 };

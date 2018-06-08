@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import {Flex} from 'react-gm';
 import '../node_modules/react-gm/src/index.less';
 import 'normalize.css/normalize.css';
+import './style.less';
 import Right from './right';
 
 class Config extends React.Component {
@@ -52,7 +53,7 @@ class Config extends React.Component {
         const {config} = this.state;
 
         return (
-            <Flex style={{height: '100%', width: '100%'}}>
+            <Flex className="gm-printer-config" style={{height: '100%', width: '100%'}}>
                 <Flex flex column style={{minWidth: '850px'}}>
                     <iframe
                         ref={ref => this.refIframe = ref}

@@ -9,6 +9,7 @@ module.exports = {
     },
     output: {
         path: path.resolve('build'),
+        publicPath: "/",
         filename: '[name].bundle.js'
     },
     module: {
@@ -35,7 +36,7 @@ module.exports = {
                 loader: 'url-loader',
                 options: {
                     limit: 1024,
-                    name: 'font/[name].[hash:8].[ext]'
+                    name: 'font/[name].[ext]'
                 }
             }]
         }]
