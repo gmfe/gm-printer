@@ -5,7 +5,8 @@ const config = {
             fontSize: '20px',
             fontWeight: 'bold',
             textAlign: 'center',
-            padding: '10px 0'
+            padding: '10px 0',
+            height: '30'
         }
     },
     header: {
@@ -80,7 +81,7 @@ const config = {
             head: '销售价格',
             text: '${tableData.sale_price} ¥',
             style: {
-                color: 'red'
+                textAlign: 'right'
             }
         }]
     },

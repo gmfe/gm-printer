@@ -13,7 +13,7 @@ class Config extends React.Component {
             config: props.config
         };
 
-        this.debounceUpdate = _.debounce(this.handleUpdate, 1000);
+        this.debounceDoRender = _.debounce(this.doRender, 1000);
     }
 
     componentDidMount() {
@@ -44,7 +44,7 @@ class Config extends React.Component {
         this.setState({
             config
         }, () => {
-            this.doRender();
+            this.debounceDoRender();
         });
     };
 
@@ -53,14 +53,14 @@ class Config extends React.Component {
 
         return (
             <Flex style={{height: '100%', width: '100%'}}>
-                <Flex column style={{minWidth: '850px'}}>
+                <Flex flex column style={{minWidth: '850px'}}>
                     <iframe
                         ref={ref => this.refIframe = ref}
                         style={{border: 'none', width: '100%', height: '100%'}}
                     />
                 </Flex>
-                <Flex column flex style={{minWidth: '400px'}} className="gm-overflow-y">
-                    <Right config={config} onUpdate={this.debounceUpdate}/>
+                <Flex column style={{width: '350px', minWidth: '350px'}} className="gm-overflow-y">
+                    <Right config={config} onUpdate={this.handleUpdate}/>
                 </Flex>
             </Flex>
         );

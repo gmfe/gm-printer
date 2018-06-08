@@ -1,14 +1,15 @@
 import React from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
+import classNames from 'classnames';
 
 class Panel extends React.Component {
     render() {
         const {title, children} = this.props;
 
         return (
-            <div className="gm-padding-5 gm-margin-5" style={{border: '1px solid black'}}>
-                <div className="gm-border-bottom">
+            <div className="gm-padding-5 gm-margin-10" style={{border: '1px solid black', position: 'relative'}}>
+                <div style={{position: 'absolute', top: '-6px', background: 'white', padding: '0 5px'}}>
                     {title}
                 </div>
                 <div className="gm-padding-tb-5">
@@ -30,15 +31,18 @@ class Text extends React.Component {
     };
 
     render() {
-        const {value} = this.props;
+        const {value, block} = this.props;
         return (
-            <input type="text" className="form-control" value={value} onChange={this.handleChange}
+            <input type="text" className={classNames({
+                'form-control': block
+            })} value={value} onChange={this.handleChange}
                    placeholder="请输入"/>
         );
     }
 }
 
 Text.propTypes = {
+    block: PropTypes.bool,
     value: PropTypes.string,
     onChange: PropTypes.func.isRequired
 };
@@ -104,13 +108,38 @@ class Style extends React.Component {
     };
 
     render() {
-        const {style: {height}} = this.props;
+        const {
+            style: {
+                height, width,
+                padding,
+                fontSize, fontWeight,
+                textAlign
+            }
+        } = this.props;
+
+        console.log(this.props.style);
 
         return (
             <div>
                 <div>
                     高 <Number value={height} onChange={this.handleChange.bind(this, 'height')}/>
                 </div>
+                <div>
+                    宽 <Number value={width} onChange={this.handleChange.bind(this, 'width')}/>
+                </div>
+                <div>
+                    对齐 <Text value={textAlign} onChange={this.handleChange.bind(this, 'textAlign')}/>
+                </div>
+                <div>
+                    字体大小 <Number value={fontSize} onChange={this.handleChange.bind(this, 'fontSize')}/>
+                </div>
+                <div>
+                    字体粗细 <Text value={fontWeight} onChange={this.handleChange.bind(this, 'fontWeight')}/>
+                </div>
+                <div>
+                    边距 <Number value={padding} onChange={this.handleChange.bind(this, 'padding')}/>
+                </div>
+
             </div>
         );
     }
@@ -120,7 +149,11 @@ Style.propTypes = {
     style: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     fontSize: PropTypes.bool,
-    height: PropTypes.bool
+    fontWeight: PropTypes.bool,
+    textAlign: PropTypes.bool,
+    padding: PropTypes.bool,
+    height: PropTypes.bool,
+    width: PropTypes.bool
 };
 
 class PanelBlock extends React.Component {
@@ -156,9 +189,9 @@ class PanelBlock extends React.Component {
             <Panel title={title}>
                 <Style style={data.style} onChange={this.handleStyle}/>
                 {_.map(data.blocks, (block, i) => (
-                    <div key={i} className="gm-padding-tb-5 gm-padding-left-15 gm-margin-tb-5"
+                    <div key={i} className="gm-padding-tb-5 gm-padding-left-10 gm-margin-tb-5"
                          style={{borderTop: '1px dotted black'}}>
-                        <Text value={block.text} onChange={this.handleBlockText.bind(this, i)}/>
+                        <Text block value={block.text} onChange={this.handleBlockText.bind(this, i)}/>
                         <Position style={block.style} onChange={this.handleBlockStyle.bind(this, i)}/>
                         <Style style={block.style} onChange={this.handleBlockStyle.bind(this, i)}/>
                     </div>
@@ -196,7 +229,7 @@ class PanelTitle extends React.Component {
 
         return (
             <Panel title={title}>
-                <Text value={data.text} onChange={this.handleText}/>
+                <Text block value={data.text} onChange={this.handleText}/>
                 <Style style={data.style} onChange={this.handleStyle}/>
             </Panel>
         );
