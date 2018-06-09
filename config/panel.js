@@ -3,6 +3,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import {Flex} from 'react-gm';
 import {Text, Style} from './util';
+import {pageSizeMap} from '../src/util';
 
 class Panel extends React.Component {
     render() {
@@ -29,6 +30,54 @@ class Panel extends React.Component {
 
 Panel.propTypes = {
     title: PropTypes.string.isRequired
+};
+
+class PanelPage extends React.Component {
+    handleChange = (type, value) => {
+        const {data, onUpdate} = this.props;
+
+        if (type === 'type') {
+            onUpdate({
+                [type]: value,
+                ...pageSizeMap[value]
+            });
+        } else {
+            onUpdate({
+                ...data,
+                [type]: value
+            });
+        }
+    };
+
+    render() {
+        const {title, data} = this.props;
+
+        return (
+            <Panel title={title}>
+                <div>
+                    纸张
+                    <select value={data.type} onChange={(e) => this.handleChange('type', e.target.value)}>
+                        {_.map(pageSizeMap, (value, key) => <option value={key} key={key}>{key}</option>)}
+                        <option value="">自定义</option>
+                    </select>
+                </div>
+                {(
+                    <div>
+                        <Style disabled={!!data.type} size style={data.size}
+                               onChange={this.handleChange.bind(this, 'size')}/>
+                        <Style disabled={!!data.type} gap style={data.gap}
+                               onChange={this.handleChange.bind(this, 'gap')}/>
+                    </div>
+                )}
+            </Panel>
+        );
+    }
+}
+
+PanelPage.propTypes = {
+    title: PropTypes.string.isRequired,
+    data: PropTypes.any.isRequired,
+    onUpdate: PropTypes.func.isRequired
 };
 
 class PanelTitle extends React.Component {
@@ -167,5 +216,6 @@ PanelColumns.propTypes = {
 export {
     PanelTitle,
     PanelBlock,
-    PanelColumns
+    PanelColumns,
+    PanelPage
 };

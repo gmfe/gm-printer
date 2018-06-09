@@ -10,9 +10,10 @@ class Text extends React.Component {
     };
 
     render() {
-        const {value, block, style} = this.props;
+        const {disabled, value, block, style} = this.props;
         return (
             <input
+                disabled={disabled}
                 type="text"
                 className={classNames({
                     'form-control': block
@@ -26,6 +27,7 @@ class Text extends React.Component {
 }
 
 Text.propTypes = {
+    disabled: PropTypes.bool,
     block: PropTypes.bool,
     value: PropTypes.string,
     onChange: PropTypes.func.isRequired
@@ -45,7 +47,7 @@ class TextPX extends React.Component {
     };
 
     render() {
-        const {value = '', block} = this.props;
+        const {disabled, value = '', block} = this.props;
 
         let nValue = value;
         if (value.endsWith('px')) {
@@ -53,12 +55,14 @@ class TextPX extends React.Component {
         }
 
         return (
-            <Text block={block} value={nValue} onChange={this.handleChange} style={{width: '50px'}}/>
+            <Text disabled={disabled} block={block} value={nValue} onChange={this.handleChange}
+                  style={{width: '50px'}}/>
         );
     }
 }
 
 TextPX.propTypes = {
+    disabled: PropTypes.bool,
     block: PropTypes.bool,
     value: PropTypes.string,
     onChange: PropTypes.func.isRequired
@@ -220,23 +224,27 @@ class Gap extends React.Component {
     };
 
     render() {
-        const {style: {paddingTop, paddingRight, paddingBottom, paddingLeft}} = this.props;
+        const {disabled, style: {paddingTop, paddingRight, paddingBottom, paddingLeft}} = this.props;
 
         return (
             <span>
-                上 <TextPX value={paddingTop} onChange={this.handleChange.bind(this, 'paddingTop')}/>
+                上 <TextPX disabled={disabled} value={paddingTop} onChange={this.handleChange.bind(this, 'paddingTop')}/>
                 &nbsp;
-                左 <TextPX value={paddingLeft} onChange={this.handleChange.bind(this, 'paddingLeft')}/>
+                左 <TextPX disabled={disabled} value={paddingLeft}
+                          onChange={this.handleChange.bind(this, 'paddingLeft')}/>
                 &nbsp;
-                右 <TextPX value={paddingRight} onChange={this.handleChange.bind(this, 'paddingRight')}/>
+                右 <TextPX disabled={disabled} value={paddingRight}
+                          onChange={this.handleChange.bind(this, 'paddingRight')}/>
                 &nbsp;
-                下 <TextPX value={paddingBottom} onChange={this.handleChange.bind(this, 'paddingBottom')}/>
+                下 <TextPX disabled={disabled} value={paddingBottom}
+                          onChange={this.handleChange.bind(this, 'paddingBottom')}/>
             </span>
         );
     }
 }
 
 Gap.propTypes = {
+    disabled: PropTypes.bool,
     style: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired
 };
@@ -257,15 +265,17 @@ class Style extends React.Component {
     };
 
     render() {
-        const {style, size, font, gap, position} = this.props;
+        const {disabled, style, size, font, gap, position} = this.props;
 
         return (
             <div>
                 {size && (
                     <div>
-                        大小: 高 <TextPX value={style.height} onChange={this.handleChange.bind(this, 'height')}/>
+                        大小: 高 <TextPX disabled={disabled} value={style.height}
+                                      onChange={this.handleChange.bind(this, 'height')}/>
                         &nbsp;
-                        宽 <TextPX value={style.width} onChange={this.handleChange.bind(this, 'width')}/>
+                        宽 <TextPX disabled={disabled} value={style.width}
+                                  onChange={this.handleChange.bind(this, 'width')}/>
                     </div>
                 )}
                 {font && (
@@ -277,7 +287,7 @@ class Style extends React.Component {
                 )}
                 {gap && (
                     <div>
-                        边距: <Gap style={style} onChange={this.handleStyle}/>
+                        边距: <Gap disabled={disabled} style={style} onChange={this.handleStyle}/>
                     </div>
                 )}
                 {position && (
@@ -291,6 +301,7 @@ class Style extends React.Component {
 }
 
 Style.propTypes = {
+    disabled: PropTypes.bool,
     style: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     size: PropTypes.bool,

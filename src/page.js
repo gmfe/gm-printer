@@ -17,17 +17,17 @@ class Page extends React.Component {
 
     render() {
         const {children} = this.props;
-        const {top, right, bottom, left} = printerStore.gap;
+        const {paddingTop, paddingRight, paddingBottom, paddingLeft} = printerStore.gap;
 
         return (
             <div className="gm-printer-page" style={{
-                width: `calc(${printerStore.size.width} - ${left} - ${right})`,
-                height: `calc(${printerStore.size.height} - ${top} - ${bottom} - 3px)`,
-                padding: `${top} ${right} ${bottom} ${left}`
+                width: `calc(${printerStore.size.width} - ${paddingLeft} - ${paddingRight})`,
+                height: `calc(${printerStore.size.height} - ${paddingTop} - ${paddingBottom} - 3px)`,
+                padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`
             }}>
                 <div className="gm-printer-page-inner" style={{
-                    width: `calc(${printerStore.size.width} - ${left} - ${right})`,
-                    height: `calc(${printerStore.size.height} - ${top} - ${bottom} - 3px)`
+                    width: `calc(${printerStore.size.width} - ${paddingLeft} - ${paddingRight})`,
+                    height: `calc(${printerStore.size.height} - ${paddingTop} - ${paddingBottom} - 3px)`
                 }}>
                     {children}
                 </div>

@@ -18,7 +18,35 @@ function getWidth(el) {
     return width - borderLeftWidth - borderRightWidth - paddingLeft - paddingRight;
 }
 
+const pageSizeMap = {
+    'A4': {
+        size: {
+            width: '210mm',
+            height: '297mm'
+        },
+        gap: {
+            paddingTop: '5mm',
+            paddingRight: '5mm',
+            paddingBottom: '5mm',
+            paddingLeft: '5mm'
+        }
+    },
+    'A5': {
+        size: {
+            width: '180mm',
+            height: '260mm'
+        },
+        gap: {
+            paddingTop: '5mm',
+            paddingRight: '5mm',
+            paddingBottom: '5mm',
+            paddingLeft: '5mm'
+        }
+    }
+};
+
 export {
     getHeight,
-    getWidth
+    getWidth,
+    pageSizeMap
 };

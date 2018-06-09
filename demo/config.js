@@ -1,8 +1,16 @@
 const config = {
     page: {
         type: 'A4',
-        size: 'A4',
-        gap: 'A4'
+        size: {
+            width: '210mm', // '210mm',
+            height: '297mm' // '297mm'
+        },
+        gap: {
+            paddingTop: '5mm',
+            paddingRight: '5mm',
+            paddingBottom: '5mm',
+            paddingLeft: '5mm'
+        }
     },
     title: {
         text: '四川九州昌隆农业有限公司',

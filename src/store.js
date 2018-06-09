@@ -1,30 +1,11 @@
 import {observable, action, configure} from 'mobx';
 import _ from 'lodash';
+import {pageSizeMap} from './util';
 
 configure({enforceActions: true});
 
 let templateCache = {};
 let templateTableCache = {};
-
-// TODO
-const settingMap = {
-    'A4': {
-        size: {
-            width: '794px', // '210mm',
-            height: '1123px' // '297mm'
-        },
-        gap: {
-            top: '5mm',
-            right: '5mm',
-            bottom: '5mm',
-            left: '5mm'
-        }
-    },
-    'A5': {
-        size: {},
-        gap: {}
-    }
-};
 
 class PrinterStore {
     // TODO
@@ -32,10 +13,10 @@ class PrinterStore {
     sizeLabel = '';
 
     @observable
-    size = settingMap.A4.size;
+    size = pageSizeMap.A4.size;
 
     @observable
-    gap = settingMap.A4.gap;
+    gap = pageSizeMap.A4.gap;
 
     @observable
     ready = false;
@@ -71,8 +52,8 @@ class PrinterStore {
 
     @action
     setSize(size) {
-        if (_.isString(size) && settingMap[size]) {
-            this.size = settingMap[size].size;
+        if (_.isString(size) && pageSizeMap[size]) {
+            this.size = pageSizeMap[size].size;
         } else if (_.isObject(size)) {
             this.size = size;
         }
@@ -80,8 +61,8 @@ class PrinterStore {
 
     @action
     setGap(gap) {
-        if (_.isString(gap) && settingMap[gap]) {
-            this.gap = settingMap[gap].gap;
+        if (_.isString(gap) && pageSizeMap[gap]) {
+            this.gap = pageSizeMap[gap].gap;
         } else if (_.isObject(gap)) {
             this.gap = gap;
         }
