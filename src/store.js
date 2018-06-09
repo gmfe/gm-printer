@@ -6,6 +6,7 @@ configure({enforceActions: true});
 let templateCache = {};
 let templateTableCache = {};
 
+// TODO
 const settingMap = {
     'A4': {
         size: {
@@ -18,6 +19,10 @@ const settingMap = {
             bottom: '5mm',
             left: '5mm'
         }
+    },
+    'A5': {
+        size: {},
+        gap: {}
     }
 };
 

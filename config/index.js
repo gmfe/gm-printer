@@ -6,6 +6,7 @@ import '../node_modules/react-gm/src/index.less';
 import 'normalize.css/normalize.css';
 import './style.less';
 import Right from './right';
+import _ from 'lodash';
 
 class Config extends React.Component {
     constructor(props) {
@@ -60,7 +61,7 @@ class Config extends React.Component {
                         style={{border: 'none', width: '100%', height: '100%'}}
                     />
                 </Flex>
-                <Flex column style={{width: '350px', minWidth: '350px'}} className="gm-overflow-y">
+                <Flex column style={{width: '400px', minWidth: '400px'}} className="gm-overflow-y">
                     <Right config={config} onUpdate={this.handleUpdate}/>
                 </Flex>
             </Flex>

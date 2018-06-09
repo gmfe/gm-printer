@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {PanelBlock, PanelTitle, Panel} from './panel';
+import {PanelTitle, PanelBlock, PanelColumns} from './panel';
 
 class Right extends React.Component {
 
@@ -17,10 +17,11 @@ class Right extends React.Component {
 
         return (
             <div>
+                <div>TODO page</div>
                 <PanelTitle title="标题" data={config.title} onUpdate={this.handleUpdate.bind(this, 'title')}/>
                 <PanelBlock title="页眉" data={config.header} onUpdate={this.handleUpdate.bind(this, 'header')}/>
                 <PanelBlock title="头部" data={config.top} onUpdate={this.handleUpdate.bind(this, 'top')}/>
-                <Panel title="表格数据" data={config.table} onUpdate={this.handleUpdate.bind(this, 'table')}/>
+                <PanelColumns title="表格数据" data={config.table} onUpdate={this.handleUpdate.bind(this, 'table')}/>
                 <PanelBlock title="底部" data={config.bottom} onUpdate={this.handleUpdate.bind(this, 'bottom')}/>
                 <PanelBlock title="页脚" data={config.footer} onUpdate={this.handleUpdate.bind(this, 'footer')}/>
             </div>

@@ -10,12 +10,17 @@ class Text extends React.Component {
     };
 
     render() {
-        const {value, block} = this.props;
+        const {value, block, style} = this.props;
         return (
-            <input type="text" className={classNames({
-                'form-control': block
-            })} value={value} onChange={this.handleChange}
-                   placeholder="请输入"/>
+            <input
+                type="text"
+                className={classNames({
+                    'form-control': block
+                })}
+                value={value}
+                onChange={this.handleChange}
+                style={style}
+            />
         );
     }
 }
@@ -48,7 +53,7 @@ class TextPX extends React.Component {
         }
 
         return (
-            <Text block={block} value={nValue} onChange={this.handleChange}/>
+            <Text block={block} value={nValue} onChange={this.handleChange} style={{width: '50px'}}/>
         );
     }
 }
@@ -135,6 +140,11 @@ Fonter.propTypes = {
 };
 
 class TextAlign extends React.Component {
+    handleChange = (value) => {
+        const {onChange} = this.props;
+        onChange(value);
+    };
+
     render() {
         const {value} = this.props;
         return (
@@ -143,16 +153,19 @@ class TextAlign extends React.Component {
                     className={classNames("gm-printer-config-btn", {
                         active: value === 'left'
                     })}
+                    onClick={() => this.handleChange('left')}
                 ><i className="glyphicon glyphicon-align-left"/></span>
                 <span
                     className={classNames("gm-printer-config-btn", {
                         active: value === 'center'
                     })}
+                    onClick={() => this.handleChange('center')}
                 ><i className="glyphicon glyphicon-align-center"/></span>
                 <span
                     className={classNames("gm-printer-config-btn", {
                         active: value === 'right'
                     })}
+                    onClick={() => this.handleChange('right')}
                 ><i className="glyphicon glyphicon-align-right"/></span>
             </span>
         );
@@ -166,7 +179,8 @@ TextAlign.propTypes = {
 
 class Position extends React.Component {
     handleChange = (type, value) => {
-        const {onChange, style} = this.props;
+        const {style, onChange} = this.props;
+
         onChange({
             ...style,
             [type]: value
@@ -177,21 +191,55 @@ class Position extends React.Component {
         const {style: {top, right, bottom, left}} = this.props;
 
         return (
-            <div onChange={this.handleChange}>
-                <div className="text-center">
-                    上 <TextPX value={top} onChange={this.handleChange.bind(this, 'top')}/>
-                </div>
-                <div className="text-center">
-                    左 <TextPX value={left} onChange={this.handleChange.bind(this, 'left')}/>
-                    <TextPX value={right} onChange={this.handleChange.bind(this, 'right')}/> 右
-                </div>
-                <div className="text-center">
-                    下 <TextPX value={bottom} onChange={this.handleChange.bind(this, 'bottom')}/>
-                </div>
-            </div>
+            <span>
+                上 <TextPX value={top} onChange={this.handleChange.bind(this, 'top')}/>
+                &nbsp;
+                左 <TextPX value={left} onChange={this.handleChange.bind(this, 'left')}/>
+                &nbsp;
+                右 <TextPX value={right} onChange={this.handleChange.bind(this, 'right')}/>
+                &nbsp;
+                下 <TextPX value={bottom} onChange={this.handleChange.bind(this, 'bottom')}/>
+            </span>
         );
     }
 }
+
+Position.propTypes = {
+    style: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired
+};
+
+class Gap extends React.Component {
+    handleChange = (type, value) => {
+        const {style, onChange} = this.props;
+
+        onChange({
+            ...style,
+            [type]: value
+        });
+    };
+
+    render() {
+        const {style: {paddingTop, paddingRight, paddingBottom, paddingLeft}} = this.props;
+
+        return (
+            <span>
+                上 <TextPX value={paddingTop} onChange={this.handleChange.bind(this, 'paddingTop')}/>
+                &nbsp;
+                左 <TextPX value={paddingLeft} onChange={this.handleChange.bind(this, 'paddingLeft')}/>
+                &nbsp;
+                右 <TextPX value={paddingRight} onChange={this.handleChange.bind(this, 'paddingRight')}/>
+                &nbsp;
+                下 <TextPX value={paddingBottom} onChange={this.handleChange.bind(this, 'paddingBottom')}/>
+            </span>
+        );
+    }
+}
+
+Gap.propTypes = {
+    style: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired
+};
 
 class Style extends React.Component {
     handleChange = (type, value) => {
@@ -206,28 +254,37 @@ class Style extends React.Component {
     handleStyle = (style) => {
         const {onChange} = this.props;
         onChange(style);
-        console.log(style);
     };
 
     render() {
-        const {style} = this.props;
+        const {style, size, font, gap, position} = this.props;
 
         return (
             <div>
-                <div>
-                    高 <TextPX value={style.height} onChange={this.handleChange.bind(this, 'height')}/>
-                </div>
-                <div>
-                    宽 <TextPX value={style.width} onChange={this.handleChange.bind(this, 'width')}/>
-                </div>
-                <div>
-                    字 <Fonter style={style} onChange={this.handleStyle}/> <TextAlign value={style.textAlign}
-                                                                                     onChange={this.handleChange.bind(this, 'textAlign')}/>
-                </div>
-                <div>
-                    边距 <TextPX value={style.padding} onChange={this.handleChange.bind(this, 'padding')}/>
-                </div>
-
+                {size && (
+                    <div>
+                        大小: 高 <TextPX value={style.height} onChange={this.handleChange.bind(this, 'height')}/>
+                        &nbsp;
+                        宽 <TextPX value={style.width} onChange={this.handleChange.bind(this, 'width')}/>
+                    </div>
+                )}
+                {font && (
+                    <div>
+                        格式: <Fonter style={style} onChange={this.handleStyle}/>
+                        <TextAlign value={style.textAlign}
+                                   onChange={this.handleChange.bind(this, 'textAlign')}/>
+                    </div>
+                )}
+                {gap && (
+                    <div>
+                        边距: <Gap style={style} onChange={this.handleStyle}/>
+                    </div>
+                )}
+                {position && (
+                    <div>
+                        位置: <Position style={style} onChange={this.handleStyle}/>
+                    </div>
+                )}
             </div>
         );
     }
@@ -236,16 +293,13 @@ class Style extends React.Component {
 Style.propTypes = {
     style: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
-    fontSize: PropTypes.bool,
-    fontWeight: PropTypes.bool,
-    textAlign: PropTypes.bool,
-    padding: PropTypes.bool,
-    height: PropTypes.bool,
-    width: PropTypes.bool
+    size: PropTypes.bool,
+    font: PropTypes.bool,
+    gap: PropTypes.bool,
+    position: PropTypes.bool
 };
 
 export {
     Style,
-    Position,
     Text
 };

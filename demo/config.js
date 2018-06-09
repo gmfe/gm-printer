@@ -1,12 +1,17 @@
 const config = {
-    page: {},
+    page: {
+        type: 'A4',
+        size: 'A4',
+        gap: 'A4'
+    },
     title: {
         text: '四川九州昌隆农业有限公司',
         style: {
             fontSize: '20px',
             fontWeight: 'bold',
             textAlign: 'center',
-            padding: '10px 0px',
+            paddingTop: '10px',
+            paddingBottom: '10px',
             height: '30px'
         }
     },
@@ -62,24 +67,36 @@ const config = {
             }
         }, {
             head: '商品名',
+            headStyle: {
+                textAlign: 'center'
+            },
             text: '${tableData.name}',
             style: {
                 textAlign: 'center'
             }
         }, {
             head: '品类',
+            headStyle: {
+                textAlign: 'center'
+            },
             text: '${tableData.pinlei_title}',
             style: {
                 textAlign: 'center'
             }
         }, {
             head: 'SPU',
+            headStyle: {
+                textAlign: 'center'
+            },
             text: '${tableData.spu_name}',
             style: {
                 textAlign: 'center'
             }
         }, {
             head: '销售价格',
+            headStyle: {
+                textAlign: 'center'
+            },
             text: '${tableData.sale_price} ¥',
             style: {
                 textAlign: 'right'

@@ -21,8 +21,14 @@ class Printer extends React.Component {
 
         printerStore.cleanTemplateCache();
 
-        printerStore.setSize(props.size);
-        printerStore.setGap(props.gap);
+        const {type, size, gap} = props.config.page;
+        if (_.isString(type)) {
+            printerStore.setSize(type);
+            printerStore.setGap(type);
+        } else {
+            printerStore.setSize(size);
+            printerStore.setGap(gap);
+        }
 
         printerStore.setData(props.data);
         printerStore.setTableData(props.tableData);
@@ -126,15 +132,7 @@ class Printer extends React.Component {
 Printer.propTypes = {
     data: PropTypes.object.isRequired,
     tableData: PropTypes.array.isRequired,
-    config: PropTypes.object.isRequired,
-
-    size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-    gap: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
-};
-
-Printer.defaultProps = {
-    size: 'A4',
-    gap: 'A4'
+    config: PropTypes.object.isRequired
 };
 
 export default Printer;
