@@ -19,7 +19,7 @@ class Printer extends React.Component {
     constructor(props) {
         super(props);
 
-        printerStore.cleanTemplateCache();
+        printerStore.init();
 
         const {type, size, gap} = props.config.page;
         if (_.isString(type)) {

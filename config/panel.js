@@ -133,6 +133,25 @@ class PanelBlock extends React.Component {
         });
     };
 
+    handleRemove(index) {
+        const {data, onUpdate} = this.props;
+        data.blocks = _.dropWhile(data.blocks, (v, i) => i === index);
+        onUpdate(data);
+    }
+
+    handleAdd = () => {
+        const {data, onUpdate} = this.props;
+        data.blocks.push({
+            text: '请编辑',
+            style: {
+                position: 'absolute',
+                left: '0px',
+                top: '0px'
+            }
+        });
+        onUpdate(data);
+    };
+
     render() {
         const {title, data} = this.props;
 
@@ -145,14 +164,20 @@ class PanelBlock extends React.Component {
                     {_.map(data.blocks, (block, i) => (
                         <div
                             key={i}
-                            className="gm-padding-tb-5 gm-margin-tb-5"
-                            style={{borderTop: i === 0 ? '' : '1px dotted black'}}
+                            className="gm-padding-tb-5 gm-margin-tb-5 gm-position-relative"
+                            style={{borderBottom: '1px dotted black'}}
                         >
+                            <div className="clearfix">
+                                <button type="button" className="close"
+                                        onClick={this.handleRemove.bind(this, i)}>&times;</button>
+                            </div>
                             <Text block value={block.text} onChange={this.handleBlock.bind(this, i, 'text')}/>
                             <Style font position style={block.style}
                                    onChange={this.handleBlock.bind(this, i, 'style')}/>
+
                         </div>
                     ))}
+                    <button type="button" onClick={this.handleAdd}>add</button>
                 </div>
             </Panel>
         );
@@ -174,6 +199,27 @@ class PanelColumns extends React.Component {
         onUpdate(data);
     };
 
+    handleRemove(index) {
+        const {data, onUpdate} = this.props;
+        data.columns = _.dropWhile(data.columns, (v, i) => i === index);
+        onUpdate(data);
+    }
+
+    handleAdd = () => {
+        const {data, onUpdate} = this.props;
+        data.columns.push({
+            head: '请编辑',
+            headStyle: {
+                textAlign: 'center'
+            },
+            text: '请编辑',
+            style: {
+                textAlign: 'center'
+            }
+        });
+        onUpdate(data);
+    };
+
     render() {
         const {title, data} = this.props;
 
@@ -182,9 +228,13 @@ class PanelColumns extends React.Component {
                 {_.map(data.columns, (col, i) => (
                     <div
                         key={i}
-                        className="gm-padding-tb-5 gm-margin-tb-5"
-                        style={{borderTop: i === 0 ? '' : '1px dotted black'}}
+                        className="gm-padding-tb-5 gm-margin-tb-5 gm-position-relative"
+                        style={{borderBottom: '1px dotted black'}}
                     >
+                        <div className="clearfix">
+                            <button type="button" className="close"
+                                    onClick={this.handleRemove.bind(this, i)}>&times;</button>
+                        </div>
                         <Flex>
                             表头:
                             <Flex column flex>
@@ -202,6 +252,7 @@ class PanelColumns extends React.Component {
                         </Flex>
                     </div>
                 ))}
+                <button type="button" onClick={this.handleAdd}>add</button>
             </Panel>
         );
     }

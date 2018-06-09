@@ -8,10 +8,6 @@ let templateCache = {};
 let templateTableCache = {};
 
 class PrinterStore {
-    // TODO
-    @observable
-    sizeLabel = '';
-
     @observable
     size = pageSizeMap.A4.size;
 
@@ -49,6 +45,38 @@ class PrinterStore {
 
     data = {};
     tableData = [];
+
+    @action
+    init() {
+        this.size = pageSizeMap.A4.size;
+        this.gap = pageSizeMap.A4.gap;
+        this.ready = false;
+        this.height = {
+            title: 0,
+            top: 0,
+            header: 0,
+            table: 0,
+            bottom: 0,
+            footer: 0,
+            page: 0
+        };
+        this.table = {
+            data: [],
+            head: {
+                widths: [],
+                height: 0
+            },
+            body: {
+                heights: []
+            }
+        };
+        this.page = [];
+        this.data = {};
+        this.tableData = [];
+
+        templateCache = {};
+        templateTableCache = {};
+    }
 
     @action
     setSize(size) {
@@ -219,11 +247,6 @@ class PrinterStore {
     @action
     setTableData(tableData) {
         this.tableData = tableData;
-    }
-
-    cleanTemplateCache() {
-        templateCache = {};
-        templateTableCache = {};
     }
 
     template(text) {
