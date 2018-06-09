@@ -160,7 +160,7 @@ const config = {
     },
     fixed: {
         blocks: [{
-            type: 'logo',
+            type: 'image',
             link: 'http://js.guanmai.cn/static_storage/json/common/logo/default/logo.pure.png',
             style: {
                 position: 'absolute',

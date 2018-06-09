@@ -14,6 +14,7 @@ const nData = {
     receive_end_time_t1: moment(data.receive_end_time).format('MM-DD HH:mm')
 };
 
+
 class App extends React.Component {
 
     render() {

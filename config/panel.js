@@ -157,26 +157,49 @@ class PanelBlock extends React.Component {
 
         return (
             <Panel title={title}>
-                <Style size style={data.style} onChange={this.handleStyle}/>
-                <div className="gm-padding-left-15 gm-margin-top-5" style={{
+                {data.style && <Style size style={data.style} onChange={this.handleStyle}/>}
+                {data.style && <div className="gm-margin-top-5" style={{
                     borderTop: '1px solid black'
-                }}>
-                    {_.map(data.blocks, (block, i) => (
-                        <div
-                            key={i}
-                            className="gm-padding-tb-5 gm-margin-tb-5 gm-position-relative"
-                            style={{borderBottom: '1px dotted black'}}
-                        >
-                            <div className="clearfix">
-                                <button type="button" className="close"
-                                        onClick={this.handleRemove.bind(this, i)}>&times;</button>
-                            </div>
-                            <Text block value={block.text} onChange={this.handleBlock.bind(this, i, 'text')}/>
-                            <Style font position style={block.style}
-                                   onChange={this.handleBlock.bind(this, i, 'style')}/>
+                }}/>}
+                <div>
+                    {_.map(data.blocks, (block, i) => {
+                        if (block.type === 'image') {
+                            return (
+                                <div
+                                    key={i}
+                                    className="gm-padding-tb-5 gm-margin-tb-5 gm-position-relative"
+                                    style={{borderBottom: '1px dotted black'}}
+                                >
+                                    <div className="clearfix">
+                                        <strong>图片</strong>
+                                        <button type="button" className="close"
+                                                onClick={this.handleRemove.bind(this, i)}>&times;</button>
+                                    </div>
+                                    <Text block value={block.link} onChange={this.handleBlock.bind(this, i, 'link')}/>
+                                    <Style position style={block.style}
+                                           onChange={this.handleBlock.bind(this, i, 'style')}/>
+                                </div>
+                            );
+                        } else {
+                            return (
+                                <div
+                                    key={i}
+                                    className="gm-padding-tb-5 gm-margin-tb-5 gm-position-relative"
+                                    style={{borderBottom: '1px dotted black'}}
+                                >
+                                    <div className="clearfix">
+                                        <strong>文本</strong>
+                                        <button type="button" className="close"
+                                                onClick={this.handleRemove.bind(this, i)}>&times;</button>
+                                    </div>
+                                    <Text block value={block.text} onChange={this.handleBlock.bind(this, i, 'text')}/>
+                                    <Style font position style={block.style}
+                                           onChange={this.handleBlock.bind(this, i, 'style')}/>
 
-                        </div>
-                    ))}
+                                </div>
+                            );
+                        }
+                    })}
                     <button type="button" onClick={this.handleAdd}>add</button>
                 </div>
             </Panel>

@@ -50,6 +50,10 @@ class Config extends React.Component {
         });
     };
 
+    handleTestPrint = () => {
+        this.$iframe.contentWindow.print();
+    };
+
     render() {
         const {config} = this.state;
 
@@ -61,8 +65,14 @@ class Config extends React.Component {
                         style={{border: 'none', width: '100%', height: '100%'}}
                     />
                 </Flex>
-                <Flex column style={{width: '400px', minWidth: '400px'}} className="gm-overflow-y">
-                    <Right config={config} onUpdate={this.handleUpdate}/>
+                <Flex column style={{width: '400px', minWidth: '400px'}}>
+                    <Flex flex column className="gm-overflow-y">
+                        <Right config={config} onUpdate={this.handleUpdate}/>
+                    </Flex>
+                    <Flex justifyBetween className="gm-padding-10">
+                        <button className="btn btn-info" onClick={this.handleTestPrint}>测试打印</button>
+                        <button className="btn btn-success">保存</button>
+                    </Flex>
                 </Flex>
             </Flex>
         );

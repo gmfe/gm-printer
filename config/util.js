@@ -185,9 +185,17 @@ class Position extends React.Component {
     handleChange = (type, value) => {
         const {style, onChange} = this.props;
 
+        const map = {
+            left: 'right',
+            right: 'left',
+            top: 'bottom',
+            bottom: 'top'
+        };
+
         onChange({
             ...style,
-            [type]: value
+            [type]: value,
+            [map[type]]: ''
         });
     };
 
@@ -200,9 +208,9 @@ class Position extends React.Component {
                 &nbsp;
                 左 <TextPX value={left} onChange={this.handleChange.bind(this, 'left')}/>
                 &nbsp;
-                右 <TextPX value={right} onChange={this.handleChange.bind(this, 'right')}/>
-                &nbsp;
                 下 <TextPX value={bottom} onChange={this.handleChange.bind(this, 'bottom')}/>
+                &nbsp;
+                右 <TextPX value={right} onChange={this.handleChange.bind(this, 'right')}/>
             </span>
         );
     }
@@ -233,11 +241,11 @@ class Gap extends React.Component {
                 左 <TextPX disabled={disabled} value={paddingLeft}
                           onChange={this.handleChange.bind(this, 'paddingLeft')}/>
                 &nbsp;
-                右 <TextPX disabled={disabled} value={paddingRight}
-                          onChange={this.handleChange.bind(this, 'paddingRight')}/>
-                &nbsp;
                 下 <TextPX disabled={disabled} value={paddingBottom}
                           onChange={this.handleChange.bind(this, 'paddingBottom')}/>
+                &nbsp;
+                右 <TextPX disabled={disabled} value={paddingRight}
+                          onChange={this.handleChange.bind(this, 'paddingRight')}/>
             </span>
         );
     }

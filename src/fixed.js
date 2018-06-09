@@ -12,7 +12,7 @@ class Fixed extends React.Component {
         return (
             <div className="gm-printer-fixed">
                 {_.map(blocks, (v, i) => {
-                    if (v.type === 'logo') {
+                    if (v.type === 'image') {
                         return (
                             <img key={i} src={v.link} style={v.style} alt=""/>
                         );
