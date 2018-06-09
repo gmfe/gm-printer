@@ -19,6 +19,8 @@ class Page extends React.Component {
         const {children} = this.props;
         const {paddingTop, paddingRight, paddingBottom, paddingLeft} = printerStore.gap;
 
+        // -3px 是避免运算误差而溢出
+
         return (
             <div className="gm-printer-page" style={{
                 width: `calc(${printerStore.size.width} - ${paddingLeft} - ${paddingRight})`,
