@@ -135,7 +135,7 @@ class PanelBlock extends React.Component {
 
     handleRemove(index) {
         const {data, onUpdate} = this.props;
-        data.blocks = _.dropWhile(data.blocks, (v, i) => i === index);
+        _.remove(data.blocks, (v, i) => i === index);
         onUpdate(data);
     }
 
@@ -152,8 +152,22 @@ class PanelBlock extends React.Component {
         onUpdate(data);
     };
 
+    handleAddImage = () => {
+        const {data, onUpdate} = this.props;
+        data.blocks.push({
+            type: 'image',
+            link: '填写链接',
+            style: {
+                position: 'absolute',
+                left: '0px',
+                top: '0px'
+            }
+        });
+        onUpdate(data);
+    };
+
     render() {
-        const {title, data} = this.props;
+        const {title, data, addTypes} = this.props;
 
         return (
             <Panel title={title}>
@@ -176,7 +190,7 @@ class PanelBlock extends React.Component {
                                                 onClick={this.handleRemove.bind(this, i)}>&times;</button>
                                     </div>
                                     <Text block value={block.link} onChange={this.handleBlock.bind(this, i, 'link')}/>
-                                    <Style position style={block.style}
+                                    <Style size position style={block.style}
                                            onChange={this.handleBlock.bind(this, i, 'style')}/>
                                 </div>
                             );
@@ -200,7 +214,12 @@ class PanelBlock extends React.Component {
                             );
                         }
                     })}
-                    <button type="button" onClick={this.handleAdd}>add</button>
+                    <div className="text-right">
+                        <button type="button" onClick={this.handleAdd}>+</button>
+                        {addTypes.includes('image') && (
+                            <button type="button" onClick={this.handleAddImage}>+ 图片</button>
+                        )}
+                    </div>
                 </div>
             </Panel>
         );
@@ -210,7 +229,12 @@ class PanelBlock extends React.Component {
 PanelBlock.propTypes = {
     title: PropTypes.string.isRequired,
     data: PropTypes.any.isRequired,
-    onUpdate: PropTypes.func.isRequired
+    onUpdate: PropTypes.func.isRequired,
+    addTypes: PropTypes.array
+};
+
+PanelBlock.defaultProps = {
+    addTypes: []
 };
 
 class PanelColumns extends React.Component {
@@ -222,11 +246,11 @@ class PanelColumns extends React.Component {
         onUpdate(data);
     };
 
-    handleRemove(index) {
+    handleRemove = (index) => {
         const {data, onUpdate} = this.props;
-        data.columns = _.dropWhile(data.columns, (v, i) => i === index);
+        _.remove(data.columns, (v, i) => i === index);
         onUpdate(data);
-    }
+    };
 
     handleAdd = () => {
         const {data, onUpdate} = this.props;
@@ -275,7 +299,9 @@ class PanelColumns extends React.Component {
                         </Flex>
                     </div>
                 ))}
-                <button type="button" onClick={this.handleAdd}>add</button>
+                <div className="text-right">
+                    <button type="button" onClick={this.handleAdd}>+</button>
+                </div>
             </Panel>
         );
     }

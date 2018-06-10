@@ -25,7 +25,8 @@ class Right extends React.Component {
                 <PanelColumns title="表格数据" data={config.table} onUpdate={this.handleUpdate.bind(this, 'table')}/>
                 <PanelBlock title="底部" data={config.bottom} onUpdate={this.handleUpdate.bind(this, 'bottom')}/>
                 <PanelBlock title="页脚" data={config.footer} onUpdate={this.handleUpdate.bind(this, 'footer')}/>
-                <PanelBlock title="任意位置" data={config.fixed} onUpdate={this.handleUpdate.bind(this, 'fixed')}/>
+                <PanelBlock title="任意位置" addTypes={['image']} data={config.fixed}
+                            onUpdate={this.handleUpdate.bind(this, 'fixed')}/>
             </div>
         );
     }
