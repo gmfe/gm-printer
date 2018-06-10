@@ -8,6 +8,10 @@
     "start": "webpack-dev-server"
   },
   "lint-staged": {
+    "./printer/*.js": [
+      "eslint --cache --fix",
+      "git add"
+    ],
     "./src/*.js": [
       "eslint --cache --fix",
       "git add"

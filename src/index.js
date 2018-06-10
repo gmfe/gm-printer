@@ -1,46 +1,88 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import Printer from './printer';
+import {Flex} from 'react-gm';
+import '../node_modules/react-gm/src/index.less';
 import 'normalize.css/normalize.css';
-import '../src/style.less';
+import './style.less';
+import Right from './right';
+import _ from 'lodash';
 
-const div = window.document.createElement('div');
-div.id = 'appContainer';
-window.document.body.appendChild(div);
-
-const style = window.document.createElement('style');
-style.type = 'text/css';
-window.document.head.appendChild(style);
-
-function addPageSizeStyle(rule) {
-    style.sheet.insertRule(`@page {size: ${rule}; }`);
-}
-
-class App extends React.Component {
+class Config extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            config: props.config
+        };
 
-        const {type, size} = props.config.page;
-        if (type) {
-            addPageSizeStyle(type);
-        } else {
-            addPageSizeStyle(`${size.width} ${size.height}`);
-        }
+        this.debounceDoRender = _.debounce(this.doRender, 1000);
     }
 
+    componentDidMount() {
+        const $iframe = ReactDOM.findDOMNode(this.refIframe);
+        window.$iframe = $iframe;
+        this.$iframe = $iframe;
+
+        const script = $iframe.contentWindow.document.createElement('script');
+        script.src = '/printer.js';
+        $iframe.contentWindow.document.body.append(script);
+
+        script.addEventListener('load', () => {
+            this.doRender();
+        });
+    }
+
+    doRender = () => {
+        const {config} = this.state;
+        const {data, tableData} = this.props;
+        this.$iframe.contentWindow.render({
+            data,
+            tableData,
+            config
+        });
+    };
+
+    handleUpdate = (config) => {
+        this.setState({
+            config
+        }, () => {
+            this.debounceDoRender();
+        });
+    };
+
+    handleTestPrint = () => {
+        this.$iframe.contentWindow.print();
+    };
+
     render() {
-        const {data, tableData, config} = this.props;
+        const {config} = this.state;
+
         return (
-            <Printer
-                data={data}
-                tableData={tableData}
-                config={config}
-            />
+            <Flex className="gm-printer-config" style={{height: '100%', width: '100%'}}>
+                <Flex flex column style={{minWidth: '850px'}}>
+                    <iframe
+                        ref={ref => this.refIframe = ref}
+                        style={{border: 'none', width: '100%', height: '100%'}}
+                    />
+                </Flex>
+                <Flex column style={{width: '400px', minWidth: '400px'}}>
+                    <Flex flex column className="gm-overflow-y">
+                        <Right config={config} onUpdate={this.handleUpdate}/>
+                    </Flex>
+                    <Flex justifyBetween className="gm-padding-10">
+                        <button className="btn btn-info" onClick={this.handleTestPrint}>测试打印</button>
+                        <button className="btn btn-success">保存</button>
+                    </Flex>
+                </Flex>
+            </Flex>
         );
     }
 }
 
-window.render = (props) => {
-    // 给随机数key，避免不render
-    ReactDOM.render(<App key={Math.random()} {...props}/>, div);
+Config.propTypes = {
+    data: PropTypes.object.isRequired,
+    tableData: PropTypes.array.isRequired,
+    config: PropTypes.object.isRequired
 };
+
+export default Config;

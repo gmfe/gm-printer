@@ -5,7 +5,7 @@ import data from '../demo/data';
 import moment from 'moment';
 import '../node_modules/react-gm/src/index.less';
 import 'normalize.css/normalize.css';
-import Config from '../config';
+import PrinterManage from '../src';
 
 const nData = {
     ...data,
@@ -20,7 +20,7 @@ class App extends React.Component {
     render() {
         return (
             <div style={{height: '100vh', width: '100vw'}}>
-                <Config data={nData} config={config} tableData={nData.details}/>
+                <PrinterManage data={nData} config={config} tableData={nData.details}/>
             </div>
         );
     }

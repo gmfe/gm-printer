@@ -5,12 +5,12 @@ module.exports = {
     mode: 'development',
     entry: {
         demo: './demo/index.js',
-        lib: './src/index.js'
+        printer: './printer/index.js'
     },
     output: {
         path: path.resolve('build'),
         publicPath: "/",
-        filename: '[name].bundle.js'
+        filename: '[name].js'
     },
     module: {
         rules: [{

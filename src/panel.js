@@ -3,7 +3,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import {Flex} from 'react-gm';
 import {Text, Style} from './util';
-import {pageSizeMap} from '../src/util';
+import {pageSizeMap} from '../printer/util';
 
 class Panel extends React.Component {
     render() {
