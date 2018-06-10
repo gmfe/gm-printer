@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from "prop-types";
 import _ from 'lodash';
 import {observer} from "mobx-react/index";
+import printerStore from "./store";
 
 @observer
 class Fixed extends React.Component {
@@ -16,8 +17,11 @@ class Fixed extends React.Component {
                         return (
                             <img key={i} src={v.link} style={v.style} alt=""/>
                         );
+                    } else {
+                        return (
+                            <div key={i} style={v.style}>{printerStore.template(v.text)}</div>
+                        );
                     }
-                    return null;
                 })}
             </div>
         );
