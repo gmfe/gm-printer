@@ -10,6 +10,11 @@ function init() {
     if (!$printer) {
         $printer = window.document.createElement('iframe');
         $printer.id = printerId;
+        $printer.style.position = 'fixed';
+        $printer.style.top = '0';
+        $printer.style.left = '-1200px';
+        $printer.style.width = '1000px';
+
         window.document.body.appendChild($printer);
 
         const script = $printer.contentWindow.document.createElement('script');
@@ -20,13 +25,13 @@ function init() {
             ready = true;
 
             _.each(stacks, v => {
-                doPrint(v);
+                do_print(v);
             });
         });
     }
 }
 
-function doPrint({data, tableData, config}) {
+function do_print({data, tableData, config}) {
     $printer.contentWindow.render({
         data,
         tableData,
@@ -35,14 +40,14 @@ function doPrint({data, tableData, config}) {
     $printer.contentWindow.print();
 }
 
-function print({data, tableData, config}) {
+function doPrint({data, tableData, config}) {
     init();
 
     if (!ready) {
         stacks.push({data, tableData, config});
     } else {
-        doPrint({data, tableData, config});
+        do_print({data, tableData, config});
     }
 }
 
-export default print;
+export default doPrint;

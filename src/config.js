@@ -8,6 +8,7 @@ import './style.less';
 import Right from './right';
 import _ from 'lodash';
 import {printerJS} from './util';
+import doPrint from './do_print';
 
 class Config extends React.Component {
     constructor(props) {
@@ -51,7 +52,10 @@ class Config extends React.Component {
     };
 
     handleTestPrint = () => {
-        this.$iframe.contentWindow.print();
+        const {data, tableData} = this.props;
+        const {config} = this.state;
+
+        doPrint({data, tableData, config});
     };
 
     render() {

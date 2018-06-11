@@ -5,7 +5,7 @@ import data from '../demo/data';
 import moment from 'moment';
 import '../node_modules/react-gm/src/index.less';
 import 'normalize.css/normalize.css';
-import {PrinterConfig, print} from '../src';
+import {PrinterConfig, doPrint} from '../src';
 
 const nData = {
     ...data,
@@ -16,7 +16,7 @@ const nData = {
 
 
 setTimeout(() => {
-    print({
+    doPrint({
         data: nData,
         config,
         tableData: nData.details

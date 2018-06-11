@@ -1,7 +1,7 @@
 import PrinterConfig from './config';
-import print from './print';
+import doPrint from './do_print';
 
 export {
-    print,
+    doPrint,
     PrinterConfig
 };
