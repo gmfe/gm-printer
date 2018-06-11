@@ -2,7 +2,7 @@ import React from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import {Flex} from 'react-gm';
-import {Text, Style} from './util';
+import {Text, Style} from './component';
 import {pageSizeMap} from '../printer/util';
 
 class Panel extends React.Component {
