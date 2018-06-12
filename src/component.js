@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import classNames from 'classnames';
 import _ from 'lodash';
+import {fontSizeList} from "./util";
 
 class Text extends React.Component {
     handleChange = (e) => {
@@ -70,18 +71,6 @@ TextPX.propTypes = {
     onChange: PropTypes.func.isRequired
 };
 
-const fontSizeList = [
-    '12px',
-    '14px',
-    '16px',
-    '18px',
-    '20px',
-    '22px',
-    '24px',
-    '26px',
-    '28px'
-];
-
 class Fonter extends React.Component {
     handleChange = (type, value) => {
         const {style, onChange} = this.props;
@@ -98,7 +87,7 @@ class Fonter extends React.Component {
         return (
             <span className="gm-printer-config-fonter">
                 <select
-                    value={style.fontSize}
+                    value={style.fontSize || '14px'}
                     onChange={e => this.handleChange('fontSize', e.target.value)}
                 >
                     {_.map(fontSizeList, v => <option key={v} value={v}>{v.slice(0, -2)}</option>)}
@@ -187,17 +176,16 @@ class Position extends React.Component {
     handleChange = (type, value) => {
         const {style, onChange} = this.props;
 
-        const map = {
-            left: 'right',
-            right: 'left',
-            top: 'bottom',
-            bottom: 'top'
-        };
+        // const map = {
+        //     left: 'right',
+        //     right: 'left',
+        //     top: 'bottom',
+        //     bottom: 'top'
+        // };
 
         onChange({
             ...style,
-            [type]: value,
-            [map[type]]: ''
+            [type]: value
         });
     };
 
@@ -259,6 +247,34 @@ Gap.propTypes = {
     onChange: PropTypes.func.isRequired
 };
 
+class Line extends React.Component {
+    handleChange = (type, value) => {
+        const {style, onChange} = this.props;
+
+        onChange({
+            ...style,
+            [type]: value
+        });
+    };
+
+    render() {
+        const {style: {borderTopWidth, borderTopStyle}} = this.props;
+
+        return (
+            <span>
+                粗细 <TextPX value={borderTopWidth} onChange={this.handleChange.bind(this, 'borderTopWidth')}/>
+                &nbsp;
+                类型 <Text value={borderTopStyle} onChange={this.handleChange.bind(this, 'borderTopStyle')}/>
+            </span>
+        );
+    }
+}
+
+Line.propTypes = {
+    style: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired
+};
+
 class Style extends React.Component {
     handleChange = (type, value) => {
         const {onChange, style} = this.props;
@@ -275,7 +291,7 @@ class Style extends React.Component {
     };
 
     render() {
-        const {disabled, style, size, font, gap, position} = this.props;
+        const {disabled, style, size, font, line, gap, position} = this.props;
 
         return (
             <div>
@@ -293,6 +309,11 @@ class Style extends React.Component {
                         格式: <Fonter style={style} onChange={this.handleStyle}/>
                         <TextAlign value={style.textAlign}
                                    onChange={this.handleChange.bind(this, 'textAlign')}/>
+                    </div>
+                )}
+                {line && (
+                    <div>
+                        线条: <Line style={style} onChange={this.handleStyle}/>
                     </div>
                 )}
                 {gap && (
@@ -317,7 +338,8 @@ Style.propTypes = {
     size: PropTypes.bool,
     font: PropTypes.bool,
     gap: PropTypes.bool,
-    position: PropTypes.bool
+    position: PropTypes.bool,
+    line: PropTypes.bool
 };
 
 export {

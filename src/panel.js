@@ -141,6 +141,7 @@ class PanelBlock extends React.Component {
 
     handleAdd = () => {
         const {data, onUpdate} = this.props;
+
         data.blocks.push({
             text: '请编辑',
             style: {
@@ -166,8 +167,75 @@ class PanelBlock extends React.Component {
         onUpdate(data);
     };
 
+    handleAddLine = () => {
+        const {data, onUpdate} = this.props;
+        data.blocks.push({
+            type: 'line',
+            style: {
+                position: 'absolute',
+                left: '0px',
+                top: '0px',
+                borderTopColor: 'black',
+                borderTopWidth: '1px',
+                borderTopStyle: 'solid'
+            }
+        });
+        onUpdate(data);
+    };
+
+    handleUp = (i) => {
+        const {data, onUpdate} = this.props;
+
+        data.blocks.splice(i - 1, 2, data.blocks[i], data.blocks[i - 1]);
+
+        onUpdate(data);
+    };
+
+    handleDown = (i) => {
+        const {data, onUpdate} = this.props;
+
+        data.blocks.splice(i, 2, data.blocks[i + 1], data.blocks[i]);
+
+        onUpdate(data);
+    };
+
+    renderType(block, i) {
+        if (block.type === 'image') {
+            return (
+                <React.Fragment>
+                    <Text block value={block.link} onChange={this.handleBlock.bind(this, i, 'link')}/>
+                    <Style size position style={block.style}
+                           onChange={this.handleBlock.bind(this, i, 'style')}/>
+                </React.Fragment>
+            );
+        } else if (block.type === 'line') {
+            return (
+                <React.Fragment>
+                    <Style position line style={block.style}
+                           onChange={this.handleBlock.bind(this, i, 'style')}/>
+                </React.Fragment>
+            );
+        } else {
+            return (
+                <React.Fragment>
+                    <Text block value={block.text} onChange={this.handleBlock.bind(this, i, 'text')}/>
+                    <Style font position style={block.style}
+                           onChange={this.handleBlock.bind(this, i, 'style')}/>
+                </React.Fragment>
+            );
+        }
+    }
+
     render() {
         const {title, data, addTypes} = this.props;
+
+        const length = data.blocks.length;
+
+        const typeMap = {
+            'image': '图片',
+            'line': '线条',
+            'text': '文本'
+        };
 
         return (
             <Panel title={title}>
@@ -176,48 +244,30 @@ class PanelBlock extends React.Component {
                     borderTop: '1px solid black'
                 }}/>}
                 <div>
-                    {_.map(data.blocks, (block, i) => {
-                        if (block.type === 'image') {
-                            return (
-                                <div
-                                    key={i}
-                                    className="gm-padding-tb-5 gm-margin-tb-5 gm-position-relative"
-                                    style={{borderBottom: '1px dotted black'}}
-                                >
-                                    <div className="clearfix">
-                                        <strong>图片</strong>
-                                        <button type="button" className="close"
-                                                onClick={this.handleRemove.bind(this, i)}>&times;</button>
-                                    </div>
-                                    <Text block value={block.link} onChange={this.handleBlock.bind(this, i, 'link')}/>
-                                    <Style size position style={block.style}
-                                           onChange={this.handleBlock.bind(this, i, 'style')}/>
-                                </div>
-                            );
-                        } else {
-                            return (
-                                <div
-                                    key={i}
-                                    className="gm-padding-tb-5 gm-margin-tb-5 gm-position-relative"
-                                    style={{borderBottom: '1px dotted black'}}
-                                >
-                                    <div className="clearfix">
-                                        <strong>文本</strong>
-                                        <button type="button" className="close"
-                                                onClick={this.handleRemove.bind(this, i)}>&times;</button>
-                                    </div>
-                                    <Text block value={block.text} onChange={this.handleBlock.bind(this, i, 'text')}/>
-                                    <Style font position style={block.style}
-                                           onChange={this.handleBlock.bind(this, i, 'style')}/>
-
-                                </div>
-                            );
-                        }
-                    })}
+                    {_.map(data.blocks, (block, i) => (
+                        <div
+                            key={i}
+                            className="gm-padding-tb-5 gm-margin-tb-5 gm-position-relative"
+                            style={{borderBottom: '1px dotted black'}}
+                        >
+                            <Flex className="clearfix">
+                                <strong>{typeMap[block.type || 'text']}</strong>
+                                <Flex flex/>
+                                <button disabled={i === 0} onClick={this.handleUp.bind(this, i)}>∧</button>
+                                <button disabled={i === length - 1} onClick={this.handleDown.bind(this, i)}>∨</button>
+                                <button type="button" className="close"
+                                        onClick={this.handleRemove.bind(this, i)}>&times;</button>
+                            </Flex>
+                            {this.renderType(block, i)}
+                        </div>
+                    ))}
                     <div className="text-right">
                         <button type="button" onClick={this.handleAdd}>+</button>
                         {addTypes.includes('image') && (
                             <button type="button" onClick={this.handleAddImage}>+ 图片</button>
+                        )}
+                        {addTypes.includes('line') && (
+                            <button type="button" onClick={this.handleAddLine}>+ 线条</button>
                         )}
                     </div>
                 </div>

@@ -19,7 +19,6 @@ class PrinterStore {
 
     @observable
     height = {
-        title: 0,
         top: 0,
         header: 0,
         table: 0,
@@ -52,7 +51,6 @@ class PrinterStore {
         this.gap = pageSizeMap.A4.gap;
         this.ready = false;
         this.height = {
-            title: 0,
             top: 0,
             header: 0,
             table: 0,
@@ -126,8 +124,7 @@ class PrinterStore {
 
     @action
     _onePage() {
-        const height = this.height.title
-            + this.height.top
+        const height = this.height.top
             + this.height.header
             + this.height.table
             + this.height.bottom
@@ -147,8 +144,7 @@ class PrinterStore {
 
     @action
     _twoPage() {
-        const height = this.height.title * 2
-            + this.height.top
+        const height = this.height.top
             + this.height.header
             + this.height.table + this.table.head.height
             + this.height.bottom
@@ -158,8 +154,7 @@ class PrinterStore {
             return false;
         }
 
-        let oneHeight = this.height.title
-            + this.height.header
+        let oneHeight = this.height.header
             + this.height.top
             + this.table.head.height + this.table.body.heights[0]
             + this.height.footer;
@@ -183,8 +178,7 @@ class PrinterStore {
 
     @action
     _morePage() {
-        let oneHeight = this.height.title
-            + this.height.header
+        let oneHeight = this.height.header
             + this.height.top
             + this.table.head.height + this.table.body.heights[0]
             + this.height.footer;
@@ -204,8 +198,7 @@ class PrinterStore {
         oEnd = end;
 
         while (end <= this.table.data.length) {
-            let moreHeight = this.height.title
-                + this.height.header
+            let moreHeight = this.height.header
                 + this.table.head.height + this.table.body.heights[0]
                 + this.height.footer;
 
@@ -222,8 +215,7 @@ class PrinterStore {
         }
 
         // 如果最后一页高度不够
-        const lastHeight = this.height.title
-            + this.height.header
+        const lastHeight = this.height.header
             + this.table.head.height + _.sum(this.table.body.heights.slice(page.slice(-1)[0].begin))
             + this.height.bottom
             + this.height.footer;
@@ -249,14 +241,18 @@ class PrinterStore {
         this.tableData = tableData;
     }
 
-    template(text) {
+    template(text, pageIndex) {
         // cache 下
         if (templateCache[text]) {
             return templateCache[text];
         }
         try {
             templateCache[text] = _.template(text)({
-                data: this.data
+                data: this.data,
+                pagination: {
+                    pageIndex: pageIndex + 1,
+                    count: this.page.length
+                }
             });
 
             return templateCache[text];

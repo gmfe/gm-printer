@@ -43,8 +43,5 @@ module.exports = {
     },
     plugins: [
         new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/)
-    ],
-    devServer: {
-        port: 2222
-    }
+    ]
 };

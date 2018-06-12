@@ -8,7 +8,7 @@ import printerStore from "./store";
 class Fixed extends React.Component {
     render() {
 
-        const {blocks} = this.props;
+        const {blocks, pageIndex} = this.props;
 
         return (
             <div className="gm-printer-fixed">
@@ -19,7 +19,7 @@ class Fixed extends React.Component {
                         );
                     } else {
                         return (
-                            <div key={i} style={v.style}>{printerStore.template(v.text)}</div>
+                            <div key={i} style={v.style}>{printerStore.template(v.text, pageIndex)}</div>
                         );
                     }
                 })}
@@ -29,7 +29,8 @@ class Fixed extends React.Component {
 }
 
 Fixed.propTypes = {
-    blocks: PropTypes.array.isRequired
+    blocks: PropTypes.array.isRequired,
+    pageIndex: PropTypes.number
 };
 
 export default Fixed;

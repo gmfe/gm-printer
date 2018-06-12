@@ -17,13 +17,13 @@ class Header extends React.Component {
     }
 
     render() {
-        const {blocks, style} = this.props;
+        const {blocks, style, pageIndex} = this.props;
 
         return (
             <div className="gm-printer-header">
                 <div style={style}>
                     {_.map(blocks, (cell, i) => (
-                        <div key={i} style={cell.style}>{printerStore.template(cell.text)}</div>
+                        <div key={i} style={cell.style}>{printerStore.template(cell.text, pageIndex)}</div>
                     ))}
                 </div>
             </div>
@@ -33,7 +33,8 @@ class Header extends React.Component {
 
 Header.propTypes = {
     blocks: PropTypes.array.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    pageIndex: PropTypes.number
 };
 
 export default Header;

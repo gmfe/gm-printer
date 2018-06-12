@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import printerStore from "./store";
 import Page from './page';
 import _ from 'lodash';
-import Title from './title';
 import Top from './top';
 import Bottom from './bottom';
 import Header from './header';
@@ -42,14 +41,13 @@ class Printer extends React.Component {
         const {config, tableData} = this.props;
 
         return (
-            <Page>
-                <Title {...config.title}/>
-                <Header {...config.header}/>
-                <Top {...config.top}/>
+            <Page pageIndex={0}>
+                <Header {...config.header} pageIndex={0}/>
+                <Top {...config.top} pageIndex={0}/>
                 <Table {...config.table} data={tableData}/>
-                <Bottom {...config.bottom}/>
+                <Bottom {...config.bottom} pageIndex={0}/>
                 <Footer {...config.footer} pageIndex={0}/>
-                <Fixed {...config.fixed}/>
+                <Fixed {...config.fixed} pageIndex={0}/>
             </Page>
         );
     }
@@ -59,13 +57,12 @@ class Printer extends React.Component {
 
         return (
             <Page pageIndex={0}>
-                <Title {...config.title}/>
-                <Header {...config.header}/>
-                <Top {...config.top}/>
+                <Header {...config.header} pageIndex={0}/>
+                <Top {...config.top} pageIndex={0}/>
                 <Table {...config.table} data={tableData}/>
-                <Bottom {...config.bottom}/>
+                <Bottom {...config.bottom} pageIndex={0}/>
                 <Footer {...config.footer} pageIndex={0}/>
-                <Fixed {...config.fixed}/>
+                <Fixed {...config.fixed} pageIndex={0}/>
             </Page>
         );
     }
@@ -82,24 +79,22 @@ class Printer extends React.Component {
                     if (p.bottomPage) {
                         return (
                             <Page key={i} pageIndex={i}>
-                                <Title {...config.title}/>
-                                <Header {...config.header}/>
-                                <Bottom {...config.bottom}/>
+                                <Header {...config.header} pageIndex={i}/>
+                                <Bottom {...config.bottom} pageIndex={i}/>
                                 <Footer {...config.footer} pageIndex={i}/>
-                                <Fixed {...config.fixed}/>
+                                <Fixed {...config.fixed} pageIndex={i}/>
                             </Page>
                         );
                     }
 
                     return (
                         <Page key={i} pageIndex={i}>
-                            <Title {...config.title}/>
-                            <Header {...config.header}/>
-                            {i === 0 ? <Top {...config.top}/> : null}
+                            <Header {...config.header} pageIndex={i}/>
+                            {i === 0 ? <Top {...config.top} pageIndex={i}/> : null}
                             <Table {...config.table} data={tableData.slice(p.begin, p.end)}/>
                             {i === (printerStore.page.length - 1) ? <Bottom {...config.bottom}/> : null}
                             <Footer {...config.footer} pageIndex={i}/>
-                            <Fixed {...config.fixed}/>
+                            <Fixed {...config.fixed} pageIndex={i}/>
                         </Page>
                     );
                 })}

@@ -34,7 +34,6 @@ class Footer extends React.Component {
 Footer.propTypes = {
     blocks: PropTypes.array.isRequired,
     style: PropTypes.object,
-
     pageIndex: PropTypes.number
 };
 
