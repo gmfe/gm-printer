@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import config from '../demo/config';
+import config from '../demo/config.json';
 import data from '../demo/data';
 import moment from 'moment';
 import {Storage, Tip, LayoutRoot} from 'react-gm';

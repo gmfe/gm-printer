@@ -258,13 +258,16 @@ class Line extends React.Component {
     };
 
     render() {
-        const {style: {borderTopWidth, borderTopStyle}} = this.props;
+        const {style: {borderTopWidth, borderTopStyle, width}} = this.props;
 
+        // TODO 横竖线  type select
         return (
             <span>
+                宽度 <Text value={width} onChange={this.handleChange.bind(this, 'width')} style={{width: '50px'}}/>
                 粗细 <TextPX value={borderTopWidth} onChange={this.handleChange.bind(this, 'borderTopWidth')}/>
                 &nbsp;
-                类型 <Text value={borderTopStyle} onChange={this.handleChange.bind(this, 'borderTopStyle')}/>
+                类型 <Text value={borderTopStyle} onChange={this.handleChange.bind(this, 'borderTopStyle')}
+                         style={{width: '50px'}}/>
             </span>
         );
     }

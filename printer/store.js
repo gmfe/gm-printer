@@ -5,7 +5,6 @@ import {pageSizeMap} from './util';
 configure({enforceActions: true});
 
 let templateCache = {};
-let templateTableCache = {};
 
 class PrinterStore {
     @observable
@@ -73,7 +72,6 @@ class PrinterStore {
         this.tableData = [];
 
         templateCache = {};
-        templateTableCache = {};
     }
 
     @action
@@ -124,8 +122,8 @@ class PrinterStore {
 
     @action
     _onePage() {
-        const height = this.height.top
-            + this.height.header
+        const height = this.height.header
+            + this.height.top
             + this.height.table
             + this.height.bottom
             + this.height.footer;
@@ -144,11 +142,11 @@ class PrinterStore {
 
     @action
     _twoPage() {
-        const height = this.height.top
-            + this.height.header
+        const height = this.height.header * 2
+            + this.height.top
             + this.height.table + this.table.head.height
             + this.height.bottom
-            + this.height.footer;
+            + this.height.footer * 2;
 
         if (height > (this.height.page * 2)) {
             return false;
@@ -242,20 +240,14 @@ class PrinterStore {
     }
 
     template(text, pageIndex) {
-        // cache 下
-        if (templateCache[text]) {
-            return templateCache[text];
-        }
         try {
-            templateCache[text] = _.template(text)({
+            return _.template(text)({
                 data: this.data,
                 pagination: {
                     pageIndex: pageIndex + 1,
                     count: this.page.length
                 }
             });
-
-            return templateCache[text];
         } catch (err) {
             console.warn(err);
             return text;
@@ -264,16 +256,16 @@ class PrinterStore {
 
     templateTable(text, i) {
         // cache 下
-        if (templateTableCache[text]) {
-            return templateTableCache[text];
+        if (templateCache[text]) {
+            return templateCache[text];
         }
         try {
-            templateTableCache[text] = _.template(text)({
+            templateCache[text] = _.template(text)({
                 data: this.data,
                 tableData: this.tableData[i]
             });
 
-            return templateTableCache[text];
+            return templateCache[text];
         } catch (err) {
             console.warn(err);
             return text;

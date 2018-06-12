@@ -1,0 +1,364 @@
+{
+  "page": {
+    "type": "A4",
+    "size": {
+      "width": "210mm",
+      "height": "297mm"
+    },
+    "gap": {
+      "paddingTop": "5mm",
+      "paddingRight": "5mm",
+      "paddingBottom": "5mm",
+      "paddingLeft": "5mm"
+    }
+  },
+  "title": {
+    "text": "GDAILY FRESH SDN.BHD.",
+    "style": {
+      "fontSize": "28px",
+      "fontWeight": "bold",
+      "textAlign": "center",
+      "paddingTop": "0px",
+      "paddingBottom": "0px",
+      "height": "0px"
+    }
+  },
+  "header": {
+    "blocks": [
+      {
+        "text": "GDAILY FRESH SDN.BHD.",
+        "style": {
+          "position": "absolute",
+          "left": "0px",
+          "top": "0px",
+          "right": "0px",
+          "textAlign": "center",
+          "fontSize": "26px",
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "text": "(1219631-A)",
+        "style": {
+          "position": "absolute",
+          "left": "",
+          "top": "12px",
+          "right": "140px",
+          "bottom": "",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "LOT 17504,KAWASAN PERINDUSTRIAN SELAYANG,68100 BATU CAVES,SELANGOR.",
+        "style": {
+          "position": "absolute",
+          "left": "0px",
+          "top": "30px",
+          "bottom": "",
+          "right": "0px",
+          "fontSize": "14px",
+          "textAlign": "center"
+        }
+      },
+      {
+        "text": "Phone: 03-6127 9887  Fax:03-6128 3387",
+        "style": {
+          "position": "absolute",
+          "left": "0px",
+          "top": "50px",
+          "bottom": "",
+          "right": "0px",
+          "fontSize": "14px",
+          "textAlign": "center"
+        }
+      },
+      {
+        "text": "Email: accounts@gdailyfresh.com",
+        "style": {
+          "position": "absolute",
+          "left": "0px",
+          "top": "70px",
+          "bottom": "",
+          "right": "0px",
+          "textAlign": "center",
+          "fontSize": "14px"
+        }
+      },
+      {
+        "type": "line",
+        "style": {
+          "position": "absolute",
+          "left": "0px",
+          "top": "95px",
+          "borderTopColor": "black",
+          "borderTopWidth": "2px",
+          "borderTopStyle": "solid",
+          "right": "0px"
+        }
+      },
+      {
+        "text": "Bill to:",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "110px",
+          "fontWeight": "bold",
+          "bottom": "",
+          "right": "",
+          "fontSize": "16px"
+        }
+      },
+      {
+        "text": "Delivery Address",
+        "style": {
+          "position": "absolute",
+          "left": "40%",
+          "top": "110px",
+          "bottom": "",
+          "right": "",
+          "fontWeight": "bold",
+          "fontSize": "16px"
+        }
+      },
+      {
+        "text": "INVOICE",
+        "style": {
+          "position": "absolute",
+          "left": "620px",
+          "top": "110px",
+          "bottom": "",
+          "right": "",
+          "fontWeight": "bold",
+          "fontSize": "20px"
+        }
+      },
+      {
+        "text": "RU DI FOOK 如狄福",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "135px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "ICHIGOFUKU KITCHENBAR SDN BHD",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "150px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "NO. 2-1, JALAN PJU 5/4,",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "165px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "DATARAN SUMWAY,",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "180px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "47810 PETALING JAYA, SELANGOR.",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "195px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "Attn : A111",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "210px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "TEL : 016-323 9253 RUDY",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "225px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "Page      : ${pagination.pageIndex} of ${pagination.count}",
+        "style": {
+          "position": "absolute",
+          "left": "620px",
+          "top": "225px"
+        }
+      }
+    ],
+    "style": {
+      "height": "270px"
+    }
+  },
+  "top": {
+    "blocks": [],
+    "style": {
+      "height": "0px"
+    }
+  },
+  "table": {
+    "columns": [
+      {
+        "head": "ID",
+        "headStyle": {
+          "textAlign": "center"
+        },
+        "text": "${tableData.id}",
+        "style": {
+          "textAlign": "left"
+        }
+      },
+      {
+        "head": "商品名",
+        "headStyle": {
+          "textAlign": "center"
+        },
+        "text": "${tableData.name}",
+        "style": {
+          "textAlign": "center"
+        }
+      },
+      {
+        "head": "品类",
+        "headStyle": {
+          "textAlign": "center"
+        },
+        "text": "${tableData.pinlei_title}",
+        "style": {
+          "textAlign": "center"
+        }
+      },
+      {
+        "head": "SPU",
+        "headStyle": {
+          "textAlign": "center"
+        },
+        "text": "${tableData.spu_name}",
+        "style": {
+          "textAlign": "center"
+        }
+      },
+      {
+        "head": "销售价格",
+        "headStyle": {
+          "textAlign": "center"
+        },
+        "text": "${tableData.sale_price} ¥",
+        "style": {
+          "textAlign": "right"
+        }
+      }
+    ]
+  },
+  "bottom": {
+    "blocks": [
+      {
+        "text": "RINGGIT MALAYSIA : NINETY FOUR AND CENTS SEVENTY ONLY",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "10px"
+        }
+      },
+      {
+        "text": "Notes:",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "30px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "1. All Cheques should be crossed and make payable to",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "50px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "GDAILY FRESH SDN. BHD.    (OCBC : 709-120054-4)",
+        "style": {
+          "position": "absolute",
+          "left": "20px",
+          "top": "65px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "For GDAILY FRESH SDN. BHD.",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "100px",
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "line",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "160px",
+          "borderTopColor": "black",
+          "borderTopWidth": "2px",
+          "borderTopStyle": "solid",
+          "width": "200px"
+        }
+      },
+      {
+        "text": "Authorised Signature",
+        "style": {
+          "position": "absolute",
+          "left": "40px",
+          "top": "165px",
+          "fontWeight": "bold",
+          "fontSize": "12px"
+        }
+      }
+    ],
+    "style": {
+      "height": "300px"
+    }
+  },
+  "footer": {
+    "blocks": [],
+    "style": {
+      "height": "0px"
+    }
+  },
+  "fixed": {
+    "blocks": [
+      {
+        "type": "image",
+        "link": "http://js.guanmai.cn/static_storage/json/common/logo/default/logo.pure.png",
+        "style": {
+          "position": "absolute",
+          "left": "0px",
+          "top": "0px",
+          "height": "50px"
+        }
+      }
+    ]
+  }
+}

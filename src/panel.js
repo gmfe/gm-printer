@@ -177,7 +177,8 @@ class PanelBlock extends React.Component {
                 top: '0px',
                 borderTopColor: 'black',
                 borderTopWidth: '1px',
-                borderTopStyle: 'solid'
+                borderTopStyle: 'solid',
+                width: '100%'
             }
         });
         onUpdate(data);
