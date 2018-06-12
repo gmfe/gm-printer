@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "precommit": "lint-staged",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "build": "webpack -p"
   },
   "lint-staged": {
     "./printer/*.js": [
