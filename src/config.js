@@ -129,7 +129,8 @@ class Config extends React.Component {
                     <Flex justifyBetween className="gm-padding-10">
                         <div>
                             <button className="btn btn-info" onClick={this.handleTestPrint}>测试打印</button>
-                            <button className="btn btn-info" onClick={this.handleDraft}>草稿</button>
+                            <span className="gm-gap-5"/>
+                            <button className="btn btn-info" onClick={this.handleDraft}>存草稿</button>
                         </div>
                         <Button className="btn btn-success" onClick={this.handleSave}>保存</Button>
                     </Flex>

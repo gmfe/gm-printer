@@ -93,6 +93,7 @@ class TableReady extends React.Component {
     }
 }
 
+// TODO style
 class Table extends React.Component {
     render() {
         const {columns, data} = this.props;

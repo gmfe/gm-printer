@@ -10,7 +10,8 @@ class Panel extends React.Component {
         const {title, children} = this.props;
 
         return (
-            <div className="gm-padding-5 gm-margin-10" style={{border: '1px solid black', position: 'relative'}}>
+            <div className="gm-padding-5 gm-margin-lr-5 gm-margin-tb-20"
+                 style={{border: '1px solid black', position: 'relative'}}>
                 <div style={{
                     position: 'absolute',
                     top: '-8px',
@@ -204,7 +205,12 @@ class PanelBlock extends React.Component {
         if (block.type === 'image') {
             return (
                 <React.Fragment>
-                    <Text block value={block.link} onChange={this.handleBlock.bind(this, i, 'link')}/>
+                    <Flex>
+                        链接:&nbsp;
+                        <Flex flex>
+                            <Text block value={block.link} onChange={this.handleBlock.bind(this, i, 'link')}/>
+                        </Flex>
+                    </Flex>
                     <Style size position style={block.style}
                            onChange={this.handleBlock.bind(this, i, 'style')}/>
                 </React.Fragment>
@@ -219,7 +225,12 @@ class PanelBlock extends React.Component {
         } else {
             return (
                 <React.Fragment>
-                    <Text block value={block.text} onChange={this.handleBlock.bind(this, i, 'text')}/>
+                    <Flex>
+                        内容:&nbsp;
+                        <Flex flex>
+                            <Text block value={block.text} onChange={this.handleBlock.bind(this, i, 'text')}/>
+                        </Flex>
+                    </Flex>
                     <Style font position style={block.style}
                            onChange={this.handleBlock.bind(this, i, 'style')}/>
                 </React.Fragment>
@@ -318,8 +329,26 @@ class PanelColumns extends React.Component {
         onUpdate(data);
     };
 
+    handleUp = (i) => {
+        const {data, onUpdate} = this.props;
+
+        data.columns.splice(i - 1, 2, data.columns[i], data.columns[i - 1]);
+
+        onUpdate(data);
+    };
+
+    handleDown = (i) => {
+        const {data, onUpdate} = this.props;
+
+        data.columns.splice(i, 2, data.columns[i + 1], data.columns[i]);
+
+        onUpdate(data);
+    };
+
     render() {
         const {title, data} = this.props;
+
+        const length = data.columns.length;
 
         return (
             <Panel title={title}>
@@ -329,10 +358,13 @@ class PanelColumns extends React.Component {
                         className="gm-padding-tb-5 gm-margin-tb-5 gm-position-relative"
                         style={{borderBottom: '1px dotted black'}}
                     >
-                        <div className="clearfix">
+                        <Flex className="clearfix">
+                            <Flex flex/>
+                            <button disabled={i === 0} onClick={this.handleUp.bind(this, i)}>∧</button>
+                            <button disabled={i === length - 1} onClick={this.handleDown.bind(this, i)}>∨</button>
                             <button type="button" className="close"
                                     onClick={this.handleRemove.bind(this, i)}>&times;</button>
-                        </div>
+                        </Flex>
                         <Flex>
                             表头:
                             <Flex column flex>

@@ -17,7 +17,14 @@ const fontSizeList = [
     '28px'
 ];
 
+const borderStyleList = [
+    {value: 'solid', text: '实线'},
+    {value: 'dashed', text: '虚线'},
+    {value: 'dotted', text: '圆点'}
+];
+
 export {
     fontSizeList,
+    borderStyleList,
     printerJS
 };

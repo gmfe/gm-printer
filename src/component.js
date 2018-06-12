@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import classNames from 'classnames';
 import _ from 'lodash';
-import {fontSizeList} from "./util";
+import {fontSizeList, borderStyleList} from "./util";
 
 class Text extends React.Component {
     handleChange = (e) => {
@@ -264,10 +264,12 @@ class Line extends React.Component {
         return (
             <span>
                 宽度 <Text value={width} onChange={this.handleChange.bind(this, 'width')} style={{width: '50px'}}/>
+                &nbsp;
                 粗细 <TextPX value={borderTopWidth} onChange={this.handleChange.bind(this, 'borderTopWidth')}/>
                 &nbsp;
-                类型 <Text value={borderTopStyle} onChange={this.handleChange.bind(this, 'borderTopStyle')}
-                         style={{width: '50px'}}/>
+                类型 <select value={borderTopStyle} onChange={e => this.handleChange('borderTopStyle', e.target.value)}>
+                {_.map(borderStyleList, v => <option key={v.value} value={v.value}>{v.text}</option>)}
+            </select>
             </span>
         );
     }
