@@ -38,6 +38,7 @@
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.11",
     "gm-util": "^5.5.4",
+    "gm-xfont": "^1.0.30",
     "husky": "^0.14.3",
     "less": "^3.0.4",
     "less-loader": "^4.1.0",

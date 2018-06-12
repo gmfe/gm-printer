@@ -16,11 +16,13 @@ class Text extends React.Component {
                 disabled={disabled}
                 type="text"
                 className={classNames({
-                    'form-control': block
+                    'gm-block': block
                 })}
                 value={value}
                 onChange={this.handleChange}
-                style={style}
+                style={Object.assign({
+                    width: block ? '100%' : 'auto'
+                }, style)}
             />
         );
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import {Flex} from 'react-gm';
+import {Flex, Button} from 'react-gm';
 import '../node_modules/react-gm/src/index.less';
 import 'normalize.css/normalize.css';
 import './style.less';
@@ -58,12 +58,17 @@ class Config extends React.Component {
         doPrint({data, tableData, config});
     };
 
+    handleSave = () => {
+        const {onSave} = this.props;
+        return onSave(this.state.config);
+    };
+
     render() {
         const {config} = this.state;
 
         return (
             <Flex className="gm-printer-config" style={{height: '100%', width: '100%'}}>
-                <Flex flex column style={{minWidth: '850px'}}>
+                <Flex flex column style={{minWidth: '820px'}} className="gm-overflow-y">
                     <iframe
                         ref={ref => this.refIframe = ref}
                         style={{border: 'none', width: '100%', height: '100%'}}
@@ -75,7 +80,7 @@ class Config extends React.Component {
                     </Flex>
                     <Flex justifyBetween className="gm-padding-10">
                         <button className="btn btn-info" onClick={this.handleTestPrint}>测试打印</button>
-                        <button className="btn btn-success">保存</button>
+                        <Button className="btn btn-success" onClick={this.handleSave}>保存</Button>
                     </Flex>
                 </Flex>
             </Flex>
@@ -86,7 +91,8 @@ class Config extends React.Component {
 Config.propTypes = {
     data: PropTypes.object.isRequired,
     tableData: PropTypes.array.isRequired,
-    config: PropTypes.object.isRequired
+    config: PropTypes.object.isRequired,
+    onSave: PropTypes.func.isRequired
 };
 
 export default Config;

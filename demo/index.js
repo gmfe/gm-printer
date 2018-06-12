@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom';
 import config from '../demo/config';
 import data from '../demo/data';
 import moment from 'moment';
+import {Storage, Tip, LayoutRoot} from 'react-gm';
 import '../node_modules/react-gm/src/index.less';
 import 'normalize.css/normalize.css';
-import {PrinterConfig, doPrint} from '../src';
+import {PrinterConfig} from '../src';
+import 'gm-xfont/iconfont.css';
 
 const nData = {
     ...data,
@@ -14,21 +16,34 @@ const nData = {
     receive_end_time_t1: moment(data.receive_end_time).format('MM-DD HH:mm')
 };
 
-
-setTimeout(() => {
-    doPrint({
-        data: nData,
-        config,
-        tableData: nData.details
-    });
-}, 5000);
-
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            config: Storage.get('gm-printer-config') || config
+        };
+    }
+
+    handleSave = (c) => {
+        return new Promise(resolve => {
+            Storage.set('gm-printer-config', c);
+            setTimeout(() => {
+                resolve();
+                Tip.success('保存成功');
+            }, 2000);
+        });
+    };
 
     render() {
         return (
-            <div style={{height: '100vh', width: '100vw'}}>
-                <PrinterConfig data={nData} config={config} tableData={nData.details}/>
+            <div style={{height: '100vh'}}>
+                <PrinterConfig
+                    data={nData}
+                    config={this.state.config}
+                    tableData={nData.details}
+                    onSave={this.handleSave}
+                />
+                <LayoutRoot/>
             </div>
         );
     }
