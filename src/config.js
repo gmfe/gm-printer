@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import {Flex, Button, Tip, Storage, Modal} from 'react-gm';
 import '../node_modules/react-gm/src/index.less';
-import 'normalize.css/normalize.css';
 import './style.less';
 import Right from './right';
 import _ from 'lodash';
@@ -11,8 +10,6 @@ import {printerJS} from './util';
 import doPrint from './do_print';
 
 const KEY = 'gm-printer-config-draft';
-
-window.gStorage = Storage;
 
 class Config extends React.Component {
     constructor(props) {

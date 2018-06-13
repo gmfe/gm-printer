@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import {Flex} from 'react-gm';
 import {Text, Style} from './component';
 import {pageSizeMap} from '../printer/util';
+import {tableStyleList} from "./util";
 
 class Panel extends React.Component {
     render() {
@@ -14,7 +15,7 @@ class Panel extends React.Component {
                  style={{border: '1px solid black', position: 'relative'}}>
                 <div style={{
                     position: 'absolute',
-                    top: '-8px',
+                    top: '-10px',
                     background: 'white',
                     padding: '0 5px',
                     fontWeight: 'bolder'
@@ -345,6 +346,14 @@ class PanelColumns extends React.Component {
         onUpdate(data);
     };
 
+    handleClassName = (value) => {
+        const {data, onUpdate} = this.props;
+
+        data.className = value;
+
+        onUpdate(data);
+    };
+
     render() {
         const {title, data} = this.props;
 
@@ -352,6 +361,15 @@ class PanelColumns extends React.Component {
 
         return (
             <Panel title={title}>
+                <div>
+                    样式 <select value={data.className} onChange={e => this.handleClassName(e.target.value)}>
+                    <option value="">无</option>
+                    {_.map(tableStyleList, v => <option key={v.value} value={v.value}>{v.text}</option>)}
+                </select>
+                </div>
+                <div className="gm-margin-top-5" style={{
+                    borderTop: '1px solid black'
+                }}/>
                 {_.map(data.columns, (col, i) => (
                     <div
                         key={i}

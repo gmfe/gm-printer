@@ -98,7 +98,8 @@ const config = {
             style: {
                 textAlign: 'right'
             }
-        }]
+        }],
+        className: ''
     },
     bottom: {
         blocks: [{

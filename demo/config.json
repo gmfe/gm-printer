@@ -266,7 +266,8 @@
           "textAlign": "right"
         }
       }
-    ]
+    ],
+    "className": "gm-printer-table-style-1"
   },
   "bottom": {
     "blocks": [

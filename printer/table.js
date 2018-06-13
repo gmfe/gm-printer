@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import {getHeight, getWidth} from "./util";
 import printerStore from "./store";
 import {observer} from "mobx-react/index";
+import classNames from 'classnames';
 
 @observer
 class TableBefore extends React.Component {
@@ -33,10 +34,10 @@ class TableBefore extends React.Component {
     }
 
     render() {
-        const {columns, data} = this.props;
+        const {columns, data, className} = this.props;
 
         return (
-            <table className="gm-printer-table">
+            <table className={classNames("gm-printer-table", className)}>
                 <thead>
                 <tr>
                     {_.map(columns, (col, i) => <th key={i} style={col.headStyle}>{col.head}</th>)}
@@ -61,14 +62,14 @@ class TableBefore extends React.Component {
 
 class TableReady extends React.Component {
     render() {
-        const {columns, data} = this.props;
+        const {columns, data, className} = this.props;
 
         if (data.length === 0) {
             return null;
         }
 
         return (
-            <table className="gm-printer-table">
+            <table className={classNames("gm-printer-table", className)}>
                 <thead>
                 <tr>
                     {_.map(columns, (col, i) => <th key={i} style={Object.assign({}, col.headStyle, {
@@ -93,15 +94,14 @@ class TableReady extends React.Component {
     }
 }
 
-// TODO style
 class Table extends React.Component {
     render() {
-        const {columns, data} = this.props;
+        const {columns, data, className} = this.props;
 
         return (
             <div>
-                {printerStore.ready ? <TableReady columns={columns} data={data}/> :
-                    <TableBefore columns={columns} data={data}/>}
+                {printerStore.ready ? <TableReady columns={columns} data={data} className={className}/> :
+                    <TableBefore columns={columns} data={data} className={className}/>}
             </div>
         );
     }
