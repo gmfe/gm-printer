@@ -45,6 +45,9 @@ module.exports = {
         new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/)
     ],
     devServer: {
-        host: "0.0.0.0"
+        compress: true,
+        host: "0.0.0.0",
+        inline: false,
+        disableHostCheck: true
     }
 };
