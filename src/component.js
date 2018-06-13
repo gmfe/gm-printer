@@ -22,7 +22,8 @@ class Text extends React.Component {
                 value={value}
                 onChange={this.handleChange}
                 style={Object.assign({
-                    width: block ? '100%' : 'auto'
+                    width: block ? '100%' : 'auto',
+                    height: '19px'
                 }, style)}
             />
         );

@@ -6,7 +6,7 @@ let $printer = window.document.getElementById(printerId);
 let ready = false;
 let stacks = [];
 
-function init() {
+function init(isBatch) {
     if (!$printer) {
         $printer = window.document.createElement('iframe');
         $printer.id = printerId;
@@ -25,7 +25,7 @@ function init() {
             ready = true;
 
             _.each(stacks, v => {
-                do_print(v);
+                isBatch ? do_print_batch(v) : do_print(v);
             });
         });
     }
@@ -35,6 +35,15 @@ function do_print({data, tableData, config}) {
     $printer.contentWindow.render({
         data,
         tableData,
+        config
+    });
+    $printer.contentWindow.print();
+}
+
+function do_print_batch({datas, tableDatas, config}) {
+    $printer.contentWindow.renderBatch({
+        datas,
+        tableDatas,
         config
     });
     $printer.contentWindow.print();
@@ -50,4 +59,17 @@ function doPrint({data, tableData, config}) {
     }
 }
 
-export default doPrint;
+function doPrintBatch({datas, tableDatas, config}) {
+    init(true);
+
+    if (!ready) {
+        stacks.push({datas, tableDatas, config});
+    } else {
+        do_print_batch({datas, tableDatas, config});
+    }
+}
+
+export {
+    doPrint,
+    doPrintBatch
+};

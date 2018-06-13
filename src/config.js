@@ -7,7 +7,7 @@ import './style.less';
 import Right from './right';
 import _ from 'lodash';
 import {printerJS} from './util';
-import doPrint from './do_print';
+import {doPrint} from './do_print';
 
 const KEY = 'gm-printer-config-draft';
 

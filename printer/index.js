@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import Printer from './printer';
 import 'normalize.css/normalize.css';
 import './style.less';
+import _ from 'lodash';
 
 const div = window.document.createElement('div');
 div.id = 'appContainer';
@@ -29,18 +30,42 @@ class App extends React.Component {
     }
 
     render() {
-        const {data, tableData, config} = this.props;
-        return (
-            <Printer
-                data={data}
-                tableData={tableData}
-                config={config}
-            />
-        );
+        const {
+            data, tableData,
+            config,
+            datas, tableDatas,
+            isBatch
+        } = this.props;
+
+        if (isBatch) {
+            return (
+                <div>
+                    {_.map(datas, (v, i) => <Printer
+                        key={i}
+                        data={datas[i]}
+                        tableData={tableDatas[i]}
+                        config={config}
+                    />)}
+                </div>
+            );
+        } else {
+            return (
+                <Printer
+                    data={data}
+                    tableData={tableData}
+                    config={config}
+                />
+            );
+        }
     }
 }
 
 window.render = (props) => {
     // 给随机数key，避免不render
     ReactDOM.render(<App key={Math.random()} {...props}/>, div);
+};
+
+window.renderBatch = (props) => {
+    // 给随机数key，避免不render
+    ReactDOM.render(<App key={Math.random()} {...props} isBatch/>, div);
 };
