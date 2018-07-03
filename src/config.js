@@ -1,147 +1,144 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
-import {Flex, Button, Tip, Storage, Modal} from 'react-gm';
-import '../node_modules/react-gm/src/index.less';
-import './style.less';
-import Right from './right';
-import _ from 'lodash';
-import {printerJS} from './util';
-import {doPrint} from './do_print';
+import React from 'react'
+import PropTypes from 'prop-types'
+import ReactDOM from 'react-dom'
+import { Flex, Button, Tip, Storage, Modal } from 'react-gm'
+import '../node_modules/react-gm/src/index.less'
+import './style.less'
+import Right from './right'
+import _ from 'lodash'
+import { printerJS } from './util'
+import { doPrint } from './do_print'
 
-const KEY = 'gm-printer-config-draft';
+const KEY = 'gm-printer-config-draft'
 
 class Config extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            config: props.config
-        };
-
-        this.debounceDoRender = _.debounce(this.doRender, 1000);
+  constructor (props) {
+    super(props)
+    this.state = {
+      config: props.config
     }
 
-    componentDidMount() {
-        const $iframe = ReactDOM.findDOMNode(this.refIframe);
-        this.$iframe = $iframe;
+    this.debounceDoRender = _.debounce(this.doRender, 1000)
+  }
 
-        const script = $iframe.contentWindow.document.createElement('script');
-        script.src = printerJS;
-        $iframe.contentWindow.document.body.append(script);
+  componentDidMount () {
+    const $iframe = ReactDOM.findDOMNode(this.refIframe)
+    this.$iframe = $iframe
 
-        script.addEventListener('load', () => {
-            this.doRender();
-        });
+    const script = $iframe.contentWindow.document.createElement('script')
+    script.src = printerJS
+    $iframe.contentWindow.document.body.append(script)
 
-        setTimeout(() => {
-            const sConfig = Storage.get(KEY);
+    script.addEventListener('load', () => {
+      this.doRender()
+    })
 
-            if (sConfig) {
-                Modal.render({
-                    title: '提示',
-                    size: 'sm',
-                    children: (
-                        <div>
-                            <div>发现草稿，是否加载</div>
-                            <Flex justifyBetween className="gm-padding-10">
-                                <button className="btn btn-default" onClick={() => {
-                                    Modal.hide();
-                                }}>取消
-                                </button>
-                                <button className="btn btn-default" onClick={() => {
-                                    Storage.remove(KEY);
-                                    Modal.hide();
-                                }}>取消并清理草稿
-                                </button>
-                                <button className="btn btn-primary" onClick={() => {
-                                    this.doUpdate(sConfig);
-                                    Modal.hide();
-                                }}>加载
-                                </button>
-                            </Flex>
-                        </div>
-                    ),
-                    onHide: Modal.hide
-                });
-            }
-        }, 1000);
-    }
+    setTimeout(() => {
+      const sConfig = Storage.get(KEY)
 
-    doRender = () => {
-        const {config} = this.state;
-        const {data, tableData} = this.props;
-        this.$iframe.contentWindow.render({
-            data,
-            tableData,
-            config
-        });
-    };
+      if (sConfig) {
+        Modal.render({
+          title: '提示',
+          size: 'sm',
+          children: (
+            <div>
+              <div>发现草稿，是否加载</div>
+              <Flex justifyBetween className='gm-padding-10'>
+                <button className='btn btn-default' onClick={() => {
+                  Modal.hide()
+                }}>取消
+                </button>
+                <button className='btn btn-default' onClick={() => {
+                  Storage.remove(KEY)
+                  Modal.hide()
+                }}>取消并清理草稿
+                </button>
+                <button className='btn btn-primary' onClick={() => {
+                  this.doUpdate(sConfig)
+                  Modal.hide()
+                }}>加载
+                </button>
+              </Flex>
+            </div>
+          ),
+          onHide: Modal.hide
+        })
+      }
+    }, 1000)
+  }
 
-    doUpdate = (config) => {
-        this.setState({
-            config
-        }, () => {
-            this.debounceDoRender();
-        });
-    };
+  doRender = () => {
+    const {config} = this.state
+    const {data, tableData} = this.props
+    this.$iframe.contentWindow.render({
+      data,
+      tableData,
+      config
+    })
+  }
 
-    handleUpdate = (config) => {
-        this.doUpdate(config);
-    };
+  doUpdate = (config) => {
+    this.setState({
+      config
+    }, () => {
+      this.debounceDoRender()
+    })
+  }
 
-    handleTestPrint = () => {
-        const {data, tableData} = this.props;
-        const {config} = this.state;
+  handleUpdate = (config) => {
+    this.doUpdate(config)
+  }
 
-        doPrint({data, tableData, config});
-    };
+  handleTestPrint = () => {
+    const {data, tableData} = this.props
+    const {config} = this.state
 
-    handleDraft = () => {
-        const {config} = this.state;
+    doPrint({data, tableData, config})
+  }
 
-        Storage.set(KEY, config);
-        Tip.success('存草稿成功');
-    };
+  handleDraft = () => {
+    const {config} = this.state
 
-    handleSave = () => {
-        const {onSave} = this.props;
-        return onSave(this.state.config);
-    };
+    Storage.set(KEY, config)
+    Tip.success('存草稿成功')
+  }
 
-    render() {
-        const {config} = this.state;
+  handleSave = () => {
+    const {onSave} = this.props
+    return onSave(this.state.config)
+  }
 
-        return (
-            <Flex className="gm-printer-config" style={{height: '100%', width: '100%'}}>
-                <Flex flex column style={{minWidth: '820px'}} className="gm-overflow-y">
-                    <iframe
-                        ref={ref => this.refIframe = ref}
-                        style={{border: 'none', width: '100%', height: '100%'}}
-                    />
-                </Flex>
-                <Flex column style={{width: '400px', minWidth: '400px'}}>
-                    <Flex flex column className="gm-overflow-y">
-                        <Right config={config} onUpdate={this.handleUpdate}/>
-                    </Flex>
-                    <Flex justifyBetween className="gm-padding-10">
-                        <div>
-                            <button className="btn btn-info" onClick={this.handleTestPrint}>测试打印</button>
-                            <span className="gm-gap-5"/>
-                            <button className="btn btn-info" onClick={this.handleDraft}>存草稿</button>
-                        </div>
-                        <Button className="btn btn-success" onClick={this.handleSave}>保存</Button>
-                    </Flex>
-                </Flex>
-            </Flex>
-        );
-    }
+  render () {
+    const {config} = this.state
+
+    return (
+      <Flex className='gm-printer-config' style={{height: '100%', width: '100%'}}>
+        <Flex flex column style={{minWidth: '820px'}} className='gm-overflow-y'>
+          <iframe ref={ref => { this.refIframe = ref }} style={{border: 'none', width: '100%', height: '100%'}}/>
+        </Flex>
+        <Flex column style={{width: '400px', minWidth: '400px'}}>
+          <Flex flex column className='gm-overflow-y'>
+            <Right config={config} onUpdate={this.handleUpdate}/>
+          </Flex>
+          <Flex justifyBetween className='gm-padding-10'>
+            <div>
+              <button className='btn btn-info' onClick={this.handleTestPrint}>测试打印</button>
+              <span className='gm-gap-5'/>
+              <button className='btn btn-info' onClick={this.handleDraft}>存草稿</button>
+            </div>
+            <Button className='btn btn-success' onClick={this.handleSave}>保存</Button>
+          </Flex>
+        </Flex>
+      </Flex>
+    )
+  }
 }
 
 Config.propTypes = {
-    data: PropTypes.object.isRequired,
-    tableData: PropTypes.array.isRequired,
-    config: PropTypes.object.isRequired,
-    onSave: PropTypes.func.isRequired
-};
+  data: PropTypes.object.isRequired,
+  tableData: PropTypes.array.isRequired,
+  config: PropTypes.object.isRequired,
+  onSave: PropTypes.func.isRequired
+}
 
-export default Config;
+export default Config
