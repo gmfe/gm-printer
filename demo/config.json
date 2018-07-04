@@ -124,8 +124,8 @@
         "text": "INVOICE",
         "style": {
           "position": "absolute",
-          "left": "620px",
-          "top": "110px",
+          "left": "580px",
+          "top": "105px",
           "bottom": "",
           "right": "",
           "fontWeight": "bold",
@@ -196,11 +196,182 @@
         }
       },
       {
-        "text": "Page      : ${pagination.pageIndex} of ${pagination.count}",
+        "text": "FAX :",
         "style": {
           "position": "absolute",
-          "left": "620px",
-          "top": "225px"
+          "left": "230px",
+          "top": "225px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "RU DI FOOK 如狄福",
+        "style": {
+          "position": "absolute",
+          "left": "40%",
+          "top": "135px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "ICHIGOFUKU KITCHENBAR SDN BHD",
+        "style": {
+          "position": "absolute",
+          "left": "40%",
+          "top": "150px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "NO. 2-1, JALAN PJU 5/4,",
+        "style": {
+          "position": "absolute",
+          "left": "40%",
+          "top": "165px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "DATARAN SUMWAY,",
+        "style": {
+          "position": "absolute",
+          "left": "40%",
+          "top": "180px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "47810 PETALING JAYA, SELANGOR.",
+        "style": {
+          "position": "absolute",
+          "left": "40%",
+          "top": "195px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "Invoice No",
+        "style": {
+          "position": "absolute",
+          "left": "580px",
+          "top": "135px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": ": IV-16013",
+        "style": {
+          "position": "absolute",
+          "left": "650px",
+          "top": "135px",
+          "fontSize": "12px",
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "text": "Your Ref.",
+        "style": {
+          "position": "absolute",
+          "left": "580px",
+          "top": "155px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": ":",
+        "style": {
+          "position": "absolute",
+          "left": "650px",
+          "top": "155px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "Area",
+        "style": {
+          "position": "absolute",
+          "left": "580px",
+          "top": "175px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": ": ",
+        "style": {
+          "position": "absolute",
+          "left": "650px",
+          "top": "175px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "Our D/O No",
+        "style": {
+          "position": "absolute",
+          "left": "580px",
+          "top": "195px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": ": ",
+        "style": {
+          "position": "absolute",
+          "left": "650px",
+          "top": "195px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "Terms",
+        "style": {
+          "position": "absolute",
+          "left": "580px",
+          "top": "215px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": ":",
+        "style": {
+          "position": "absolute",
+          "left": "650px",
+          "top": "215px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "Date",
+        "style": {
+          "position": "absolute",
+          "left": "580px",
+          "top": "235px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": ":",
+        "style": {
+          "position": "absolute",
+          "left": "650px",
+          "top": "235px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "Page",
+        "style": {
+          "position": "absolute",
+          "left": "580px",
+          "top": "255px"
+        }
+      },
+      {
+        "text": ": ${pagination.pageIndex} of ${pagination.count}",
+        "style": {
+          "position": "absolute",
+          "left": "650px",
+          "top": "255px"
         }
       }
     ],
@@ -217,17 +388,17 @@
   "table": {
     "columns": [
       {
-        "head": "ID",
+        "head": "No",
         "headStyle": {
           "textAlign": "center"
         },
         "text": "${tableData.id}",
         "style": {
-          "textAlign": "left"
+          "textAlign": "center"
         }
       },
       {
-        "head": "商品名",
+        "head": "Qty",
         "headStyle": {
           "textAlign": "center"
         },
@@ -237,7 +408,7 @@
         }
       },
       {
-        "head": "品类",
+        "head": "Description",
         "headStyle": {
           "textAlign": "center"
         },
@@ -247,7 +418,7 @@
         }
       },
       {
-        "head": "SPU",
+        "head": "Price/Unit",
         "headStyle": {
           "textAlign": "center"
         },
@@ -257,9 +428,19 @@
         }
       },
       {
-        "head": "销售价格",
+        "head": "Discount",
         "headStyle": {
-          "textAlign": "center"
+          "textAlign": "right"
+        },
+        "text": "",
+        "style": {
+          "textAlign": "right"
+        }
+      },
+      {
+        "head": "Amount",
+        "headStyle": {
+          "textAlign": "right"
         },
         "text": "${tableData.sale_price} ¥",
         "style": {
@@ -272,11 +453,23 @@
   "bottom": {
     "blocks": [
       {
+        "type": "line",
+        "style": {
+          "borderTopColor": "black",
+          "borderTopStyle": "solid",
+          "borderTopWidth": "3px",
+          "left": "0px",
+          "position": "absolute",
+          "top": "0px",
+          "width": "100%"
+        }
+      },
+      {
         "text": "RINGGIT MALAYSIA : NINETY FOUR AND CENTS SEVENTY ONLY",
         "style": {
           "position": "absolute",
           "left": "10px",
-          "top": "10px"
+          "top": "5px"
         }
       },
       {
@@ -298,11 +491,38 @@
         }
       },
       {
-        "text": "GDAILY FRESH SDN. BHD.    (OCBC : 709-120054-4)",
+        "text": "GDAILY FRESH SDN. BHD.\u00a0\u00a0\u00a0(OCBC : 709-120054-4)",
         "style": {
           "position": "absolute",
-          "left": "20px",
+          "left": "10px",
           "top": "65px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "2. Received the above listed item in good order and condition.",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "80px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "3. Any claims on merchandise delivered must be lodged at the time of receipt.",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "95px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "4. Account not paid within terms are subject to a 1.5% monthly finance charge.",
+        "style": {
+          "position": "absolute",
+          "left": "10px",
+          "top": "110px",
           "fontSize": "12px"
         }
       },
@@ -311,7 +531,7 @@
         "style": {
           "position": "absolute",
           "left": "10px",
-          "top": "100px",
+          "top": "130px",
           "fontWeight": "bold"
         }
       },
@@ -320,7 +540,7 @@
         "style": {
           "position": "absolute",
           "left": "10px",
-          "top": "160px",
+          "top": "220px",
           "borderTopColor": "black",
           "borderTopWidth": "2px",
           "borderTopStyle": "solid",
@@ -332,14 +552,81 @@
         "style": {
           "position": "absolute",
           "left": "40px",
-          "top": "165px",
+          "top": "225px",
           "fontWeight": "bold",
-          "fontSize": "12px"
+          "fontSize": "14px"
+        }
+      },
+      {
+        "text": "Total(RM)",
+        "style": {
+          "position": "absolute",
+          "right": "180px",
+          "top": "5px",
+          "fontWeight": "bold",
+          "fontSize": "14px"
+        }
+      },
+      {
+        "text": "140.44",
+        "style": {
+          "position": "absolute",
+          "right": "50px",
+          "top": "5px",
+          "fontWeight": "bold",
+          "fontSize": "14px",
+          "width": "120px",
+          "textAlign": "right"
+        }
+      },
+      {
+        "type": "line",
+        "style": {
+          "position": "absolute",
+          "right": "50px",
+          "top": "20px",
+          "borderTopColor": "black",
+          "borderTopWidth": "2px",
+          "borderTopStyle": "solid",
+          "width": "120px"
+        }
+      },
+      {
+        "text": "For Customer",
+        "style": {
+          "position": "absolute",
+          "right": "190px",
+          "top": "130px",
+          "fontWeight": "bold",
+          "fontSize": "14px",
+          "textAlign": "right"
+        }
+      },
+      {
+        "type": "line",
+        "style": {
+          "position": "absolute",
+          "right": "80px",
+          "top": "220px",
+          "borderTopColor": "black",
+          "borderTopWidth": "2px",
+          "borderTopStyle": "solid",
+          "width": "200px"
+        }
+      },
+      {
+        "text": "Customer chop & sign",
+        "style": {
+          "position": "absolute",
+          "right": "105px",
+          "top": "225px",
+          "fontWeight": "bold",
+          "fontSize": "14px"
         }
       }
     ],
     "style": {
-      "height": "300px"
+      "height": "250px"
     }
   },
   "footer": {

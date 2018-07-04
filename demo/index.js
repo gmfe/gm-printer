@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom'
 import config from '../demo/config.json'
 import data from '../demo/data'
 import moment from 'moment'
-import {Storage, Tip, LayoutRoot} from 'react-gm'
+import { Storage, Tip, LayoutRoot } from 'react-gm'
 import '../node_modules/react-gm/src/index.less'
 import 'normalize.css/normalize.css'
-import {PrinterConfig} from '../src'
+import { PrinterConfig } from '../src'
 import 'gm-xfont/iconfont.css'
 
 const nData = {
@@ -24,29 +24,28 @@ class App extends React.Component {
     }
   }
 
-    handleSave = (c) => {
-      return new Promise(resolve => {
-        Storage.set('gm-printer-config', c)
-        setTimeout(() => {
-          resolve()
-          Tip.success('保存成功')
-        }, 2000)
-      })
-    };
+  handleSave = (c) => {
+    return new Promise(resolve => {
+      Storage.set('gm-printer-config', c)
+      resolve()
+      console.log(c)
+      Tip.success('保存成功')
+    })
+  }
 
-    render () {
-      return (
-        <div style={{height: '100vh'}}>
-          <PrinterConfig
-            data={nData}
-            config={this.state.config}
-            tableData={nData.details}
-            onSave={this.handleSave}
-          />
-          <LayoutRoot/>
-        </div>
-      )
-    }
+  render () {
+    return (
+      <div style={{height: '100vh'}}>
+        <PrinterConfig
+          data={nData}
+          config={this.state.config}
+          tableData={nData.details}
+          onSave={this.handleSave}
+        />
+        <LayoutRoot/>
+      </div>
+    )
+  }
 }
 
 ReactDOM.render(<App/>, window.document.getElementById('appContainer'))
