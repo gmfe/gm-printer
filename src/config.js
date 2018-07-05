@@ -21,6 +21,12 @@ class Config extends React.Component {
     this.debounceDoRender = _.debounce(this.doRender, 1000)
   }
 
+  componentWillReceiveProps (next) {
+    if (next.config !== this.state.config) {
+      this.handleUpdate(next.config)
+    }
+  }
+
   componentDidMount () {
     const $iframe = ReactDOM.findDOMNode(this.refIframe)
     this.$iframe = $iframe

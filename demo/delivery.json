@@ -473,56 +473,20 @@
         }
       },
       {
-        "text": "Notes:",
+        "text": "Remark:  Please return a original copy to Gdaily Fresh Sdn. Bhd.",
         "style": {
           "position": "absolute",
           "left": "10px",
-          "top": "30px",
+          "top": "90px",
           "fontSize": "12px"
         }
       },
       {
-        "text": "1. All Cheques should be crossed and make payable to",
+        "text": "I/We hereby confirmed and received to the above mentioned goods in a good order & condition.",
         "style": {
           "position": "absolute",
-          "left": "10px",
-          "top": "50px",
-          "fontSize": "12px"
-        }
-      },
-      {
-        "text": "GDAILY FRESH SDN. BHD.\u00a0\u00a0\u00a0(OCBC : 709-120054-4)",
-        "style": {
-          "position": "absolute",
-          "left": "18px",
-          "top": "65px",
-          "fontSize": "12px"
-        }
-      },
-      {
-        "text": "2. Received the above listed item in good order and condition.",
-        "style": {
-          "position": "absolute",
-          "left": "10px",
-          "top": "80px",
-          "fontSize": "12px"
-        }
-      },
-      {
-        "text": "3. Any claims on merchandise delivered must be lodged at the time of receipt.",
-        "style": {
-          "position": "absolute",
-          "left": "10px",
-          "top": "95px",
-          "fontSize": "12px"
-        }
-      },
-      {
-        "text": "4. Account not paid within terms are subject to a 1.5% monthly finance charge.",
-        "style": {
-          "position": "absolute",
-          "left": "10px",
-          "top": "110px",
+          "left": "475px",
+          "top": "90px",
           "fontSize": "12px"
         }
       },
