@@ -42,6 +42,18 @@ const pageSizeMap = {
       paddingBottom: '5mm',
       paddingLeft: '5mm'
     }
+  },
+  '自定义': {
+    size: {
+      width: '210mm',
+      height: '150mm'
+    },
+    gap: {
+      paddingTop: '5mm',
+      paddingRight: '5mm',
+      paddingBottom: '5mm',
+      paddingLeft: '5mm'
+    }
   }
 }
 

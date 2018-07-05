@@ -61,7 +61,6 @@ class PanelPage extends React.Component {
           纸张
           <select value={data.type} onChange={(e) => this.handleChange('type', e.target.value)}>
             {_.map(pageSizeMap, (value, key) => <option value={key} key={key}>{key}</option>)}
-            <option value=''>自定义</option>
           </select>
         </div>
         {(
