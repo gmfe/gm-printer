@@ -4,10 +4,10 @@ import delivery from '../demo/delivery.json'
 import invoice from '../demo/config.json'
 import data from '../demo/data'
 import moment from 'moment'
-import { Storage, Tip, LayoutRoot } from 'react-gm'
+import { Storage, Tip, LayoutRoot, Select, Option } from 'react-gm'
 import '../node_modules/react-gm/src/index.less'
 import 'normalize.css/normalize.css'
-import { PrinterConfig } from '../src'
+import { SimpleConfig } from '../src'
 import 'gm-xfont/iconfont.css'
 
 const config = {
@@ -30,31 +30,23 @@ class App extends React.Component {
     }
   }
 
-  handleSave = (c) => {
-    return new Promise(resolve => {
-      Storage.set('gm-printer-config', c)
-      resolve()
-      console.log(c)
-      Tip.success('保存成功')
-    })
-  }
-
-  handleChangeTable (config) {
+  handleChangeTable = (config) => {
     this.setState({config})
   }
 
   render () {
+    const configSelect = <Select value={this.state.config} onChange={this.handleChangeTable}>
+      <Option value='invoice'>invoice</Option>
+      <Option value='delivery'>delivery</Option>
+    </Select>
     return (
       <div style={{height: '100vh'}}>
-        <div style={{position: 'fixed', top: '0', right: '5%'}}>
-          <button onClick={this.handleChangeTable.bind(this, 'invoice')}>invoice</button>
-          <button onClick={this.handleChangeTable.bind(this, 'delivery')}>delivery</button>
-        </div>
-        <PrinterConfig
+        <SimpleConfig
+          key={this.state.config}
           data={nData}
           config={config[this.state.config]}
           tableData={nData.details}
-          onSave={this.handleSave}
+          configSelect={configSelect}
         />
         <LayoutRoot/>
       </div>
