@@ -133,7 +133,7 @@
         }
       },
       {
-        "text": "RU DI FOOK 如狄福",
+        "text": "${data.receiver_name}",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -142,7 +142,7 @@
         }
       },
       {
-        "text": "ICHIGOFUKU KITCHENBAR SDN BHD",
+        "text": "${data.city}",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -151,7 +151,7 @@
         }
       },
       {
-        "text": "NO. 2-1, JALAN PJU 5/4,",
+        "text": "${data.area_l1}",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -160,7 +160,7 @@
         }
       },
       {
-        "text": "DATARAN SUMWAY,",
+        "text": "${data.address_sign}",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -169,7 +169,7 @@
         }
       },
       {
-        "text": "47810 PETALING JAYA, SELANGOR.",
+        "text": "${data.address}",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -178,7 +178,7 @@
         }
       },
       {
-        "text": "Attn : A111",
+        "text": "Attn : ${预留字段}",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -187,7 +187,7 @@
         }
       },
       {
-        "text": "TEL : 016-323 9253 RUDY",
+        "text": "TEL : ${data.receiver_phone}",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -196,16 +196,7 @@
         }
       },
       {
-        "text": "FAX :",
-        "style": {
-          "position": "absolute",
-          "left": "230px",
-          "top": "225px",
-          "fontSize": "12px"
-        }
-      },
-      {
-        "text": "RU DI FOOK 如狄福",
+        "text": "${data.receiver_name}",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -214,7 +205,7 @@
         }
       },
       {
-        "text": "ICHIGOFUKU KITCHENBAR SDN BHD",
+        "text": "${data.city}",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -223,7 +214,7 @@
         }
       },
       {
-        "text": "NO. 2-1, JALAN PJU 5/4,",
+        "text": "${data.area_l1}",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -232,7 +223,7 @@
         }
       },
       {
-        "text": "DATARAN SUMWAY,",
+        "text": "${data.address_sign}",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -241,7 +232,7 @@
         }
       },
       {
-        "text": "47810 PETALING JAYA, SELANGOR.",
+        "text": "${data.address}",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -259,7 +250,7 @@
         }
       },
       {
-        "text": ": IV-16013",
+        "text": ": ${data.id}",
         "style": {
           "position": "absolute",
           "left": "650px",
@@ -332,7 +323,7 @@
         }
       },
       {
-        "text": ":",
+        "text": ": ${data.settle_way}",
         "style": {
           "position": "absolute",
           "left": "650px",
@@ -350,7 +341,7 @@
         }
       },
       {
-        "text": ":",
+        "text": ": ${data.receive_begin_time}",
         "style": {
           "position": "absolute",
           "left": "650px",
@@ -392,7 +383,7 @@
         "headStyle": {
           "textAlign": "center"
         },
-        "text": "${tableData.id}",
+        "text": "${tableData.number}",
         "style": {
           "textAlign": "center"
         }
