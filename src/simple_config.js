@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { Flex } from 'react-gm'
 import './style.less'
 import { printerJS } from './util'
-import { doPrint } from './do_print'
+import { doPrint, doPrintBatch } from './do_print'
 
 class SimpleConfig extends React.Component {
   constructor (props) {
@@ -29,19 +29,31 @@ class SimpleConfig extends React.Component {
 
   doRender = () => {
     const {config} = this.state
-    const {data, tableData} = this.props
-    this.$iframe.contentWindow.render({
-      data,
-      tableData,
-      config
-    })
+    const {data, tableData, isBatch} = this.props
+    if (isBatch) {
+      this.$iframe.contentWindow.renderBatch({
+        data,
+        tableData,
+        config
+      })
+    } else {
+      this.$iframe.contentWindow.render({
+        data,
+        tableData,
+        config
+      })
+    }
   }
 
   handleTestPrint = () => {
-    const {data, tableData} = this.props
+    const {data, tableData, isBatch} = this.props
     const {config} = this.state
 
-    doPrint({data, tableData, config})
+    if (isBatch) {
+      doPrintBatch({data, tableData, config})
+    } else {
+      doPrint({data, tableData, config})
+    }
   }
 
   render () {
@@ -63,8 +75,8 @@ class SimpleConfig extends React.Component {
 }
 
 SimpleConfig.propTypes = {
-  data: PropTypes.object.isRequired,
-  tableData: PropTypes.array.isRequired,
+  data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+  tableData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   config: PropTypes.object.isRequired
 }
 
