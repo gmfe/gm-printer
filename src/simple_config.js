@@ -32,8 +32,8 @@ class SimpleConfig extends React.Component {
     const {data, tableData, isBatch} = this.props
     if (isBatch) {
       this.$iframe.contentWindow.renderBatch({
-        data,
-        tableData,
+        datas: data,
+        tableDatas: tableData,
         config
       })
     } else {
@@ -50,7 +50,7 @@ class SimpleConfig extends React.Component {
     const {config} = this.state
 
     if (isBatch) {
-      doPrintBatch({data, tableData, config})
+      doPrintBatch({datas: data, tableDatas: tableData, config})
     } else {
       doPrint({data, tableData, config})
     }

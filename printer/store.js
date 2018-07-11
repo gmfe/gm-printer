@@ -255,10 +255,10 @@ class PrinterStore {
     }
 
     templateTable (text, i) {
-      // cache 下
-      if (templateCache[text]) {
-        return templateCache[text]
-      }
+      // cache 之后表格数据重复,所以不cache
+      // if (templateCache[text]) {
+      //   return templateCache[text]
+      // }
       try {
         templateCache[text] = _.template(text)({
           data: this.data,
