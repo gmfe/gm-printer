@@ -5,3 +5,5 @@ package-lock.json
 logs
 /.stylelintcache
 .eslintcache
+build/font/
+build/demo.js
