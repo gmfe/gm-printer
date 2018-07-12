@@ -133,7 +133,7 @@
         }
       },
       {
-        "text": "${data.receiver_name}",
+        "text": "RU DI FOOK 如狄福",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -142,7 +142,7 @@
         }
       },
       {
-        "text": "${data.city}",
+        "text": "ICHIGOFUKU KITCHENBAR SDN BHD",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -151,7 +151,7 @@
         }
       },
       {
-        "text": "${data.area_l1}",
+        "text": "NO. 2-1, JALAN PJU 5/4,",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -160,7 +160,7 @@
         }
       },
       {
-        "text": "${data.address_sign}",
+        "text": "DATARAN SUMWAY,",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -169,7 +169,7 @@
         }
       },
       {
-        "text": "${data.address}",
+        "text": "47810 PETALING JAYA, SELANGOR.",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -178,7 +178,7 @@
         }
       },
       {
-        "text": "Attn : ${预留字段}",
+        "text": "Attn : A111",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -187,7 +187,7 @@
         }
       },
       {
-        "text": "TEL : ${data.receiver_phone}",
+        "text": "TEL : 016-323 9253 RUDY",
         "style": {
           "position": "absolute",
           "left": "10px",
@@ -196,7 +196,16 @@
         }
       },
       {
-        "text": "${data.receiver_name}",
+        "text": "FAX :",
+        "style": {
+          "position": "absolute",
+          "left": "230px",
+          "top": "225px",
+          "fontSize": "12px"
+        }
+      },
+      {
+        "text": "RU DI FOOK 如狄福",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -205,7 +214,7 @@
         }
       },
       {
-        "text": "${data.city}",
+        "text": "ICHIGOFUKU KITCHENBAR SDN BHD",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -214,7 +223,7 @@
         }
       },
       {
-        "text": "${data.area_l1}",
+        "text": "NO. 2-1, JALAN PJU 5/4,",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -223,7 +232,7 @@
         }
       },
       {
-        "text": "${data.address_sign}",
+        "text": "DATARAN SUMWAY,",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -232,7 +241,7 @@
         }
       },
       {
-        "text": "${data.address}",
+        "text": "47810 PETALING JAYA, SELANGOR.",
         "style": {
           "position": "absolute",
           "left": "40%",
@@ -250,7 +259,7 @@
         }
       },
       {
-        "text": ": ${data.id}",
+        "text": ": IV-16013",
         "style": {
           "position": "absolute",
           "left": "650px",
@@ -323,7 +332,7 @@
         }
       },
       {
-        "text": ": ${data.settle_way}",
+        "text": ":",
         "style": {
           "position": "absolute",
           "left": "650px",
@@ -341,7 +350,7 @@
         }
       },
       {
-        "text": ": ${data.receive_begin_time}",
+        "text": ":",
         "style": {
           "position": "absolute",
           "left": "650px",
@@ -383,7 +392,7 @@
         "headStyle": {
           "textAlign": "center"
         },
-        "text": "${tableData.number}",
+        "text": "${tableData.id}",
         "style": {
           "textAlign": "center"
         }
@@ -464,56 +473,20 @@
         }
       },
       {
-        "text": "Notes:",
+        "text": "Remark:  Please return a original copy to Gdaily Fresh Sdn. Bhd.",
         "style": {
           "position": "absolute",
           "left": "10px",
-          "top": "30px",
+          "top": "90px",
           "fontSize": "12px"
         }
       },
       {
-        "text": "1. All Cheques should be crossed and make payable to",
+        "text": "I/We hereby confirmed and received to the above mentioned goods in a good order & condition.",
         "style": {
           "position": "absolute",
-          "left": "10px",
-          "top": "50px",
-          "fontSize": "12px"
-        }
-      },
-      {
-        "text": "GDAILY FRESH SDN. BHD.\u00a0\u00a0\u00a0(OCBC : 709-120054-4)",
-        "style": {
-          "position": "absolute",
-          "left": "18px",
-          "top": "65px",
-          "fontSize": "12px"
-        }
-      },
-      {
-        "text": "2. Received the above listed item in good order and condition.",
-        "style": {
-          "position": "absolute",
-          "left": "10px",
-          "top": "80px",
-          "fontSize": "12px"
-        }
-      },
-      {
-        "text": "3. Any claims on merchandise delivered must be lodged at the time of receipt.",
-        "style": {
-          "position": "absolute",
-          "left": "10px",
-          "top": "95px",
-          "fontSize": "12px"
-        }
-      },
-      {
-        "text": "4. Account not paid within terms are subject to a 1.5% monthly finance charge.",
-        "style": {
-          "position": "absolute",
-          "left": "10px",
-          "top": "110px",
+          "left": "475px",
+          "top": "90px",
           "fontSize": "12px"
         }
       },

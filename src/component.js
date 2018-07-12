@@ -1,354 +1,339 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from 'classnames';
-import _ from 'lodash';
-import {fontSizeList, borderStyleList} from "./util";
+import React from 'react'
+import PropTypes from 'prop-types'
+import classNames from 'classnames'
+import _ from 'lodash'
+import { fontSizeList, borderStyleList } from './util'
 
 class Text extends React.Component {
-    handleChange = (e) => {
-        const {onChange} = this.props;
-        onChange(e.target.value);
-    };
+  handleChange = (e) => {
+    const {onChange} = this.props
+    onChange(e.target.value)
+  }
 
-    render() {
-        const {disabled, value, block, style} = this.props;
-        return (
-            <input
-                disabled={disabled}
-                type="text"
-                className={classNames({
-                    'gm-block': block
-                })}
-                value={value}
-                onChange={this.handleChange}
-                style={Object.assign({
-                    width: block ? '100%' : 'auto',
-                    height: '19px'
-                }, style)}
-            />
-        );
-    }
+  render () {
+    const {disabled, value, block, style} = this.props
+    return (
+      <input
+        disabled={disabled}
+        type='text'
+        className={classNames({
+          'gm-block': block
+        })}
+        value={value}
+        onChange={this.handleChange}
+        style={Object.assign({
+          width: block ? '100%' : 'auto',
+          height: '19px'
+        }, style)}
+      />
+    )
+  }
 }
 
 Text.propTypes = {
-    disabled: PropTypes.bool,
-    block: PropTypes.bool,
-    value: PropTypes.string,
-    onChange: PropTypes.func.isRequired
-};
+  disabled: PropTypes.bool,
+  block: PropTypes.bool,
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired
+}
 
 // 10px => 10  10% => 10%
 class TextPX extends React.Component {
-    handleChange = (value) => {
-        const {onChange} = this.props;
-        if (value === '') {
-            onChange('');
-        } else if (value.endsWith('%')) {
-            onChange(value);
-        } else {
-            onChange(value + 'px');
-        }
-    };
-
-    render() {
-        const {disabled, value = '', block} = this.props;
-
-        let nValue = value;
-        if (value.endsWith('px')) {
-            nValue = value.replace(/px/g, '');
-        }
-
-        return (
-            <Text disabled={disabled} block={block} value={nValue} onChange={this.handleChange}
-                  style={{width: '50px'}}/>
-        );
+  handleChange = (value) => {
+    const {onChange} = this.props
+    if (value === '') {
+      onChange('')
+    } else if (value.endsWith('%')) {
+      onChange(value)
+    } else {
+      onChange(value + 'px')
     }
+  }
+
+  render () {
+    const {disabled, value = '', block} = this.props
+
+    let nValue = value
+    if (value.endsWith('px')) {
+      nValue = value.replace(/px/g, '')
+    }
+
+    return (
+      <Text disabled={disabled} block={block} value={nValue} onChange={this.handleChange} style={{width: '50px'}}/>
+    )
+  }
 }
 
 TextPX.propTypes = {
-    disabled: PropTypes.bool,
-    block: PropTypes.bool,
-    value: PropTypes.string,
-    onChange: PropTypes.func.isRequired
-};
+  disabled: PropTypes.bool,
+  block: PropTypes.bool,
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired
+}
 
 class Fonter extends React.Component {
-    handleChange = (type, value) => {
-        const {style, onChange} = this.props;
+  handleChange = (type, value) => {
+    const {style, onChange} = this.props
 
-        onChange({
-            ...style,
-            [type]: value
-        });
-    };
+    onChange({
+      ...style,
+      [type]: value
+    })
+  }
 
-    render() {
-        const {style} = this.props;
+  render () {
+    const {style} = this.props
 
-        return (
-            <span className="gm-printer-config-fonter">
-                <select
-                    value={style.fontSize || '14px'}
-                    onChange={e => this.handleChange('fontSize', e.target.value)}
-                >
-                    {_.map(fontSizeList, v => <option key={v} value={v}>{v.slice(0, -2)}</option>)}
-                </select>
-                &nbsp;
-                <span
-                    className={classNames("gm-printer-config-btn", {
-                        active: style.fontWeight === 'bold'
-                    })}
-                    style={{fontWeight: 'bold'}}
-                    onClick={() => this.handleChange('fontWeight', style.fontWeight === 'bold' ? '' : 'bold')}
-                >
-                    B
-                </span>
-                <span
-                    className={classNames("gm-printer-config-btn", {
-                        active: style.fontStyle === 'italic'
-                    })}
-                    style={{fontStyle: 'italic'}}
-                    onClick={() => this.handleChange('fontStyle', style.fontStyle === 'italic' ? '' : 'italic')}
-                >
-                    I
-                </span>
-                <span
-                    className={classNames("gm-printer-config-btn", {
-                        active: style.textDecoration === 'underline'
-                    })}
-                    style={{textDecoration: 'underline'}}
-                    onClick={() => this.handleChange('textDecoration', style.textDecoration === 'underline' ? '' : 'underline')}
-                >
-                    U
-                </span>
-            </span>
-        );
-    }
+    return (
+      <span className='gm-printer-config-fonter'>
+        <select value={style.fontSize || '14px'} onChange={e => this.handleChange('fontSize', e.target.value)}>
+          {_.map(fontSizeList, v => <option key={v} value={v}>{v.slice(0, -2)}</option>)}
+        </select>
+        &nbsp;
+        <span
+          className={classNames('gm-printer-config-btn', {
+            active: style.fontWeight === 'bold'
+          })}
+          style={{fontWeight: 'bold'}}
+          onClick={() => this.handleChange('fontWeight', style.fontWeight === 'bold' ? '' : 'bold')}
+        >
+          B
+        </span>
+        <span
+          className={classNames('gm-printer-config-btn', {active: style.fontStyle === 'italic'})}
+          style={{fontStyle: 'italic'}}
+          onClick={() => this.handleChange('fontStyle', style.fontStyle === 'italic' ? '' : 'italic')}
+        >
+          I
+        </span>
+        <span
+          className={classNames('gm-printer-config-btn', {active: style.textDecoration === 'underline'})}
+          style={{textDecoration: 'underline'}}
+          onClick={() => this.handleChange('textDecoration', style.textDecoration === 'underline' ? '' : 'underline')}
+        >
+          U
+        </span>
+      </span>
+    )
+  }
 }
 
 Fonter.propTypes = {
-    // fontSize: PropTypes.string,
-    // fontWeight: PropTypes.string,
-    // fontStyle: PropTypes.string,
-    // textDecoration: PropTypes.string,
-    style: PropTypes.object,
-    onChange: PropTypes.func.isRequired
-};
+  // fontSize: PropTypes.string,
+  // fontWeight: PropTypes.string,
+  // fontStyle: PropTypes.string,
+  // textDecoration: PropTypes.string,
+  style: PropTypes.object,
+  onChange: PropTypes.func.isRequired
+}
 
 class TextAlign extends React.Component {
-    handleChange = (value) => {
-        const {onChange} = this.props;
-        onChange(value);
-    };
+  handleChange = (value) => {
+    const {onChange} = this.props
+    onChange(value)
+  }
 
-    render() {
-        const {value} = this.props;
-        return (
-            <span className="gm-printer-config-text-align">
-                <span
-                    className={classNames("gm-printer-config-btn", {
-                        active: value === 'left'
-                    })}
-                    onClick={() => this.handleChange('left')}
-                ><i className="glyphicon glyphicon-align-left"/></span>
-                <span
-                    className={classNames("gm-printer-config-btn", {
-                        active: value === 'center'
-                    })}
-                    onClick={() => this.handleChange('center')}
-                ><i className="glyphicon glyphicon-align-center"/></span>
-                <span
-                    className={classNames("gm-printer-config-btn", {
-                        active: value === 'right'
-                    })}
-                    onClick={() => this.handleChange('right')}
-                ><i className="glyphicon glyphicon-align-right"/></span>
-            </span>
-        );
-    }
+  render () {
+    const {value} = this.props
+    return (
+      <span className='gm-printer-config-text-align'>
+        <span
+          className={classNames('gm-printer-config-btn', {
+            active: value === 'left'
+          })}
+          onClick={() => this.handleChange('left')}
+        ><i className='glyphicon glyphicon-align-left'/></span>
+        <span
+          className={classNames('gm-printer-config-btn', {
+            active: value === 'center'
+          })}
+          onClick={() => this.handleChange('center')}
+        ><i className='glyphicon glyphicon-align-center'/></span>
+        <span
+          className={classNames('gm-printer-config-btn', {
+            active: value === 'right'
+          })}
+          onClick={() => this.handleChange('right')}
+        ><i className='glyphicon glyphicon-align-right'/></span>
+      </span>
+    )
+  }
 }
 
 TextAlign.propTypes = {
-    value: PropTypes.string,
-    onChange: PropTypes.func.isRequired
-};
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired
+}
 
 class Position extends React.Component {
-    handleChange = (type, value) => {
-        const {style, onChange} = this.props;
+  handleChange = (type, value) => {
+    const {style, onChange} = this.props
 
-        // const map = {
-        //     left: 'right',
-        //     right: 'left',
-        //     top: 'bottom',
-        //     bottom: 'top'
-        // };
+    // const map = {
+    //     left: 'right',
+    //     right: 'left',
+    //     top: 'bottom',
+    //     bottom: 'top'
+    // };
 
-        onChange({
-            ...style,
-            [type]: value
-        });
-    };
+    onChange({
+      ...style,
+      [type]: value
+    })
+  }
 
-    render() {
-        const {style: {top, right, bottom, left}} = this.props;
+  render () {
+    const {style: {top, right, bottom, left}} = this.props
 
-        return (
-            <span>
-                上 <TextPX value={top} onChange={this.handleChange.bind(this, 'top')}/>
-                &nbsp;
-                左 <TextPX value={left} onChange={this.handleChange.bind(this, 'left')}/>
-                &nbsp;
-                下 <TextPX value={bottom} onChange={this.handleChange.bind(this, 'bottom')}/>
-                &nbsp;
-                右 <TextPX value={right} onChange={this.handleChange.bind(this, 'right')}/>
-            </span>
-        );
-    }
+    return (
+      <span>
+        上 <TextPX value={top} onChange={this.handleChange.bind(this, 'top')}/>
+        &nbsp;
+        左 <TextPX value={left} onChange={this.handleChange.bind(this, 'left')}/>
+        &nbsp;
+        下 <TextPX value={bottom} onChange={this.handleChange.bind(this, 'bottom')}/>
+        &nbsp;
+        右 <TextPX value={right} onChange={this.handleChange.bind(this, 'right')}/>
+      </span>
+    )
+  }
 }
 
 Position.propTypes = {
-    style: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired
-};
+  style: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired
+}
 
 class Gap extends React.Component {
-    handleChange = (type, value) => {
-        const {style, onChange} = this.props;
+  handleChange = (type, value) => {
+    const {style, onChange} = this.props
 
-        onChange({
-            ...style,
-            [type]: value
-        });
-    };
+    onChange({
+      ...style,
+      [type]: value
+    })
+  }
 
-    render() {
-        const {disabled, style: {paddingTop, paddingRight, paddingBottom, paddingLeft}} = this.props;
+  render () {
+    const {disabled, style: {paddingTop, paddingRight, paddingBottom, paddingLeft}} = this.props
 
-        return (
-            <span>
-                上 <TextPX disabled={disabled} value={paddingTop} onChange={this.handleChange.bind(this, 'paddingTop')}/>
-                &nbsp;
-                左 <TextPX disabled={disabled} value={paddingLeft}
-                          onChange={this.handleChange.bind(this, 'paddingLeft')}/>
-                &nbsp;
-                下 <TextPX disabled={disabled} value={paddingBottom}
-                          onChange={this.handleChange.bind(this, 'paddingBottom')}/>
-                &nbsp;
-                右 <TextPX disabled={disabled} value={paddingRight}
-                          onChange={this.handleChange.bind(this, 'paddingRight')}/>
-            </span>
-        );
-    }
+    return (
+      <span>
+        上 <TextPX disabled={disabled} value={paddingTop} onChange={this.handleChange.bind(this, 'paddingTop')}/>
+        &nbsp;
+        左 <TextPX disabled={disabled} value={paddingLeft} onChange={this.handleChange.bind(this, 'paddingLeft')}/>
+        &nbsp;
+        下 <TextPX disabled={disabled} value={paddingBottom} onChange={this.handleChange.bind(this, 'paddingBottom')}/>
+        &nbsp;
+        右 <TextPX disabled={disabled} value={paddingRight} onChange={this.handleChange.bind(this, 'paddingRight')}/>
+      </span>
+    )
+  }
 }
 
 Gap.propTypes = {
-    disabled: PropTypes.bool,
-    style: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired
-};
+  disabled: PropTypes.bool,
+  style: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired
+}
 
 class Line extends React.Component {
-    handleChange = (type, value) => {
-        const {style, onChange} = this.props;
+  handleChange = (type, value) => {
+    const {style, onChange} = this.props
 
-        onChange({
-            ...style,
-            [type]: value
-        });
-    };
+    onChange({
+      ...style,
+      [type]: value
+    })
+  }
 
-    render() {
-        const {style: {borderTopWidth, borderTopStyle, width}} = this.props;
+  render () {
+    const {style: {borderTopWidth, borderTopStyle, width}} = this.props
 
-        // TODO 横竖线  type select
-        return (
-            <span>
-                宽度 <Text value={width} onChange={this.handleChange.bind(this, 'width')} style={{width: '50px'}}/>
-                &nbsp;
-                粗细 <TextPX value={borderTopWidth} onChange={this.handleChange.bind(this, 'borderTopWidth')}/>
-                &nbsp;
-                类型 <select value={borderTopStyle} onChange={e => this.handleChange('borderTopStyle', e.target.value)}>
-                {_.map(borderStyleList, v => <option key={v.value} value={v.value}>{v.text}</option>)}
-            </select>
-            </span>
-        );
-    }
+    // TODO 横竖线  type select
+    return (
+      <span>
+        宽度 <Text value={width} onChange={this.handleChange.bind(this, 'width')} style={{width: '50px'}}/>
+        &nbsp;
+        粗细 <TextPX value={borderTopWidth} onChange={this.handleChange.bind(this, 'borderTopWidth')}/>
+        &nbsp;
+        类型 <select value={borderTopStyle} onChange={e => this.handleChange('borderTopStyle', e.target.value)}>
+          {_.map(borderStyleList, v => <option key={v.value} value={v.value}>{v.text}</option>)}</select>
+      </span>
+    )
+  }
 }
 
 Line.propTypes = {
-    style: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired
-};
+  style: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired
+}
 
 class Style extends React.Component {
-    handleChange = (type, value) => {
-        const {onChange, style} = this.props;
+  handleChange = (type, value) => {
+    const {onChange, style} = this.props
 
-        onChange({
-            ...style,
-            [type]: value
-        });
-    };
+    onChange({
+      ...style,
+      [type]: value
+    })
+  }
 
-    handleStyle = (style) => {
-        const {onChange} = this.props;
-        onChange(style);
-    };
+  handleStyle = (style) => {
+    const {onChange} = this.props
+    onChange(style)
+  }
 
-    render() {
-        const {disabled, style, size, font, line, gap, position} = this.props;
+  render () {
+    const {disabled, style, size, font, line, gap, position} = this.props
 
-        return (
-            <div>
-                {size && (
-                    <div>
-                        大小: 高 <TextPX disabled={disabled} value={style.height}
-                                      onChange={this.handleChange.bind(this, 'height')}/>
-                        &nbsp;
-                        宽 <TextPX disabled={disabled} value={style.width}
-                                  onChange={this.handleChange.bind(this, 'width')}/>
-                    </div>
-                )}
-                {font && (
-                    <div>
-                        格式: <Fonter style={style} onChange={this.handleStyle}/>
-                        <TextAlign value={style.textAlign}
-                                   onChange={this.handleChange.bind(this, 'textAlign')}/>
-                    </div>
-                )}
-                {line && (
-                    <div>
-                        线条: <Line style={style} onChange={this.handleStyle}/>
-                    </div>
-                )}
-                {gap && (
-                    <div>
-                        边距: <Gap disabled={disabled} style={style} onChange={this.handleStyle}/>
-                    </div>
-                )}
-                {position && (
-                    <div>
-                        位置: <Position style={style} onChange={this.handleStyle}/>
-                    </div>
-                )}
-            </div>
-        );
-    }
+    return (
+      <div>
+        {size && (
+          <div>
+            大小: 高 <TextPX disabled={disabled} value={style.height} onChange={this.handleChange.bind(this, 'height')}/>
+            &nbsp;
+            宽 <TextPX disabled={disabled} value={style.width} onChange={this.handleChange.bind(this, 'width')}/>
+          </div>
+        )}
+        {font && (
+          <div>
+            格式: <Fonter style={style} onChange={this.handleStyle}/>
+            <TextAlign value={style.textAlign} onChange={this.handleChange.bind(this, 'textAlign')}/>
+          </div>
+        )}
+        {line && (
+          <div>
+            线条: <Line style={style} onChange={this.handleStyle}/>
+          </div>
+        )}
+        {gap && (
+          <div>
+            边距: <Gap disabled={disabled} style={style} onChange={this.handleStyle}/>
+          </div>
+        )}
+        {position && (
+          <div>
+            位置: <Position style={style} onChange={this.handleStyle}/>
+          </div>
+        )}
+      </div>
+    )
+  }
 }
 
 Style.propTypes = {
-    disabled: PropTypes.bool,
-    style: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired,
-    size: PropTypes.bool,
-    font: PropTypes.bool,
-    gap: PropTypes.bool,
-    position: PropTypes.bool,
-    line: PropTypes.bool
-};
+  disabled: PropTypes.bool,
+  style: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired,
+  size: PropTypes.bool,
+  font: PropTypes.bool,
+  gap: PropTypes.bool,
+  position: PropTypes.bool,
+  line: PropTypes.bool
+}
 
 export {
-    Style,
-    Text
-};
+  Style,
+  Text
+}
