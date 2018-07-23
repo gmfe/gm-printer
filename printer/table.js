@@ -50,7 +50,7 @@ class TableBefore extends React.Component {
                 <td
                   style={col.style}
                   key={j}
-                >{printerStore.templateTable(col.text, i)}</td>
+                >{printerStore.templateTable(col.text, i, data)}</td>
               ))}
             </tr>
           ))}
@@ -84,7 +84,7 @@ class TableReady extends React.Component {
                 <td
                   style={col.style}
                   key={j}
-                >{printerStore.templateTable(col.text, i)}</td>
+                >{printerStore.templateTable(col.text, i, data)}</td>
               ))}
             </tr>
           ))}

@@ -383,7 +383,7 @@
         "headStyle": {
           "textAlign": "center"
         },
-        "text": "${tableData.number}",
+        "text": "${tableData.No}",
         "style": {
           "textAlign": "center"
         }

@@ -1,20 +1,29 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import delivery from '../demo/delivery.json'
-import invoice from '../demo/config.json'
+import invoice from './invoice.json'
 import data from '../demo/data'
 import moment from 'moment'
-import { Storage, Tip, LayoutRoot, Select, Option } from 'react-gm'
+import { LayoutRoot, Select, Option } from 'react-gm'
 import '../node_modules/react-gm/src/index.less'
 import 'normalize.css/normalize.css'
 import { SimpleConfig } from '../src'
 import 'gm-xfont/iconfont.css'
+import _ from 'lodash'
 
 const config = {
   delivery,
   invoice
 }
 
+const details = _.map(_.range(50), (val, i) => {
+  return {
+    'spu_name': '宽叶菠',
+    'pinlei_title': '菠菜' + i,
+    'No': i
+  }
+})
+data.details = details
 const nData = {
   ...data,
 

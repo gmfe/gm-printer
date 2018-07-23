@@ -4,8 +4,6 @@ import {pageSizeMap} from './util'
 
 configure({enforceActions: true})
 
-let templateCache = {}
-
 class PrinterStore {
     @observable
     size = pageSizeMap.A4.size;
@@ -70,8 +68,6 @@ class PrinterStore {
       this.page = []
       this.data = {}
       this.tableData = []
-
-      templateCache = {}
     }
 
     @action
@@ -254,18 +250,16 @@ class PrinterStore {
       }
     }
 
-    templateTable (text, i) {
+    templateTable (text, i, tableData) {
       // cache 之后表格数据重复,所以不cache
       // if (templateCache[text]) {
       //   return templateCache[text]
       // }
       try {
-        templateCache[text] = _.template(text)({
+        return _.template(text)({
           data: this.data,
-          tableData: this.tableData[i]
+          tableData: tableData[i]
         })
-
-        return templateCache[text]
       } catch (err) {
         console.warn(err)
         return text
