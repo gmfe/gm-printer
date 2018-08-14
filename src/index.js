@@ -1,10 +1,7 @@
-import PrinterConfig from './config'
-import SimpleConfig from './simple_config'
-import {doPrint, doPrintBatch} from './do_print'
+import PrinterEdit from './edit'
+import { Printer, BatchPrinter } from './printer'
 
 export {
-  doPrint,
-  doPrintBatch,
-  PrinterConfig,
-  SimpleConfig
+  Printer, BatchPrinter,
+  PrinterEdit
 }

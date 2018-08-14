@@ -4,8 +4,7 @@ const path = require('path')
 module.exports = {
   mode: 'development',
   entry: {
-    demo: './demo/index.js',
-    printer: './printer/index.js'
+    demo: './demo/index.js'
   },
   output: {
     path: path.resolve('build'),
@@ -19,7 +18,7 @@ module.exports = {
     }, {
       test: /\.less$/,
       use: [
-        'style-loader',
+        // 'style-loader',
         'css-loader',
         'postcss-loader',
         'less-loader'
@@ -27,7 +26,7 @@ module.exports = {
     }, {
       test: /\.css$/,
       use: [
-        'style-loader',
+        // 'style-loader',
         'css-loader'
       ]
     }, {

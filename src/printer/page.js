@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {observer} from 'mobx-react'
+import { observer } from 'mobx-react'
 import printerStore from './store'
 import ReactDOM from 'react-dom'
-import {getHeight} from './util'
+import { getHeight } from '../util'
 
 @observer
 class Page extends React.Component {

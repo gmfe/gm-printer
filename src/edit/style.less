@@ -1,0 +1,69 @@
+.gm-printer-edit {
+  .gm-printer-edit-header-fixed {
+    height: 85px;
+  }
+
+  .gm-printer-edit-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    background: whitesmoke;
+
+    .gm-printer-edit-header-top {
+      background: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .gm-printer-edit-header-bottom {
+      text-align: center;
+      padding: 10px;
+    }
+
+    span.gm-printer-edit-btn {
+      cursor: pointer;
+      padding: 0 5px;
+      border: 1px solid transparent;
+
+      &:hover {
+        border: 1px solid rgba(51, 51, 51, 0.1);
+      }
+
+      &.active {
+        border: 1px solid rgba(51, 51, 51, 0.1);
+        background: rgba(51, 51, 51, 0.1);
+      }
+    }
+
+    select {
+      outline: none;
+      border: none;
+    }
+
+    input {
+      outline: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-bottom: 1px solid black;
+      background: transparent;
+    }
+  }
+
+  .gm-printer-edit-content {
+    position: relative;
+  }
+}
+
+@media print {
+  .gm-printer-edit-header-fixed {
+    display: none;
+  }
+
+  .gm-printer-edit-header {
+    display: none;
+  }
+}

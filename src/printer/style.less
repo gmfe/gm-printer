@@ -1,0 +1,154 @@
+html,
+body {
+  background: whitesmoke;
+  font-size: 14px;
+}
+
+.gm-printer {
+  margin: 10px auto;
+  background: white;
+}
+
+// block
+.gm-printer-block {
+  cursor: move;
+
+  &:hover,
+  &.active {
+    outline: 1px solid red;
+  }
+}
+
+// page
+.gm-printer-page {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+
+  + .gm-printer-page {
+    page-break-before: always;
+    margin-top: 10px;
+  }
+
+  &-inner {
+    position: relative;
+    outline: 1px dotted red;
+  }
+}
+
+// panel
+.gm-printer-panel {
+  position: relative;
+
+  &::before {
+    content: attr(data-placeholder);
+    position: absolute;
+    font-style: italic;
+    font-size: 3em;
+    color: rgba(0, 0, 0, 0.1);
+    left: calc(50% - 1.5em);
+    top: calc(50% - 0.5em);
+  }
+}
+
+.gm-printer-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+// table
+.gm-printer-table {
+  position: relative;
+  outline: 1px dotted blue;
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+
+    td,
+    th {
+      border: 1px solid black;
+    }
+  }
+
+  &.gm-printer-table-style-1 {
+    table {
+      th,
+      td {
+        border: 1px solid transparent;
+      }
+
+      th {
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
+      }
+    }
+  }
+
+  &::before {
+    content: "表格";
+    position: absolute;
+    font-style: italic;
+    font-size: 3em;
+    color: rgba(0, 0, 0, 0.1);
+    left: calc(50% - 1.5em);
+    top: calc(50% - 0.5em);
+  }
+}
+
+// fixed
+.gm-printer-fixed {
+  outline: 1px dotted black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.gm-printer-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: rgba(0, 0, 0, 0.1);
+}
+
+@media print {
+  * {
+    outline: none !important;
+  }
+
+  .gm-printer {
+    margin: 0;
+  }
+
+  .gm-printer-page {
+    box-shadow: none;
+
+    + .gm-printer-page {
+      margin-top: 0;
+    }
+  }
+
+  // panel
+  .gm-printer-panel {
+    &::before {
+      display: none;
+    }
+  }
+
+  .gm-printer-table {
+    &::before {
+      display: none;
+    }
+  }
+
+  .gm-printer-label {
+    display: none;
+  }
+}
+
+@page {
+  margin: 0;
+}

@@ -1,29 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import delivery from '../demo/delivery.json'
-import invoice from './invoice.json'
+import config from '../demo/config.json'
 import data from '../demo/data'
 import moment from 'moment'
-import { LayoutRoot, Select, Option } from 'react-gm'
-import '../node_modules/react-gm/src/index.less'
 import 'normalize.css/normalize.css'
-import { SimpleConfig } from '../src'
-import 'gm-xfont/iconfont.css'
-import _ from 'lodash'
+import { PrinterEdit } from '../src'
 
-const config = {
-  delivery,
-  invoice
-}
-
-const details = _.map(_.range(50), (val, i) => {
-  return {
-    'spu_name': '宽叶菠',
-    'pinlei_title': '菠菜' + i,
-    'No': i
-  }
-})
-data.details = details
 const nData = {
   ...data,
 
@@ -35,29 +17,26 @@ class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      config: 'invoice'
+      config
     }
   }
 
-  handleChangeTable = (config) => {
-    this.setState({config})
+  handleChange = (config) => {
+    console.log(config)
+    this.setState({
+      config
+    })
   }
 
   render () {
-    const configSelect = <Select value={this.state.config} onChange={this.handleChangeTable}>
-      <Option value='invoice'>invoice</Option>
-      <Option value='delivery'>delivery</Option>
-    </Select>
     return (
-      <div style={{height: '100vh'}}>
-        <SimpleConfig
-          key={this.state.config}
+      <div>
+        <PrinterEdit
           data={nData}
-          config={config[this.state.config]}
+          config={this.state.config}
           tableData={nData.details}
-          configSelect={configSelect}
+          onChange={this.handleChange}
         />
-        <LayoutRoot/>
       </div>
     )
   }
