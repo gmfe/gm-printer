@@ -1,17 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import editStore from './store'
-import { Printer } from '../printer'
+import { Printer, doPrint } from '../printer'
 import EditHeader from './edit_header'
 import editCSS from './style.less'
 import _ from 'lodash'
 import { getStyleWithDiff, insertCSS } from '../util'
 import { blockTypeList, panelList } from '../config'
-import { doPrint } from '../printer/do_print'
 
 insertCSS(editCSS)
 
-class Index extends React.Component {
+class Edit extends React.Component {
   constructor (props) {
     super(props)
     Printer.setIsEdit(true)
@@ -124,13 +123,13 @@ class Index extends React.Component {
   }
 }
 
-Index.propTypes = {
+Edit.propTypes = {
   data: PropTypes.object.isRequired,
   tableData: PropTypes.array.isRequired,
   config: PropTypes.object.isRequired,
   onChange: PropTypes.func
 }
 
-Index.deaultProps = {}
+Edit.deaultProps = {}
 
-export default Index
+export default Edit

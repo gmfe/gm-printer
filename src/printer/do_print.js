@@ -60,7 +60,7 @@ function doPrint ({data, tableData, config}) {
   toDoPrint({data, tableData, config})
 }
 
-function doPrintBatch ({datas, tableDatas, config}) {
+function doBatchPrint ({datas, tableDatas, config}) {
   init()
 
   toDoPrintBatch({datas, tableDatas, config})
@@ -68,5 +68,5 @@ function doPrintBatch ({datas, tableDatas, config}) {
 
 export {
   doPrint,
-  doPrintBatch
+  doBatchPrint
 }

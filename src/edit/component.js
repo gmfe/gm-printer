@@ -143,7 +143,7 @@ class TextAlign extends React.Component {
   render () {
     const {style: {textAlign}} = this.props
 
-    // TODO
+    // TODO icon
     return (
       <span className='gm-printer-edit-text-align'>
         <span
@@ -219,7 +219,6 @@ class Line extends React.Component {
   render () {
     const {style: {borderTopWidth, borderTopStyle, width}} = this.props
 
-    // TODO 横竖线  type select
     return (
       <span>
         宽 <TextPX value={width} onChange={this.handleChange.bind(this, 'width')} style={{width: '35px'}}/>
@@ -266,6 +265,7 @@ Size.propTypes = {
 }
 
 export {
+  TextPX,
   TextAlign,
   Separator,
   Fonter,

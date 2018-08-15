@@ -1,7 +1,8 @@
 import Printer from './printer'
 import BatchPrinter from './batch_printer'
+import { doPrint, doBatchPrint } from './do_print'
 
 export {
-  Printer,
-  BatchPrinter
+  doPrint, doBatchPrint,
+  Printer, BatchPrinter
 }
