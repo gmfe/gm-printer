@@ -15,16 +15,6 @@ class Block extends React.Component {
     }
   }
 
-  componentDidMount () {
-    const {name, onChange} = this.props
-
-    window.document.addEventListener('gm-printer-block-config-broadcast', e => {
-      if (e.detail.name === name) {
-        onChange(e.detail.config)
-      }
-    })
-  }
-
   handleDragStart = ({clientX, clientY}) => {
     const {config, name} = this.props
 
@@ -33,8 +23,7 @@ class Block extends React.Component {
       clientY
     })
 
-    printerStore.setEditActive(name)
-
+    // TODO
     window.document.dispatchEvent(new window.CustomEvent('gm-printer-block-config-set', {
       detail: {
         name,
@@ -44,7 +33,7 @@ class Block extends React.Component {
   }
 
   handleDragEnd = ({clientX, clientY}) => {
-    const {name, config, onChange} = this.props
+    const {name, config} = this.props
 
     const diffX = clientX - this.state.clientX
     const diffY = clientY - this.state.clientY
@@ -53,8 +42,7 @@ class Block extends React.Component {
 
     const newConfig = Object.assign({}, config, {style: newStyle})
 
-    onChange(newConfig)
-
+    // TODO
     window.document.dispatchEvent(new window.CustomEvent('gm-printer-block-style-set', {
       detail: {
         name,
@@ -63,15 +51,12 @@ class Block extends React.Component {
     }))
   }
 
-  handleClick = (e) => {
-    const {config, name} = this.props
+  handleClick = () => {
+    const {name} = this.props
 
-    printerStore.setEditActive(name)
-
-    window.document.dispatchEvent(new window.CustomEvent('gm-printer-block-config-set', {
+    window.document.dispatchEvent(new window.CustomEvent('gm-printer-select', {
       detail: {
-        name,
-        config
+        selected: name
       }
     }))
   }
@@ -88,7 +73,6 @@ class Block extends React.Component {
     let content = null
     if (!type || type === 'text') {
       content = printerStore.template(text, pageIndex)
-
     } else if (type === 'line') {
       content = null
     } else if (type === 'image') {
@@ -100,7 +84,7 @@ class Block extends React.Component {
         {...rest}
         style={style}
         className={classNames('gm-printer-block', className, {
-          active: name === printerStore.editActive
+          active: name === printerStore.selected
         })}
         draggable
         onDragStart={this.handleDragStart}
@@ -116,8 +100,7 @@ class Block extends React.Component {
 Block.propTypes = {
   name: PropTypes.string.isRequired,
   config: PropTypes.object.isRequired,
-  pageIndex: PropTypes.number.isRequired,
-  onChange: PropTypes.func.isRequired
+  pageIndex: PropTypes.number.isRequired
 }
 
 export default Block

@@ -1,77 +1,75 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import editStore from './store'
+import { toJS } from 'mobx'
 import { Printer, doPrint } from '../printer'
 import EditHeader from './edit_header'
 import editCSS from './style.less'
 import _ from 'lodash'
-import { getStyleWithDiff, insertCSS } from '../util'
+import { getStyleWithDiff, insertCSS, getBlockName } from '../util'
 import { blockTypeList, panelList } from '../config'
+import { observer } from 'mobx-react/index'
 
 insertCSS(editCSS)
 
+@observer
 class Edit extends React.Component {
   constructor (props) {
     super(props)
-    Printer.setIsEdit(true)
+
+    editStore.setConfig(props.config)
   }
 
   componentDidMount () {
-    window.document.addEventListener('gm-printer-block-config-set', e => {
-      const {detail: {config, name}} = e
+    window.document.addEventListener('gm-printer-select', e => {
+      const {selected} = e.detail
 
-      editStore.setName(name)
-      editStore.setConfig(config)
+      editStore.setSelected(selected)
     })
 
-    window.document.addEventListener('keydown', e => {
-      if (!editStore.name || !e.code.startsWith('Arrow')) {
-        return
-      }
+    window.document.addEventListener('keydown', this.handleKeyDown)
+  }
 
-      e.preventDefault()
+  handleKeyDown = (e) => {
+    if (!(editStore.computedIsSelectBlock && e.code.startsWith('Arrow'))) {
+      return
+    }
 
-      let diffX = 0
-      let diffY = 0
+    e.preventDefault()
 
-      if (e.code === 'ArrowLeft') {
-        diffX -= 1
-      } else if (e.code === 'ArrowUp') {
-        diffY -= 1
-      } else if (e.code === 'ArrowRight') {
-        diffX += 1
-      } else if (e.code === 'ArrowDown') {
-        diffY += 1
-      }
+    let diffX = 0
+    let diffY = 0
 
-      const newStyle = getStyleWithDiff(editStore.data.config.style, diffX, diffY)
+    if (e.code === 'ArrowLeft') {
+      diffX -= 1
+    } else if (e.code === 'ArrowUp') {
+      diffY -= 1
+    } else if (e.code === 'ArrowRight') {
+      diffX += 1
+    } else if (e.code === 'ArrowDown') {
+      diffY += 1
+    }
 
-      const newConfig = Object.assign({}, editStore.data.config, {
-        style: newStyle
-      })
+    const newStyle = getStyleWithDiff(editStore.computedSelectedInfo.style, diffX, diffY)
 
-      editStore.setConfigAndBroadcast(newConfig)
-    })
+    editStore.setConfigBlock('style', newStyle)
   }
 
   // TODO
   handleSave = () => {
-    console.log(Printer.getConfig())
   }
 
   handleInsert = (type) => {
-    window.document.dispatchEvent(new window.CustomEvent('gm-printer-block-insert', {
-      detail: {
-        panel: editStore.insertPanel,
-        type
-      }
-    }))
+    const panel = editStore.insertPanel
+
+    editStore.addConfigBlock(panel, type)
+    editStore.setSelected(getBlockName(panel, editStore.config[panel].blocks.length - 1))
   }
 
   handleTestPrint = () => {
-    const {config, data, tableData} = this.props
+    const {data, tableData} = this.props
     doPrint({
-      config,
+      config: toJS(editStore.config),
       data,
       tableData
     })
@@ -79,9 +77,11 @@ class Edit extends React.Component {
 
   render () {
     const {
-      data, tableData,
-      config
+      data, tableData
     } = this.props
+
+    // Printer config 的 高度调整需要重新 render ，可把高度做key
+
     return (
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header-fixed'/>
@@ -112,7 +112,8 @@ class Edit extends React.Component {
         </div>
         <div className='gm-printer-edit-content'>
           <Printer
-            config={config}
+            selected={editStore.selected}
+            config={editStore.config}
             data={data}
             tableData={tableData}
             onChange={this.handleChange}

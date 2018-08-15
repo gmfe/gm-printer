@@ -1,7 +1,6 @@
 import normalizeCSS from 'normalize.css/normalize.css'
 import printerCSS from './style.less'
 import React from 'react'
-import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import printerStore from './store'
@@ -42,13 +41,17 @@ class Printer extends React.Component {
     printerStore.setData(props.data)
     printerStore.setTableData(props.tableData)
 
-    printerStore.setConfig(props.config)
-
     if (type) {
       addPageSizeStyle(type)
     } else {
       addPageSizeStyle(`${size.width} ${size.height}`)
     }
+
+    printerStore.setSelected(props.selected)
+  }
+
+  componentDidUpdate () {
+    printerStore.setSelected(this.props.selected)
   }
 
   componentDidMount () {
@@ -62,11 +65,11 @@ class Printer extends React.Component {
 
     return (
       <Page pageIndex={0}>
-        <Header pageIndex={0}/>
-        <Top pageIndex={0}/>
-        <Table {...config.table} data={tableData}/>
-        <Bottom pageIndex={0}/>
-        <Footer pageIndex={0}/>
+        <Header config={config.header} pageIndex={0}/>
+        <Top config={config.top} pageIndex={0}/>
+        <Table config={config.table} data={tableData}/>
+        <Bottom config={config.bottom} pageIndex={0}/>
+        <Footer config={config.footer} pageIndex={0}/>
       </Page>
     )
   }
@@ -76,11 +79,11 @@ class Printer extends React.Component {
 
     return (
       <Page pageIndex={0}>
-        <Header pageIndex={0}/>
-        <Top pageIndex={0}/>
-        <Table {...config.table} data={tableData}/>
-        <Bottom pageIndex={0}/>
-        <Footer pageIndex={0}/>
+        <Header config={config.header} pageIndex={0}/>
+        <Top config={config.top} pageIndex={0}/>
+        <Table config={config.table} data={tableData}/>
+        <Bottom config={config.bottom} pageIndex={0}/>
+        <Footer config={config.footer} pageIndex={0}/>
       </Page>
     )
   }
@@ -96,20 +99,20 @@ class Printer extends React.Component {
           if (p.bottomPage) {
             return (
               <Page key={i} pageIndex={i}>
-                <Header pageIndex={i}/>
-                <Bottom pageIndex={i}/>
-                <Footer pageIndex={i}/>
+                <Header config={config.header} pageIndex={i}/>
+                <Bottom config={config.bottom} pageIndex={i}/>
+                <Footer config={config.footer} pageIndex={i}/>
               </Page>
             )
           }
 
           return (
             <Page key={i} pageIndex={i}>
-              <Header pageIndex={i}/>
-              {i === 0 && <Top pageIndex={i}/>}
-              <Table {...config.table} data={tableData.slice(p.begin, p.end)}/>
-              {i === (printerStore.page.length - 1) && <Bottom pageIndex={i}/>}
-              <Footer pageIndex={i}/>
+              <Header config={config.header} pageIndex={i}/>
+              {i === 0 && <Top config={config.top} pageIndex={i}/>}
+              <Table config={config.table} data={tableData.slice(p.begin, p.end)}/>
+              {i === (printerStore.page.length - 1) && <Bottom config={config.bottom} pageIndex={i}/>}
+              <Footer config={config.footer} pageIndex={i}/>
             </Page>
           )
         })}
@@ -137,15 +140,8 @@ class Printer extends React.Component {
   }
 }
 
-Printer.setIsEdit = (isEdit) => {
-  printerStore.setIsEdit(isEdit)
-}
-
-Printer.getConfig = () => {
-  return toJS(printerStore.config)
-}
-
 Printer.propTypes = {
+  selected: PropTypes.string,
   data: PropTypes.object.isRequired,
   tableData: PropTypes.array.isRequired,
   config: PropTypes.object.isRequired

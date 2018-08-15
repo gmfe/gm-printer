@@ -98,7 +98,7 @@ class TableReady extends React.Component {
 @observer
 class Table extends React.Component {
   render () {
-    const {columns, data, className} = this.props
+    const {config: {columns}, data, className} = this.props
 
     return (
       <div className={classNames('gm-printer-table', className)}>
@@ -110,7 +110,7 @@ class Table extends React.Component {
 }
 
 Table.propTypes = {
-  columns: PropTypes.array.isRequired,
+  config: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired
 }
 

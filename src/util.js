@@ -40,8 +40,8 @@ function getStyleWithDiff (style, diffX, diffY) {
   return newStyle
 }
 
-function getBlockName (pageIndex, panel, index) {
-  return `page.${pageIndex}.${panel}.block.${index}`
+function getBlockName (panel, index) {
+  return `page.${panel}.block.${index}`
 }
 
 function insertCSS (cssString) {

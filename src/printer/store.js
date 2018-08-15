@@ -42,15 +42,9 @@ class PrinterStore {
   data = {}
   tableData = []
 
-  // 以下编辑用
+  // 选中某个东西，具体见 edit/store.js 定义
   @observable
-  isEdit = false
-
-  @observable
-  editActive = null
-
-  @observable
-  config = {}
+  selected = null
 
   @action
   init () {
@@ -78,9 +72,7 @@ class PrinterStore {
     this.page = []
     this.data = {}
     this.tableData = []
-    this.isEdit = false
-    this.editActive = null
-    this.config = {}
+    this.selected = null
   }
 
   @action
@@ -297,65 +289,8 @@ class PrinterStore {
   }
 
   @action
-  setIsEdit (isEdit) {
-    this.isEdit = isEdit
-  }
-
-  @action
-  setEditActive (active) {
-    this.editActive = active
-  }
-
-  // config
-  @action
-  setConfig (config) {
-    this.config = config
-  }
-
-  @action
-  setConfigBlock (panel, index, block) {
-    this.config[panel].blocks[index] = block
-  }
-
-  @action
-  insertConfigBlock (panel, type) {
-    if (!type || type === 'text') {
-      this.config[panel].blocks.push({
-        text: '请编辑',
-        style: {
-          position: 'absolute',
-          left: '0px',
-          top: '0px'
-        }
-      })
-    } else if (type === 'line') {
-      this.config[panel].blocks.push({
-        type: 'line',
-        style: {
-          position: 'absolute',
-          left: '0px',
-          top: '0px',
-          borderTopColor: 'black',
-          borderTopWidth: '1px',
-          borderTopStyle: 'solid',
-          width: '100%'
-        }
-      })
-    } else if (type === 'image') {
-      this.config[panel].blocks.push({
-        type: 'image',
-        link: '',
-        style: {
-          position: 'absolute',
-          left: '0px',
-          top: '0px',
-          width: '100px',
-          height: '100px'
-        }
-      })
-    } else {
-      window.alert('出错啦，未识别类型，此信息不应该出现')
-    }
+  setSelected (selected) {
+    this.selected = selected || null
   }
 }
 

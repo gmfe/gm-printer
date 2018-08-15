@@ -17,36 +17,11 @@ class Panel extends React.Component {
     printerStore.setHeight({
       [panel]: getHeight($dom)
     })
-
-    window.document.addEventListener('gm-printer-block-insert', this.handleBlockInsert)
-  }
-
-  componentWillUnmount () {
-    window.document.removeEventListener('gm-printer-block-insert', this.handleBlockInsert)
-  }
-
-  handleBlockInsert = e => {
-    const {panel, pageIndex} = this.props
-
-    if (e.detail.panel === panel) {
-      printerStore.insertConfigBlock(e.detail.panel, e.detail.type)
-
-      const length = printerStore.config[panel].blocks.length
-      const name = getBlockName(pageIndex, panel, length - 1)
-      printerStore.setEditActive(name)
-
-      window.document.dispatchEvent(new window.CustomEvent('gm-printer-block-config-set', {
-        detail: {
-          name,
-          config: printerStore.config[panel].blocks[length - 1]
-        }
-      }))
-    }
   }
 
   render () {
-    const {panel, placeholder, pageIndex} = this.props
-    const {style, blocks} = printerStore.config[panel]
+    const {panel, config, placeholder, pageIndex} = this.props
+    const {style, blocks} = config
 
     return (
       <div className={`gm-printer-panel gm-printer-${panel}`} data-placeholder={placeholder}>
@@ -54,10 +29,9 @@ class Panel extends React.Component {
           {_.map(blocks, (block, i) => (
             <Block
               key={i}
-              name={getBlockName(pageIndex, panel, i)}
+              name={getBlockName(panel, i)}
               config={block}
               pageIndex={pageIndex}
-              onChange={block => printerStore.setConfigBlock(panel, i, block)}
             />
           ))}
         </div>
@@ -68,6 +42,7 @@ class Panel extends React.Component {
 
 Panel.propTypes = {
   panel: PropTypes.string.isRequired,
+  config: PropTypes.object.isRequired,
   placeholder: PropTypes.string,
   pageIndex: PropTypes.number.isRequired
 }
