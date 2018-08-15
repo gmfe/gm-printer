@@ -1,5 +1,5 @@
 import { observable, action, configure } from 'mobx'
-import { panelList } from '../util'
+import { panelList } from '../config'
 
 configure({enforceActions: true})
 

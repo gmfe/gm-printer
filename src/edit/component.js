@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import _ from 'lodash'
-import { fontSizeList, borderStyleList } from '../util'
+import { fontSizeList, borderStyleList } from '../config'
 
 class Separator extends React.Component {
   render () {

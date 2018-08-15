@@ -5,7 +5,8 @@ import { Printer } from '../printer'
 import EditHeader from './edit_header'
 import editCSS from './style.less'
 import _ from 'lodash'
-import { blockTypeList, panelList, getStyleWithDiff, insertCSS } from '../util'
+import { getStyleWithDiff, insertCSS } from '../util'
+import { blockTypeList, panelList } from '../config'
 import { doPrint } from '../printer/do_print'
 
 insertCSS(editCSS)

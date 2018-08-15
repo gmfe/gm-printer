@@ -1,6 +1,6 @@
 import { observable, action, configure } from 'mobx'
 import _ from 'lodash'
-import { pageSizeMap } from '../util'
+import { pageSizeMap } from '../config'
 
 configure({enforceActions: true})
 
