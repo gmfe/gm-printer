@@ -65,7 +65,8 @@ const panelList = [
   {value: 'header', text: '页眉'},
   {value: 'top', text: '页头'},
   {value: 'bottom', text: '页尾'},
-  {value: 'footer', text: '页脚'}
+  {value: 'footer', text: '页脚'},
+  {value: 'table', text: '表格'}
 ]
 
 const blockTypeList = [

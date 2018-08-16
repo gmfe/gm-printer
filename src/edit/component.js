@@ -9,9 +9,10 @@ class Separator extends React.Component {
     return (
       <span style={{
         display: 'inline-block',
-        margin: '0 8px',
+        margin: '0 5px',
         borderLeft: '1px solid #c1c8cc',
-        height: '1em'
+        height: '1em',
+        verticalAlign: 'middle'
       }}/>
     )
   }

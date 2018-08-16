@@ -7,15 +7,23 @@ import { Separator, Fonter, Position, TextAlign, Text, Line, Size } from './comp
 @observer
 class EditBottom extends React.Component {
   handleChangeBlock = (who, value) => {
-    if (!editStore.selected) {
+    if (!editStore.computedIsSelectBlock) {
       return
     }
 
     editStore.setConfigBlock(who, value)
   }
 
-  handleRemoveBlock = () => {
-    editStore.removeConfigBlock()
+  handleChangeTable = (who, value) => {
+    if (!editStore.computedIsSelectTable) {
+      return
+    }
+
+    editStore.setConfigTable(who, value)
+  }
+
+  handleRemove = () => {
+    editStore.removeConfig()
   }
 
   renderPanel () {
@@ -62,13 +70,49 @@ class EditBottom extends React.Component {
       fun.push(<Separator/>)
     }
 
-    fun.push(<button onClick={this.handleRemoveBlock}>X</button>)
+    fun.push(<button onClick={this.handleRemove}>X</button>)
 
     return _.map(fun, (v, i) => React.cloneElement(v, {key: i}))
   }
 
   renderTable () {
-    return null
+    const {head, headStyle, text, style} = editStore.computedSelectedInfo
+
+    const fun = []
+
+    fun.push(<Fonter style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>)
+    fun.push(<Separator/>)
+    fun.push(<TextAlign style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>)
+    fun.push(<Separator/>)
+    fun.push(<Text
+      value={head}
+      placeholder='请输入表头填充内容'
+      style={{width: '200px'}}
+      onChange={this.handleChangeTable.bind(this, 'head')}
+    />)
+
+    fun.push(<span style={{
+      display: 'inline-block',
+      margin: '0 10px',
+      borderLeft: '2px solid red',
+      height: '1em',
+      verticalAlign: 'middle'
+    }}/>)
+
+    fun.push(<Fonter style={style} onChange={this.handleChangeTable.bind(this, 'style')}/>)
+    fun.push(<Separator/>)
+    fun.push(<TextAlign style={style} onChange={this.handleChangeTable.bind(this, 'style')}/>)
+    fun.push(<Separator/>)
+    fun.push(<Text
+      value={text}
+      placeholder='请输入内容填充内容'
+      style={{width: '200px'}}
+      onChange={this.handleChangeTable.bind(this, 'text')}
+    />)
+
+    fun.push(<button style={{marginLeft: '20px'}} onClick={this.handleRemove}>X</button>)
+
+    return _.map(fun, (v, i) => React.cloneElement(v, {key: i}))
   }
 
   render () {

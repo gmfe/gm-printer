@@ -41,7 +41,11 @@ function getStyleWithDiff (style, diffX, diffY) {
 }
 
 function getBlockName (panel, index) {
-  return `page.${panel}.block.${index}`
+  return `panel.${panel}.block.${index}`
+}
+
+function getTableColumnName (index) {
+  return `table.column.${index}`
 }
 
 function insertCSS (cssString) {
@@ -51,11 +55,25 @@ function insertCSS (cssString) {
   window.document.head.appendChild(style)
 }
 
+function dispatchMsg (event, data) {
+  window.document.dispatchEvent(new window.CustomEvent(event, {
+    detail: data
+  }))
+}
+
+function exchange (arr, target, source) {
+  [arr[target], arr[source]] = [arr[source], arr[target]]
+  return arr
+}
+
 export {
   getHeight,
   getWidth,
   pxAdd,
   getStyleWithDiff,
   getBlockName,
-  insertCSS
+  getTableColumnName,
+  insertCSS,
+  dispatchMsg,
+  exchange
 }

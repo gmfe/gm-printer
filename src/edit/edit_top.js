@@ -31,6 +31,33 @@ class EditTop extends React.Component {
     editStore.setPanelHeight(height)
   }
 
+  handleTableAdd = () => {
+    editStore.addTableColumn()
+  }
+
+  renderTable () {
+    return (
+      <React.Fragment>
+        <button onClick={this.handleTableAdd}>插入一列</button>
+      </React.Fragment>
+    )
+  }
+
+  renderBlock () {
+    return (
+      <React.Fragment>
+        {_.map(blockTypeList, v => (
+          <button
+            key={v.value}
+            onClick={this.handleInsert.bind(this, v.value)}
+          >{v.text}</button>
+        ))}
+        &nbsp;&nbsp;
+        高 <TextPX value={editStore.computedPanelHeight} onChange={this.handlePanelHeight}/>
+      </React.Fragment>
+    )
+  }
+
   render () {
     return (
       <div className='gm-printer-edit-header-top'>
@@ -41,14 +68,7 @@ class EditTop extends React.Component {
           &nbsp;&nbsp;
           <span>插入</span>
           &nbsp;&nbsp;
-          {_.map(blockTypeList, v => (
-            <button
-              key={v.value}
-              onClick={this.handleInsert.bind(this, v.value)}
-            >{v.text}</button>
-          ))}
-          &nbsp;&nbsp;
-          高 <TextPX value={editStore.computedPanelHeight} onChange={this.handlePanelHeight}/>
+          {editStore.insertPanel !== 'table' ? this.renderBlock() : this.renderTable()}
         </div>
         <div>
           <button onClick={this.handleTestPrint}>测试打印</button>

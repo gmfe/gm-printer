@@ -1,6 +1,7 @@
 import { observable, action, computed, configure } from 'mobx'
 import { panelList } from '../config'
 import _ from 'lodash'
+import { exchange } from '../util'
 
 configure({enforceActions: true})
 
@@ -18,8 +19,14 @@ class EditStore {
   insertPanel = panelList[0].value
 
   @computed
-  get computedHeightKey () {
-    return _.map(this.config, v => v.style ? v.style.height : '').join('_')
+  get computedPrinterKey () {
+    return _.map(this.config, (v, k) => {
+      if (k === 'table') {
+        return v.columns.length
+      } else {
+        return v.style ? v.style.height : ''
+      }
+    }).join('_')
   }
 
   @action
@@ -80,7 +87,7 @@ class EditStore {
       return this.config[arr[1]]
     } else if (arr.length === 4) {
       return this.config[arr[1]].blocks[arr[3]]
-    } else if (arr.lenght === 3) {
+    } else if (arr.length === 3) {
       return this.config.table.columns[arr[2]]
     }
   }
@@ -137,13 +144,46 @@ class EditStore {
   }
 
   @action
-  removeConfigBlock () {
+  setConfigTable (who, value) {
+    if (!this.computedIsSelectTable) {
+      return
+    }
+
+    const column = this.computedSelectedInfo
+    column[who] = value
+  }
+
+  @action
+  exchangeTableColumn (target, source) {
+    if (this.computedIsSelectTable) {
+      exchange(this.config.table.columns, target, source)
+    }
+  }
+
+  @action
+  addTableColumn () {
+    this.config.table.columns.push({
+      head: '表头',
+      headStyle: {
+        textAlign: 'center'
+      },
+      text: '内容',
+      style: {
+        textAlign: 'center'
+      }
+    })
+  }
+
+  @action
+  removeConfig () {
     if (this.computedIsSelectBlock) {
       const arr = this.selected.split('.')
       this.selected = null
       this.config[arr[1]].blocks.splice(arr[3], 1)
     } else if (this.computedIsSelectTable) {
-      // TODO
+      const arr = this.selected.split('.')
+      this.selected = null
+      this.config.table.columns.splice(arr[2], 1)
     }
   }
 }

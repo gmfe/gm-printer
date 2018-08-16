@@ -23,12 +23,15 @@ class Edit extends React.Component {
 
     window.document.addEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
 
+    window.document.addEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
+
     window.document.addEventListener('keydown', this.handleKeyDown)
   }
 
   componentWillUnmount () {
     window.document.removeEventListener('gm-printer-select', this.handlePrinterSelect)
     window.document.removeEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
+    window.document.removeEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
     window.document.removeEventListener('keydown', this.handleKeyDown)
   }
 
@@ -43,34 +46,34 @@ class Edit extends React.Component {
     editStore.setConfigBlock('style', style)
   }
 
+  handlePrinterTableDrag = (e) => {
+    console.log(e.detail)
+    editStore.exchangeTableColumn(e.detail.target, e.detail.source)
+  }
+
   handleKeyDown = (e) => {
-    if (editStore.computedIsSelectBlock) {
-      if (e.code.startsWith('Arrow')) {
-        e.preventDefault()
+    if (e.code.startsWith('Arrow') && editStore.computedIsSelectBlock) {
+      e.preventDefault()
 
-        let diffX = 0
-        let diffY = 0
+      let diffX = 0
+      let diffY = 0
 
-        if (e.code === 'ArrowLeft') {
-          diffX -= 1
-        } else if (e.code === 'ArrowUp') {
-          diffY -= 1
-        } else if (e.code === 'ArrowRight') {
-          diffX += 1
-        } else if (e.code === 'ArrowDown') {
-          diffY += 1
-        }
-
-        const newStyle = getStyleWithDiff(editStore.computedSelectedInfo.style, diffX, diffY)
-
-        editStore.setConfigBlock('style', newStyle)
-      } else if (e.code === 'Escape') {
-        e.preventDefault()
-        editStore.setSelected(null)
-      } else if (e.code === 'Backspace') {
-        e.preventDefault()
-        editStore.removeConfigBlock()
+      if (e.code === 'ArrowLeft') {
+        diffX -= 1
+      } else if (e.code === 'ArrowUp') {
+        diffY -= 1
+      } else if (e.code === 'ArrowRight') {
+        diffX += 1
+      } else if (e.code === 'ArrowDown') {
+        diffY += 1
       }
+
+      const newStyle = getStyleWithDiff(editStore.computedSelectedInfo.style, diffX, diffY)
+
+      editStore.setConfigBlock('style', newStyle)
+    } else if (e.code === 'Escape' && editStore.selected) {
+      e.preventDefault()
+      editStore.setSelected(null)
     }
   }
 
@@ -96,7 +99,7 @@ class Edit extends React.Component {
         </div>
         <div className='gm-printer-edit-content' onClick={this.handleCancel}>
           <Printer
-            key={editStore.computedHeightKey}
+            key={editStore.computedPrinterKey}
             selected={editStore.selected}
             config={editStore.config}
             data={data}
