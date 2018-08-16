@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import _ from 'lodash'
+import { toJS } from 'mobx'
 import editStore from './store'
 import { Printer } from '../printer'
 import editCSS from './style.less'
@@ -15,6 +17,8 @@ class Edit extends React.Component {
   constructor (props) {
     super(props)
 
+    editStore.init()
+
     editStore.setConfig(props.config)
   }
 
@@ -26,6 +30,10 @@ class Edit extends React.Component {
     window.document.addEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
 
     window.document.addEventListener('keydown', this.handleKeyDown)
+
+    this.autoSaveTimer = setInterval(() => {
+      editStore.saveConfigToCache()
+    }, 1000)
   }
 
   componentWillUnmount () {
@@ -33,6 +41,12 @@ class Edit extends React.Component {
     window.document.removeEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
     window.document.removeEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
     window.document.removeEventListener('keydown', this.handleKeyDown)
+
+    clearInterval(this.autoSaveTimer)
+  }
+
+  handleSave = () => {
+    this.props.onSave(toJS(editStore.config))
   }
 
   handlePrinterSelect = (e) => {
@@ -94,7 +108,7 @@ class Edit extends React.Component {
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header-fixed'/>
         <div className='gm-printer-edit-header'>
-          <EditTop data={data} tableData={tableData}/>
+          <EditTop data={data} tableData={tableData} onSave={this.handleSave}/>
           <EditBottom/>
         </div>
         <div className='gm-printer-edit-content' onClick={this.handleCancel}>
@@ -116,9 +130,11 @@ Edit.propTypes = {
   data: PropTypes.object.isRequired,
   tableData: PropTypes.array.isRequired,
   config: PropTypes.object.isRequired,
-  onChange: PropTypes.func
+  onSave: PropTypes.func
 }
 
-Edit.deaultProps = {}
+Edit.deaultProps = {
+  onSave: _.noop
+}
 
 export default Edit

@@ -2,6 +2,10 @@ import { observable, action, computed, configure } from 'mobx'
 import { panelList } from '../config'
 import _ from 'lodash'
 import { exchange } from '../util'
+import UndoManager from './undo_manager'
+
+const undoManager = new UndoManager()
+undoManager.setLimit(30)
 
 configure({enforceActions: true})
 
@@ -17,6 +21,15 @@ class EditStore {
 
   @observable
   insertPanel = panelList[0].value
+
+  @observable
+  cacheConfig = []
+
+  @observable
+  hasUndo = false
+
+  @observable
+  hasRedo = false
 
   @computed
   get computedPrinterKey () {
@@ -54,6 +67,7 @@ class EditStore {
   @action
   setConfig (config) {
     this.config = config
+    this.cacheConfig.push(JSON.stringify(config))
   }
 
   @action
@@ -186,7 +200,64 @@ class EditStore {
       this.config.table.columns.splice(arr[2], 1)
     }
   }
+
+  @action
+  saveConfigToCache () {
+    const lastConfig = this.cacheConfig.slice(-1)[0]
+    const configStr = JSON.stringify(this.config)
+
+    if (lastConfig !== configStr) {
+      this.cacheConfig.push(configStr)
+      this._saveCache()
+
+      this.checkUndoRedo()
+
+      undoManager.add({
+        undo: () => {
+          if (this.cacheConfig.length > 1) {
+            this.cacheConfig.pop()
+            this.config = JSON.parse(this.cacheConfig.slice(-1)[0])
+            this._saveCache()
+          }
+        },
+        redo: () => {
+          this.config = JSON.parse(configStr)
+          this.cacheConfig.push(configStr)
+          this._saveCache()
+        }
+      })
+    }
+  }
+
+  @action
+  undo () {
+    this.selected = null
+    undoManager.undo()
+    this.checkUndoRedo()
+  }
+
+  @action
+  redo () {
+    this.selected = null
+    undoManager.redo()
+    this.checkUndoRedo()
+  }
+
+  @action
+  checkUndoRedo () {
+    this.hasUndo = undoManager.hasUndo()
+    this.hasRedo = undoManager.hasRedo()
+  }
+
+  @action
+  _saveCache () {
+    if (this.cacheConfig.length > 30) {
+      this.cacheConfig = this.cacheConfig.slice(-30)
+    }
+  }
 }
+
+window.undoManager = undoManager
 
 const editStore = new EditStore()
 

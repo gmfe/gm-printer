@@ -35,6 +35,14 @@ class EditTop extends React.Component {
     editStore.addTableColumn()
   }
 
+  handleUndo = () => {
+    editStore.undo()
+  }
+
+  handleRedo = () => {
+    editStore.redo()
+  }
+
   renderTable () {
     return (
       <React.Fragment>
@@ -73,8 +81,13 @@ class EditTop extends React.Component {
           {editStore.insertPanel !== 'table' ? this.renderBlock() : this.renderTable()}
         </div>
         <div>
+          <button onClick={this.handleUndo} disabled={!editStore.hasUndo}>undo</button>
+          <button onClick={this.handleRedo} disabled={!editStore.hasRedo}>redo</button>
+          &nbsp;&nbsp;
+          &nbsp;&nbsp;
+          &nbsp;&nbsp;
           <button onClick={this.handleTestPrint}>测试打印</button>
-          <button>保存</button>
+          <button onClick={this.props.onSave}>保存</button>
         </div>
       </div>
     )
@@ -83,7 +96,8 @@ class EditTop extends React.Component {
 
 EditTop.propTypes = {
   data: PropTypes.object.isRequired,
-  tableData: PropTypes.array.isRequired
+  tableData: PropTypes.array.isRequired,
+  onSave: PropTypes.func.isRequired
 }
 
 export default EditTop
