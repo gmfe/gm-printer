@@ -4,6 +4,42 @@ import classNames from 'classnames'
 import _ from 'lodash'
 import { fontSizeList, borderStyleList } from '../config'
 
+class IconAlign extends React.Component {
+  render () {
+    const style = {
+      display: 'block',
+      background: 'black',
+      width: '100%',
+      height: '1px',
+      marginBottom: '1px'
+    }
+
+    return (
+      <span style={{
+        display: 'inline-flex',
+        width: '1em',
+        verticalAlign: 'middle',
+        flexDirection: 'column',
+        alignItems: ({left: 'flex-start', center: 'center', right: 'flex-end'})[this.props.textAlign]
+      }}>
+        <span style={{...style}}/>
+        <span style={{...style, width: '60%'}}/>
+        <span style={{...style}}/>
+        <span style={{...style, width: '60%'}}/>
+        <span style={{...style}}/>
+      </span>
+    )
+  }
+}
+
+IconAlign.propTypes = {
+  textAlign: PropTypes.string
+}
+
+IconAlign.defaultProps = {
+  textAlign: 'left'
+}
+
 class Separator extends React.Component {
   render () {
     return (
@@ -148,19 +184,19 @@ class TextAlign extends React.Component {
             active: textAlign === 'left'
           })}
           onClick={() => this.handleChange('left')}
-        >居左</span>
+        ><IconAlign textAlign='left'/></span>
         <span
           className={classNames('gm-printer-edit-btn', {
             active: textAlign === 'center'
           })}
           onClick={() => this.handleChange('center')}
-        >居中</span>
+        ><IconAlign textAlign='center'/></span>
         <span
           className={classNames('gm-printer-edit-btn', {
             active: textAlign === 'right'
           })}
           onClick={() => this.handleChange('right')}
-        >居右</span>
+        ><IconAlign textAlign='right'/></span>
       </span>
     )
   }

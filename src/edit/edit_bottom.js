@@ -26,11 +26,6 @@ class EditBottom extends React.Component {
     editStore.removeConfig()
   }
 
-  renderPanel () {
-    // TODO
-    return null
-  }
-
   renderBlocks () {
     const {type, text, style, link} = editStore.computedSelectedInfo
 
@@ -117,9 +112,7 @@ class EditBottom extends React.Component {
 
   render () {
     let content = '单击选中内容编辑，或拖动内容以摆放位置'
-    if (editStore.computedIsSelectPanel) {
-      content = this.renderPanel()
-    } else if (editStore.computedIsSelectBlock) {
+    if (editStore.computedIsSelectBlock) {
       content = this.renderBlocks()
     } else if (editStore.computedIsSelectTable) {
       content = this.renderTable()
