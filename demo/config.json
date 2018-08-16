@@ -192,19 +192,5 @@
     "style": {
       "height": "0px"
     }
-  },
-  "fixed": {
-    "blocks": [
-      {
-        "type": "image",
-        "link": "http://js.guanmai.cn/static_storage/json/common/logo/default/logo.pure.png",
-        "style": {
-          "position": "absolute",
-          "left": "0px",
-          "top": "0px",
-          "height": "50px"
-        }
-      }
-    ]
   }
 }

@@ -16,37 +16,31 @@ class Block extends React.Component {
   }
 
   handleDragStart = ({clientX, clientY}) => {
-    const {config, name} = this.props
+    const {name} = this.props
 
     this.setState({
       clientX,
       clientY
     })
 
-    // TODO
-    window.document.dispatchEvent(new window.CustomEvent('gm-printer-block-config-set', {
+    window.document.dispatchEvent(new window.CustomEvent('gm-printer-select', {
       detail: {
-        name,
-        config
+        selected: name
       }
     }))
   }
 
   handleDragEnd = ({clientX, clientY}) => {
-    const {name, config} = this.props
+    const {config} = this.props
 
     const diffX = clientX - this.state.clientX
     const diffY = clientY - this.state.clientY
 
     const newStyle = getStyleWithDiff(config.style, diffX, diffY)
 
-    const newConfig = Object.assign({}, config, {style: newStyle})
-
-    // TODO
     window.document.dispatchEvent(new window.CustomEvent('gm-printer-block-style-set', {
       detail: {
-        name,
-        config: newConfig
+        style: newStyle
       }
     }))
   }

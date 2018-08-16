@@ -24,10 +24,9 @@ class Text extends React.Component {
   }
 
   render () {
-    const {disabled, value, placeholder, style} = this.props
+    const {value, placeholder, style} = this.props
     return (
       <input
-        disabled={disabled}
         type='text'
         value={value}
         placeholder={placeholder}
@@ -39,7 +38,6 @@ class Text extends React.Component {
 }
 
 Text.propTypes = {
-  disabled: PropTypes.bool,
   value: PropTypes.string,
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired
@@ -59,7 +57,7 @@ class TextPX extends React.Component {
   }
 
   render () {
-    const {disabled, value = '', block} = this.props
+    const {value = ''} = this.props
 
     let nValue = value
     if (value.endsWith('px')) {
@@ -67,14 +65,12 @@ class TextPX extends React.Component {
     }
 
     return (
-      <Text disabled={disabled} block={block} value={nValue} onChange={this.handleChange} style={{width: '35px'}}/>
+      <Text value={nValue} onChange={this.handleChange} style={{width: '35px'}}/>
     )
   }
 }
 
 TextPX.propTypes = {
-  disabled: PropTypes.bool,
-  block: PropTypes.bool,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired
 }

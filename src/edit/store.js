@@ -1,5 +1,6 @@
 import { observable, action, computed, configure } from 'mobx'
 import { panelList } from '../config'
+import _ from 'lodash'
 
 configure({enforceActions: true})
 
@@ -16,9 +17,24 @@ class EditStore {
   @observable
   insertPanel = panelList[0].value
 
+  @computed
+  get computedHeightKey () {
+    return _.map(this.config, v => v.style ? v.style.height : '').join('_')
+  }
+
   @action
   setInsertPanel (panel) {
     this.insertPanel = panel
+  }
+
+  @computed
+  get computedPanelHeight () {
+    return this.config[this.insertPanel].style.height
+  }
+
+  @action
+  setPanelHeight (height) {
+    this.config[this.insertPanel].style.height = height
   }
 
   @action
@@ -34,7 +50,7 @@ class EditStore {
   }
 
   @action
-  setSelected (selected) {
+  setSelected (selected = null) {
     this.selected = selected
   }
 
@@ -117,6 +133,17 @@ class EditStore {
       })
     } else {
       window.alert('出错啦，未识别类型，此信息不应该出现')
+    }
+  }
+
+  @action
+  removeConfigBlock () {
+    if (this.computedIsSelectBlock) {
+      const arr = this.selected.split('.')
+      this.selected = null
+      this.config[arr[1]].blocks.splice(arr[3], 1)
+    } else if (this.computedIsSelectTable) {
+      // TODO
     }
   }
 }

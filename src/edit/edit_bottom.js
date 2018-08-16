@@ -5,13 +5,17 @@ import editStore from './store'
 import { Separator, Fonter, Position, TextAlign, Text, Line, Size } from './component'
 
 @observer
-class EditHeader extends React.Component {
+class EditBottom extends React.Component {
   handleChangeBlock = (who, value) => {
     if (!editStore.selected) {
       return
     }
 
     editStore.setConfigBlock(who, value)
+  }
+
+  handleRemoveBlock = () => {
+    editStore.removeConfigBlock()
   }
 
   renderPanel () {
@@ -58,11 +62,9 @@ class EditHeader extends React.Component {
       fun.push(<Separator/>)
     }
 
-    return (
-      <div>
-        {_.map(fun.slice(0, -1), (v, i) => React.cloneElement(v, {key: i}))}
-      </div>
-    )
+    fun.push(<button onClick={this.handleRemoveBlock}>X</button>)
+
+    return _.map(fun, (v, i) => React.cloneElement(v, {key: i}))
   }
 
   renderTable () {
@@ -70,19 +72,20 @@ class EditHeader extends React.Component {
   }
 
   render () {
+    let content = '单击选中内容编辑，或拖动内容以摆放位置'
     if (editStore.computedIsSelectPanel) {
-      return this.renderPanel()
+      content = this.renderPanel()
     } else if (editStore.computedIsSelectBlock) {
-      return this.renderBlocks()
+      content = this.renderBlocks()
     } else if (editStore.computedIsSelectTable) {
-      return this.renderTable()
+      content = this.renderTable()
     }
-    return <div>单击选中内容编辑</div>
+    return <div className='gm-printer-edit-header-bottom'>{content}</div>
   }
 }
 
-EditHeader.propTypes = {}
+EditBottom.propTypes = {}
 
-EditHeader.deaultProps = {}
+EditBottom.deaultProps = {}
 
-export default EditHeader
+export default EditBottom
