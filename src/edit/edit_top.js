@@ -62,6 +62,8 @@ class EditTop extends React.Component {
     return (
       <div className='gm-printer-edit-header-top'>
         <div>
+          区域
+          &nbsp;&nbsp;
           <select value={editStore.insertPanel} onChange={e => editStore.setInsertPanel(e.target.value)}>
             {_.map(panelList, v => <option key={v.value} value={v.value}>{v.text}</option>)}
           </select>

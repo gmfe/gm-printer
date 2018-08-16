@@ -5,10 +5,10 @@ const pageSizeMap = {
       height: '297mm'
     },
     gap: {
-      paddingTop: '5mm',
-      paddingRight: '5mm',
-      paddingBottom: '5mm',
-      paddingLeft: '5mm'
+      paddingTop: '3mm',
+      paddingRight: '3mm',
+      paddingBottom: '3mm',
+      paddingLeft: '3mm'
     }
   },
   'A5': {
@@ -17,10 +17,10 @@ const pageSizeMap = {
       height: '260mm'
     },
     gap: {
-      paddingTop: '5mm',
-      paddingRight: '5mm',
-      paddingBottom: '5mm',
-      paddingLeft: '5mm'
+      paddingTop: '3mm',
+      paddingRight: '3mm',
+      paddingBottom: '3mm',
+      paddingLeft: '3mm'
     }
   },
   '自定义': {
@@ -29,10 +29,10 @@ const pageSizeMap = {
       height: '150mm'
     },
     gap: {
-      paddingTop: '5mm',
-      paddingRight: '5mm',
-      paddingBottom: '5mm',
-      paddingLeft: '5mm'
+      paddingTop: '3mm',
+      paddingRight: '3mm',
+      paddingBottom: '3mm',
+      paddingLeft: '3mm'
     }
   }
 }

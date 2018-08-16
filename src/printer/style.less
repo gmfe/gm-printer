@@ -51,6 +51,12 @@ body {
   }
 }
 
+.gm-printer-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
 .gm-printer-footer {
   position: absolute;
   bottom: 0;
@@ -71,8 +77,14 @@ body {
     td,
     th {
       border: 1px solid black;
-      &:hover,
+
       &.active {
+        outline: 1px solid red;
+      }
+    }
+
+    th {
+      &:hover {
         outline: 1px solid red;
       }
     }

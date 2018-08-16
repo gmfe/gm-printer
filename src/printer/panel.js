@@ -20,13 +20,16 @@ class Panel extends React.Component {
   }
 
   render () {
-    const {panel, config, placeholder, pageIndex} = this.props
-    const {style, blocks} = config
+    const {panel, config, placeholder, pageIndex, style} = this.props
 
     return (
-      <div className={`gm-printer-panel gm-printer-${panel}`} data-placeholder={placeholder}>
-        <div style={style}>
-          {_.map(blocks, (block, i) => (
+      <div
+        className={`gm-printer-panel gm-printer-${panel}`}
+        data-placeholder={placeholder}
+        style={style}
+      >
+        <div style={config.style}>
+          {_.map(config.blocks, (block, i) => (
             <Block
               key={i}
               name={getBlockName(panel, i)}
@@ -44,7 +47,8 @@ Panel.propTypes = {
   panel: PropTypes.string.isRequired,
   config: PropTypes.object.isRequired,
   placeholder: PropTypes.string,
-  pageIndex: PropTypes.number.isRequired
+  pageIndex: PropTypes.number.isRequired,
+  style: PropTypes.object
 }
 
 export default Panel

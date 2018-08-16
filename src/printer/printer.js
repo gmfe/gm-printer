@@ -100,7 +100,7 @@ class Printer extends React.Component {
             return (
               <Page key={i} pageIndex={i}>
                 <Header config={config.header} pageIndex={i}/>
-                <Bottom config={config.bottom} pageIndex={i}/>
+                <Bottom config={config.bottom} style={{bottom: config.footer.style.height}} pageIndex={i}/>
                 <Footer config={config.footer} pageIndex={i}/>
               </Page>
             )
@@ -111,7 +111,8 @@ class Printer extends React.Component {
               <Header config={config.header} pageIndex={i}/>
               {i === 0 && <Top config={config.top} pageIndex={i}/>}
               <Table config={config.table} data={tableData.slice(p.begin, p.end)}/>
-              {i === (printerStore.page.length - 1) && <Bottom config={config.bottom} pageIndex={i}/>}
+              {i === (printerStore.page.length - 1) &&
+              <Bottom config={config.bottom} pageIndex={i} style={{bottom: config.footer.style.height}}/>}
               <Footer config={config.footer} pageIndex={i}/>
             </Page>
           )
