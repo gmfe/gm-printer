@@ -15,20 +15,23 @@ body {
 
   &:hover,
   &.active {
-    outline: 1px solid red;
+    outline: 1px solid rgb(82, 146, 247);
   }
 
-  input {
+  .gm-printer-block-text-edit {
     position: absolute;
     top: calc(100% + 5px);
     left: 0;
+    min-width: 100%;
+    font-size: initial;
   }
 }
 
 // page
 .gm-printer-page {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
+  // 开发阶段不 overflow
+  //overflow: hidden;
 
   + .gm-printer-page {
     page-break-before: always;
@@ -37,14 +40,14 @@ body {
 
   &-inner {
     position: relative;
-    outline: 1px dotted red;
+    outline: 1px dotted #daebf4;
   }
 }
 
 // panel
 .gm-printer-panel {
   position: relative;
-  outline: 1px dotted blue;
+  outline: 1px dotted #daebf4;
 
   &::before {
     content: attr(data-placeholder);
@@ -73,7 +76,7 @@ body {
 // table
 .gm-printer-table {
   position: relative;
-  outline: 1px dotted blue;
+  outline: 1px dotted #daebf4;
 
   table {
     border-collapse: collapse;
@@ -85,13 +88,13 @@ body {
       border: 1px solid black;
 
       &.active {
-        outline: 1px solid red;
+        outline: 1px solid rgb(82, 146, 247);
       }
     }
 
     th {
       &:hover {
-        outline: 1px solid red;
+        outline: 1px solid rgb(82, 146, 247);
       }
     }
   }
@@ -121,15 +124,6 @@ body {
   }
 }
 
-// fixed
-.gm-printer-fixed {
-  outline: 1px dotted black;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-
 .gm-printer-label {
   position: absolute;
   top: 0;
@@ -148,6 +142,7 @@ body {
 
   .gm-printer-page {
     box-shadow: none;
+    overflow: hidden;
 
     + .gm-printer-page {
       margin-top: 0;
@@ -157,6 +152,12 @@ body {
   // panel
   .gm-printer-panel {
     &::before {
+      display: none;
+    }
+  }
+
+  .gm-printer-block {
+    .gm-printer-block-text-edit {
       display: none;
     }
   }

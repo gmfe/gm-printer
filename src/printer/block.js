@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react/index'
 import printerStore from './store'
 import { getStyleWithDiff, dispatchMsg } from '../util'
+import _ from 'lodash'
 
 @observer
 class Block extends React.Component {
@@ -53,7 +54,6 @@ class Block extends React.Component {
 
   handleText = (e) => {
     if (e.key === 'Enter') {
-      console.log(e.target.value)
       dispatchMsg('gm-printer-block-text-set', {
         text: e.target.value
       })
@@ -93,9 +93,13 @@ class Block extends React.Component {
         onClick={this.handleClick}
       >
         {content}
-
         {(!type || type === 'text') && active && (
-          <input key={text} type='text' defaultValue={text} onChange={_.noop} onKeyDown={this.handleText}/>
+          <textarea
+            key={text}
+            className='gm-printer-block-text-edit' defaultValue={text}
+            onChange={_.noop}
+            onKeyDown={this.handleText}
+          />
         )}
       </div>
     )

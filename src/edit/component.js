@@ -80,6 +80,34 @@ Text.propTypes = {
   onChange: PropTypes.func.isRequired
 }
 
+class Textarea extends React.Component {
+  handleChange = (e) => {
+    const {onChange} = this.props
+    onChange(e.target.value)
+  }
+
+  render () {
+    const {value, placeholder, style} = this.props
+    return (
+      <textarea
+        value={value}
+        placeholder={placeholder}
+        onChange={this.handleChange}
+        style={{
+          width: '100%',
+          ...style
+        }}
+      />
+    )
+  }
+}
+
+Textarea.propTypes = {
+  value: PropTypes.string,
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func.isRequired
+}
+
 // 10px => 10  10% => 10%
 class TextPX extends React.Component {
   handleChange = (value) => {
@@ -298,12 +326,13 @@ Size.propTypes = {
 }
 
 export {
+  Text,
+  Textarea,
   TextPX,
   TextAlign,
   Separator,
   Fonter,
   Position,
-  Text,
   Line,
   Size
 }

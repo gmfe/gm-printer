@@ -71,6 +71,10 @@ class Edit extends React.Component {
   }
 
   handleKeyDown = (e) => {
+    if (e.target !== window.document.body) {
+      return
+    }
+
     if (e.code.startsWith('Arrow') && editStore.computedIsSelectBlock) {
       e.preventDefault()
 
