@@ -11,7 +11,7 @@ class EditBottom extends React.Component {
       return
     }
 
-    editStore.setConfigBlock(who, value)
+    editStore.setConfigBlockBy(who, value)
   }
 
   handleChangeTable = (who, value) => {

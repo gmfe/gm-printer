@@ -107,7 +107,7 @@ class EditStore {
   }
 
   @action
-  setConfigBlock (who, value) {
+  setConfigBlockBy (who, value) {
     if (!this.computedIsSelectBlock) {
       return
     }

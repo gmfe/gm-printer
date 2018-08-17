@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { observer } from 'mobx-react/index'
 import printerStore from './store'
-import { getStyleWithDiff } from '../util'
+import { getStyleWithDiff, dispatchMsg } from '../util'
 
 @observer
 class Block extends React.Component {
@@ -36,23 +36,28 @@ class Block extends React.Component {
     const diffX = clientX - this.state.clientX
     const diffY = clientY - this.state.clientY
 
-    const newStyle = getStyleWithDiff(config.style, diffX, diffY)
+    const style = getStyleWithDiff(config.style, diffX, diffY)
 
-    window.document.dispatchEvent(new window.CustomEvent('gm-printer-block-style-set', {
-      detail: {
-        style: newStyle
-      }
-    }))
+    dispatchMsg('gm-printer-block-style-set', {
+      style
+    })
   }
 
   handleClick = () => {
     const {name} = this.props
 
-    window.document.dispatchEvent(new window.CustomEvent('gm-printer-select', {
-      detail: {
-        selected: name
-      }
-    }))
+    dispatchMsg('gm-printer-select', {
+      selected: name
+    })
+  }
+
+  handleText = (e) => {
+    if (e.key === 'Enter') {
+      console.log(e.target.value)
+      dispatchMsg('gm-printer-block-text-set', {
+        text: e.target.value
+      })
+    }
   }
 
   render () {
@@ -73,12 +78,14 @@ class Block extends React.Component {
       content = <img src={link} style={{width: '100%', height: '100%'}} alt=''/>
     }
 
+    const active = name === printerStore.selected
+
     return (
       <div
         {...rest}
         style={style}
         className={classNames('gm-printer-block', className, {
-          active: name === printerStore.selected
+          active
         })}
         draggable
         onDragStart={this.handleDragStart}
@@ -86,6 +93,10 @@ class Block extends React.Component {
         onClick={this.handleClick}
       >
         {content}
+
+        {(!type || type === 'text') && active && (
+          <input key={text} type='text' defaultValue={text} onChange={_.noop} onKeyDown={this.handleText}/>
+        )}
       </div>
     )
   }

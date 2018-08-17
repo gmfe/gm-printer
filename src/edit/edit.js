@@ -24,11 +24,9 @@ class Edit extends React.Component {
 
   componentDidMount () {
     window.document.addEventListener('gm-printer-select', this.handlePrinterSelect)
-
     window.document.addEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
-
+    window.document.addEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
     window.document.addEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
-
     window.document.addEventListener('keydown', this.handleKeyDown)
 
     this.autoSaveTimer = setInterval(() => {
@@ -39,6 +37,7 @@ class Edit extends React.Component {
   componentWillUnmount () {
     window.document.removeEventListener('gm-printer-select', this.handlePrinterSelect)
     window.document.removeEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
+    window.document.removeEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
     window.document.removeEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
     window.document.removeEventListener('keydown', this.handleKeyDown)
 
@@ -57,7 +56,13 @@ class Edit extends React.Component {
 
   handlePrinterBlockStyleSet = (e) => {
     const {style} = e.detail
-    editStore.setConfigBlock('style', style)
+    editStore.setConfigBlockBy('style', style)
+  }
+
+  handlePrinterBlockTextSet = (e) => {
+    const {text} = e.detail
+    console.log('text', text)
+    editStore.setConfigBlockBy('text', text)
   }
 
   handlePrinterTableDrag = (e) => {
@@ -84,7 +89,7 @@ class Edit extends React.Component {
 
       const newStyle = getStyleWithDiff(editStore.computedSelectedInfo.style, diffX, diffY)
 
-      editStore.setConfigBlock('style', newStyle)
+      editStore.setConfigBlockBy('style', newStyle)
     } else if (e.code === 'Escape' && editStore.selected) {
       e.preventDefault()
       editStore.setSelected(null)
