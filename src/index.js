@@ -1,7 +1,8 @@
 import { PrinterEdit } from './edit'
-import { Printer, BatchPrinter } from './printer'
+import { Printer, BatchPrinter, doPrint, doBatchPrint } from './printer'
 
 export {
+  PrinterEdit,
   Printer, BatchPrinter,
-  PrinterEdit
+  doPrint, doBatchPrint
 }

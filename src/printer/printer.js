@@ -20,8 +20,19 @@ function addPageSizeStyle (rule) {
 const Header = (props) => <Panel {...props} panel='header' placeholder='页眉'/>
 const Top = (props) => <Panel {...props} panel='top' placeholder='顶部'/>
 const Bottom = (props) => <Panel {...props} panel='bottom' placeholder='底部'/>
-const Sign = (props) => <Panel {...props} panel='sign' placeholder='签名'/>
-const Footer = (props) => <Panel {...props} panel='footer' placeholder='页脚'/>
+const Sign = (props) => <Panel {...props} style={{
+  ...props.style,
+  position: 'absolute',
+  left: 0,
+  right: 0
+}} panel='sign' placeholder='签名'/>
+const Footer = (props) => <Panel {...props} style={{
+  ...props.style,
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0
+}} panel='footer' placeholder='页脚'/>
 
 @observer
 class Printer extends React.Component {

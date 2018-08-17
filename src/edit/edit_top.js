@@ -51,7 +51,7 @@ class EditTop extends React.Component {
     )
   }
 
-  renderBlock () {
+  renderPanel () {
     return (
       <React.Fragment>
         {_.map(blockTypeList, v => (
@@ -89,7 +89,7 @@ class EditTop extends React.Component {
           <br/>
           <span>插入</span>
           &nbsp;&nbsp;
-          {editStore.insertPanel !== 'table' ? this.renderBlock() : this.renderTable()}
+          {editStore.insertPanel !== 'table' ? this.renderPanel() : this.renderTable()}
         </div>
       </div>
     )

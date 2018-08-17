@@ -60,19 +60,6 @@ body {
   }
 }
 
-.gm-printer-sign {
-  position: absolute;
-  left: 0;
-  right: 0;
-}
-
-.gm-printer-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
 // table
 .gm-printer-table {
   position: relative;
@@ -124,13 +111,6 @@ body {
   }
 }
 
-.gm-printer-label {
-  position: absolute;
-  top: 0;
-  right: 0;
-  color: rgba(0, 0, 0, 0.1);
-}
-
 @media print {
   * {
     outline: none !important;
@@ -166,10 +146,6 @@ body {
     &::before {
       display: none;
     }
-  }
-
-  .gm-printer-label {
-    display: none;
   }
 }
 
