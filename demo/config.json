@@ -12,17 +12,6 @@
       "paddingLeft": "2mm"
     }
   },
-  "title": {
-    "text": "GDAILY FRESH SDN.BHD.",
-    "style": {
-      "fontSize": "28px",
-      "fontWeight": "bold",
-      "textAlign": "center",
-      "paddingTop": "0px",
-      "paddingBottom": "0px",
-      "height": "0px"
-    }
-  },
   "header": {
     "blocks": [
       {

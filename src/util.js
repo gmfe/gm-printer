@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 function getHeight (el) {
   const styles = window.getComputedStyle(el)
   const height = el.offsetHeight
@@ -66,6 +68,30 @@ function exchange (arr, target, source) {
   return arr
 }
 
+function _fixConfigPanel (config, panel) {
+  config[panel] = config[panel] || {}
+  config[panel]['blocks'] = config[panel]['blocks'] || []
+  config[panel]['style'] = config[panel]['style'] || {}
+}
+
+function fixConfig (config) {
+  config = _.cloneDeep(config)
+
+  _fixConfigPanel(config, 'header')
+  _fixConfigPanel(config, 'top')
+  _fixConfigPanel(config, 'bottom')
+  _fixConfigPanel(config, 'sign')
+  _fixConfigPanel(config, 'footer')
+
+  config.page = config.page || {}
+  config.page.type = config.page.type || 'A4'
+
+  config.table = config.table || {}
+  config.table.columns = config.table.columns || []
+
+  return config
+}
+
 export {
   getHeight,
   getWidth,
@@ -75,5 +101,6 @@ export {
   getTableColumnName,
   insertCSS,
   dispatchMsg,
-  exchange
+  exchange,
+  fixConfig
 }
