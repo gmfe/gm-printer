@@ -106,9 +106,9 @@ class Edit extends React.Component {
 
     return (
       <div className='gm-printer-edit'>
-        <div className='gm-printer-edit-header-fixed'/>
         <div className='gm-printer-edit-header'>
           <EditTop data={data} tableData={tableData} onSave={this.handleSave}/>
+          <hr/>
           <EditBottom/>
         </div>
         <div className='gm-printer-edit-content' onClick={this.handleCancel}>

@@ -31,21 +31,33 @@ class EditBottom extends React.Component {
 
     let fun = []
 
-    fun.push(<Position style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>)
-    fun.push(<Separator/>)
+    fun.push(
+      <div>
+        <button onClick={this.handleRemove}>移除</button>
+      </div>
+    )
+
+    fun.push(
+      <div>
+        <Position style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>
+      </div>
+    )
 
     if (!type || type === 'text') {
-      fun.push(<Fonter style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>)
-      fun.push(<Separator/>)
-      fun.push(<TextAlign style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>)
-      fun.push(<Separator/>)
-      fun.push(<Text
-        value={text}
-        placeholder='请输入填充内容'
-        style={{width: '300px'}}
-        onChange={this.handleChangeBlock.bind(this, 'text')}
-      />)
-      fun.push(<Separator/>)
+      fun.push(
+        <div>
+          <Fonter style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>
+          <Separator/>
+          <TextAlign style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>
+          <br/>
+          <Text
+            value={text}
+            placeholder='请输入填充内容'
+            style={{width: '300px'}}
+            onChange={this.handleChangeBlock.bind(this, 'text')}
+          />
+        </div>
+      )
     }
 
     if (type === 'line') {
@@ -64,8 +76,6 @@ class EditBottom extends React.Component {
       />)
       fun.push(<Separator/>)
     }
-
-    fun.push(<button onClick={this.handleRemove}>X</button>)
 
     return _.map(fun, (v, i) => React.cloneElement(v, {key: i}))
   }

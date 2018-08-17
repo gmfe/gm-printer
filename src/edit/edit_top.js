@@ -60,7 +60,7 @@ class EditTop extends React.Component {
             onClick={this.handleInsert.bind(this, v.value)}
           >{v.text}</button>
         ))}
-        &nbsp;&nbsp;
+        <br/>
         高 <TextPX value={editStore.computedPanelHeight} onChange={this.handlePanelHeight}/>
       </React.Fragment>
     )
@@ -69,25 +69,27 @@ class EditTop extends React.Component {
   render () {
     return (
       <div className='gm-printer-edit-header-top'>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <div>
+            <button onClick={this.handleUndo} disabled={!editStore.hasUndo}>undo</button>
+            <button onClick={this.handleRedo} disabled={!editStore.hasRedo}>redo</button>
+          </div>
+
+          <div>
+            <button onClick={this.handleTestPrint}>测试打印</button>
+            <button onClick={this.props.onSave}>保存</button>
+          </div>
+        </div>
+        <hr/>
         <div>
           区域
-          &nbsp;&nbsp;
           <select value={editStore.insertPanel} onChange={e => editStore.setInsertPanel(e.target.value)}>
             {_.map(panelList, v => <option key={v.value} value={v.value}>{v.text}</option>)}
           </select>
-          &nbsp;&nbsp;
+          <br/>
           <span>插入</span>
           &nbsp;&nbsp;
           {editStore.insertPanel !== 'table' ? this.renderBlock() : this.renderTable()}
-        </div>
-        <div>
-          <button onClick={this.handleUndo} disabled={!editStore.hasUndo}>undo</button>
-          <button onClick={this.handleRedo} disabled={!editStore.hasRedo}>redo</button>
-          &nbsp;&nbsp;
-          &nbsp;&nbsp;
-          &nbsp;&nbsp;
-          <button onClick={this.handleTestPrint}>测试打印</button>
-          <button onClick={this.props.onSave}>保存</button>
         </div>
       </div>
     )

@@ -1,26 +1,19 @@
 .gm-printer-edit {
-  .gm-printer-edit-header-fixed {
-    height: 85px;
-  }
-
   .gm-printer-edit-header {
     position: fixed;
     top: 0;
-    left: 0;
+    bottom: 0;
+    width: 350px;
     right: 0;
     z-index: 99;
-    background: whitesmoke;
+    background: white;
+    box-shadow: -2px 0 3px 0 hsla(0, 0%, 39%, 0.1);
 
     .gm-printer-edit-header-top {
-      background: white;
       padding: 10px;
-      display: flex;
-      justify-content: space-between;
-      box-shadow: 0 2px 3px 0 hsla(0, 0%, 39%, 0.1);
     }
 
     .gm-printer-edit-header-bottom {
-      text-align: center;
       padding: 10px;
     }
 
@@ -56,12 +49,13 @@
 
   .gm-printer-edit-content {
     position: relative;
+    padding-right: 350px;
   }
 }
 
 @media print {
-  .gm-printer-edit-header-fixed {
-    display: none;
+  .gm-printer-edit-content {
+    padding-right: 0;
   }
 
   .gm-printer-edit-header {
