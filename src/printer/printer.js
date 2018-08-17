@@ -17,10 +17,11 @@ function addPageSizeStyle (rule) {
   insertCSS(`@page {size: ${rule}; }`)
 }
 
-const Header = (props) => (<Panel {...props} panel='header' placeholder='页眉'/>)
-const Top = (props) => (<Panel {...props} panel='top' placeholder='页头'/>)
-const Bottom = (props) => (<Panel {...props} panel='bottom' placeholder='页尾'/>)
-const Footer = (props) => (<Panel {...props} panel='footer' placeholder='页脚'/>)
+const Header = (props) => <Panel {...props} panel='header' placeholder='页眉'/>
+const Top = (props) => <Panel {...props} panel='top' placeholder='顶部'/>
+const Bottom = (props) => <Panel {...props} panel='bottom' placeholder='底部'/>
+const Sign = (props) => <Panel {...props} panel='sign' placeholder='签名'/>
+const Footer = (props) => <Panel {...props} panel='footer' placeholder='页脚'/>
 
 @observer
 class Printer extends React.Component {
@@ -69,6 +70,7 @@ class Printer extends React.Component {
         <Top config={config.top} pageIndex={0}/>
         <Table config={config.table} data={tableData}/>
         <Bottom config={config.bottom} pageIndex={0}/>
+        <Sign config={config.sign} pageIndex={0}/>
         <Footer config={config.footer} pageIndex={0}/>
       </Page>
     )
@@ -83,6 +85,7 @@ class Printer extends React.Component {
         <Top config={config.top} pageIndex={0}/>
         <Table config={config.table} data={tableData}/>
         <Bottom config={config.bottom} pageIndex={0}/>
+        <Sign config={config.sign} pageIndex={0}/>
         <Footer config={config.footer} pageIndex={0}/>
       </Page>
     )
@@ -100,19 +103,26 @@ class Printer extends React.Component {
             return (
               <Page key={i} pageIndex={i}>
                 <Header config={config.header} pageIndex={i}/>
-                <Bottom config={config.bottom} style={{bottom: config.footer.style.height}} pageIndex={i}/>
+                <Bottom config={config.bottom} pageIndex={i}/>
+                <Sign config={config.sign} style={{bottom: config.footer.style.height}} pageIndex={i}/>
                 <Footer config={config.footer} pageIndex={i}/>
               </Page>
             )
           }
+
+          const isLastPage = i === printerStore.page.length - 1
 
           return (
             <Page key={i} pageIndex={i}>
               <Header config={config.header} pageIndex={i}/>
               {i === 0 && <Top config={config.top} pageIndex={i}/>}
               <Table config={config.table} data={tableData.slice(p.begin, p.end)}/>
-              {i === (printerStore.page.length - 1) &&
-              <Bottom config={config.bottom} pageIndex={i} style={{bottom: config.footer.style.height}}/>}
+              {isLastPage && (
+                <Bottom config={config.bottom} pageIndex={i}/>
+              )}
+              {isLastPage && (
+                <Sign config={config.sign} style={{bottom: config.footer.style.height}} pageIndex={i}/>
+              )}
               <Footer config={config.footer} pageIndex={i}/>
             </Page>
           )

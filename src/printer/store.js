@@ -20,6 +20,7 @@ class PrinterStore {
     header: 0,
     table: 0,
     bottom: 0,
+    sigh: 0,
     footer: 0,
     page: 0
   }
@@ -56,6 +57,7 @@ class PrinterStore {
       header: 0,
       table: 0,
       bottom: 0,
+      sigh: 0,
       footer: 0,
       page: 0
     }
@@ -128,6 +130,7 @@ class PrinterStore {
       this.height.top +
       this.height.table +
       this.height.bottom +
+      this.height.sign +
       this.height.footer
 
     if (height > this.height.page) {
@@ -150,15 +153,18 @@ class PrinterStore {
       this.height.table +
       this.table.head.height +
       this.height.bottom +
+      this.height.sign +
       this.height.footer * 2
 
     if (height > (this.height.page * 2)) {
       return false
     }
 
-    let oneHeight = this.height.header +
+    let oneHeight =
+      this.height.header +
       this.height.top +
-      this.table.head.height + this.table.body.heights[0] +
+      this.table.head.height +
+      this.table.body.heights[0] +
       this.height.footer
     let oneEnd = 1
 
@@ -221,12 +227,13 @@ class PrinterStore {
       oEnd = end
     }
 
-    // 如果最后一页高度不够
+    // 如果最后一页高度不够，就补多一个页面
     const lastHeight =
       this.height.header +
       this.table.head.height +
       _.sum(this.table.body.heights.slice(page.slice(-1)[0].begin)) +
       this.height.bottom +
+      this.height.sign +
       this.height.footer
 
     if (lastHeight > this.height.page) {

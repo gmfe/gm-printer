@@ -189,6 +189,11 @@
       "height": "300px"
     }
   },
+  "sign": {
+    "style": {
+      "height": "50px"
+    }
+  },
   "footer": {
     "blocks": [],
     "style": {
