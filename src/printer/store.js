@@ -123,7 +123,8 @@ class PrinterStore {
 
   @action
   _onePage () {
-    const height = this.height.header +
+    const height =
+      this.height.header +
       this.height.top +
       this.height.table +
       this.height.bottom +
@@ -143,9 +144,11 @@ class PrinterStore {
 
   @action
   _twoPage () {
-    const height = this.height.header * 2 +
+    const height =
+      this.height.header * 2 +
       this.height.top +
-      this.height.table + this.table.head.height +
+      this.height.table +
+      this.table.head.height +
       this.height.bottom +
       this.height.footer * 2
 
@@ -177,9 +180,11 @@ class PrinterStore {
 
   @action
   _morePage () {
-    let oneHeight = this.height.header +
+    let oneHeight =
+      this.height.header +
       this.height.top +
-      this.table.head.height + this.table.body.heights[0] +
+      this.table.head.height +
+      this.table.body.heights[0] +
       this.height.footer
     let end = 1
     let oEnd = 0
@@ -198,8 +203,10 @@ class PrinterStore {
     oEnd = end
 
     while (end <= this.table.data.length) {
-      let moreHeight = this.height.header +
-        this.table.head.height + this.table.body.heights[0] +
+      let moreHeight =
+        this.height.header +
+        this.table.head.height +
+        this.table.body.heights[0] +
         this.height.footer
 
       while (moreHeight < this.height.page) {
@@ -215,8 +222,10 @@ class PrinterStore {
     }
 
     // 如果最后一页高度不够
-    const lastHeight = this.height.header +
-      this.table.head.height + _.sum(this.table.body.heights.slice(page.slice(-1)[0].begin)) +
+    const lastHeight =
+      this.height.header +
+      this.table.head.height +
+      _.sum(this.table.body.heights.slice(page.slice(-1)[0].begin)) +
       this.height.bottom +
       this.height.footer
 
