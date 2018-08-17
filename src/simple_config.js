@@ -45,7 +45,7 @@ class SimpleConfig extends React.Component {
     }
   }
 
-  handleTestPrint = () => {
+  handlePrint = () => {
     const {data, tableData, isBatch} = this.props
     const {config} = this.state
 
@@ -63,10 +63,10 @@ class SimpleConfig extends React.Component {
         <Flex flex column style={{minWidth: '820px'}} className='gm-overflow-y'>
           <iframe ref={ref => { this.refIframe = ref }} style={{border: 'none', width: '100%', height: '100%'}}/>
         </Flex>
-        <Flex column style={{width: '160px'}}>
+        <Flex column style={{width: '240px'}}>
           <Flex justifyBetween className='gm-padding-10'>
             {configSelect}
-            <button className='btn btn-success' onClick={this.handleTestPrint}>打印</button>
+            <button className='btn btn-success' onClick={this.handlePrint}>打印</button>
           </Flex>
         </Flex>
       </Flex>
