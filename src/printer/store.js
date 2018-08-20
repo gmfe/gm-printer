@@ -272,7 +272,7 @@ class PrinterStore {
     }
   }
 
-  templateTable (text, i, tableData) {
+  templateTable (text, index, tableData) {
     // cache 之后表格数据重复,所以不cache
     // if (templateCache[text]) {
     //   return templateCache[text]
@@ -280,7 +280,8 @@ class PrinterStore {
     try {
       return _.template(text)({
         data: this.data,
-        tableData: tableData[i]
+        index,
+        tableData: tableData
       })
     } catch (err) {
       console.warn(err)

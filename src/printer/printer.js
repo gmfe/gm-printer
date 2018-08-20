@@ -9,6 +9,7 @@ import _ from 'lodash'
 import Panel from './panel'
 import Table from './table'
 import { insertCSS } from '../util'
+import { TABLETYPE_CATEGORY1TOTAL } from '../config'
 
 insertCSS(normalizeCSS.toString())
 insertCSS(printerCSS.toString())
@@ -169,4 +170,42 @@ Printer.propTypes = {
   config: PropTypes.object.isRequired
 }
 
-export default Printer
+@observer
+class Special extends React.Component {
+  render () {
+    const {config, data, tableData, ...rest} = this.props
+
+    const group = _.groupBy(tableData, v => v.category_title_1)
+
+    let newTableData = []
+
+    console.log(group)
+
+    _.forEach(group, (value, k) => {
+      newTableData = newTableData.concat(value)
+      newTableData.push({
+        _special: {
+          type: TABLETYPE_CATEGORY1TOTAL,
+          data: {
+            total: _.sum(value, v => v.sale_price)
+          }
+        }
+      })
+
+      console.log(k, value)
+    })
+
+    console.log(newTableData)
+
+    return (
+      <Printer
+        config={config}
+        data={data}
+        tableData={newTableData}
+        {...rest}
+      />
+    )
+  }
+}
+
+export default Special

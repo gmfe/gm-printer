@@ -60,9 +60,11 @@ const tableClassNameList = [
   {value: 'className1', text: '样式一'}
 ]
 
+const TABLETYPE_CATEGORY1TOTAL = 'typeCategory1Total'
+
 const tableTypeList = [
   {value: '', text: '默认'},
-  {value: 'typeCategory1Total', text: '一级分类+总计'}
+  {value: TABLETYPE_CATEGORY1TOTAL, text: '一级分类+总计'}
 ]
 
 const panelList = [
@@ -85,6 +87,7 @@ export {
   borderStyleList,
   tableClassNameList,
   tableTypeList,
+  TABLETYPE_CATEGORY1TOTAL,
   panelList,
   blockTypeList,
   pageSizeMap
