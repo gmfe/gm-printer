@@ -5,7 +5,7 @@ import { toJS } from 'mobx'
 import { doPrint } from '../printer'
 import _ from 'lodash'
 import { getBlockName } from '../util'
-import { blockTypeList, panelList } from '../config'
+import { blockTypeList, panelList, tableClassNameList, tableTypeList } from '../config'
 import { TextPX } from './component'
 import { observer } from 'mobx-react/index'
 
@@ -43,10 +43,34 @@ class EditTop extends React.Component {
     editStore.redo()
   }
 
+  handleTableClassName = (e) => {
+    editStore.setConfigTableClassName(e.target.value)
+  }
+
+  handleTableType = (e) => {
+    editStore.setConfigTableType(e.target.value)
+  }
+
   renderTable () {
+    const {type, className} = editStore.config.table
     return (
       <React.Fragment>
         <button onClick={this.handleTableAdd}>插入一列</button>
+        <div>
+          样式
+          <select value={className || ''} onChange={this.handleTableClassName}>
+            {_.map(tableClassNameList, v => (
+              <option key={v.value} value={v.value}>{v.text}</option>
+            ))}
+          </select>
+          <br/>
+          类型
+          <select value={type || ''} onChange={this.handleTableType}>
+            {_.map(tableTypeList, v => (
+              <option key={v.value} value={v.value}>{v.text}</option>
+            ))}
+          </select>
+        </div>
       </React.Fragment>
     )
   }

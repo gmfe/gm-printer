@@ -74,7 +74,7 @@ class EditBottom extends React.Component {
     return (
       <React.Fragment>
         <div>
-          <button style={{marginLeft: '20px'}} onClick={this.handleRemove}>移除</button>
+          <button onClick={this.handleRemove}>移除</button>
         </div>
         <hr/>
         <div>

@@ -57,7 +57,7 @@
         },
         "text": "${tableData.id}",
         "style": {
-          "textAlign": "left"
+          "textAlign": "center"
         }
       },
       {
@@ -101,11 +101,15 @@
         }
       }
     ],
-    "className": "gm-printer-table-style-1"
-  },
-  "content": {
+    "className": "className1",
+    "type": "typeCategory1Total"
   },
   "bottom": {
+    "style": {
+      "height": "50px"
+    }
+  },
+  "sign": {
     "blocks": [
       {
         "text": "RINGGIT MALAYSIA : NINETY FOUR AND CENTS SEVENTY ONLY",
@@ -176,11 +180,6 @@
     ],
     "style": {
       "height": "300px"
-    }
-  },
-  "sign": {
-    "style": {
-      "height": "50px"
     }
   },
   "footer": {

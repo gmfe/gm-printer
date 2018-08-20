@@ -35,7 +35,7 @@ class EditStore {
   get computedPrinterKey () {
     return _.map(this.config, (v, k) => {
       if (k === 'table') {
-        return v.columns.length
+        return v.columns.length + '_' + v.className + '_' + v.type
       } else {
         return v.style ? v.style.height : ''
       }
@@ -165,6 +165,17 @@ class EditStore {
 
     const column = this.computedSelectedInfo
     column[who] = value
+  }
+
+  @action
+  setConfigTableType (type) {
+    this.config.table.type = type
+  }
+
+  @action
+  setConfigTableClassName (className) {
+    this.config.table.className = className
+    console.log(this.config.table)
   }
 
   @action

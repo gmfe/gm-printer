@@ -72,8 +72,6 @@ body {
 
     td,
     th {
-      border: 1px solid black;
-
       &.active {
         outline: 1px solid rgb(82, 146, 247);
       }
@@ -86,20 +84,6 @@ body {
     }
   }
 
-  &.gm-printer-table-style-1 {
-    table {
-      th,
-      td {
-        border: 1px solid transparent;
-      }
-
-      th {
-        border-top: 1px solid black;
-        border-bottom: 1px solid black;
-      }
-    }
-  }
-
   &::before {
     content: "表格";
     position: absolute;
@@ -108,6 +92,29 @@ body {
     color: rgba(0, 0, 0, 0.1);
     left: calc(50% - 1.5em);
     top: calc(50% - 0.5em);
+  }
+}
+
+.gm-printer-table.gm-printer-table-classname-default {
+  table {
+    td,
+    th {
+      border: 1px solid black;
+    }
+  }
+}
+
+.gm-printer-table.gm-printer-table-classname-className1 {
+  table {
+    td,
+    th {
+      border: 1px solid transparent;
+    }
+
+    th {
+      border-top: 1px solid black;
+      border-bottom: 1px solid black;
+    }
   }
 }
 

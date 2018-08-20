@@ -96,7 +96,7 @@ class Printer extends React.Component {
         <Top config={config.top} pageIndex={0}/>
         <Table config={config.table} data={tableData}/>
         <Bottom config={config.bottom} pageIndex={0}/>
-        <Sign config={config.sign} pageIndex={0}/>
+        <Sign config={config.sign} pageIndex={0} style={{bottom: config.footer.style.height}}/>
         <Footer config={config.footer} pageIndex={0}/>
       </Page>
     )
@@ -115,7 +115,7 @@ class Printer extends React.Component {
               <Page key={i} pageIndex={i}>
                 <Header config={config.header} pageIndex={i}/>
                 <Bottom config={config.bottom} pageIndex={i}/>
-                <Sign config={config.sign} style={{bottom: config.footer.style.height}} pageIndex={i}/>
+                <Sign config={config.sign} pageIndex={i} style={{bottom: config.footer.style.height}}/>
                 <Footer config={config.footer} pageIndex={i}/>
               </Page>
             )
@@ -132,7 +132,7 @@ class Printer extends React.Component {
                 <Bottom config={config.bottom} pageIndex={i}/>
               )}
               {isLastPage && (
-                <Sign config={config.sign} style={{bottom: config.footer.style.height}} pageIndex={i}/>
+                <Sign config={config.sign} pageIndex={i} style={{bottom: config.footer.style.height}}/>
               )}
               <Footer config={config.footer} pageIndex={i}/>
             </Page>

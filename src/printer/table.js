@@ -8,14 +8,21 @@ import { observer } from 'mobx-react/index'
 import classNames from 'classnames'
 
 @observer
-class TableBefore extends React.Component {
+class Table extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      index: null
+    }
+  }
+
   componentDidMount () {
     const {data} = this.props
 
-    const $table = ReactDOM.findDOMNode(this)
+    const $table = ReactDOM.findDOMNode(this).querySelector('table')
     const tHead = $table.querySelector('thead')
-    const ths = tHead.querySelectorAll('th')
-    const trs = $table.querySelectorAll('tbody tr')
+    const ths = tHead.querySelectorAll('th') || []
+    const trs = $table.querySelectorAll('tbody tr') || []
 
     printerStore.setHeight({
       table: getHeight($table)
@@ -31,42 +38,6 @@ class TableBefore extends React.Component {
         heights: _.map(trs, tr => getHeight(tr))
       }
     })
-  }
-
-  render () {
-    const {columns, data} = this.props
-
-    return (
-      <table>
-        <thead>
-        <tr>
-          {_.map(columns, (col, i) => <th key={i} style={col.headStyle}>{col.head}</th>)}
-        </tr>
-        </thead>
-        <tbody>
-        {_.map(data, (d, i) => (
-          <tr key={i}>
-            {_.map(columns, (col, j) => (
-              <td
-                style={col.style}
-                key={j}
-              >{printerStore.templateTable(col.text, i, data)}</td>
-            ))}
-          </tr>
-        ))}
-        </tbody>
-      </table>
-    )
-  }
-}
-
-@observer
-class TableReady extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      index: null
-    }
   }
 
   handleClick = (e) => {
@@ -104,12 +75,23 @@ class TableReady extends React.Component {
     e.preventDefault()
   }
 
-  render () {
-    const {columns, data} = this.props
+  renderCategoryTotal () {
+    return (
+      <table>
+        <thead>
+        <tr>
 
-    if (data.length === 0) {
-      return null
-    }
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    )
+  }
+
+  renderDefault () {
+    const {config: {columns}, data} = this.props
 
     return (
       <table>
@@ -139,11 +121,11 @@ class TableReady extends React.Component {
           <tr key={i}>
             {_.map(columns, (col, j) => (
               <td
+                key={j}
                 style={col.style}
                 className={classNames({
                   active: getTableColumnName(j) === printerStore.selected
                 })}
-                key={j}
               >{printerStore.templateTable(col.text, i, data)}</td>
             ))}
           </tr>
@@ -152,17 +134,25 @@ class TableReady extends React.Component {
       </table>
     )
   }
-}
 
-@observer
-class Table extends React.Component {
   render () {
-    const {config: {columns}, data, className} = this.props
+    const {config: {type, className}} = this.props
+
+    let content
+
+    if (type === 'typeCategory1Total') {
+      content = this.renderCategoryTotal()
+    } else {
+      content = this.renderDefault()
+    }
 
     return (
-      <div className={classNames('gm-printer-table', className)}>
-        {printerStore.ready ? <TableReady columns={columns} data={data}/>
-          : <TableBefore columns={columns} data={data}/>}
+      <div className={classNames(
+        'gm-printer-table',
+        'gm-printer-table-classname-' + (className || 'default'),
+        'gm-printer-table-type-' + (type || 'default')
+      )}>
+        {content}
       </div>
     )
   }

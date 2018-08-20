@@ -4,7 +4,7 @@ import config from '../demo/config.json'
 import data from '../demo/data'
 import moment from 'moment'
 import 'normalize.css/normalize.css'
-import { PrinterEdit } from '../src'
+import { PrinterEdit, fixConfig } from '../src'
 
 const nData = {
   ...data,
@@ -17,11 +17,11 @@ class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      config
+      config: fixConfig(config)
     }
   }
 
-  handleChange = (config) => {
+  handleSave = (config) => {
     console.log(config)
     this.setState({
       config
@@ -35,7 +35,7 @@ class App extends React.Component {
           data={nData}
           config={this.state.config}
           tableData={nData.details}
-          onChange={this.handleChange}
+          onSave={this.handleSave}
         />
       </div>
     )

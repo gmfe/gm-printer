@@ -85,9 +85,14 @@ function fixConfig (config) {
 
   config.page = config.page || {}
   config.page.type = config.page.type || 'A4'
+  _.each(config.page.blocks, v => {
+    v.type = v.type || ''
+  })
 
   config.table = config.table || {}
   config.table.columns = config.table.columns || []
+  config.table.className = config.table.className || ''
+  config.table.type = config.table.type || ''
 
   return config
 }
