@@ -57,17 +57,22 @@ class SimpleConfig extends React.Component {
   }
 
   render () {
-    const {configSelect} = this.props
+    const {configSelect, content, style} = this.props
+    const _style = {width: '240px', ...style}
+
     return (
       <Flex className='gm-printer-config' style={{height: '100%', width: '100%'}}>
         <Flex flex column style={{minWidth: '820px'}} className='gm-overflow-y'>
           <iframe ref={ref => { this.refIframe = ref }} style={{border: 'none', width: '100%', height: '100%'}}/>
         </Flex>
-        <Flex column style={{width: '240px'}}>
+        <Flex column style={_style}>
           <Flex justifyBetween className='gm-padding-10'>
             {configSelect}
             <button className='btn btn-success' onClick={this.handlePrint}>打印</button>
           </Flex>
+          <div>
+            {content}
+          </div>
         </Flex>
       </Flex>
     )
@@ -77,7 +82,8 @@ class SimpleConfig extends React.Component {
 SimpleConfig.propTypes = {
   data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   tableData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
-  config: PropTypes.object.isRequired
+  config: PropTypes.object.isRequired,
+  style: PropTypes.object
 }
 
 export default SimpleConfig
