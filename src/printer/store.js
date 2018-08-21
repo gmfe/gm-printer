@@ -4,8 +4,6 @@ import { pageSizeMap } from '../config'
 
 configure({enforceActions: true})
 
-_.templateSettings.interpolate = /{{([\s\S]+?)}}/g
-
 class PrinterStore {
   @observable
   size = pageSizeMap.A4.size
@@ -18,10 +16,9 @@ class PrinterStore {
 
   @observable
   height = {
-    top: 0,
     header: 0,
+    contents: [],
     table: 0,
-    bottom: 0,
     sigh: 0,
     footer: 0,
     page: 0
@@ -55,10 +52,9 @@ class PrinterStore {
     this.gap = pageSizeMap.A4.gap
     this.ready = false
     this.height = {
-      top: 0,
       header: 0,
+      contents: [],
       table: 0,
-      bottom: 0,
       sigh: 0,
       footer: 0,
       page: 0
@@ -98,8 +94,13 @@ class PrinterStore {
   }
 
   @action
-  setHeight (height) {
-    this.height = Object.assign(this.height, height)
+  setHeight (who, height) {
+    const [a, b] = who.split('.')
+    if (b) {
+      this.height[a][b] = height
+    } else {
+      this.height[a] = height
+    }
   }
 
   @action
@@ -129,9 +130,8 @@ class PrinterStore {
   _onePage () {
     const height =
       this.height.header +
-      this.height.top +
+      _.sum(this.height.contents) +
       this.height.table +
-      this.height.bottom +
       this.height.sign +
       this.height.footer
 
@@ -151,10 +151,8 @@ class PrinterStore {
   _twoPage () {
     const height =
       this.height.header * 2 +
-      this.height.top +
       this.height.table +
       this.table.head.height +
-      this.height.bottom +
       this.height.sign +
       this.height.footer * 2
 
@@ -164,7 +162,6 @@ class PrinterStore {
 
     let oneHeight =
       this.height.header +
-      this.height.top +
       this.table.head.height +
       this.table.body.heights[0] +
       this.height.footer
@@ -190,7 +187,6 @@ class PrinterStore {
   _morePage () {
     let oneHeight =
       this.height.header +
-      this.height.top +
       this.table.head.height +
       this.table.body.heights[0] +
       this.height.footer
@@ -234,7 +230,6 @@ class PrinterStore {
       this.height.header +
       this.table.head.height +
       _.sum(this.table.body.heights.slice(page.slice(-1)[0].begin)) +
-      this.height.bottom +
       this.height.sign +
       this.height.footer
 
@@ -275,10 +270,6 @@ class PrinterStore {
   }
 
   templateTable (text, index, tableData) {
-    // cache 之后表格数据重复,所以不cache
-    // if (templateCache[text]) {
-    //   return templateCache[text]
-    // }
     try {
       return _.template(text)({
         data: this.data,
@@ -292,7 +283,6 @@ class PrinterStore {
   }
 
   templatePagination (text, pageIndex) {
-    // 不cache page 会变
     try {
       return _.template(text)({
         data: this.data,

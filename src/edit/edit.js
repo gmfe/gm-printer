@@ -37,8 +37,6 @@ class Edit extends React.Component {
       }
     }
 
-    console.log(config)
-
     editStore.setConfig(config)
   }
 

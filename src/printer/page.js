@@ -10,9 +10,7 @@ class Page extends React.Component {
   componentDidMount () {
     const $dom = ReactDOM.findDOMNode(this)
 
-    printerStore.setHeight({
-      page: getHeight($dom)
-    })
+    printerStore.setHeight('page', getHeight($dom))
   }
 
   render () {

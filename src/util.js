@@ -78,8 +78,6 @@ function fixConfig (config) {
   config = _.cloneDeep(config)
 
   _fixConfigPanel(config, 'header')
-  _fixConfigPanel(config, 'top')
-  _fixConfigPanel(config, 'bottom')
   _fixConfigPanel(config, 'sign')
   _fixConfigPanel(config, 'footer')
 

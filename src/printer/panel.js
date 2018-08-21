@@ -14,9 +14,7 @@ class Panel extends React.Component {
 
     const $dom = ReactDOM.findDOMNode(this)
 
-    printerStore.setHeight({
-      [panel]: getHeight($dom)
-    })
+    printerStore.setHeight(panel, getHeight($dom))
   }
 
   render () {

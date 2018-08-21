@@ -25,9 +25,7 @@ class Table extends React.Component {
     const ths = tHead.querySelectorAll('th') || []
     const trs = $table.querySelectorAll('tbody tr') || []
 
-    printerStore.setHeight({
-      table: getHeight($table)
-    })
+    printerStore.setHeight('table', getHeight($table))
 
     printerStore.setTable({
       data,

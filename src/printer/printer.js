@@ -15,13 +15,13 @@ import { TABLETYPE_CATEGORY1TOTAL } from '../config'
 insertCSS(normalizeCSS.toString())
 insertCSS(printerCSS.toString())
 
+_.templateSettings.interpolate = /{{([\s\S]+?)}}/g
+
 function addPageSizeStyle (rule) {
   insertCSS(`@page {size: ${rule}; }`)
 }
 
 const Header = (props) => <Panel {...props} panel='header' placeholder='页眉'/>
-const Top = (props) => <Panel {...props} panel='top' placeholder='顶部'/>
-const Bottom = (props) => <Panel {...props} panel='bottom' placeholder='底部'/>
 const Sign = (props) => <Panel {...props} style={{
   ...props.style,
   position: 'absolute',
@@ -35,6 +35,16 @@ const Footer = (props) => <Panel {...props} style={{
   left: 0,
   right: 0
 }} panel='footer' placeholder='页脚'/>
+
+const Contents = props => _.map(props.contents, (content, index) => (
+  <Panel
+    key={`contents.${index}`}
+    config={content}
+    pageIndex={props.pageIndex}
+    panel={`contents.${index}`}
+    placeholder={`contents.${index}`}
+  />
+))
 
 @observer
 class Printer extends React.Component {
@@ -80,9 +90,8 @@ class Printer extends React.Component {
     return (
       <Page pageIndex={0}>
         <Header config={config.header} pageIndex={0}/>
-        <Top config={config.top} pageIndex={0}/>
+        <Contents contents={config.contents} pageIndex={0}/>
         <Table config={config.table} data={tableData}/>
-        <Bottom config={config.bottom} pageIndex={0}/>
         <Sign config={config.sign} pageIndex={0}/>
         <Footer config={config.footer} pageIndex={0}/>
       </Page>
@@ -95,9 +104,8 @@ class Printer extends React.Component {
     return (
       <Page pageIndex={0}>
         <Header config={config.header} pageIndex={0}/>
-        <Top config={config.top} pageIndex={0}/>
+        <Contents contents={config.contents} pageIndex={0}/>
         <Table config={config.table} data={tableData}/>
-        <Bottom config={config.bottom} pageIndex={0}/>
         <Sign config={config.sign} pageIndex={0} style={{bottom: config.footer.style.height}}/>
         <Footer config={config.footer} pageIndex={0}/>
       </Page>
@@ -116,7 +124,6 @@ class Printer extends React.Component {
             return (
               <Page key={i} pageIndex={i}>
                 <Header config={config.header} pageIndex={i}/>
-                <Bottom config={config.bottom} pageIndex={i}/>
                 <Sign config={config.sign} pageIndex={i} style={{bottom: config.footer.style.height}}/>
                 <Footer config={config.footer} pageIndex={i}/>
               </Page>
@@ -128,11 +135,7 @@ class Printer extends React.Component {
           return (
             <Page key={i} pageIndex={i}>
               <Header config={config.header} pageIndex={i}/>
-              {i === 0 && <Top config={config.top} pageIndex={i}/>}
               <Table config={config.table} data={tableData.slice(p.begin, p.end)}/>
-              {isLastPage && (
-                <Bottom config={config.bottom} pageIndex={i}/>
-              )}
               {isLastPage && (
                 <Sign config={config.sign} pageIndex={i} style={{bottom: config.footer.style.height}}/>
               )}
