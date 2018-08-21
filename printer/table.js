@@ -2,15 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import ReactDOM from 'react-dom'
-import {getHeight, getWidth} from './util'
+import { getHeight, getWidth } from './util'
 import printerStore from './store'
-import {observer} from 'mobx-react/index'
+import { observer } from 'mobx-react/index'
 import classNames from 'classnames'
 
 @observer
 class TableBefore extends React.Component {
   componentDidMount () {
-    const {data} = this.props
+    const {tableData} = this.props
 
     const $table = ReactDOM.findDOMNode(this)
     const tHead = $table.querySelector('thead')
@@ -22,7 +22,7 @@ class TableBefore extends React.Component {
     })
 
     printerStore.setTable({
-      data,
+      data: tableData,
       head: {
         height: getHeight(tHead),
         widths: _.map(ths, th => getWidth(th))
@@ -34,7 +34,7 @@ class TableBefore extends React.Component {
   }
 
   render () {
-    const {columns, data, className} = this.props
+    const {columns, tableData, data, className} = this.props
 
     return (
       <table className={classNames('gm-printer-table', className)}>
@@ -44,13 +44,13 @@ class TableBefore extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {_.map(data, (d, i) => (
+          {_.map(tableData, (d, i) => (
             <tr key={i}>
               {_.map(columns, (col, j) => (
                 <td
                   style={col.style}
                   key={j}
-                >{printerStore.templateTable(col.text, i, data)}</td>
+                >{printerStore.templateTable(col.text, i, tableData, data)}</td>
               ))}
             </tr>
           ))}
@@ -62,9 +62,9 @@ class TableBefore extends React.Component {
 
 class TableReady extends React.Component {
   render () {
-    const {columns, data, className} = this.props
+    const {columns, tableData, className, data} = this.props
 
-    if (data.length === 0) {
+    if (tableData.length === 0) {
       return null
     }
 
@@ -78,13 +78,13 @@ class TableReady extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {_.map(data, (d, i) => (
+          {_.map(tableData, (d, i) => (
             <tr key={i}>
               {_.map(columns, (col, j) => (
                 <td
                   style={col.style}
                   key={j}
-                >{printerStore.templateTable(col.text, i, data)}</td>
+                >{printerStore.templateTable(col.text, i, tableData, data)}</td>
               ))}
             </tr>
           ))}
@@ -96,12 +96,12 @@ class TableReady extends React.Component {
 
 class Table extends React.Component {
   render () {
-    const {columns, data, className} = this.props
+    const {columns, tableData, data, className} = this.props
 
     return (
       <div>
-        {printerStore.ready ? <TableReady columns={columns} data={data} className={className}/>
-          : <TableBefore columns={columns} data={data} className={className}/>}
+        {printerStore.ready ? <TableReady columns={columns} tableData={tableData} data={data} className={className}/>
+          : <TableBefore columns={columns} data={data} tableData={tableData} className={className}/>}
       </div>
     )
   }
@@ -109,7 +109,8 @@ class Table extends React.Component {
 
 Table.propTypes = {
   columns: PropTypes.array.isRequired,
-  data: PropTypes.array.isRequired
+  tableData: PropTypes.array.isRequired,
+  data: PropTypes.object.isRequired
 }
 
 Table.defaultProps = {}

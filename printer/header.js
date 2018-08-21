@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
-import {observer} from 'mobx-react'
+import { observer } from 'mobx-react'
 import printerStore from './store'
 import _ from 'lodash'
-import {getHeight} from './util'
+import { getHeight } from './util'
 
 @observer
 class Header extends React.Component {
@@ -17,13 +17,13 @@ class Header extends React.Component {
   }
 
   render () {
-    const {blocks, style, pageIndex} = this.props
+    const {blocks, style, pageIndex, data} = this.props
 
     return (
       <div className='gm-printer-header'>
         <div style={style}>
           {_.map(blocks, (cell, i) => (
-            <div key={i} style={cell.style}>{printerStore.template(cell.text, pageIndex)}</div>
+            <div key={i} style={cell.style}>{printerStore.template(cell.text, pageIndex, data)}</div>
           ))}
         </div>
       </div>
@@ -34,7 +34,8 @@ class Header extends React.Component {
 Header.propTypes = {
   blocks: PropTypes.array.isRequired,
   style: PropTypes.object,
-  pageIndex: PropTypes.number
+  pageIndex: PropTypes.number,
+  data: PropTypes.object.isRequired
 }
 
 export default Header

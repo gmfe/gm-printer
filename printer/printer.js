@@ -26,9 +26,6 @@ class Printer extends React.Component {
       printerStore.setSize(size)
       printerStore.setGap(gap)
     }
-
-    printerStore.setData(props.data)
-    printerStore.setTableData(props.tableData)
   }
 
   componentDidMount () {
@@ -38,38 +35,38 @@ class Printer extends React.Component {
   }
 
   renderBefore () {
-    const {config, tableData} = this.props
+    const {config, tableData, data} = this.props
 
     return (
       <Page pageIndex={0}>
-        <Header {...config.header} pageIndex={0}/>
-        <Top {...config.top} pageIndex={0}/>
-        <Table {...config.table} data={tableData}/>
-        <Bottom {...config.bottom} pageIndex={0}/>
-        <Footer {...config.footer} pageIndex={0}/>
-        <Fixed {...config.fixed} pageIndex={0}/>
+        <Header {...config.header} pageIndex={0} data={data}/>
+        <Top {...config.top} pageIndex={0} data={data}/>
+        <Table {...config.table} tableData={tableData} data={data}/>
+        <Bottom {...config.bottom} pageIndex={0} data={data}/>
+        <Footer {...config.footer} pageIndex={0} data={data}/>
+        <Fixed {...config.fixed} pageIndex={0} data={data}/>
       </Page>
     )
   }
 
   renderOnePage () {
-    const {config, tableData} = this.props
+    const {config, tableData, data} = this.props
 
     return (
       <Page pageIndex={0}>
-        <Header {...config.header} pageIndex={0}/>
-        <Top {...config.top} pageIndex={0}/>
-        <Table {...config.table} data={tableData}/>
-        <Bottom {...config.bottom} pageIndex={0}/>
-        <Footer {...config.footer} pageIndex={0}/>
-        <Fixed {...config.fixed} pageIndex={0}/>
+        <Header {...config.header} pageIndex={0} data={data}/>
+        <Top {...config.top} pageIndex={0} data={data}/>
+        <Table {...config.table} tableData={tableData} data={data}/>
+        <Bottom {...config.bottom} pageIndex={0} data={data}/>
+        <Footer {...config.footer} pageIndex={0} data={data}/>
+        <Fixed {...config.fixed} pageIndex={0} data={data}/>
       </Page>
     )
   }
 
   renderMorePage () {
     const {
-      config, tableData
+      config, tableData, data
     } = this.props
 
     return (
@@ -78,22 +75,22 @@ class Printer extends React.Component {
           if (p.bottomPage) {
             return (
               <Page key={i} pageIndex={i}>
-                <Header {...config.header} pageIndex={i}/>
-                <Bottom {...config.bottom} pageIndex={i}/>
-                <Footer {...config.footer} pageIndex={i}/>
-                <Fixed {...config.fixed} pageIndex={i}/>
+                <Header {...config.header} pageIndex={i} data={data}/>
+                <Bottom {...config.bottom} pageIndex={i} data={data}/>
+                <Footer {...config.footer} pageIndex={i} data={data}/>
+                <Fixed {...config.fixed} pageIndex={i} data={data}/>
               </Page>
             )
           }
 
           return (
             <Page key={i} pageIndex={i}>
-              <Header {...config.header} pageIndex={i}/>
-              {i === 0 ? <Top {...config.top} pageIndex={i}/> : null}
-              <Table {...config.table} data={tableData.slice(p.begin, p.end)}/>
-              {i === (printerStore.page.length - 1) ? <Bottom {...config.bottom}/> : null}
-              <Footer {...config.footer} pageIndex={i}/>
-              <Fixed {...config.fixed} pageIndex={i}/>
+              <Header {...config.header} pageIndex={i} data={data}/>
+              {i === 0 ? <Top {...config.top} pageIndex={i} data={data}/> : null}
+              <Table {...config.table} tableData={tableData.slice(p.begin, p.end)} data={data}/>
+              {i === (printerStore.page.length - 1) ? <Bottom {...config.bottom} data={data}/> : null}
+              <Footer {...config.footer} pageIndex={i} data={data}/>
+              <Fixed {...config.fixed} pageIndex={i} data={data}/>
             </Page>
           )
         })}
