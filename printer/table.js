@@ -3,25 +3,24 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import ReactDOM from 'react-dom'
 import { getHeight, getWidth } from './util'
-import printerStore from './store'
 import { observer } from 'mobx-react/index'
 import classNames from 'classnames'
 
 @observer
 class TableBefore extends React.Component {
   componentDidMount () {
-    const {tableData} = this.props
+    const {tableData, store} = this.props
 
     const $table = ReactDOM.findDOMNode(this)
     const tHead = $table.querySelector('thead')
     const ths = tHead.querySelectorAll('th')
     const trs = $table.querySelectorAll('tbody tr')
 
-    printerStore.setHeight({
+    store.setHeight({
       table: getHeight($table)
     })
 
-    printerStore.setTable({
+    store.setTable({
       data: tableData,
       head: {
         height: getHeight(tHead),
@@ -34,7 +33,7 @@ class TableBefore extends React.Component {
   }
 
   render () {
-    const {columns, tableData, data, className} = this.props
+    const {columns, tableData, className, store} = this.props
 
     return (
       <table className={classNames('gm-printer-table', className)}>
@@ -50,7 +49,7 @@ class TableBefore extends React.Component {
                 <td
                   style={col.style}
                   key={j}
-                >{printerStore.templateTable(col.text, i, tableData, data)}</td>
+                >{store.templateTable(col.text, i, tableData)}</td>
               ))}
             </tr>
           ))}
@@ -62,7 +61,7 @@ class TableBefore extends React.Component {
 
 class TableReady extends React.Component {
   render () {
-    const {columns, tableData, className, data} = this.props
+    const {columns, tableData, className, store} = this.props
 
     if (tableData.length === 0) {
       return null
@@ -73,7 +72,7 @@ class TableReady extends React.Component {
         <thead>
           <tr>
             {_.map(columns, (col, i) => <th key={i} style={Object.assign({}, col.headStyle, {
-              width: printerStore.table.head.widths[i]
+              width: store.table.head.widths[i]
             })}>{col.head}</th>)}
           </tr>
         </thead>
@@ -84,7 +83,7 @@ class TableReady extends React.Component {
                 <td
                   style={col.style}
                   key={j}
-                >{printerStore.templateTable(col.text, i, tableData, data)}</td>
+                >{store.templateTable(col.text, i, tableData)}</td>
               ))}
             </tr>
           ))}
@@ -96,12 +95,12 @@ class TableReady extends React.Component {
 
 class Table extends React.Component {
   render () {
-    const {columns, tableData, data, className} = this.props
+    const {columns, tableData, className, store} = this.props
 
     return (
       <div>
-        {printerStore.ready ? <TableReady columns={columns} tableData={tableData} data={data} className={className}/>
-          : <TableBefore columns={columns} data={data} tableData={tableData} className={className}/>}
+        {store.ready ? <TableReady columns={columns} store={store} tableData={tableData} className={className}/>
+          : <TableBefore columns={columns} tableData={tableData} className={className} store={store}/>}
       </div>
     )
   }
@@ -109,8 +108,7 @@ class Table extends React.Component {
 
 Table.propTypes = {
   columns: PropTypes.array.isRequired,
-  tableData: PropTypes.array.isRequired,
-  data: PropTypes.object.isRequired
+  tableData: PropTypes.array.isRequired
 }
 
 Table.defaultProps = {}

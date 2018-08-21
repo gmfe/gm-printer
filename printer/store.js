@@ -15,6 +15,12 @@ class PrinterStore {
   ready = false
 
   @observable
+  data = {}
+
+  @observable
+  tableData = []
+
+  @observable
   height = {
     top: 0,
     header: 0,
@@ -65,6 +71,16 @@ class PrinterStore {
     this.page = []
     this.data = {}
     this.tableData = []
+  }
+
+  @action
+  setTableData (tableData) {
+    this.tableData = tableData
+  }
+
+  @action
+  setData (data) {
+    this.data = data
   }
 
   @action
@@ -223,10 +239,10 @@ class PrinterStore {
     return true
   }
 
-  template (text, pageIndex, data) {
+  template (text, pageIndex) {
     try {
       return _.template(text)({
-        data: data,
+        data: this.data,
         pagination: {
           pageIndex: pageIndex + 1,
           count: this.page.length
@@ -238,10 +254,10 @@ class PrinterStore {
     }
   }
 
-  templateTable (text, i, tableData, data) {
+  templateTable (text, i, tableData) {
     try {
       return _.template(text)({
-        data: data,
+        data: this.data,
         tableData: tableData[i]
       })
     } catch (err) {
@@ -250,11 +266,11 @@ class PrinterStore {
     }
   }
 
-  templatePagination (text, pageIndex, data) {
+  templatePagination (text, pageIndex) {
     // 不cache page 会变
     try {
       return _.template(text)({
-        data: data,
+        data: this.data,
         pagination: {
           pageIndex: pageIndex + 1,
           count: this.page.length
@@ -267,6 +283,4 @@ class PrinterStore {
   }
 }
 
-const printerStore = new PrinterStore()
-
-export default printerStore
+export default PrinterStore

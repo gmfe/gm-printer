@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Printer from './printer'
+import Store from './store'
 import 'normalize.css/normalize.css'
 import './style.less'
 import _ from 'lodash'
@@ -42,6 +43,7 @@ class App extends React.Component {
         <div>
           {_.map(datas, (v, i) => <Printer
             key={i}
+            store={new Store()}
             data={datas[i]}
             tableData={tableDatas[i]}
             config={config}
@@ -51,6 +53,7 @@ class App extends React.Component {
     } else {
       return (
         <Printer
+          store={new Store()}
           data={data}
           tableData={tableData}
           config={config}
