@@ -11,7 +11,8 @@ class Block extends React.Component {
     super(props)
     this.state = {
       clientX: null,
-      clientY: null
+      clientY: null,
+      isEdit: false
     }
   }
 
@@ -50,6 +51,20 @@ class Block extends React.Component {
     })
   }
 
+  handleDoubleClick = () => {
+    this.setState({
+      isEdit: true
+    }, () => {
+      this.refEdit.focus()
+    })
+  }
+
+  handleEditBlur = () => {
+    this.setState({
+      isEdit: false
+    })
+  }
+
   handleText = (text) => {
     dispatchMsg('gm-printer-block-text-set', {
       text
@@ -64,6 +79,7 @@ class Block extends React.Component {
       className,
       ...rest
     } = this.props
+    const {isEdit} = this.state
 
     let content = null
     if (!type || type === 'text') {
@@ -87,12 +103,15 @@ class Block extends React.Component {
         onDragStart={this.handleDragStart}
         onDragEnd={this.handleDragEnd}
         onClick={this.handleClick}
+        onDoubleClick={this.handleDoubleClick}
       >
         {content}
-        {(!type || type === 'text') && active && (
+        {(!type || type === 'text') && active && isEdit && (
           <textarea
+            ref={ref => (this.refEdit = ref)}
             className='gm-printer-block-text-edit' value={text}
             onChange={(e) => this.handleText(e.target.value)}
+            onBlur={this.handleEditBlur}
           />
         )}
       </div>

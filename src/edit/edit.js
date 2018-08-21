@@ -10,6 +10,8 @@ import { observer } from 'mobx-react/index'
 import EditBottom from './edit_bottom'
 import EditTop from './edit_top'
 
+const STORAGE_CACHE = 'gm-printer-config-cache'
+
 insertCSS(editCSS)
 
 @observer
@@ -19,7 +21,25 @@ class Edit extends React.Component {
 
     editStore.init()
 
-    editStore.setConfig(props.config)
+    let config = props.config
+
+    let sConfig = window.localStorage.getItem(STORAGE_CACHE)
+    if (sConfig) {
+      try {
+        sConfig = JSON.parse(sConfig)
+
+        if (window.confirm('发现草稿，是否加载')) {
+          config = sConfig
+        } else {
+          window.localStorage.removeItem(STORAGE_CACHE)
+        }
+      } catch (err) {
+      }
+    }
+
+    console.log(config)
+
+    editStore.setConfig(config)
   }
 
   componentDidMount () {
@@ -30,7 +50,7 @@ class Edit extends React.Component {
     window.document.addEventListener('keydown', this.handleKeyDown)
 
     this.autoSaveTimer = setInterval(() => {
-      editStore.saveConfigToCache()
+      editStore.saveConfigToStack()
     }, 1000)
   }
 
@@ -42,6 +62,10 @@ class Edit extends React.Component {
     window.document.removeEventListener('keydown', this.handleKeyDown)
 
     clearInterval(this.autoSaveTimer)
+  }
+
+  handleDraft = () => {
+    window.localStorage.setItem(STORAGE_CACHE, JSON.stringify(toJS(editStore.config)))
   }
 
   handleSave = () => {
@@ -118,7 +142,7 @@ class Edit extends React.Component {
     return (
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header'>
-          <EditTop data={data} tableData={tableData} onSave={this.handleSave}/>
+          <EditTop data={data} tableData={tableData} onSave={this.handleSave} onDraft={this.handleDraft}/>
           <hr/>
           <EditBottom/>
         </div>

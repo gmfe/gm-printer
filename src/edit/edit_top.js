@@ -4,7 +4,7 @@ import editStore from './store'
 import { toJS } from 'mobx'
 import { doPrint } from '../printer'
 import _ from 'lodash'
-import { getBlockName } from '../util'
+import { getBlockName, getTableColumnName } from '../util'
 import { blockTypeList, panelList, tableClassNameList, tableTypeList } from '../config'
 import { TextPX } from './component'
 import { observer } from 'mobx-react/index'
@@ -33,6 +33,7 @@ class EditTop extends React.Component {
 
   handleTableAdd = () => {
     editStore.addTableColumn()
+    editStore.setSelected(getTableColumnName(editStore.config.table.columns.length - 1))
   }
 
   handleUndo = () => {
@@ -101,6 +102,7 @@ class EditTop extends React.Component {
 
           <div>
             <button onClick={this.handleTestPrint}>测试打印</button>
+            <button onClick={this.props.onDraft}>保存草稿</button>
             <button onClick={this.props.onSave}>保存</button>
           </div>
         </div>
@@ -124,6 +126,7 @@ class EditTop extends React.Component {
 EditTop.propTypes = {
   data: PropTypes.object.isRequired,
   tableData: PropTypes.array.isRequired,
+  onDraft: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired
 }
 

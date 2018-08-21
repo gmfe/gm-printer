@@ -15,7 +15,7 @@
   "header": {
     "blocks": [
       {
-        "text": "GDAILY FRESH SDN.BHD.",
+        "text": "配送单",
         "style": {
           "position": "absolute",
           "left": "0px",
@@ -27,19 +27,84 @@
         }
       },
       {
-        "text": "(1219631-A)",
+        "text": "订单号：{{data.id}}",
+        "style": {
+          "position": "absolute",
+          "left": "NaNpx",
+          "top": "26px",
+          "right": "",
+          "bottom": "",
+          "fontSize": "14px"
+        }
+      },
+      {
+        "text": "地址：{{data.address_sign}}",
+        "style": {
+          "position": "absolute",
+          "left": "321px",
+          "top": "96px"
+        }
+      },
+      {
+        "text": "收货人：{{data.receiver_name}}",
+        "style": {
+          "position": "absolute",
+          "left": "320px",
+          "top": "74px"
+        }
+      },
+      {
+        "text": "序号：{{data.source_origin_id}}",
         "style": {
           "position": "absolute",
           "left": "",
-          "top": "12px",
-          "right": "140px",
-          "bottom": "",
-          "fontSize": "12px"
+          "top": "6px",
+          "right": "20px"
+        }
+      },
+      {
+        "text": "联系电话：{{data.receiver_phone}}",
+        "style": {
+          "position": "absolute",
+          "left": "1px",
+          "top": "94px"
+        }
+      },
+      {
+        "text": "收货商户：{{data.resname}}",
+        "style": {
+          "position": "absolute",
+          "left": "1px",
+          "top": "68px"
+        }
+      },
+      {
+        "text": "打印时间：todo",
+        "style": {
+          "position": "absolute",
+          "left": "590px",
+          "top": "49px"
+        }
+      },
+      {
+        "text": "配送时间：{{data.receive_begin_time}}",
+        "style": {
+          "position": "absolute",
+          "left": "322px",
+          "top": "51px"
+        }
+      },
+      {
+        "text": "下单时间：{{data.date_time}}",
+        "style": {
+          "position": "absolute",
+          "left": "0px",
+          "top": "48px"
         }
       }
     ],
     "style": {
-      "height": "170px"
+      "height": "130px"
     }
   },
   "top": {
@@ -51,53 +116,83 @@
   "table": {
     "columns": [
       {
-        "head": "ID",
+        "head": "序号",
         "headStyle": {
           "textAlign": "center"
         },
-        "text": "${tableData.id}",
+        "text": "{{index}}",
         "style": {
           "textAlign": "center"
         }
       },
       {
-        "head": "商品名",
+        "head": "类别",
         "headStyle": {
           "textAlign": "center"
         },
-        "text": "${tableData.name}",
+        "text": "{{tableData.category_title_1}}",
         "style": {
           "textAlign": "center"
         }
       },
       {
-        "head": "品类",
+        "head": "规格",
         "headStyle": {
           "textAlign": "center"
         },
-        "text": "${tableData.pinlei_title}",
+        "text": "{{tableData.sale_unit_name}}",
         "style": {
           "textAlign": "center"
         }
       },
       {
-        "head": "SPU",
+        "head": "下单数",
         "headStyle": {
           "textAlign": "center"
         },
-        "text": "${tableData.spu_name}",
+        "text": "{{tableData.quantity}}",
         "style": {
           "textAlign": "center"
         }
       },
       {
-        "head": "销售价格",
+        "head": "出库数",
         "headStyle": {
           "textAlign": "center"
         },
-        "text": "${tableData.sale_price} ¥",
+        "text": "todo",
         "style": {
-          "textAlign": "right"
+          "textAlign": "center"
+        }
+      },
+      {
+        "head": "商品二级分类",
+        "headStyle": {
+          "textAlign": "center"
+        },
+        "text": "{{tableData.category_title_2}}",
+        "style": {
+          "textAlign": "center"
+        }
+      },
+      {
+        "head": "单价",
+        "headStyle": {
+          "textAlign": "center"
+        },
+        "text": "{{tableData.std_sale_price}}",
+        "style": {
+          "textAlign": "center"
+        }
+      },
+      {
+        "head": "应付金额",
+        "headStyle": {
+          "textAlign": "center"
+        },
+        "text": "{{tableData.total_item_price}}",
+        "style": {
+          "textAlign": "center"
         }
       }
     ],
@@ -107,85 +202,69 @@
   "bottom": {
     "style": {
       "height": "50px"
-    }
-  },
-  "sign": {
+    },
     "blocks": [
       {
-        "text": "RINGGIT MALAYSIA : NINETY FOUR AND CENTS SEVENTY ONLY",
+        "text": "下单金额：",
         "style": {
           "position": "absolute",
-          "left": "10px",
+          "left": "0px",
+          "top": "13px"
+        }
+      },
+      {
+        "text": "运费：",
+        "style": {
+          "position": "absolute",
+          "left": "310px",
           "top": "10px"
         }
       },
       {
-        "text": "Notes:",
+        "text": "出库金额：",
         "style": {
           "position": "absolute",
-          "left": "10px",
-          "top": "30px",
-          "fontSize": "12px"
+          "left": "150px",
+          "top": "11px"
         }
       },
       {
-        "text": "1. All Cheques should be crossed and make payable to",
+        "text": "异常金额：",
         "style": {
           "position": "absolute",
-          "left": "10px",
-          "top": "50px",
-          "fontSize": "12px"
+          "left": "452px",
+          "top": "9px"
         }
       },
       {
-        "text": "GDAILY FRESH SDN. BHD.    (OCBC : 709-120054-4)",
+        "text": "应付金额：",
         "style": {
           "position": "absolute",
-          "left": "20px",
-          "top": "65px",
-          "fontSize": "12px"
+          "left": "633px",
+          "top": "10px"
         }
-      },
+      }
+    ]
+  },
+  "sign": {
+    "blocks": [
       {
-        "text": "For GDAILY FRESH SDN. BHD.",
+        "text": "签收人：",
         "style": {
           "position": "absolute",
-          "left": "10px",
-          "top": "100px",
-          "fontWeight": "bold"
-        }
-      },
-      {
-        "type": "line",
-        "style": {
-          "position": "absolute",
-          "left": "10px",
-          "top": "160px",
-          "borderTopColor": "black",
-          "borderTopWidth": "2px",
-          "borderTopStyle": "solid",
-          "width": "200px"
-        }
-      },
-      {
-        "text": "Authorised Signature",
-        "style": {
-          "position": "absolute",
-          "left": "40px",
-          "top": "165px",
-          "fontWeight": "bold",
-          "fontSize": "12px"
+          "left": "556px",
+          "top": "2px"
         }
       }
     ],
     "style": {
-      "height": "300px"
+      "height": "50px"
     }
   },
   "footer": {
     "blocks": [],
     "style": {
-      "height": "50px"
+      "height": "15px"
     }
   }
 }

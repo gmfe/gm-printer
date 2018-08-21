@@ -4,6 +4,8 @@ import { pageSizeMap } from '../config'
 
 configure({enforceActions: true})
 
+_.templateSettings.interpolate = /{{([\s\S]+?)}}/g
+
 class PrinterStore {
   @observable
   size = pageSizeMap.A4.size
@@ -280,7 +282,7 @@ class PrinterStore {
     try {
       return _.template(text)({
         data: this.data,
-        index,
+        index: index + 1,
         tableData: tableData
       })
     } catch (err) {

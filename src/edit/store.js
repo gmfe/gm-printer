@@ -23,7 +23,7 @@ class EditStore {
   insertPanel = panelList[0].value
 
   @observable
-  cacheConfig = []
+  _cacheConfig = []
 
   @observable
   hasUndo = false
@@ -67,7 +67,7 @@ class EditStore {
   @action
   setConfig (config) {
     this.config = config
-    this.cacheConfig.push(JSON.stringify(config))
+    this._cacheConfig.push(JSON.stringify(config))
   }
 
   @action
@@ -213,28 +213,28 @@ class EditStore {
   }
 
   @action
-  saveConfigToCache () {
-    const lastConfig = this.cacheConfig.slice(-1)[0]
+  saveConfigToStack () {
+    const lastConfig = this._cacheConfig.slice(-1)[0]
     const configStr = JSON.stringify(this.config)
 
     if (lastConfig !== configStr) {
-      this.cacheConfig.push(configStr)
-      this._saveCache()
+      this._cacheConfig.push(configStr)
+      this._saveStack()
 
-      this.checkUndoRedo()
+      this._updateUndoRedo()
 
       undoManager.add({
         undo: () => {
-          if (this.cacheConfig.length > 1) {
-            this.cacheConfig.pop()
-            this.config = JSON.parse(this.cacheConfig.slice(-1)[0])
-            this._saveCache()
+          if (this._cacheConfig.length > 1) {
+            this._cacheConfig.pop()
+            this.config = JSON.parse(this._cacheConfig.slice(-1)[0])
+            this._saveStack()
           }
         },
         redo: () => {
           this.config = JSON.parse(configStr)
-          this.cacheConfig.push(configStr)
-          this._saveCache()
+          this._cacheConfig.push(configStr)
+          this._saveStack()
         }
       })
     }
@@ -244,26 +244,26 @@ class EditStore {
   undo () {
     this.selected = null
     undoManager.undo()
-    this.checkUndoRedo()
+    this._updateUndoRedo()
   }
 
   @action
   redo () {
     this.selected = null
     undoManager.redo()
-    this.checkUndoRedo()
+    this._updateUndoRedo()
   }
 
   @action
-  checkUndoRedo () {
+  _updateUndoRedo () {
     this.hasUndo = undoManager.hasUndo()
     this.hasRedo = undoManager.hasRedo()
   }
 
   @action
-  _saveCache () {
-    if (this.cacheConfig.length > 30) {
-      this.cacheConfig = this.cacheConfig.slice(-30)
+  _saveStack () {
+    if (this._cacheConfig.length > 30) {
+      this._cacheConfig = this._cacheConfig.slice(-30)
     }
   }
 }
