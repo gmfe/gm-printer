@@ -65,9 +65,9 @@ class Block extends React.Component {
     })
   }
 
-  handleText = (text) => {
+  handleText = (e) => {
     dispatchMsg('gm-printer-block-text-set', {
-      text
+      text: e.target.value
     })
   }
 
@@ -110,7 +110,7 @@ class Block extends React.Component {
           <textarea
             ref={ref => (this.refEdit = ref)}
             className='gm-printer-block-text-edit' value={text}
-            onChange={(e) => this.handleText(e.target.value)}
+            onChange={this.handleText}
             onBlur={this.handleEditBlur}
           />
         )}
