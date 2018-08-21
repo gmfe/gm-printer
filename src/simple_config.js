@@ -7,13 +7,6 @@ import { printerJS } from './util'
 import { doPrint, doPrintBatch } from './do_print'
 
 class SimpleConfig extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      config: props.config
-    }
-  }
-
   componentDidMount () {
     const $iframe = ReactDOM.findDOMNode(this.refIframe)
     this.$iframe = $iframe
@@ -27,9 +20,15 @@ class SimpleConfig extends React.Component {
     })
   }
 
-  doRender = () => {
-    const {config} = this.state
-    const {data, tableData, isBatch} = this.props
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.reRenderKey !== this.props.reRenderKey) {
+      this.doRender(nextProps)
+    }
+  }
+
+  doRender = (nextProps) => {
+    const props = {...this.props, ...nextProps}
+    const {data, tableData, isBatch, config} = props
     if (isBatch) {
       this.$iframe.contentWindow.renderBatch({
         datas: data,
@@ -46,8 +45,7 @@ class SimpleConfig extends React.Component {
   }
 
   handlePrint = () => {
-    const {data, tableData, isBatch} = this.props
-    const {config} = this.state
+    const {data, tableData, isBatch, config} = this.props
 
     if (isBatch) {
       doPrintBatch({datas: data, tableDatas: tableData, config})
