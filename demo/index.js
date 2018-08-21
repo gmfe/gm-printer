@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import delivery from '../demo/delivery.json'
 import invoice from './invoice.json'
 import data from '../demo/data'
-import moment from 'moment'
 import { LayoutRoot, Select, Option } from 'react-gm'
 import '../node_modules/react-gm/src/index.less'
 import 'normalize.css/normalize.css'
@@ -16,20 +15,27 @@ const config = {
   invoice
 }
 
-const details = _.map(_.range(50), (val, i) => {
+const detail = _.map(_.range(40), (val, i) => {
   return {
     'spu_name': '宽叶菠',
     'pinlei_title': '菠菜' + i,
     'No': i
   }
 })
-data.details = details
-const nData = {
-  ...data,
 
-  receive_begin_time_t1: moment(data.receive_begin_time).format('MM-DD HH:mm'),
-  receive_end_time_t1: moment(data.receive_end_time).format('MM-DD HH:mm')
-}
+const detail2 =  _.map(_.range(3), (val, i) => {
+  return {
+    'spu_name': '宽叶菠',
+    'pinlei_title': '菠菜' + i,
+    'No': i
+  }
+})
+
+const tables = [detail, detail2]
+
+const dataList = _.map(_.range(2), (val, i) => {
+  return {...data, id: i}
+})
 
 class App extends React.Component {
   constructor (props) {
@@ -52,10 +58,11 @@ class App extends React.Component {
       <div style={{height: '100vh'}}>
         <SimpleConfig
           key={this.state.config}
-          data={nData}
           config={config[this.state.config]}
-          tableData={nData.details}
+          data={dataList}
+          tableData={tables}
           configSelect={configSelect}
+          isBatch
         />
         <LayoutRoot/>
       </div>
