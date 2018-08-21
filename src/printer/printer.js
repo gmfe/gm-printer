@@ -3,6 +3,7 @@ import printerCSS from './style.less'
 import React from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
+import Big from 'big.js'
 import printerStore from './store'
 import Page from './page'
 import _ from 'lodash'
@@ -179,23 +180,22 @@ class Special extends React.Component {
 
     let newTableData = []
 
-    console.log(group)
-
-    _.forEach(group, (value, k) => {
+    _.forEach(group, (value) => {
       newTableData = newTableData.concat(value)
+
+      let total = Big(0)
+
+      _.each(value, v => (total = total.plus(v.sale_price)))
+
       newTableData.push({
         _special: {
           type: TABLETYPE_CATEGORY1TOTAL,
           data: {
-            total: _.sum(value, v => v.sale_price)
+            total: total.valueOf()
           }
         }
       })
-
-      console.log(k, value)
     })
-
-    console.log(newTableData)
 
     return (
       <Printer

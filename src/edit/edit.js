@@ -66,7 +66,6 @@ class Edit extends React.Component {
   }
 
   handlePrinterTableDrag = (e) => {
-    console.log(e.detail)
     editStore.exchangeTableColumn(e.detail.target, e.detail.source)
   }
 
@@ -97,6 +96,9 @@ class Edit extends React.Component {
     } else if (e.code === 'Escape' && editStore.selected) {
       e.preventDefault()
       editStore.setSelected(null)
+    } else if (e.code === 'Backspace' && editStore.selected) {
+      e.preventDefault()
+      editStore.removeConfig()
     }
   }
 

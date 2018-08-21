@@ -95,8 +95,8 @@ class EditTop extends React.Component {
       <div className='gm-printer-edit-header-top'>
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <div>
-            <button onClick={this.handleUndo} disabled={!editStore.hasUndo}>undo</button>
-            <button onClick={this.handleRedo} disabled={!editStore.hasRedo}>redo</button>
+            <button onClick={this.handleUndo} disabled={!editStore.hasUndo}>撤销</button>
+            <button onClick={this.handleRedo} disabled={!editStore.hasRedo}>重做</button>
           </div>
 
           <div>
@@ -106,11 +106,12 @@ class EditTop extends React.Component {
         </div>
         <hr/>
         <div>
-          区域
-          <select value={editStore.insertPanel} onChange={e => editStore.setInsertPanel(e.target.value)}>
-            {_.map(panelList, v => <option key={v.value} value={v.value}>{v.text}</option>)}
-          </select>
-          <br/>
+          <div style={{fontSize: '20px'}}>
+            区域
+            <select value={editStore.insertPanel} onChange={e => editStore.setInsertPanel(e.target.value)}>
+              {_.map(panelList, v => <option key={v.value} value={v.value}>{v.text}</option>)}
+            </select>
+          </div>
           <span>插入</span>
           &nbsp;&nbsp;
           {editStore.insertPanel !== 'table' ? this.renderPanel() : this.renderTable()}
