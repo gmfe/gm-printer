@@ -111,13 +111,25 @@
     {
       "blocks": [],
       "style": {
-        "height": "100px"
+        "height": "200px"
       }
     },
     {
       "blocks": [],
       "style": {
-        "height": "100px"
+        "height": "300px"
+      }
+    },
+    {
+      "blocks": [],
+      "style": {
+        "height": "300px"
+      }
+    },
+    {
+      "blocks": [],
+      "style": {
+        "height": "200px"
       }
     }
   ],

@@ -8,7 +8,6 @@ import printerStore from './store'
 import Page from './page'
 import _ from 'lodash'
 import Panel from './panel'
-import Table from './table'
 import { insertCSS } from '../util'
 import { TABLETYPE_CATEGORY1TOTAL } from '../config'
 
@@ -36,15 +35,21 @@ const Footer = (props) => <Panel {...props} style={{
   right: 0
 }} panel='footer' placeholder='页脚'/>
 
-const Contents = props => _.map(props.contents, (content, index) => (
-  <Panel
-    key={`contents.${index}`}
-    config={content}
-    pageIndex={props.pageIndex}
-    panel={`contents.${index}`}
-    placeholder={`contents.${index}`}
-  />
-))
+const Contents = props => _.map(props.contents, (content, index) => {
+  if (content.type === 'table') {
+    return null
+  } else {
+    return (
+      <Panel
+        key={`contents.${index}`}
+        config={content}
+        pageIndex={props.pageIndex}
+        panel={`contents.${index}`}
+        placeholder={`contents.${index}`}
+      />
+    )
+  }
+})
 
 @observer
 class Printer extends React.Component {
@@ -85,13 +90,12 @@ class Printer extends React.Component {
   }
 
   renderBefore () {
-    const {config, tableData} = this.props
+    const {config} = this.props
 
     return (
       <Page pageIndex={0}>
         <Header config={config.header} pageIndex={0}/>
         <Contents contents={config.contents} pageIndex={0}/>
-        <Table config={config.table} data={tableData}/>
         <Sign config={config.sign} pageIndex={0}/>
         <Footer config={config.footer} pageIndex={0}/>
       </Page>
@@ -99,13 +103,12 @@ class Printer extends React.Component {
   }
 
   renderOnePage () {
-    const {config, tableData} = this.props
+    const {config} = this.props
 
     return (
       <Page pageIndex={0}>
         <Header config={config.header} pageIndex={0}/>
         <Contents contents={config.contents} pageIndex={0}/>
-        <Table config={config.table} data={tableData}/>
         <Sign config={config.sign} pageIndex={0} style={{bottom: config.footer.style.height}}/>
         <Footer config={config.footer} pageIndex={0}/>
       </Page>
@@ -114,7 +117,7 @@ class Printer extends React.Component {
 
   renderMorePage () {
     const {
-      config, tableData
+      config
     } = this.props
 
     return (
@@ -135,7 +138,6 @@ class Printer extends React.Component {
           return (
             <Page key={i} pageIndex={i}>
               <Header config={config.header} pageIndex={i}/>
-              <Table config={config.table} data={tableData.slice(p.begin, p.end)}/>
               {isLastPage && (
                 <Sign config={config.sign} pageIndex={i} style={{bottom: config.footer.style.height}}/>
               )}
@@ -161,7 +163,7 @@ class Printer extends React.Component {
       <div className='gm-printer' style={{
         width: printerStore.size.width
       }}>
-        {printerStore.ready ? this.renderPage() : this.renderBefore()}
+        {this.this.renderBefore()}
       </div>
     )
   }

@@ -6,23 +6,22 @@ configure({enforceActions: true})
 
 class PrinterStore {
   @observable
+  ready = false
+
+  @observable
   size = pageSizeMap.A4.size
 
   @observable
   gap = pageSizeMap.A4.gap
 
   @observable
-  ready = false
+  pageHeight = pageSizeMap
 
   @observable
-  height = {
-    header: 0,
-    contents: [],
-    table: 0,
-    sigh: 0,
-    footer: 0,
-    page: 0
-  }
+  height = {}
+
+  @observable
+  contents = []
 
   @observable
   table = {
@@ -37,7 +36,7 @@ class PrinterStore {
   }
 
   @observable
-  page = [] // [{begin, end, bottomPage}]
+  page = [] // [{type, index, begin, end, bottomPage}]
 
   data = {}
   tableData = []
@@ -51,14 +50,7 @@ class PrinterStore {
     this.size = pageSizeMap.A4.size
     this.gap = pageSizeMap.A4.gap
     this.ready = false
-    this.height = {
-      header: 0,
-      contents: [],
-      table: 0,
-      sigh: 0,
-      footer: 0,
-      page: 0
-    }
+    this.height = {}
     this.table = {
       data: [],
       head: {
@@ -94,13 +86,13 @@ class PrinterStore {
   }
 
   @action
+  setPageHeight (height) {
+    this.pageHeight = height
+  }
+
+  @action
   setHeight (who, height) {
-    const [a, b] = who.split('.')
-    if (b) {
-      this.height[a][b] = height
-    } else {
-      this.height[a] = height
-    }
+    this.height[who] = height
   }
 
   @action
@@ -119,65 +111,24 @@ class PrinterStore {
       return
     }
 
-    if (this._twoPage()) {
-      return
-    }
-
     this._morePage()
   }
 
   @action
   _onePage () {
-    const height =
-      this.height.header +
-      _.sum(this.height.contents) +
-      this.height.table +
-      this.height.sign +
-      this.height.footer
+    let height = this.height
 
-    if (height > this.height.page) {
+    _.forEach(this.height, v => (height += v))
+
+    if (height > this.pageHeight) {
       return false
     }
 
     this.page = [{
-      begin: 0,
-      end: this.table.data.length
-    }]
-
-    return true
-  }
-
-  @action
-  _twoPage () {
-    const height =
-      this.height.header * 2 +
-      this.height.table +
-      this.table.head.height +
-      this.height.sign +
-      this.height.footer * 2
-
-    if (height > (this.height.page * 2)) {
-      return false
-    }
-
-    let oneHeight =
-      this.height.header +
-      this.table.head.height +
-      this.table.body.heights[0] +
-      this.height.footer
-    let oneEnd = 1
-
-    while (oneHeight < this.height.page) {
-      oneHeight += this.table.body.heights[oneEnd]
-      oneEnd++
-    }
-
-    this.page = [{
-      begin: 0,
-      end: oneEnd - 1
+      type: 'panel',
+      name: ''
     }, {
-      begin: oneEnd - 1,
-      end: this.table.data.length
+      type: 'footer'
     }]
 
     return true
@@ -187,8 +138,6 @@ class PrinterStore {
   _morePage () {
     let oneHeight =
       this.height.header +
-      this.table.head.height +
-      this.table.body.heights[0] +
       this.height.footer
     let end = 1
     let oEnd = 0
@@ -196,6 +145,7 @@ class PrinterStore {
     const page = []
 
     while (oneHeight < this.height.page) {
+
       oneHeight += this.table.body.heights[end]
       end++
     }
