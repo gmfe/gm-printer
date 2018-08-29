@@ -111,7 +111,7 @@
     {
       "blocks": [],
       "style": {
-        "height": "100px"
+        "height": "400px"
       }
     },
     {
@@ -173,6 +173,42 @@
       "style": {
         "height": "200px"
       }
+    },
+    {
+      "type": "table",
+      "columns": [
+        {
+          "head": "序号",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{index}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "类别",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{tableData.category_title_1}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "规格",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{tableData.sale_unit_name}}",
+          "style": {
+            "textAlign": "center"
+          }
+        }
+      ],
+      "className": ""
     }
   ],
   "sign": {

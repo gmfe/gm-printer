@@ -12,12 +12,6 @@ class PrinterStore {
   config = {}
 
   @observable
-  size = pageSizeMap.A4.size
-
-  @observable
-  gap = pageSizeMap.A4.gap
-
-  @observable
   pageHeight = pageSizeMap
 
   @observable
@@ -44,6 +38,7 @@ class PrinterStore {
   data = {}
   tableData = []
 
+  // TODO
   // 选中某个东西，具体见 edit/store.js 定义
   @observable
   selected = null
@@ -51,32 +46,17 @@ class PrinterStore {
   @action
   init (config) {
     this.config = config
-    this.size = pageSizeMap.A4.size
-    this.gap = pageSizeMap.A4.gap
     this.ready = false
     this.height = {}
-    this.tables = []
     this.pages = []
     this.data = {}
     this.tablesInfo = {}
     this.selected = null
-  }
 
-  @action
-  setSize (size) {
-    if (_.isString(size) && pageSizeMap[size]) {
-      this.size = pageSizeMap[size].size
-    } else if (_.isObject(size)) {
-      this.size = size
-    }
-  }
-
-  @action
-  setGap (gap) {
-    if (_.isString(gap) && pageSizeMap[gap]) {
-      this.gap = pageSizeMap[gap].gap
-    } else if (_.isObject(gap)) {
-      this.gap = gap
+    const temp = pageSizeMap[this.config.page.type]
+    if (temp) {
+      this.config.page.size = temp.size
+      this.config.page.gap = temp.gap
     }
   }
 
@@ -110,6 +90,7 @@ class PrinterStore {
 
     let page = []
 
+    // 轮 contents
     while (index < this.config.contents.length) {
       if (this.config.contents[index].type === 'table') {
         const info = this.tablesInfo[`contents.table.${index}`]
@@ -119,7 +100,6 @@ class PrinterStore {
         height += info.head.height
         while (end < info.body.heights.length) {
           height += info.body.heights[end]
-          console.log(height, this.pageHeight, end)
           if (height > this.pageHeight) {
             page.push({
               type: 'table',
@@ -169,8 +149,6 @@ class PrinterStore {
     }
 
     this.pages.push(page)
-
-    console.log(toJS(this.pages))
 
     return true
   }

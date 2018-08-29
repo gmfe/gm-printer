@@ -9,27 +9,6 @@ body {
   background: white;
 }
 
-// block
-.gm-printer-block {
-  position: relative;
-  cursor: move;
-
-  &:hover,
-  &.active {
-    outline: 1px solid rgb(82, 146, 247);
-  }
-
-  .gm-printer-block-text-edit {
-    position: absolute;
-    z-index: 99;
-    background: white;
-    top: calc(100% + 5px);
-    left: 0;
-    min-width: 100%;
-    font-size: initial;
-  }
-}
-
 // page
 .gm-printer-page {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -60,6 +39,27 @@ body {
     color: rgba(0, 0, 0, 0.1);
     left: calc(50% - 1.5em);
     top: calc(50% - 0.5em);
+  }
+}
+
+// block
+.gm-printer-block {
+  position: relative;
+  cursor: move;
+
+  &:hover,
+  &.active {
+    outline: 1px solid rgb(82, 146, 247);
+  }
+
+  .gm-printer-block-text-edit {
+    position: absolute;
+    z-index: 99;
+    background: white;
+    top: calc(100% + 5px);
+    left: 0;
+    min-width: 100%;
+    font-size: initial;
   }
 }
 

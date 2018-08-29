@@ -10,21 +10,21 @@ import Block from './block'
 @observer
 class Panel extends React.Component {
   componentDidMount () {
-    const {panel} = this.props
+    const {name} = this.props
 
     if (!printerStore.ready) {
       const $dom = ReactDOM.findDOMNode(this)
 
-      printerStore.setHeight(panel, getHeight($dom))
+      printerStore.setHeight(name, getHeight($dom))
     }
   }
 
   render () {
-    const {panel, config, placeholder, pageIndex, style} = this.props
+    const {name, config, placeholder, pageIndex, style} = this.props
 
     return (
       <div
-        className={`gm-printer-panel gm-printer-${panel}`}
+        className={`gm-printer-panel gm-printer-${name}`}
         data-placeholder={placeholder}
         style={style}
       >
@@ -32,7 +32,7 @@ class Panel extends React.Component {
           {_.map(config.blocks, (block, i) => (
             <Block
               key={i}
-              name={getBlockName(panel, i)}
+              name={getBlockName(name, i)}
               config={block}
               pageIndex={pageIndex}
             />
@@ -44,7 +44,7 @@ class Panel extends React.Component {
 }
 
 Panel.propTypes = {
-  panel: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
   config: PropTypes.object.isRequired,
   placeholder: PropTypes.string,
   pageIndex: PropTypes.number.isRequired,

@@ -15,19 +15,21 @@ class Page extends React.Component {
 
   render () {
     const {children} = this.props
-    const {paddingTop, paddingRight, paddingBottom, paddingLeft} = printerStore.gap
+    const {paddingTop, paddingRight, paddingBottom, paddingLeft} = printerStore.config.page.gap
 
     // -3px 是避免运算误差而溢出
 
+    const {width, height} = printerStore.config.page.size
+
     return (
       <div className='gm-printer-page' style={{
-        width: `calc(${printerStore.size.width} - ${paddingLeft} - ${paddingRight})`,
-        height: `calc(${printerStore.size.height} - ${paddingTop} - ${paddingBottom} - 3px)`,
+        width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
+        height: `calc(${height} - ${paddingTop} - ${paddingBottom} - 3px)`,
         padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`
       }}>
         <div className='gm-printer-page-inner' style={{
-          width: `calc(${printerStore.size.width} - ${paddingLeft} - ${paddingRight})`,
-          height: `calc(${printerStore.size.height} - ${paddingTop} - ${paddingBottom} - 3px)`
+          width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
+          height: `calc(${height} - ${paddingTop} - ${paddingBottom} - 3px)`
         }}>
           {children}
         </div>

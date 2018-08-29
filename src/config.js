@@ -23,7 +23,7 @@ const pageSizeMap = {
       paddingLeft: '3mm'
     }
   },
-  '自定义': {
+  '自定义1': {
     size: {
       width: '210mm',
       height: '150mm'

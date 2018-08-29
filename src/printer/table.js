@@ -26,7 +26,7 @@ class Table extends React.Component {
       const ths = tHead.querySelectorAll('th') || []
       const trs = $table.querySelectorAll('tbody tr') || []
 
-      printerStore.setHeight('table', getHeight($table))
+      printerStore.setHeight(name, getHeight($table))
 
       printerStore.setTable(name, {
         head: {
@@ -176,7 +176,7 @@ class Table extends React.Component {
   }
 
   render () {
-    const {config: {type, className}} = this.props
+    const {config: {subType, className}} = this.props
 
     let content
 
@@ -190,7 +190,7 @@ class Table extends React.Component {
       <div className={classNames(
         'gm-printer-table',
         'gm-printer-table-classname-' + (className || 'default'),
-        'gm-printer-table-type-' + (type || 'default')
+        'gm-printer-table-subtype-' + (subType || 'default')
       )}>
         {content}
       </div>

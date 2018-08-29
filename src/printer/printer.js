@@ -21,20 +21,20 @@ function addPageSizeStyle (rule) {
   insertCSS(`@page {size: ${rule}; }`)
 }
 
-const Header = (props) => <Panel {...props} panel='header' placeholder='页眉'/>
+const Header = (props) => <Panel {...props} name='header' placeholder='页眉'/>
 const Sign = (props) => <Panel {...props} style={{
   ...props.style,
   position: 'absolute',
   left: 0,
   right: 0
-}} panel='sign' placeholder='签名'/>
+}} name='sign' placeholder='签名'/>
 const Footer = (props) => <Panel {...props} style={{
   ...props.style,
   position: 'absolute',
   bottom: 0,
   left: 0,
   right: 0
-}} panel='footer' placeholder='页脚'/>
+}} name='footer' placeholder='页脚'/>
 
 @observer
 class Printer extends React.Component {
@@ -43,23 +43,11 @@ class Printer extends React.Component {
 
     printerStore.init(props.config)
 
-    const {type, size, gap} = props.config.page
-    if (_.isString(type)) {
-      printerStore.setSize(type)
-      printerStore.setGap(type)
-    } else {
-      printerStore.setSize(size)
-      printerStore.setGap(gap)
-    }
-
     printerStore.setData(props.data)
     printerStore.setTableData(props.tableData)
 
-    if (type) {
-      addPageSizeStyle(type)
-    } else {
-      addPageSizeStyle(`${size.width} ${size.height}`)
-    }
+    const {width, height} = printerStore.config.page.size
+    addPageSizeStyle(`${width} ${height}`)
 
     printerStore.setSelected(props.selected)
   }
@@ -84,16 +72,16 @@ class Printer extends React.Component {
           if (content.type === 'table') {
             return <Table
               key={`contents.table.${index}`}
+              name={`contents.table.${index}`}
               config={content}
               data={tableData}
-              name={`contents.table.${index}`}
               pageIndex={0}
             />
           } else {
             return (
               <Panel
                 key={`contents.panel.${index}`}
-                panel={`contents.panel.${index}`}
+                name={`contents.panel.${index}`}
                 config={content}
                 pageIndex={0}
                 placeholder={`contents.panel.${index}`}
@@ -125,16 +113,16 @@ class Printer extends React.Component {
                 if (panel.type === 'table') {
                   return <Table
                     key={`contents.table.${panel.index}.${ii}`}
+                    name={`contents.table.${panel.index}`}
                     config={config.contents[panel.index]}
                     data={tableData.slice(panel.begin, panel.end)}
-                    name={`contents.table.${panel.index}`}
                     pageIndex={i}
                   />
                 } else {
                   return (
                     <Panel
                       key={`contents.panel.${panel.index}`}
-                      panel={`contents.panel.${panel.index}`}
+                      name={`contents.panel.${panel.index}`}
                       config={config.contents[panel.index]}
                       pageIndex={i}
                       placeholder={`contents.panel.${panel.index}`}
@@ -154,11 +142,13 @@ class Printer extends React.Component {
   }
 
   render () {
+    const {width} = printerStore.config.page.size
+
     return (
       <div className='gm-printer' style={{
-        width: printerStore.size.width
+        width
       }}>
-        {(printerStore.ready) ? this.renderPage() : this.renderBefore()}
+        {printerStore.ready ? this.renderPage() : this.renderBefore()}
       </div>
     )
   }
