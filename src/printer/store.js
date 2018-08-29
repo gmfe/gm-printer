@@ -1,4 +1,4 @@
-import { observable, action, configure } from 'mobx'
+import { observable, action, configure, toJS } from 'mobx'
 import _ from 'lodash'
 import { pageSizeMap } from '../config'
 
@@ -26,9 +26,7 @@ class PrinterStore {
   @observable
   contents = []
 
-  @observable
-  table = {
-    data: [],
+  /* {
     head: {
       widths: [],
       height: 0
@@ -36,7 +34,9 @@ class PrinterStore {
     body: {
       heights: []
     }
-  }
+  } */
+  @observable
+  tablesInfo = {}
 
   @observable
   pages = [] // [{type, index, begin, end}]
@@ -55,19 +55,10 @@ class PrinterStore {
     this.gap = pageSizeMap.A4.gap
     this.ready = false
     this.height = {}
-    this.table = {
-      data: [],
-      head: {
-        widths: [],
-        height: 0
-      },
-      body: {
-        heights: []
-      }
-    }
+    this.tables = []
     this.pages = []
     this.data = {}
-    this.tableData = []
+    this.tablesInfo = {}
     this.selected = null
   }
 
@@ -100,8 +91,8 @@ class PrinterStore {
   }
 
   @action
-  setTable (table) {
-    this.table = table
+  setTable (name, table) {
+    this.tablesInfo[name] = table
   }
 
   @action
@@ -111,7 +102,7 @@ class PrinterStore {
 
   @action
   setPages () {
-    let oneHeight =
+    let height =
       this.height.header +
       this.height.footer
 
@@ -120,26 +111,66 @@ class PrinterStore {
     let page = []
 
     while (index < this.config.contents.length) {
-      oneHeight += this.height[`contents.${index}`]
+      if (this.config.contents[index].type === 'table') {
+        const info = this.tablesInfo[`contents.table.${index}`]
+        let begin = 0
+        let end = 0
 
-      if (oneHeight < this.pageHeight) {
-        page.push({
-          type: 'panel',
-          index
-        })
-        index += 1
+        height += info.head.height
+        while (end < info.body.heights.length) {
+          height += info.body.heights[end]
+          console.log(height, this.pageHeight, end)
+          if (height > this.pageHeight) {
+            page.push({
+              type: 'table',
+              index,
+              begin,
+              end
+            })
+            this.pages.push(page)
+            page = []
+            height =
+              this.height.header +
+              this.height.footer +
+              info.head.height
+            begin = end
+          } else {
+            end++
+            if (end === info.body.heights.length) {
+              page.push({
+                type: 'table',
+                index,
+                begin,
+                end
+              })
+              index++
+            }
+          }
+        }
+
+        index++
       } else {
-        oneHeight =
-          this.height.header +
-          this.height.footer
-        this.pages.push(page)
-        page = []
+        height += this.height[`contents.panel.${index}`]
+
+        if (height < this.pageHeight) {
+          page.push({
+            type: 'panel',
+            index
+          })
+          index++
+        } else {
+          height =
+            this.height.header +
+            this.height.footer
+          this.pages.push(page)
+          page = []
+        }
       }
     }
 
     this.pages.push(page)
 
-    console.log(this.pages)
+    console.log(toJS(this.pages))
 
     return true
   }

@@ -12,9 +12,11 @@ class Panel extends React.Component {
   componentDidMount () {
     const {panel} = this.props
 
-    const $dom = ReactDOM.findDOMNode(this)
+    if (!printerStore.ready) {
+      const $dom = ReactDOM.findDOMNode(this)
 
-    printerStore.setHeight(panel, getHeight($dom))
+      printerStore.setHeight(panel, getHeight($dom))
+    }
   }
 
   render () {

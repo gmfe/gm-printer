@@ -8,6 +8,7 @@ import printerStore from './store'
 import Page from './page'
 import _ from 'lodash'
 import Panel from './panel'
+import Table from './table'
 import { insertCSS } from '../util'
 import { TABLETYPE_CATEGORY1TOTAL } from '../config'
 
@@ -34,18 +35,6 @@ const Footer = (props) => <Panel {...props} style={{
   left: 0,
   right: 0
 }} panel='footer' placeholder='页脚'/>
-
-const Contents = props => _.map(props.contents, (content, index) => {
-  return (
-    <Panel
-      key={`contents.${index}`}
-      config={content}
-      pageIndex={props.pageIndex}
-      panel={`contents.${index}`}
-      placeholder={`contents.${index}`}
-    />
-  )
-})
 
 @observer
 class Printer extends React.Component {
@@ -86,12 +75,32 @@ class Printer extends React.Component {
   }
 
   renderBefore () {
-    const {config} = this.props
+    const {config, tableData} = this.props
 
     return (
       <Page pageIndex={0}>
         <Header config={config.header} pageIndex={0}/>
-        <Contents contents={config.contents} pageIndex={0}/>
+        {_.map(config.contents, (content, index) => {
+          if (content.type === 'table') {
+            return <Table
+              key={`contents.table.${index}`}
+              config={content}
+              data={tableData}
+              name={`contents.table.${index}`}
+              pageIndex={0}
+            />
+          } else {
+            return (
+              <Panel
+                key={`contents.panel.${index}`}
+                panel={`contents.panel.${index}`}
+                config={content}
+                pageIndex={0}
+                placeholder={`contents.panel.${index}`}
+              />
+            )
+          }
+        })}
         <Sign config={config.sign} pageIndex={0}/>
         <Footer config={config.footer} pageIndex={0}/>
       </Page>
@@ -100,7 +109,8 @@ class Printer extends React.Component {
 
   renderPage () {
     const {
-      config
+      config,
+      tableData
     } = this.props
 
     return (
@@ -111,14 +121,26 @@ class Printer extends React.Component {
           return (
             <Page key={i} pageIndex={i}>
               <Header config={config.header} pageIndex={i}/>
-              {_.map(page, panel => {
-                return <Panel
-                  key={`contents.${panel.index}`}
-                  config={config.contents[panel.index]}
-                  pageIndex={i}
-                  panel={`contents.${panel.index}`}
-                  placeholder={`contents.${panel.index}`}
-                />
+              {_.map(page, (panel, ii) => {
+                if (panel.type === 'table') {
+                  return <Table
+                    key={`contents.table.${panel.index}.${ii}`}
+                    config={config.contents[panel.index]}
+                    data={tableData.slice(panel.begin, panel.end)}
+                    name={`contents.table.${panel.index}`}
+                    pageIndex={i}
+                  />
+                } else {
+                  return (
+                    <Panel
+                      key={`contents.panel.${panel.index}`}
+                      panel={`contents.panel.${panel.index}`}
+                      config={config.contents[panel.index]}
+                      pageIndex={i}
+                      placeholder={`contents.panel.${panel.index}`}
+                    />
+                  )
+                }
               })}
               {isLastPage && (
                 <Sign config={config.sign} pageIndex={i} style={{bottom: config.footer.style.height}}/>
@@ -136,7 +158,7 @@ class Printer extends React.Component {
       <div className='gm-printer' style={{
         width: printerStore.size.width
       }}>
-        {printerStore.ready ? this.renderPage() : this.renderBefore()}
+        {(printerStore.ready) ? this.renderPage() : this.renderBefore()}
       </div>
     )
   }

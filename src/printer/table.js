@@ -18,25 +18,26 @@ class Table extends React.Component {
   }
 
   componentDidMount () {
-    const {data} = this.props
+    const {name} = this.props
 
-    const $table = ReactDOM.findDOMNode(this).querySelector('table')
-    const tHead = $table.querySelector('thead')
-    const ths = tHead.querySelectorAll('th') || []
-    const trs = $table.querySelectorAll('tbody tr') || []
+    if (!printerStore.ready) {
+      const $table = ReactDOM.findDOMNode(this).querySelector('table')
+      const tHead = $table.querySelector('thead')
+      const ths = tHead.querySelectorAll('th') || []
+      const trs = $table.querySelectorAll('tbody tr') || []
 
-    printerStore.setHeight('table', getHeight($table))
+      printerStore.setHeight('table', getHeight($table))
 
-    printerStore.setTable({
-      data,
-      head: {
-        height: getHeight(tHead),
-        widths: _.map(ths, th => getWidth(th))
-      },
-      body: {
-        heights: _.map(trs, tr => getHeight(tr))
-      }
-    })
+      printerStore.setTable(name, {
+        head: {
+          height: getHeight(tHead),
+          widths: _.map(ths, th => getWidth(th))
+        },
+        body: {
+          heights: _.map(trs, tr => getHeight(tr))
+        }
+      })
+    }
   }
 
   handleClick = (e) => {
@@ -74,62 +75,62 @@ class Table extends React.Component {
     e.preventDefault()
   }
 
-  renderCategoryTotal () {
-    const {config: {columns}, data} = this.props
-
-    return (
-      <table>
-        <thead>
-        <tr>
-          {_.map(columns, (col, i) => (
-            <th
-              data-index={i}
-              draggable
-              key={i}
-              style={Object.assign({}, col.headStyle, {
-                width: printerStore.table.head.widths[i]
-              })}
-              className={classNames({
-                active: getTableColumnName(i) === printerStore.selected
-              })}
-              onClick={this.handleClick}
-              onDragStart={this.handleDragStart}
-              onDrop={this.handleDrop}
-              onDragOver={this.handleDragOver}
-            >{col.head}</th>
-          ))}
-        </tr>
-        </thead>
-        <tbody>
-        {_.map(data, (d, i) => {
-          const special = d._special
-
-          if (special && special.type === TABLETYPE_CATEGORY1TOTAL) {
-            return (
-              <tr key={i}>
-                <td colSpan={99}>小计：{special.data.total}</td>
-              </tr>
-            )
-          }
-
-          return (
-            <tr key={i}>
-              {_.map(columns, (col, j) => (
-                <td
-                  key={j}
-                  style={col.style}
-                  className={classNames({
-                    active: getTableColumnName(j) === printerStore.selected
-                  })}
-                >{printerStore.templateTable(col.text, i, d)}</td>
-              ))}
-            </tr>
-          )
-        })}
-        </tbody>
-      </table>
-    )
-  }
+  // renderCategoryTotal () {
+  //   const {config: {columns}, data} = this.props
+  //
+  //   return (
+  //     <table>
+  //       <thead>
+  //       <tr>
+  //         {_.map(columns, (col, i) => (
+  //           <th
+  //             data-index={i}
+  //             draggable
+  //             key={i}
+  //             style={Object.assign({}, col.headStyle, {
+  //               width: printerStore.table.head.widths[i]
+  //             })}
+  //             className={classNames({
+  //               active: getTableColumnName(i) === printerStore.selected
+  //             })}
+  //             onClick={this.handleClick}
+  //             onDragStart={this.handleDragStart}
+  //             onDrop={this.handleDrop}
+  //             onDragOver={this.handleDragOver}
+  //           >{col.head}</th>
+  //         ))}
+  //       </tr>
+  //       </thead>
+  //       <tbody>
+  //       {_.map(data, (d, i) => {
+  //         const special = d._special
+  //
+  //         if (special && special.type === TABLETYPE_CATEGORY1TOTAL) {
+  //           return (
+  //             <tr key={i}>
+  //               <td colSpan={99}>小计：{special.data.total}</td>
+  //             </tr>
+  //           )
+  //         }
+  //
+  //         return (
+  //           <tr key={i}>
+  //             {_.map(columns, (col, j) => (
+  //               <td
+  //                 key={j}
+  //                 style={col.style}
+  //                 className={classNames({
+  //                   active: getTableColumnName(j) === printerStore.selected
+  //                 })}
+  //               >{printerStore.templateTable(col.text, i, d)}</td>
+  //             ))}
+  //           </tr>
+  //         )
+  //       })}
+  //       </tbody>
+  //     </table>
+  //   )
+  // }
 
   renderDefault () {
     const {config: {columns}, data} = this.props
@@ -143,9 +144,7 @@ class Table extends React.Component {
               data-index={i}
               draggable
               key={i}
-              style={Object.assign({}, col.headStyle, {
-                width: printerStore.table.head.widths[i]
-              })}
+              style={Object.assign({}, col.headStyle)}
               className={classNames({
                 active: getTableColumnName(i) === printerStore.selected
               })}
@@ -181,11 +180,11 @@ class Table extends React.Component {
 
     let content
 
-    if (type === TABLETYPE_CATEGORY1TOTAL) {
-      content = this.renderCategoryTotal()
-    } else {
-      content = this.renderDefault()
-    }
+    // if (type === TABLETYPE_CATEGORY1TOTAL) {
+    //   content = this.renderCategoryTotal()
+    // } else {
+    content = this.renderDefault()
+    // }
 
     return (
       <div className={classNames(
@@ -201,7 +200,8 @@ class Table extends React.Component {
 
 Table.propTypes = {
   config: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  name: PropTypes.string.isRequired
 }
 
 Table.defaultProps = {}

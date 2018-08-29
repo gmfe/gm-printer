@@ -121,6 +121,42 @@
       }
     },
     {
+      "type": "table",
+      "columns": [
+        {
+          "head": "序号",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{index}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "类别",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{tableData.category_title_1}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "规格",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{tableData.sale_unit_name}}",
+          "style": {
+            "textAlign": "center"
+          }
+        }
+      ],
+      "className": ""
+    },
+    {
       "blocks": [],
       "style": {
         "height": "300px"
@@ -129,7 +165,7 @@
     {
       "blocks": [],
       "style": {
-        "height": "300px"
+        "height": "100px"
       }
     },
     {
@@ -139,92 +175,6 @@
       }
     }
   ],
-  "table": {
-    "columns": [
-      {
-        "head": "序号",
-        "headStyle": {
-          "textAlign": "center"
-        },
-        "text": "{{index}}",
-        "style": {
-          "textAlign": "center"
-        }
-      },
-      {
-        "head": "类别",
-        "headStyle": {
-          "textAlign": "center"
-        },
-        "text": "{{tableData.category_title_1}}",
-        "style": {
-          "textAlign": "center"
-        }
-      },
-      {
-        "head": "规格",
-        "headStyle": {
-          "textAlign": "center"
-        },
-        "text": "{{tableData.sale_unit_name}}",
-        "style": {
-          "textAlign": "center"
-        }
-      },
-      {
-        "head": "下单数",
-        "headStyle": {
-          "textAlign": "center"
-        },
-        "text": "{{tableData.quantity}}",
-        "style": {
-          "textAlign": "center"
-        }
-      },
-      {
-        "head": "出库数",
-        "headStyle": {
-          "textAlign": "center"
-        },
-        "text": "todo",
-        "style": {
-          "textAlign": "center"
-        }
-      },
-      {
-        "head": "商品二级分类",
-        "headStyle": {
-          "textAlign": "center"
-        },
-        "text": "{{tableData.category_title_2}}",
-        "style": {
-          "textAlign": "center"
-        }
-      },
-      {
-        "head": "单价",
-        "headStyle": {
-          "textAlign": "center"
-        },
-        "text": "{{tableData.std_sale_price}}",
-        "style": {
-          "textAlign": "center"
-        }
-      },
-      {
-        "head": "应付金额",
-        "headStyle": {
-          "textAlign": "center"
-        },
-        "text": "{{tableData.total_item_price}}",
-        "style": {
-          "textAlign": "center"
-        }
-      }
-    ],
-    "className": "",
-    "type": "typeCategory1Total"
-  },
   "sign": {
     "blocks": [
       {
