@@ -36,19 +36,15 @@ const Footer = (props) => <Panel {...props} style={{
 }} panel='footer' placeholder='页脚'/>
 
 const Contents = props => _.map(props.contents, (content, index) => {
-  if (content.type === 'table') {
-    return null
-  } else {
-    return (
-      <Panel
-        key={`contents.${index}`}
-        config={content}
-        pageIndex={props.pageIndex}
-        panel={`contents.${index}`}
-        placeholder={`contents.${index}`}
-      />
-    )
-  }
+  return (
+    <Panel
+      key={`contents.${index}`}
+      config={content}
+      pageIndex={props.pageIndex}
+      panel={`contents.${index}`}
+      placeholder={`contents.${index}`}
+    />
+  )
 })
 
 @observer
@@ -56,7 +52,7 @@ class Printer extends React.Component {
   constructor (props) {
     super(props)
 
-    printerStore.init()
+    printerStore.init(props.config)
 
     const {type, size, gap} = props.config.page
     if (_.isString(type)) {
@@ -86,7 +82,7 @@ class Printer extends React.Component {
   componentDidMount () {
     printerStore.setReady(true)
 
-    printerStore.setPage()
+    printerStore.setPages()
   }
 
   renderBefore () {
@@ -102,42 +98,28 @@ class Printer extends React.Component {
     )
   }
 
-  renderOnePage () {
-    const {config} = this.props
-
-    return (
-      <Page pageIndex={0}>
-        <Header config={config.header} pageIndex={0}/>
-        <Contents contents={config.contents} pageIndex={0}/>
-        <Sign config={config.sign} pageIndex={0} style={{bottom: config.footer.style.height}}/>
-        <Footer config={config.footer} pageIndex={0}/>
-      </Page>
-    )
-  }
-
-  renderMorePage () {
+  renderPage () {
     const {
       config
     } = this.props
 
     return (
       <React.Fragment>
-        {_.map(printerStore.page, (p, i) => {
-          if (p.bottomPage) {
-            return (
-              <Page key={i} pageIndex={i}>
-                <Header config={config.header} pageIndex={i}/>
-                <Sign config={config.sign} pageIndex={i} style={{bottom: config.footer.style.height}}/>
-                <Footer config={config.footer} pageIndex={i}/>
-              </Page>
-            )
-          }
-
-          const isLastPage = i === printerStore.page.length - 1
+        {_.map(printerStore.pages, (page, i) => {
+          const isLastPage = i === printerStore.pages.length - 1
 
           return (
             <Page key={i} pageIndex={i}>
               <Header config={config.header} pageIndex={i}/>
+              {_.map(page, panel => {
+                return <Panel
+                  key={`contents.${panel.index}`}
+                  config={config.contents[panel.index]}
+                  pageIndex={i}
+                  panel={`contents.${panel.index}`}
+                  placeholder={`contents.${panel.index}`}
+                />
+              })}
               {isLastPage && (
                 <Sign config={config.sign} pageIndex={i} style={{bottom: config.footer.style.height}}/>
               )}
@@ -149,21 +131,12 @@ class Printer extends React.Component {
     )
   }
 
-  renderPage () {
-    const pageLength = printerStore.page.length
-    if (pageLength === 1) {
-      return this.renderOnePage()
-    } else {
-      return this.renderMorePage()
-    }
-  }
-
   render () {
     return (
       <div className='gm-printer' style={{
         width: printerStore.size.width
       }}>
-        {this.this.renderBefore()}
+        {printerStore.ready ? this.renderPage() : this.renderBefore()}
       </div>
     )
   }
@@ -176,41 +149,41 @@ Printer.propTypes = {
   config: PropTypes.object.isRequired
 }
 
-@observer
-class Special extends React.Component {
-  render () {
-    const {config, data, tableData, ...rest} = this.props
+// @observer
+// class Special extends React.Component {
+//   render () {
+//     const {config, data, tableData, ...rest} = this.props
+//
+//     const group = _.groupBy(tableData, v => v.category_title_1)
+//
+//     let newTableData = []
+//
+//     _.forEach(group, (value) => {
+//       newTableData = newTableData.concat(value)
+//
+//       let total = Big(0)
+//
+//       _.each(value, v => (total = total.plus(v.sale_price)))
+//
+//       newTableData.push({
+//         _special: {
+//           type: TABLETYPE_CATEGORY1TOTAL,
+//           data: {
+//             total: total.valueOf()
+//           }
+//         }
+//       })
+//     })
+//
+//     return (
+//       <Printer
+//         config={config}
+//         data={data}
+//         tableData={newTableData}
+//         {...rest}
+//       />
+//     )
+//   }
+// }
 
-    const group = _.groupBy(tableData, v => v.category_title_1)
-
-    let newTableData = []
-
-    _.forEach(group, (value) => {
-      newTableData = newTableData.concat(value)
-
-      let total = Big(0)
-
-      _.each(value, v => (total = total.plus(v.sale_price)))
-
-      newTableData.push({
-        _special: {
-          type: TABLETYPE_CATEGORY1TOTAL,
-          data: {
-            total: total.valueOf()
-          }
-        }
-      })
-    })
-
-    return (
-      <Printer
-        config={config}
-        data={data}
-        tableData={newTableData}
-        {...rest}
-      />
-    )
-  }
-}
-
-export default Special
+export default Printer

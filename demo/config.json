@@ -111,7 +111,13 @@
     {
       "blocks": [],
       "style": {
-        "height": "200px"
+        "height": "100px"
+      }
+    },
+    {
+      "blocks": [],
+      "style": {
+        "height": "100px"
       }
     },
     {
@@ -133,12 +139,6 @@
       }
     }
   ],
-  "top": {
-    "blocks": [],
-    "style": {
-      "height": "0px"
-    }
-  },
   "table": {
     "columns": [
       {
@@ -224,53 +224,6 @@
     ],
     "className": "",
     "type": "typeCategory1Total"
-  },
-  "bottom": {
-    "style": {
-      "height": "50px"
-    },
-    "blocks": [
-      {
-        "text": "下单金额：",
-        "style": {
-          "position": "absolute",
-          "left": "0px",
-          "top": "13px"
-        }
-      },
-      {
-        "text": "运费：",
-        "style": {
-          "position": "absolute",
-          "left": "310px",
-          "top": "10px"
-        }
-      },
-      {
-        "text": "出库金额：",
-        "style": {
-          "position": "absolute",
-          "left": "150px",
-          "top": "11px"
-        }
-      },
-      {
-        "text": "异常金额：",
-        "style": {
-          "position": "absolute",
-          "left": "452px",
-          "top": "9px"
-        }
-      },
-      {
-        "text": "应付金额：",
-        "style": {
-          "position": "absolute",
-          "left": "633px",
-          "top": "10px"
-        }
-      }
-    ]
   },
   "sign": {
     "blocks": [

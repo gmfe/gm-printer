@@ -9,6 +9,9 @@ class PrinterStore {
   ready = false
 
   @observable
+  config = {}
+
+  @observable
   size = pageSizeMap.A4.size
 
   @observable
@@ -36,7 +39,7 @@ class PrinterStore {
   }
 
   @observable
-  page = [] // [{type, index, begin, end, bottomPage}]
+  pages = [] // [{type, index, begin, end}]
 
   data = {}
   tableData = []
@@ -46,7 +49,8 @@ class PrinterStore {
   selected = null
 
   @action
-  init () {
+  init (config) {
+    this.config = config
     this.size = pageSizeMap.A4.size
     this.gap = pageSizeMap.A4.gap
     this.ready = false
@@ -61,7 +65,7 @@ class PrinterStore {
         heights: []
       }
     }
-    this.page = []
+    this.pages = []
     this.data = {}
     this.tableData = []
     this.selected = null
@@ -106,90 +110,36 @@ class PrinterStore {
   }
 
   @action
-  setPage () {
-    if (this._onePage()) {
-      return
-    }
-
-    this._morePage()
-  }
-
-  @action
-  _onePage () {
-    let height = this.height
-
-    _.forEach(this.height, v => (height += v))
-
-    if (height > this.pageHeight) {
-      return false
-    }
-
-    this.page = [{
-      type: 'panel',
-      name: ''
-    }, {
-      type: 'footer'
-    }]
-
-    return true
-  }
-
-  @action
-  _morePage () {
+  setPages () {
     let oneHeight =
       this.height.header +
       this.height.footer
-    let end = 1
-    let oEnd = 0
 
-    const page = []
+    let index = 0
 
-    while (oneHeight < this.height.page) {
+    let page = []
 
-      oneHeight += this.table.body.heights[end]
-      end++
-    }
+    while (index < this.config.contents.length) {
+      oneHeight += this.height[`contents.${index}`]
 
-    page.push({
-      begin: oEnd,
-      end: end - 1
-    })
-    oEnd = end
-
-    while (end <= this.table.data.length) {
-      let moreHeight =
-        this.height.header +
-        this.table.head.height +
-        this.table.body.heights[0] +
-        this.height.footer
-
-      while (moreHeight < this.height.page) {
-        moreHeight += this.table.body.heights[end]
-        end++
+      if (oneHeight < this.pageHeight) {
+        page.push({
+          type: 'panel',
+          index
+        })
+        index += 1
+      } else {
+        oneHeight =
+          this.height.header +
+          this.height.footer
+        this.pages.push(page)
+        page = []
       }
-
-      page.push({
-        begin: oEnd,
-        end: end - 1
-      })
-      oEnd = end
     }
 
-    // 如果最后一页高度不够，就补多一个页面
-    const lastHeight =
-      this.height.header +
-      this.table.head.height +
-      _.sum(this.table.body.heights.slice(page.slice(-1)[0].begin)) +
-      this.height.sign +
-      this.height.footer
+    this.pages.push(page)
 
-    if (lastHeight > this.height.page) {
-      page.push({
-        bottomPage: true
-      })
-    }
-
-    this.page = page
+    console.log(this.pages)
 
     return true
   }
@@ -210,7 +160,7 @@ class PrinterStore {
         data: this.data,
         pagination: {
           pageIndex: pageIndex + 1,
-          count: this.page.length
+          count: this.pages.length
         }
       })
     } catch (err) {
@@ -238,7 +188,7 @@ class PrinterStore {
         data: this.data,
         pagination: {
           pageIndex: pageIndex + 1,
-          count: this.page.length
+          count: this.pages.length
         }
       })
     } catch (err) {
