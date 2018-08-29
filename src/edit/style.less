@@ -50,12 +50,20 @@
   .gm-printer-edit-content {
     position: relative;
     padding-right: 300px;
+
+    .gm-printer-edit-content-tip {
+      text-align: center;
+      padding: 10px;
+    }
   }
 }
 
 @media print {
   .gm-printer-edit-content {
     padding-right: 0;
+    .gm-printer-edit-content-tip {
+      display: none;
+    }
   }
 
   .gm-printer-edit-header {

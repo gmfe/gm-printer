@@ -42,8 +42,8 @@ function getStyleWithDiff (style, diffX, diffY) {
   return newStyle
 }
 
-function getBlockName (panel, index) {
-  return `panel.${panel}.block.${index}`
+function getBlockName (name, index) {
+  return `${name}.block.${index}`
 }
 
 function getTableColumnName (index) {
@@ -68,6 +68,7 @@ function exchange (arr, target, source) {
   return arr
 }
 
+// TODO
 function _fixConfigPanel (config, panel) {
   config[panel] = config[panel] || {}
   config[panel]['blocks'] = config[panel]['blocks'] || []

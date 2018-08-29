@@ -13,9 +13,10 @@ class EditStore {
   @observable
   config = null
 
-  // panel.header
-  // panel.header.block.1
-  // table.column.1
+  // header
+  // header.block.1
+  // contents.panel.1.block.1
+  // contents.table.2.column.1
   @observable
   selected = null
 
@@ -33,6 +34,7 @@ class EditStore {
 
   @computed
   get computedPrinterKey () {
+    // TODO
     return _.map(this.config, (v, k) => {
       if (k === 'table') {
         return v.columns.length + '_' + v.className + '_' + v.type
@@ -58,31 +60,23 @@ class EditStore {
   }
 
   @action
-  init () {
-    this.config = null
+  init (config) {
+    this.config = config
     this.selected = null
     this.insertPanel = panelList[0].value
-  }
 
-  @action
-  setConfig (config) {
-    this.config = config
     this._cacheConfig.push(JSON.stringify(config))
   }
 
   @action
   setSelected (selected = null) {
+    console.log(selected)
     this.selected = selected
   }
 
   @computed
-  get computedIsSelectPanel () {
-    return this.selected && this.selected.split('.').length === 2
-  }
-
-  @computed
   get computedIsSelectBlock () {
-    return this.selected && this.selected.split('.').length === 4
+    return this.selected && this.selected.split('.').length === 3
   }
 
   @computed
@@ -97,10 +91,8 @@ class EditStore {
     }
 
     const arr = this.selected.split('.')
-    if (arr.length === 2) {
-      return this.config[arr[1]]
-    } else if (arr.length === 4) {
-      return this.config[arr[1]].blocks[arr[3]]
+    if (arr.length === 3) {
+      return this.config[arr[0]].blocks[arr[2]]
     } else if (arr.length === 3) {
       return this.config.table.columns[arr[2]]
     }

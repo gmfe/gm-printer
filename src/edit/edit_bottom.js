@@ -104,7 +104,7 @@ class EditBottom extends React.Component {
   }
 
   render () {
-    let content = '单击选中内容编辑，或拖动内容以摆放位置'
+    let content = null
     if (editStore.computedIsSelectBlock) {
       content = this.renderBlocks()
     } else if (editStore.computedIsSelectTable) {

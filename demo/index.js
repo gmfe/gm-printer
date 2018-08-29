@@ -4,7 +4,7 @@ import config from '../demo/config.json'
 import data from '../demo/data'
 import moment from 'moment'
 import 'normalize.css/normalize.css'
-import { PrinterEdit, fixConfig } from '../src'
+import { PrinterEdit } from '../src'
 
 const nData = {
   ...data,
@@ -17,7 +17,7 @@ class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      config: fixConfig(config)
+      config
     }
   }
 

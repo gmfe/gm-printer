@@ -19,7 +19,7 @@ class Edit extends React.Component {
   constructor (props) {
     super(props)
 
-    editStore.init()
+
 
     let config = props.config
 
@@ -37,7 +37,7 @@ class Edit extends React.Component {
       }
     }
 
-    editStore.setConfig(config)
+    editStore.init(config)
   }
 
   componentDidMount () {
@@ -145,6 +145,9 @@ class Edit extends React.Component {
           <EditBottom/>
         </div>
         <div className='gm-printer-edit-content' onClick={this.handleCancel}>
+          <div className='gm-printer-edit-content-tip'>
+            单击选中内容，双击编辑，可拖动以摆放位置，可方向键细调位置
+          </div>
           <Printer
             key={editStore.computedPrinterKey}
             selected={editStore.selected}
