@@ -76,7 +76,10 @@ class EditStore {
 
   @computed
   get computedIsSelectBlock () {
-    return this.selected && this.selected.split('.').length === 3
+    if (this.selected) {
+      const arr = this.selected.split('.')
+      return arr.length === 3 || (arr.length === 5 && arr[3] === 'block')
+    }
   }
 
   @computed
@@ -93,19 +96,18 @@ class EditStore {
     const arr = this.selected.split('.')
     if (arr.length === 3) {
       return this.config[arr[0]].blocks[arr[2]]
-    } else if (arr.length === 3) {
-      return this.config.table.columns[arr[2]]
+    } else if (arr.length === 5 && arr[3] === 'block') {
+      return this.config.contents[arr[2]].blocks[arr[4]]
     }
   }
 
   @action
   setConfigBlockBy (who, value) {
-    if (!this.computedIsSelectBlock) {
-      return
+    console.log(1)
+    if (this.computedIsSelectBlock) {
+      const block = this.computedSelectedInfo
+      block[who] = value
     }
-
-    const block = this.computedSelectedInfo
-    block[who] = value
   }
 
   @action

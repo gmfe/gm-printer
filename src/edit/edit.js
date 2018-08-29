@@ -19,8 +19,6 @@ class Edit extends React.Component {
   constructor (props) {
     super(props)
 
-
-
     let config = props.config
 
     let sConfig = window.localStorage.getItem(STORAGE_CACHE)
