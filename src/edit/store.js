@@ -219,10 +219,9 @@ class EditStore {
   }
 
   @action
-  setConfigTableClassName (className) {
-    // TODO
-    this.config.table.className = className
-    console.log(this.config.table)
+  setConfigTableClassName (name, className) {
+    const arr = name.split('.')
+    this.config.contents[arr[2]].className = className
   }
 
   @action

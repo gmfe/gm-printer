@@ -328,7 +328,7 @@ Size.propTypes = {
 class Hr extends React.Component {
   render () {
     return (
-      <div style={{border: '1px solid whitesmoke', padding: '0'}}/>
+      <div style={{borderTop: '1px solid #9a9a9a', padding: '0'}}/>
     )
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { blockTypeList } from '../config'
+import { blockTypeList, tableClassNameList } from '../config'
 import editStore from './store'
 import _ from 'lodash'
 import { Hr } from './component'
@@ -122,6 +122,15 @@ class ContextMenu extends React.Component {
     })
   }
 
+  handleTableClassName = (className) => {
+    const {name} = this.state
+    editStore.setConfigTableClassName(name, className)
+
+    this.setState({
+      name: null
+    })
+  }
+
   renderColumn () {
     return (
       <React.Fragment>
@@ -135,6 +144,12 @@ class ContextMenu extends React.Component {
         <div onClick={this.handleRemove}>
           移除
         </div>
+        <Hr/>
+        {_.map(tableClassNameList, v => (
+          <div key={v.value} onClick={this.handleTableClassName.bind(this, v.value)}>
+            {v.text}
+          </div>
+        ))}
       </React.Fragment>
     )
   }

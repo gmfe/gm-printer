@@ -56,7 +56,7 @@ const borderStyleList = [
 ]
 
 const tableClassNameList = [
-  {value: '', text: '默认'},
+  {value: '', text: '默认样式'},
   {value: 'className1', text: '样式一'}
 ]
 
