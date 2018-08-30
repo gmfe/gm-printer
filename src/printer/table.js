@@ -41,14 +41,16 @@ class Table extends React.Component {
   }
 
   handleClick = (e) => {
+    const {name} = this.props
     const {index} = e.target.dataset
 
     dispatchMsg('gm-printer-select', {
-      selected: `table.column.${index}`
+      selected: getTableColumnName(name, index)
     })
   }
 
   handleDragStart = (e) => {
+    const {name} = this.props
     const {index} = e.target.dataset
 
     this.setState({
@@ -56,7 +58,7 @@ class Table extends React.Component {
     })
 
     dispatchMsg('gm-printer-select', {
-      selected: `table.column.${index}`
+      selected: getTableColumnName(name, index)
     })
   }
 
@@ -76,7 +78,7 @@ class Table extends React.Component {
   }
 
   // renderCategoryTotal () {
-  //   const {config: {columns}, data} = this.props
+  //   const {config: {columns}, data, name} = this.props
   //
   //   return (
   //     <table>
@@ -91,7 +93,7 @@ class Table extends React.Component {
   //               width: printerStore.table.head.widths[i]
   //             })}
   //             className={classNames({
-  //               active: getTableColumnName(i) === printerStore.selected
+  //               active: getTableColumnName(name, i) === printerStore.selected
   //             })}
   //             onClick={this.handleClick}
   //             onDragStart={this.handleDragStart}
@@ -120,7 +122,7 @@ class Table extends React.Component {
   //                 key={j}
   //                 style={col.style}
   //                 className={classNames({
-  //                   active: getTableColumnName(j) === printerStore.selected
+  //                   active: getTableColumnName(name, j) === printerStore.selected
   //                 })}
   //               >{printerStore.templateTable(col.text, i, d)}</td>
   //             ))}
@@ -133,7 +135,7 @@ class Table extends React.Component {
   // }
 
   renderDefault () {
-    const {config: {columns}, data} = this.props
+    const {config: {columns}, data, name, columnIndex} = this.props
 
     return (
       <table>
@@ -146,7 +148,7 @@ class Table extends React.Component {
               key={i}
               style={Object.assign({}, col.headStyle)}
               className={classNames({
-                active: getTableColumnName(i) === printerStore.selected
+                active: getTableColumnName(name, i) === printerStore.selected
               })}
               onClick={this.handleClick}
               onDragStart={this.handleDragStart}
@@ -164,9 +166,9 @@ class Table extends React.Component {
                 key={j}
                 style={col.style}
                 className={classNames({
-                  active: getTableColumnName(j) === printerStore.selected
+                  active: getTableColumnName(name, j) === printerStore.selected
                 })}
-              >{printerStore.templateTable(col.text, i, d)}</td>
+              >{printerStore.templateTable(col.text, i + columnIndex, d)}</td>
             ))}
           </tr>
         ))}
@@ -201,9 +203,12 @@ class Table extends React.Component {
 Table.propTypes = {
   config: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
+  columnIndex: PropTypes.number
 }
 
-Table.defaultProps = {}
+Table.defaultProps = {
+  columnIndex: 0
+}
 
 export default Table

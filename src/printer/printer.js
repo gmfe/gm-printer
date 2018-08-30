@@ -116,6 +116,7 @@ class Printer extends React.Component {
                     name={`contents.table.${panel.index}`}
                     config={config.contents[panel.index]}
                     data={tableData.slice(panel.begin, panel.end)}
+                    columnIndex={panel.begin}
                     pageIndex={i}
                   />
                 } else {

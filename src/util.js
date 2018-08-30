@@ -46,8 +46,8 @@ function getBlockName (name, index) {
   return `${name}.block.${index}`
 }
 
-function getTableColumnName (index) {
-  return `table.column.${index}`
+function getTableColumnName (name, index) {
+  return `${name}.column.${index}`
 }
 
 function insertCSS (cssString) {

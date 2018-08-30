@@ -40,6 +40,7 @@ class Edit extends React.Component {
 
   componentDidMount () {
     window.document.addEventListener('gm-printer-select', this.handlePrinterSelect)
+    window.document.addEventListener('gm-printer-panel-style-set', this.handlePrinterPanelStyleSet)
     window.document.addEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
     window.document.addEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
     window.document.addEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
@@ -52,6 +53,7 @@ class Edit extends React.Component {
 
   componentWillUnmount () {
     window.document.removeEventListener('gm-printer-select', this.handlePrinterSelect)
+    window.document.removeEventListener('gm-printer-panel-style-set', this.handlePrinterPanelStyleSet)
     window.document.removeEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
     window.document.removeEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
     window.document.removeEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
@@ -72,6 +74,11 @@ class Edit extends React.Component {
     const {selected} = e.detail
 
     editStore.setSelected(selected)
+  }
+
+  handlePrinterPanelStyleSet = (e) => {
+    const {name, style} = e.detail
+    editStore.setConfigPanelStyle(name, style)
   }
 
   handlePrinterBlockStyleSet = (e) => {

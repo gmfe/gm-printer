@@ -34,10 +34,15 @@ class EditStore {
 
   @computed
   get computedPrinterKey () {
-    // TODO
     return _.map(this.config, (v, k) => {
-      if (k === 'table') {
-        return v.columns.length + '_' + v.className + '_' + v.type
+      if (k === 'contents') {
+        return _.map(v, vv => {
+          if (vv.type === 'table') {
+            return vv.columns.length + '_' + vv.className
+          } else {
+            return vv.style ? vv.style.height : ''
+          }
+        }).join('_')
       } else {
         return v.style ? v.style.height : ''
       }
@@ -84,7 +89,10 @@ class EditStore {
 
   @computed
   get computedIsSelectTable () {
-    return this.selected && this.selected.split('.').length === 3
+    if (this.selected) {
+      const arr = this.selected.split('.')
+      return arr.length === 5 && arr[3] === 'column'
+    }
   }
 
   @computed
@@ -98,6 +106,19 @@ class EditStore {
       return this.config[arr[0]].blocks[arr[2]]
     } else if (arr.length === 5 && arr[3] === 'block') {
       return this.config.contents[arr[2]].blocks[arr[4]]
+    } else if (arr.length === 5 && arr[3] === 'column') {
+      return this.config.contents[arr[2]].columns[arr[4]]
+    }
+  }
+
+  @action
+  setConfigPanelStyle (name, style) {
+    const arr = name.split('.')
+
+    if (arr.length === 1) {
+      this.config[name].style = style
+    } else if (arr.length === 3) {
+      this.config.contents[arr[2]].style = style
     }
   }
 
@@ -163,11 +184,13 @@ class EditStore {
 
   @action
   setConfigTableType (type) {
+    // TODO
     this.config.table.type = type
   }
 
   @action
   setConfigTableClassName (className) {
+    // TODO
     this.config.table.className = className
     console.log(this.config.table)
   }
@@ -175,12 +198,14 @@ class EditStore {
   @action
   exchangeTableColumn (target, source) {
     if (this.computedIsSelectTable) {
-      exchange(this.config.table.columns, target, source)
+      const arr = this.selected.split('.')
+      exchange(this.config.contents[arr[2]].columns, target, source)
     }
   }
 
   @action
   addTableColumn () {
+    // TODO
     this.config.table.columns.push({
       head: '表头',
       headStyle: {

@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { observer } from 'mobx-react'
 import printerStore from './store'
 import _ from 'lodash'
-import { getHeight, getBlockName } from '../util'
+import { getHeight, getBlockName, dispatchMsg, pxAdd } from '../util'
 import Block from './block'
 
 @observer
@@ -17,6 +17,29 @@ class Panel extends React.Component {
 
       printerStore.setHeight(name, getHeight($dom))
     }
+
+    this.state = {
+      clientY: null
+    }
+  }
+
+  handleDragStart = ({clientY}) => {
+    this.setState({
+      clientY
+    })
+  }
+
+  handleDragEnd = ({clientY}) => {
+    const {name, config} = this.props
+
+    const diffY = clientY - this.state.clientY
+
+    dispatchMsg('gm-printer-panel-style-set', {
+      name,
+      style: {
+        height: pxAdd(config.style.height, diffY)
+      }
+    })
   }
 
   render () {
@@ -38,6 +61,12 @@ class Panel extends React.Component {
             />
           ))}
         </div>
+        <div
+          draggable
+          className='gm-printer-panel-drag'
+          onDragStart={this.handleDragStart}
+          onDragEnd={this.handleDragEnd}
+        />
       </div>
     )
   }
