@@ -62,6 +62,7 @@ const tableClassNameList = [
 
 const TABLETYPE_CATEGORY1TOTAL = 'typeCategory1Total'
 
+// TODO
 const tableTypeList = [
   {value: '', text: '默认'},
   {value: TABLETYPE_CATEGORY1TOTAL, text: '一级分类+总计'}

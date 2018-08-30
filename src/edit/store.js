@@ -95,18 +95,36 @@ class EditStore {
   }
 
   @computed
-  get computedSelectedInfo () {
+  get computedSelectedSource () {
     if (!this.selected) {
       return null
     }
 
     const arr = this.selected.split('.')
     if (arr.length === 3) {
-      return this.config[arr[0]].blocks[arr[2]]
+      return this.config[arr[0]].blocks
     } else if (arr.length === 5 && arr[3] === 'block') {
-      return this.config.contents[arr[2]].blocks[arr[4]]
+      return this.config.contents[arr[2]].blocks
     } else if (arr.length === 5 && arr[3] === 'column') {
-      return this.config.contents[arr[2]].columns[arr[4]]
+      return this.config.contents[arr[2]].columns
+    }
+  }
+
+  @computed
+  get computedSelectedInfo () {
+    if (!this.selected) {
+      return null
+    }
+
+    const source = this.computedSelectedSource
+
+    const arr = this.selected.split('.')
+    if (arr.length === 3) {
+      return source[arr[2]]
+    } else if (arr.length === 5 && arr[3] === 'block') {
+      return source[arr[4]]
+    } else if (arr.length === 5 && arr[3] === 'column') {
+      return source[arr[4]]
     }
   }
 
@@ -232,15 +250,22 @@ class EditStore {
 
   @action
   removeConfig () {
-    if (this.computedIsSelectBlock) {
-      const arr = this.selected.split('.')
-      this.selected = null
-      this.config[arr[1]].blocks.splice(arr[3], 1)
-    } else if (this.computedIsSelectTable) {
-      const arr = this.selected.split('.')
-      this.selected = null
-      this.config.table.columns.splice(arr[2], 1)
+    if (!this.selected) {
+      return
     }
+
+    const source = this.computedSelectedSource
+    const arr = this.selected.split('.')
+
+    if (arr.length === 3) {
+      source.splice(arr[2], 1)
+    } else if (arr.length === 5 && arr[1] === 'panel') {
+      source.splice(arr[4], 1)
+    } else if (arr.length === 5 && arr[1] === 'table') {
+      source.splice(arr[4], 1)
+    }
+
+    this.selected = null
   }
 
   @action

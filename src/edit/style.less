@@ -75,22 +75,38 @@
       }
     }
   }
+
+  // mark
+  .gm-printer {
+    img {
+      outline: 1px solid red;
+    }
+  }
 }
 
 @media print {
-  .gm-printer-edit-content {
-    padding-right: 0;
+  .gm-printer-edit {
+    .gm-printer-edit-content {
+      padding-right: 0;
 
-    .gm-printer-edit-content-tip {
+      .gm-printer-edit-content-tip {
+        display: none;
+      }
+    }
+
+    .gm-printer-edit-header {
       display: none;
     }
-  }
 
-  .gm-printer-edit-header {
-    display: none;
-  }
+    .gm-printer-edit-contextmenu {
+      display: none;
+    }
 
-  .gm-printer-edit-contextmenu {
-    display: none;
+    // mark
+    .gm-printer {
+      img {
+        outline: none;
+      }
+    }
   }
 }

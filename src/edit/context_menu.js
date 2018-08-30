@@ -39,9 +39,7 @@ class ContextMenu extends React.Component {
   }
 
   handleContextMenu = (e) => {
-    console.log(e.target)
-
-    const {target: {dataset: {name}}, pageX, pageY} = e
+    const {target: {dataset: {name}}, clientX, clientY} = e
 
     if (!name) {
       return
@@ -54,12 +52,12 @@ class ContextMenu extends React.Component {
     this.setState({
       name,
       popup: {
-        left: pageX,
-        top: pageY
+        left: clientX,
+        top: clientY
       },
       block: {
-        left: pageX - rect.x,
-        top: pageY - rect.y
+        left: clientX - rect.x,
+        top: clientY - rect.y
       }
     })
   }
