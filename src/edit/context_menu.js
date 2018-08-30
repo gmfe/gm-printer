@@ -45,6 +45,16 @@ class ContextMenu extends React.Component {
       return
     }
 
+    // name
+    // header
+    // header.block.0
+    // contents.panel.0
+    // contents.panel.0.block.0
+    // contents.table.0
+    // contents.table.0.column.0
+
+    console.log(name)
+
     e.preventDefault()
 
     const rect = e.target.getBoundingClientRect()
@@ -75,10 +85,29 @@ class ContextMenu extends React.Component {
     })
   }
 
-  renderBlock () {
+  renderPanel () {
     return _.map(blockTypeList, v => (
       <div key={v.value} onClick={this.handleInsertBlock.bind(this, v.value)}>{v.text}</div>
     ))
+  }
+
+  handleRemoveBlock = () => {
+    const {name} = this.state
+
+    editStore.setSelected(name)
+    editStore.removeConfig()
+
+    this.setState({
+      name: null
+    })
+  }
+
+  renderBlock () {
+    return (
+      <div onClick={this.handleRemoveBlock}>
+        移除
+      </div>
+    )
   }
 
   render () {
@@ -93,8 +122,9 @@ class ContextMenu extends React.Component {
           position: 'fixed',
           ...popup
         }}>
-          {name && arr.length === 1 && this.renderBlock()}
-          {name && arr.length === 3 && arr[1] === 'panel' && this.renderBlock()}
+          {name && arr.length === 1 && this.renderPanel()}
+          {name && arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
+          {name && arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
         </div>
       </div>
     )
