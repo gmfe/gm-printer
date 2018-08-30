@@ -240,7 +240,7 @@ class EditStore {
   }
 
   @action
-  exchangeTableColumnByArrow (diff) {
+  exchangeTableColumnByDiff (diff) {
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
       const source = ~~arr[4]
@@ -249,18 +249,36 @@ class EditStore {
   }
 
   @action
-  addTableColumn () {
-    // TODO
-    this.config.table.columns.push({
-      head: '表头',
-      headStyle: {
-        textAlign: 'center'
-      },
-      text: '内容',
-      style: {
-        textAlign: 'center'
+  addTableColumn (index) { // index 可选
+    if (this.computedIsSelectTable) {
+      const arr = this.selected.split('.')
+      const {columns} = this.config.contents[arr[2]]
+
+      index = index === undefined ? columns.length : index
+
+      if (index >= 0 && index < columns.length) {
+        columns.splice(index, 0, {
+          head: '表头',
+          headStyle: {
+            textAlign: 'center'
+          },
+          text: '内容',
+          style: {
+            textAlign: 'center'
+          }
+        })
       }
-    })
+    }
+  }
+
+  @action
+  addTableColumnByDiff (diff) {
+    if (this.computedIsSelectTable) {
+      const arr = this.selected.split('.')
+      const source = ~~arr[4]
+
+      this.addTableColumn(source + diff)
+    }
   }
 
   @action

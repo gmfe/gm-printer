@@ -92,7 +92,7 @@ class ContextMenu extends React.Component {
     ))
   }
 
-  handleRemoveBlock = () => {
+  handleRemove = () => {
     const {name} = this.state
 
     editStore.setSelected(name)
@@ -105,23 +105,34 @@ class ContextMenu extends React.Component {
 
   renderBlock () {
     return (
-      <div onClick={this.handleRemoveBlock}>
+      <div onClick={this.handleRemove}>
         移除
       </div>
     )
   }
 
+  handleAddColumn = (diff) => {
+    const {name} = this.state
+
+    editStore.setSelected(name)
+    editStore.addTableColumnByDiff(diff)
+
+    this.setState({
+      name: null
+    })
+  }
+
   renderColumn () {
     return (
       <React.Fragment>
-        <div>
+        <div onClick={this.handleAddColumn.bind(this, -1)}>
           向左插入
         </div>
-        <div>
+        <div onClick={this.handleAddColumn.bind(this, 1)}>
           向右插入
         </div>
         <Hr/>
-        <div onClick={this.handleRemoveBlock}>
+        <div onClick={this.handleRemove}>
           移除
         </div>
       </React.Fragment>

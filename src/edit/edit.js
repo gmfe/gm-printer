@@ -124,9 +124,9 @@ class Edit extends React.Component {
         editStore.setConfigBlockBy('style', newStyle)
       } else if (editStore.computedIsSelectTable) {
         if (e.code === 'ArrowLeft') {
-          editStore.exchangeTableColumnByArrow(-1)
+          editStore.exchangeTableColumnByDiff(-1)
         } else if (e.code === 'ArrowRight') {
-          editStore.exchangeTableColumnByArrow(1)
+          editStore.exchangeTableColumnByDiff(1)
         }
       }
     } else if (e.code === 'Escape' && editStore.selected) {
