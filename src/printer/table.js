@@ -143,9 +143,10 @@ class Table extends React.Component {
         <tr>
           {_.map(columns, (col, i) => (
             <th
-              data-index={i}
-              draggable
               key={i}
+              data-index={i}
+              data-name={getTableColumnName(name, i)}
+              draggable
               style={Object.assign({}, col.headStyle)}
               className={classNames({
                 active: getTableColumnName(name, i) === printerStore.selected

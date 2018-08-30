@@ -229,7 +229,22 @@ class EditStore {
   exchangeTableColumn (target, source) {
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
-      exchange(this.config.contents[arr[2]].columns, target, source)
+      const {columns} = this.config.contents[arr[2]]
+
+      if (target >= 0 && target < columns.length) {
+        exchange(columns, target, source)
+        arr[4] = target
+        this.selected = arr.join('.')
+      }
+    }
+  }
+
+  @action
+  exchangeTableColumnByArrow (diff) {
+    if (this.computedIsSelectTable) {
+      const arr = this.selected.split('.')
+      const source = ~~arr[4]
+      this.exchangeTableColumn(source + diff, source)
     }
   }
 

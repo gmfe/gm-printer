@@ -325,6 +325,14 @@ Size.propTypes = {
   onChange: PropTypes.func.isRequired
 }
 
+class Hr extends React.Component {
+  render () {
+    return (
+      <div style={{border: '1px solid whitesmoke', padding: '0'}}/>
+    )
+  }
+}
+
 export {
   Text,
   Textarea,
@@ -334,5 +342,6 @@ export {
   Fonter,
   Position,
   Line,
-  Size
+  Size,
+  Hr
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import { blockTypeList } from '../config'
 import editStore from './store'
 import _ from 'lodash'
+import { Hr } from './component'
 
 class ContextMenu extends React.Component {
   constructor (props) {
@@ -110,6 +111,23 @@ class ContextMenu extends React.Component {
     )
   }
 
+  renderColumn () {
+    return (
+      <React.Fragment>
+        <div>
+          向左插入
+        </div>
+        <div>
+          向右插入
+        </div>
+        <Hr/>
+        <div onClick={this.handleRemoveBlock}>
+          移除
+        </div>
+      </React.Fragment>
+    )
+  }
+
   render () {
     const {children, ...rest} = this.props
     const {name, popup} = this.state
@@ -125,6 +143,7 @@ class ContextMenu extends React.Component {
           {name && arr.length === 1 && this.renderPanel()}
           {name && arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
           {name && arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
+          {name && arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
         </div>
       </div>
     )

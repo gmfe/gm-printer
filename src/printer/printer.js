@@ -18,9 +18,10 @@ insertCSS(printerCSS.toString())
 
 _.templateSettings.interpolate = /{{([\s\S]+?)}}/g
 
-function addPageSizeStyle (rule) {
-  insertCSS(`@page {size: ${rule}; }`)
-}
+// 貌似没用
+// function addPageSizeStyle (rule) {
+//   insertCSS(`@page {size: ${rule}; }`)
+// }
 
 const Header = (props) => <Panel {...props} name='header' placeholder='页眉'/>
 const Sign = (props) => <Panel {...props} style={{
@@ -47,8 +48,8 @@ class Printer extends React.Component {
     printerStore.setData(props.data)
     printerStore.setTableData(props.tableData)
 
-    const {width, height} = printerStore.config.page.size
-    addPageSizeStyle(`${width} ${height}`)
+    // const {width, height} = printerStore.config.page.size
+    // addPageSizeStyle(`${width} ${height}`)
 
     printerStore.setSelected(props.selected)
   }
@@ -85,7 +86,7 @@ class Printer extends React.Component {
                 name={`contents.panel.${index}`}
                 config={content}
                 pageIndex={0}
-                placeholder={`contents.panel.${index}`}
+                placeholder={`内容 ${index}`}
               />
             )
           }
@@ -127,7 +128,7 @@ class Printer extends React.Component {
                       name={`contents.panel.${panel.index}`}
                       config={config.contents[panel.index]}
                       pageIndex={i}
-                      placeholder={`contents.panel.${panel.index}`}
+                      placeholder={`内容 ${panel.index}`}
                     />
                   )
                 }

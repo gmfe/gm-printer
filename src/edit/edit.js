@@ -102,25 +102,33 @@ class Edit extends React.Component {
       return
     }
 
-    if (e.code.startsWith('Arrow') && editStore.computedIsSelectBlock) {
+    if (e.code.startsWith('Arrow')) {
       e.preventDefault()
 
-      let diffX = 0
-      let diffY = 0
+      if (editStore.computedIsSelectBlock) {
+        let diffX = 0
+        let diffY = 0
 
-      if (e.code === 'ArrowLeft') {
-        diffX -= 1
-      } else if (e.code === 'ArrowUp') {
-        diffY -= 1
-      } else if (e.code === 'ArrowRight') {
-        diffX += 1
-      } else if (e.code === 'ArrowDown') {
-        diffY += 1
+        if (e.code === 'ArrowLeft') {
+          diffX -= 1
+        } else if (e.code === 'ArrowUp') {
+          diffY -= 1
+        } else if (e.code === 'ArrowRight') {
+          diffX += 1
+        } else if (e.code === 'ArrowDown') {
+          diffY += 1
+        }
+
+        const newStyle = getStyleWithDiff(editStore.computedSelectedInfo.style, diffX, diffY)
+
+        editStore.setConfigBlockBy('style', newStyle)
+      } else if (editStore.computedIsSelectTable) {
+        if (e.code === 'ArrowLeft') {
+          editStore.exchangeTableColumnByArrow(-1)
+        } else if (e.code === 'ArrowRight') {
+          editStore.exchangeTableColumnByArrow(1)
+        }
       }
-
-      const newStyle = getStyleWithDiff(editStore.computedSelectedInfo.style, diffX, diffY)
-
-      editStore.setConfigBlockBy('style', newStyle)
     } else if (e.code === 'Escape' && editStore.selected) {
       e.preventDefault()
       editStore.setSelected(null)
