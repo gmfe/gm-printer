@@ -27,7 +27,7 @@
         }
       },
       {
-        "text": "订单号：{{data.id}}",
+        "text": "订单号：{{_original.id}}",
         "style": {
           "position": "absolute",
           "left": "0px",
@@ -38,7 +38,7 @@
         }
       },
       {
-        "text": "地址：{{data.address_sign}}",
+        "text": "地址：{{_original.address_sign}}",
         "style": {
           "position": "absolute",
           "left": "321px",
@@ -46,7 +46,7 @@
         }
       },
       {
-        "text": "收货人：{{data.receiver_name}}",
+        "text": "收货人：{{_original.receiver_name}}",
         "style": {
           "position": "absolute",
           "left": "320px",
@@ -54,7 +54,7 @@
         }
       },
       {
-        "text": "序号：{{data.source_origin_id}}",
+        "text": "序号：{{_original.source_origin_id}}",
         "style": {
           "position": "absolute",
           "left": "",
@@ -63,7 +63,7 @@
         }
       },
       {
-        "text": "联系电话：{{data.receiver_phone}}",
+        "text": "联系电话：{{_original.receiver_phone}}",
         "style": {
           "position": "absolute",
           "left": "1px",
@@ -71,7 +71,7 @@
         }
       },
       {
-        "text": "收货商户：{{data.resname}}",
+        "text": "收货商户：{{_original.resname}}",
         "style": {
           "position": "absolute",
           "left": "1px",
@@ -87,7 +87,7 @@
         }
       },
       {
-        "text": "配送时间：{{data.receive_begin_time}}",
+        "text": "配送时间：{{_original.receive_begin_time}}",
         "style": {
           "position": "absolute",
           "left": "322px",
@@ -95,7 +95,7 @@
         }
       },
       {
-        "text": "下单时间：{{data.date_time}}",
+        "text": "下单时间：{{_original.date_time}}",
         "style": {
           "position": "absolute",
           "left": "0px",
@@ -111,7 +111,7 @@
     {
       "blocks": [
         {
-          "text": "订单号：{{data.id}}",
+          "text": "订单号：{{_original.id}}",
           "style": {
             "position": "absolute",
             "left": "0px",
@@ -140,7 +140,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{index}}",
+          "text": "{{索引}}",
           "style": {
             "textAlign": "center"
           }
@@ -150,7 +150,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{tableData.category_title_1}}",
+          "text": "{{行.category_title_1}}",
           "style": {
             "textAlign": "center"
           }
@@ -160,7 +160,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{tableData.sale_unit_name}}",
+          "text": "{{行.sale_unit_name}}",
           "style": {
             "textAlign": "center"
           }
@@ -194,7 +194,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{index}}",
+          "text": "{{索引}}",
           "style": {
             "textAlign": "center"
           }
@@ -204,7 +204,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{tableData.category_title_1}}",
+          "text": "{{行.category_title_1}}",
           "style": {
             "textAlign": "center"
           }
@@ -214,7 +214,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{tableData.sale_unit_name}}",
+          "text": "{{行.sale_unit_name}}",
           "style": {
             "textAlign": "center"
           }

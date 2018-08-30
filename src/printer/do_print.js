@@ -32,38 +32,36 @@ function init () {
   }
 }
 
-function toDoPrint ({data, tableData, config}) {
+function toDoPrint ({data, config}) {
   ReactDOM.render((
     <Printer
       config={config}
       data={data}
-      tableData={tableData}
     />
   ), $printer.contentWindow.document.getElementById('appContainer'))
   $printer.contentWindow.print()
 }
 
-function toDoPrintBatch ({datas, tableDatas, config}) {
+function toDoPrintBatch ({datas, config}) {
   ReactDOM.render((
     <BatchPrinter
       config={config}
       datas={datas}
-      tableDatas={tableDatas}
     />
   ), $printer.contentWindow.document.getElementById('appContainer'))
   $printer.contentWindow.print()
 }
 
-function doPrint ({data, tableData, config}) {
+function doPrint ({data, config}) {
   init()
 
-  toDoPrint({data, tableData, config})
+  toDoPrint({data, config})
 }
 
-function doBatchPrint ({datas, tableDatas, config}) {
+function doBatchPrint ({datas, config}) {
   init()
 
-  toDoPrintBatch({datas, tableDatas, config})
+  toDoPrintBatch({datas, config})
 }
 
 export {

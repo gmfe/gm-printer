@@ -35,7 +35,6 @@ class App extends React.Component {
         <PrinterEdit
           data={nData}
           config={this.state.config}
-          tableData={nData.details}
           onSave={this.handleSave}
         />
       </div>

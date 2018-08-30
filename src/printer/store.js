@@ -1,6 +1,7 @@
 import { observable, action, configure, toJS } from 'mobx'
 import _ from 'lodash'
 import { pageSizeMap } from '../config'
+import { toKey } from './key'
 
 configure({enforceActions: true})
 
@@ -36,7 +37,6 @@ class PrinterStore {
   pages = [] // [{type, index, begin, end}]
 
   data = {}
-  tableData = []
 
   // TODO
   // 选中某个东西，具体见 edit/store.js 定义
@@ -44,12 +44,12 @@ class PrinterStore {
   selected = null
 
   @action
-  init (config) {
+  init (config, data) {
     this.config = config
     this.ready = false
     this.height = {}
     this.pages = []
-    this.data = {}
+    this.data = toKey(data)
     this.tablesInfo = {}
     this.selected = null
 
@@ -153,40 +153,30 @@ class PrinterStore {
     return true
   }
 
-  @action
-  setData (data) {
-    this.data = data
-  }
-
-  @action
-  setTableData (tableData) {
-    this.tableData = tableData
-  }
-
   template (text, pageIndex) {
     try {
       return _.template(text)({
-        data: this.data,
-        pagination: {
-          pageIndex: pageIndex + 1,
-          count: this.pages.length
-        }
+        ...this.data,
+        '当前页码': pageIndex + 1,
+        '总页码数': this.pages.length
       })
     } catch (err) {
-      console.warn(err)
+      // console.warn(err)
       return text
     }
   }
 
-  templateTable (text, index, tableData) {
+  templateTable (text, index, pageIndex) {
     try {
       return _.template(text)({
-        data: this.data,
-        index: index + 1,
-        tableData: tableData
+        ...this.data,
+        '行': this.data.orders[index],
+        '索引': index + 1,
+        '当前页码': pageIndex + 1,
+        '总页码数': this.pages.length
       })
     } catch (err) {
-      console.warn(err)
+      // console.warn(err)
       return text
     }
   }

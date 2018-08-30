@@ -9,7 +9,7 @@ class BatchPrinter extends React.Component {
   render () {
     const {
       config,
-      datas, tableDatas
+      datas
     } = this.props
 
     return (
@@ -18,7 +18,6 @@ class BatchPrinter extends React.Component {
           <Printer
             key={i}
             data={datas[i]}
-            tableData={tableDatas[i]}
             config={config}
           />
         ))}
@@ -29,8 +28,7 @@ class BatchPrinter extends React.Component {
 
 BatchPrinter.propTypes = {
   config: PropTypes.object.isRequired,
-  datas: PropTypes.object,
-  tableDatas: PropTypes.array
+  datas: PropTypes.object
 }
 
 export default BatchPrinter

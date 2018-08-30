@@ -135,7 +135,7 @@ class Table extends React.Component {
   // }
 
   renderDefault () {
-    const {config: {columns}, data, name, columnIndex} = this.props
+    const {config: {columns}, name, range, pageIndex} = this.props
 
     return (
       <table>
@@ -160,7 +160,7 @@ class Table extends React.Component {
         </tr>
         </thead>
         <tbody>
-        {_.map(data, (d, i) => (
+        {_.map(_.range(range.begin, range.end), i => (
           <tr key={i}>
             {_.map(columns, (col, j) => (
               <td
@@ -169,7 +169,7 @@ class Table extends React.Component {
                 className={classNames({
                   active: getTableColumnName(name, j) === printerStore.selected
                 })}
-              >{printerStore.templateTable(col.text, i + columnIndex, d)}</td>
+              >{printerStore.templateTable(col.text, i, pageIndex)}</td>
             ))}
           </tr>
         ))}
@@ -179,7 +179,7 @@ class Table extends React.Component {
   }
 
   render () {
-    const {config: {subType, className}} = this.props
+    const {config: {data, className}} = this.props
 
     let content
 
@@ -193,7 +193,7 @@ class Table extends React.Component {
       <div className={classNames(
         'gm-printer-table',
         'gm-printer-table-classname-' + (className || 'default'),
-        'gm-printer-table-subtype-' + (subType || 'default')
+        'gm-printer-table-data-' + (data || 'default')
       )}>
         {content}
       </div>
@@ -203,13 +203,9 @@ class Table extends React.Component {
 
 Table.propTypes = {
   config: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired,
   name: PropTypes.string.isRequired,
-  columnIndex: PropTypes.number
-}
-
-Table.defaultProps = {
-  columnIndex: 0
+  range: PropTypes.object.isRequired,
+  pageIndex: PropTypes.number.isRequired
 }
 
 export default Table

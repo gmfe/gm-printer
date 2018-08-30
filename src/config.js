@@ -60,6 +60,11 @@ const tableClassNameList = [
   {value: 'className1', text: '样式一'}
 ]
 
+const tableDataList = [
+  {value: '', text: '订单数据'},
+  {value: 'category', text: '分类订单数据'}
+]
+
 const TABLETYPE_CATEGORY1TOTAL = 'typeCategory1Total'
 
 // TODO
@@ -84,6 +89,7 @@ export {
   fontSizeList,
   borderStyleList,
   tableClassNameList,
+  tableDataList,
   tableTypeList,
   TABLETYPE_CATEGORY1TOTAL,
   panelList,

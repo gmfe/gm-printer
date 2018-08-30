@@ -146,7 +146,7 @@ class Edit extends React.Component {
 
   render () {
     const {
-      data, tableData
+      data
     } = this.props
 
     // Printer config 的 高度调整需要重新 render ，可把高度做key
@@ -154,7 +154,7 @@ class Edit extends React.Component {
     return (
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header'>
-          <EditTop data={data} tableData={tableData} onSave={this.handleSave} onDraft={this.handleDraft}/>
+          <EditTop data={data} onSave={this.handleSave} onDraft={this.handleDraft}/>
           <hr/>
           <EditBottom/>
         </div>
@@ -167,7 +167,6 @@ class Edit extends React.Component {
             selected={editStore.selected}
             config={editStore.config}
             data={data}
-            tableData={tableData}
             onChange={this.handleChange}
           />
         </ContextMenu>
@@ -178,7 +177,6 @@ class Edit extends React.Component {
 
 Edit.propTypes = {
   data: PropTypes.object.isRequired,
-  tableData: PropTypes.array.isRequired,
   config: PropTypes.object.isRequired,
   onSave: PropTypes.func
 }

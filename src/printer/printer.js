@@ -4,24 +4,17 @@ import React from 'react'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
-import Big from 'big.js'
 import printerStore from './store'
 import Page from './page'
 import _ from 'lodash'
 import Panel from './panel'
 import Table from './table'
 import { insertCSS } from '../util'
-import { TABLETYPE_CATEGORY1TOTAL } from '../config'
 
 insertCSS(normalizeCSS.toString())
 insertCSS(printerCSS.toString())
 
 _.templateSettings.interpolate = /{{([\s\S]+?)}}/g
-
-// 貌似没用
-// function addPageSizeStyle (rule) {
-//   insertCSS(`@page {size: ${rule}; }`)
-// }
 
 const Header = (props) => <Panel {...props} name='header' placeholder='页眉'/>
 const Sign = (props) => <Panel {...props} style={{
@@ -43,13 +36,7 @@ class Printer extends React.Component {
   constructor (props) {
     super(props)
 
-    printerStore.init(props.config)
-
-    printerStore.setData(props.data)
-    printerStore.setTableData(props.tableData)
-
-    // const {width, height} = printerStore.config.page.size
-    // addPageSizeStyle(`${width} ${height}`)
+    printerStore.init(props.config, props.data)
 
     printerStore.setSelected(props.selected)
   }
@@ -65,7 +52,7 @@ class Printer extends React.Component {
   }
 
   renderBefore () {
-    const {config, tableData} = this.props
+    const {config} = this.props
 
     return (
       <Page pageIndex={0}>
@@ -76,7 +63,7 @@ class Printer extends React.Component {
               key={`contents.table.${index}`}
               name={`contents.table.${index}`}
               config={content}
-              data={tableData}
+              range={{begin: 0, end: printerStore.data.orders.length}}
               pageIndex={0}
             />
           } else {
@@ -99,8 +86,7 @@ class Printer extends React.Component {
 
   renderPage () {
     const {
-      config,
-      tableData
+      config
     } = this.props
 
     return (
@@ -117,8 +103,10 @@ class Printer extends React.Component {
                     key={`contents.table.${panel.index}.${ii}`}
                     name={`contents.table.${panel.index}`}
                     config={config.contents[panel.index]}
-                    data={tableData.slice(panel.begin, panel.end)}
-                    columnIndex={panel.begin}
+                    range={{
+                      begin: panel.begin,
+                      end: panel.end
+                    }}
                     pageIndex={i}
                   />
                 } else {
@@ -146,7 +134,7 @@ class Printer extends React.Component {
 
   render () {
     const {
-      selected, data, tableData, config, //eslint-disable-line
+      selected, data, config, //eslint-disable-line
       className,
       style,
       ...rest
@@ -170,45 +158,7 @@ class Printer extends React.Component {
 Printer.propTypes = {
   selected: PropTypes.string,
   data: PropTypes.object.isRequired,
-  tableData: PropTypes.array.isRequired,
   config: PropTypes.object.isRequired
 }
-
-// @observer
-// class Special extends React.Component {
-//   render () {
-//     const {config, data, tableData, ...rest} = this.props
-//
-//     const group = _.groupBy(tableData, v => v.category_title_1)
-//
-//     let newTableData = []
-//
-//     _.forEach(group, (value) => {
-//       newTableData = newTableData.concat(value)
-//
-//       let total = Big(0)
-//
-//       _.each(value, v => (total = total.plus(v.sale_price)))
-//
-//       newTableData.push({
-//         _special: {
-//           type: TABLETYPE_CATEGORY1TOTAL,
-//           data: {
-//             total: total.valueOf()
-//           }
-//         }
-//       })
-//     })
-//
-//     return (
-//       <Printer
-//         config={config}
-//         data={data}
-//         tableData={newTableData}
-//         {...rest}
-//       />
-//     )
-//   }
-// }
 
 export default Printer

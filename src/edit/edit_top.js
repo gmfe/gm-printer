@@ -8,11 +8,10 @@ import { observer } from 'mobx-react/index'
 @observer
 class EditTop extends React.Component {
   handleTestPrint = () => {
-    const {data, tableData} = this.props
+    const {data} = this.props
     doPrint({
       config: toJS(editStore.config),
-      data,
-      tableData
+      data
     })
   }
 
@@ -47,7 +46,6 @@ class EditTop extends React.Component {
 
 EditTop.propTypes = {
   data: PropTypes.object.isRequired,
-  tableData: PropTypes.array.isRequired,
   onDraft: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired
 }
