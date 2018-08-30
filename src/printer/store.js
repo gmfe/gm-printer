@@ -166,32 +166,19 @@ class PrinterStore {
     }
   }
 
-  templateTable (text, index, pageIndex) {
+  templateTable (text, dataKey, index, pageIndex) {
     try {
+      const list = this.data[dataKey] || this.data.orders
+
       return _.template(text)({
         ...this.data,
-        '行': this.data.orders[index],
+        '行': list[index],
         '索引': index + 1,
         '当前页码': pageIndex + 1,
         '总页码数': this.pages.length
       })
     } catch (err) {
       // console.warn(err)
-      return text
-    }
-  }
-
-  templatePagination (text, pageIndex) {
-    try {
-      return _.template(text)({
-        data: this.data,
-        pagination: {
-          pageIndex: pageIndex + 1,
-          count: this.pages.length
-        }
-      })
-    } catch (err) {
-      console.warn(err)
       return text
     }
   }

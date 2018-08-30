@@ -52,55 +52,6 @@
           "left": "320px",
           "top": "74px"
         }
-      },
-      {
-        "text": "序号：{{_original.source_origin_id}}",
-        "style": {
-          "position": "absolute",
-          "left": "",
-          "top": "6px",
-          "right": "20px"
-        }
-      },
-      {
-        "text": "联系电话：{{_original.receiver_phone}}",
-        "style": {
-          "position": "absolute",
-          "left": "1px",
-          "top": "94px"
-        }
-      },
-      {
-        "text": "收货商户：{{_original.resname}}",
-        "style": {
-          "position": "absolute",
-          "left": "1px",
-          "top": "68px"
-        }
-      },
-      {
-        "text": "打印时间：todo",
-        "style": {
-          "position": "absolute",
-          "left": "590px",
-          "top": "49px"
-        }
-      },
-      {
-        "text": "配送时间：{{_original.receive_begin_time}}",
-        "style": {
-          "position": "absolute",
-          "left": "322px",
-          "top": "51px"
-        }
-      },
-      {
-        "text": "下单时间：{{_original.date_time}}",
-        "style": {
-          "position": "absolute",
-          "left": "0px",
-          "top": "48px"
-        }
       }
     ],
     "style": {
@@ -134,6 +85,7 @@
     },
     {
       "type": "table",
+      "dataKey": "abnormal",
       "columns": [
         {
           "head": "序号",

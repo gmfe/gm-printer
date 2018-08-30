@@ -37,7 +37,7 @@ class EditStore {
       if (k === 'contents') {
         return _.map(v, vv => {
           if (vv.type === 'table') {
-            return vv.columns.length + '_' + vv.className
+            return vv.columns.length + '_' + vv.className + '_' + vv.dataKey
           } else {
             return vv.style ? vv.style.height : ''
           }
@@ -219,9 +219,9 @@ class EditStore {
   }
 
   @action
-  setConfigTableClassName (name, className) {
+  setConfigTableBy (name, who, className) {
     const arr = name.split('.')
-    this.config.contents[arr[2]].className = className
+    this.config.contents[arr[2]][who] = className
   }
 
   @action

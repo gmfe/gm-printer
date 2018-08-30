@@ -59,11 +59,13 @@ class Printer extends React.Component {
         <Header config={config.header} pageIndex={0}/>
         {_.map(config.contents, (content, index) => {
           if (content.type === 'table') {
+            const list = printerStore.data[content.dataKey] || printerStore.data.orders
+
             return <Table
               key={`contents.table.${index}`}
               name={`contents.table.${index}`}
               config={content}
-              range={{begin: 0, end: printerStore.data.orders.length}}
+              range={{begin: 0, end: list.length}}
               pageIndex={0}
             />
           } else {

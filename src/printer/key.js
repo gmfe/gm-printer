@@ -2,7 +2,8 @@ function toKey (data, options) {
 
   return {
     orders: data.details,
-    abnormal: [],
+    category: [], // TODO
+    abnormal: data.details.slice(0, 2), // TODO
     _original: data
   }
 }
