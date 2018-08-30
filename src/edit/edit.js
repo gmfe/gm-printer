@@ -9,6 +9,7 @@ import { getStyleWithDiff, insertCSS } from '../util'
 import { observer } from 'mobx-react/index'
 import EditBottom from './edit_bottom'
 import EditTop from './edit_top'
+import ContextMenu from './context_menu'
 
 const STORAGE_CACHE = 'gm-printer-config-cache'
 
@@ -149,7 +150,7 @@ class Edit extends React.Component {
           <hr/>
           <EditBottom/>
         </div>
-        <div className='gm-printer-edit-content' onClick={this.handleCancel}>
+        <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
           <div className='gm-printer-edit-content-tip'>
             单击选中内容，双击编辑，可拖动以摆放位置，可方向键细调位置
           </div>
@@ -161,7 +162,7 @@ class Edit extends React.Component {
             tableData={tableData}
             onChange={this.handleChange}
           />
-        </div>
+        </ContextMenu>
       </div>
     )
   }

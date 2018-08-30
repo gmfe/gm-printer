@@ -48,19 +48,18 @@ class Panel extends React.Component {
     return (
       <div
         className={`gm-printer-panel gm-printer-${name}`}
+        data-name={name}
         data-placeholder={placeholder}
-        style={style}
+        style={Object.assign({}, style, config.style)}
       >
-        <div style={config.style}>
-          {_.map(config.blocks, (block, i) => (
-            <Block
-              key={i}
-              name={getBlockName(name, i)}
-              config={block}
-              pageIndex={pageIndex}
-            />
-          ))}
-        </div>
+        {_.map(config.blocks, (block, i) => (
+          <Block
+            key={i}
+            name={getBlockName(name, i)}
+            config={block}
+            pageIndex={pageIndex}
+          />
+        ))}
         <div
           draggable
           className='gm-printer-panel-drag'

@@ -52,11 +52,14 @@ class Block extends React.Component {
   }
 
   handleDoubleClick = () => {
-    this.setState({
-      isEdit: true
-    }, () => {
-      this.refEdit.focus()
-    })
+    const {config: {type}} = this.props
+    if (!type || type === 'text') {
+      this.setState({
+        isEdit: true
+      }, () => {
+        this.refEdit.focus()
+      })
+    }
   }
 
   handleEditBlur = () => {
@@ -99,6 +102,7 @@ class Block extends React.Component {
         className={classNames('gm-printer-block', className, {
           active
         })}
+        data-name={name}
         draggable
         onDragStart={this.handleDragStart}
         onDragEnd={this.handleDragEnd}

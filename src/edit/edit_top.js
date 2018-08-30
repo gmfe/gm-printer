@@ -1,11 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import editStore from './store'
 import { toJS } from 'mobx'
 import { doPrint } from '../printer'
 import _ from 'lodash'
-import { getBlockName, getTableColumnName } from '../util'
-import { blockTypeList, panelList, tableClassNameList, tableTypeList } from '../config'
+import { getTableColumnName } from '../util'
+import { blockTypeList, tableClassNameList, tableTypeList } from '../config'
 import { TextPX } from './component'
 import { observer } from 'mobx-react/index'
 
@@ -15,7 +16,6 @@ class EditTop extends React.Component {
     const panel = editStore.insertPanel
 
     editStore.addConfigBlock(panel, type)
-    editStore.setSelected(getBlockName(panel, editStore.config[panel].blocks.length - 1))
   }
 
   handleTestPrint = () => {
@@ -91,7 +91,17 @@ class EditTop extends React.Component {
     )
   }
 
+  handlePanelSelect = (insertPanel) => {
+    editStore.setInsertPanel(insertPanel)
+  }
+
   render () {
+    const panelList = [
+      {value: 'header', text: '页眉'},
+      {value: 'sign', text: '签名'},
+      {value: 'footer', text: '页脚'}
+    ]
+
     return (
       <div className='gm-printer-edit-header-top'>
         <div style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
@@ -108,14 +118,21 @@ class EditTop extends React.Component {
         </div>
         <hr/>
         <div style={{padding: '10px'}}>
-          <div style={{fontSize: '20px'}}>
-            区域
-            <select value={editStore.insertPanel} onChange={e => editStore.setInsertPanel(e.target.value)}>
-              {_.map(panelList, v => <option key={v.value} value={v.value}>{v.text}</option>)}
-            </select>
+          <div>
+            <span>选择区域</span>
+            &nbsp;
+            {_.map(panelList, v => (
+              <button
+                key={v.value}
+                className={classNames({
+                  active: v.value === editStore.insertPanel
+                })}
+                onClick={this.handlePanelSelect.bind(this, v.value)}
+              >{v.text}</button>
+            ))}
           </div>
           <span>插入</span>
-          &nbsp;&nbsp;
+          &nbsp;
           {editStore.insertPanel !== 'table' ? this.renderPanel() : this.renderTable()}
         </div>
       </div>

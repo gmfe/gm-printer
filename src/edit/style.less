@@ -10,7 +10,11 @@
     box-shadow: -2px 0 3px 0 hsla(0, 0%, 39%, 0.1);
 
     .gm-printer-edit-header-top {
-
+      button.active {
+        color: white;
+        background: rgb(82, 146, 247);
+        border-color: rgb(82, 146, 247);
+      }
     }
 
     .gm-printer-edit-header-bottom {
@@ -56,6 +60,21 @@
       padding: 10px;
     }
   }
+
+  .gm-printer-edit-contextmenu {
+    width: auto;
+    min-width: 100px;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+
+    > div {
+      padding: 5px;
+      cursor: pointer;
+      &:hover {
+        background: whitesmoke;
+      }
+    }
+  }
 }
 
 @media print {
@@ -68,6 +87,10 @@
   }
 
   .gm-printer-edit-header {
+    display: none;
+  }
+
+  .gm-printer-edit-contextmenu {
     display: none;
   }
 }

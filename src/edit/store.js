@@ -1,7 +1,6 @@
 import { observable, action, computed, configure } from 'mobx'
-import { panelList } from '../config'
 import _ from 'lodash'
-import { exchange } from '../util'
+import { exchange, getBlockName } from '../util'
 import UndoManager from './undo_manager'
 
 const undoManager = new UndoManager()
@@ -21,7 +20,7 @@ class EditStore {
   selected = null
 
   @observable
-  insertPanel = panelList[0].value
+  insertPanel = 'header'
 
   @observable
   _cacheConfig = []
@@ -68,7 +67,7 @@ class EditStore {
   init (config) {
     this.config = config
     this.selected = null
-    this.insertPanel = panelList[0].value
+    this.insertPanel = 'header'
 
     this._cacheConfig.push(JSON.stringify(config))
   }
@@ -132,23 +131,34 @@ class EditStore {
   }
 
   @action
-  addConfigBlock (panel, type) {
+  addConfigBlock (name, type, pos = {}) {
+    let blocks
+    const arr = name.split('.')
+
+    if (arr.length === 1) {
+      blocks = this.config[arr[0]].blocks
+    } else if (arr.length === 3) {
+      blocks = this.config.contents[arr[2]].blocks
+    } else {
+      return
+    }
+
     if (!type || type === 'text') {
-      this.config[panel].blocks.push({
+      blocks.push({
         text: '请编辑',
         style: {
           position: 'absolute',
-          left: '0px',
-          top: '0px'
+          left: pos.left || '0px',
+          top: pos.top || '0px'
         }
       })
     } else if (type === 'line') {
-      this.config[panel].blocks.push({
+      blocks.push({
         type: 'line',
         style: {
           position: 'absolute',
           left: '0px',
-          top: '0px',
+          top: pos.top || '0px',
           borderTopColor: 'black',
           borderTopWidth: '1px',
           borderTopStyle: 'solid',
@@ -156,13 +166,13 @@ class EditStore {
         }
       })
     } else if (type === 'image') {
-      this.config[panel].blocks.push({
+      blocks.push({
         type: 'image',
         link: '',
         style: {
           position: 'absolute',
-          left: '0px',
-          top: '0px',
+          left: pos.left || '0px',
+          top: pos.top || '0px',
           width: '100px',
           height: '100px'
         }
@@ -170,6 +180,8 @@ class EditStore {
     } else {
       window.alert('出错啦，未识别类型，此信息不应该出现')
     }
+
+    this.selected = getBlockName(name, blocks.length - 1)
   }
 
   @action

@@ -1,6 +1,7 @@
 import normalizeCSS from 'normalize.css/normalize.css'
 import printerCSS from './style.less'
 import React from 'react'
+import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import Big from 'big.js'
@@ -143,12 +144,22 @@ class Printer extends React.Component {
   }
 
   render () {
+    const {
+      selected, data, tableData, config, //eslint-disable-line
+      className,
+      style,
+      ...rest
+    } = this.props
     const {width} = printerStore.config.page.size
 
     return (
-      <div className='gm-printer' style={{
-        width
-      }}>
+      <div
+        {...rest}
+        className={classNames('gm-printer', className)}
+        style={Object.assign({}, style, {
+          width
+        })}
+      >
         {printerStore.ready ? this.renderPage() : this.renderBefore()}
       </div>
     )

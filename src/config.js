@@ -69,9 +69,6 @@ const tableTypeList = [
 
 const panelList = [
   {value: 'header', text: '页眉'},
-  {value: 'top', text: '顶部'},
-  {value: 'table', text: '表格'},
-  {value: 'bottom', text: '底部'},
   {value: 'sign', text: '签名'},
   {value: 'footer', text: '页脚'}
 ]
