@@ -10,6 +10,7 @@ import { observer } from 'mobx-react/index'
 import EditBottom from './edit_bottom'
 import EditTop from './edit_top'
 import ContextMenu from './context_menu'
+import data from './data'
 
 const STORAGE_CACHE = 'gm-printer-config-cache'
 
@@ -145,12 +146,6 @@ class Edit extends React.Component {
   }
 
   render () {
-    const {
-      data
-    } = this.props
-
-    // Printer config 的 高度调整需要重新 render ，可把高度做key
-
     return (
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header'>
@@ -162,6 +157,7 @@ class Edit extends React.Component {
           <div className='gm-printer-edit-content-tip'>
             单击选中内容，可双击编辑，可拖动以摆放位置，可方向键细调位置。右键使用更多功能。
           </div>
+          {/* Printer config 的 高度调整需要重新 render ，可把高度做key */}
           <Printer
             key={editStore.computedPrinterKey}
             selected={editStore.selected}
@@ -176,7 +172,6 @@ class Edit extends React.Component {
 }
 
 Edit.propTypes = {
-  data: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
   onSave: PropTypes.func
 }

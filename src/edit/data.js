@@ -3,7 +3,7 @@ const data = {
   'address': '南山大道12号',
   'carrier': '',
   'receive_end_time': '2018-08-30 06:30',
-  'sale_manager': {'name': '喵神', 'id': 3676, 'phone': '13323233341'},
+  'sale_manager': { 'name': '喵神', 'id': 3676, 'phone': '13323233341' },
   'total_pay': 303.0,
   'child_sort_id': '',
   'details': [

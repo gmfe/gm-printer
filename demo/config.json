@@ -15,58 +15,13 @@
           "fontSize": "26px",
           "fontWeight": "bold"
         }
-      },
-      {
-        "text": "订单号：{{_original.id}}",
-        "style": {
-          "position": "absolute",
-          "left": "0px",
-          "top": "26px",
-          "right": "",
-          "bottom": "",
-          "fontSize": "14px"
-        }
-      },
-      {
-        "text": "地址：{{_original.address_sign}}",
-        "style": {
-          "position": "absolute",
-          "left": "321px",
-          "top": "96px"
-        }
-      },
-      {
-        "text": "收货人：{{_original.receiver_name}}",
-        "style": {
-          "position": "absolute",
-          "left": "320px",
-          "top": "74px"
-        }
       }
     ],
     "style": {
-      "height": "130px"
+      "height": "120px"
     }
   },
   "contents": [
-    {
-      "blocks": [
-        {
-          "text": "订单号：{{_original.id}}",
-          "style": {
-            "position": "absolute",
-            "left": "0px",
-            "top": "26px",
-            "right": "",
-            "bottom": "",
-            "fontSize": "14px"
-          }
-        }
-      ],
-      "style": {
-        "height": "100px"
-      }
-    },
     {
       "blocks": [],
       "style": {
@@ -86,26 +41,6 @@
           "style": {
             "textAlign": "center"
           }
-        },
-        {
-          "head": "类别",
-          "headStyle": {
-            "textAlign": "center"
-          },
-          "text": "{{行._original.category_title_1}}",
-          "style": {
-            "textAlign": "center"
-          }
-        },
-        {
-          "head": "规格",
-          "headStyle": {
-            "textAlign": "center"
-          },
-          "text": "{{行._original.sale_unit_name}}",
-          "style": {
-            "textAlign": "center"
-          }
         }
       ],
       "className": ""
@@ -113,50 +48,18 @@
     {
       "blocks": [],
       "style": {
-        "height": "300px"
-      }
-    },
-    {
-      "blocks": [],
-      "style": {
-        "height": "100px"
-      }
-    },
-    {
-      "blocks": [],
-      "style": {
-        "height": "200px"
+        "height": "50px"
       }
     },
     {
       "type": "table",
       "columns": [
         {
-          "head": "序号",
+          "head": "表头",
           "headStyle": {
             "textAlign": "center"
           },
           "text": "{{索引}}",
-          "style": {
-            "textAlign": "center"
-          }
-        },
-        {
-          "head": "类别",
-          "headStyle": {
-            "textAlign": "center"
-          },
-          "text": "{{行._original.category_title_1}}",
-          "style": {
-            "textAlign": "center"
-          }
-        },
-        {
-          "head": "规格",
-          "headStyle": {
-            "textAlign": "center"
-          },
-          "text": "{{行._original.sale_unit_name}}",
           "style": {
             "textAlign": "center"
           }
@@ -177,7 +80,7 @@
       }
     ],
     "style": {
-      "height": "50px"
+      "height": "30px"
     }
   },
   "footer": {

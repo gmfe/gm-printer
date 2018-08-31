@@ -79,7 +79,7 @@
     }
   }
 
-  // mark
+  // cover mark
   .gm-printer {
     margin: 10px auto;
 
@@ -199,10 +199,37 @@
       display: none;
     }
 
-    // mark
+    // cover mark
     .gm-printer {
+      margin: 0;
+
       img {
         outline: none;
+      }
+
+      .gm-printer-page {
+        box-shadow: none;
+        overflow: hidden;
+
+        + .gm-printer-page {
+          margin-top: 0;
+        }
+      }
+
+      .gm-printer-panel {
+        &::before {
+          display: none;
+        }
+
+        .gm-printer-panel-drag {
+          display: none;
+        }
+      }
+
+      .gm-printer-table {
+        &::before {
+          display: none;
+        }
       }
     }
   }
