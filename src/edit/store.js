@@ -301,6 +301,57 @@ class EditStore {
   }
 
   @action
+  addContentByDiff (name, diff, type) {
+    const arr = name.split('.')
+    if (arr.length === 3 && arr[0] === 'contents') {
+      this.addContent(name, ~~arr[2] + diff, type)
+    }
+  }
+
+  @action
+  addContent (name, index, type) {
+    const arr = name.split('.')
+    if (arr.length === 3 && arr[0] === 'contents') {
+      if (index >= 0 && index < this.config.contents.length) {
+        if (type === 'table') {
+          this.config.contents.splice(index, 0, {
+            type: 'table',
+            columns: [{
+              head: '表头',
+              headStyle: {
+                textAlign: 'center'
+              },
+              text: '内容',
+              style: {
+                textAlign: 'center'
+              }
+            }]
+          })
+        } else {
+          this.config.contents.splice(index, 0, {
+            blocks: [],
+            style: {
+              height: '100px'
+            }
+          })
+        }
+      }
+    }
+  }
+
+  @action
+  removeContent (name) {
+    const arr = name.split('.')
+    if (arr.length === 3 && arr[0] === 'contents') {
+      // 保留一个
+      if (this.config.contents.length > 1) {
+        this.config.contents.splice(arr[2], 1)
+        this.selected = null
+      }
+    }
+  }
+
+  @action
   saveConfigToStack () {
     const lastConfig = this._cacheConfig.slice(-1)[0]
     const configStr = JSON.stringify(this.config)

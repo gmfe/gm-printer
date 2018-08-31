@@ -160,7 +160,7 @@ class Edit extends React.Component {
         </div>
         <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
           <div className='gm-printer-edit-content-tip'>
-            单击选中内容，双击编辑，可拖动以摆放位置，可方向键细调位置
+            单击选中内容，可双击编辑，可拖动以摆放位置，可方向键细调位置。右键使用更多功能。
           </div>
           <Printer
             key={editStore.computedPrinterKey}

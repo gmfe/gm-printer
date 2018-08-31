@@ -86,10 +86,44 @@ class ContextMenu extends React.Component {
     })
   }
 
+  handleRemoveContent = () => {
+    const {name} = this.state
+    editStore.removeContent(name)
+
+    this.setState({
+      name: null
+    })
+  }
+
+  handleAddContent = (diff, type) => {
+    const {name} = this.state
+
+    editStore.addContentByDiff(name, diff, type)
+
+    this.setState({
+      name: null
+    })
+  }
+
   renderPanel () {
-    return _.map(blockTypeList, v => (
-      <div key={v.value} onClick={this.handleInsertBlock.bind(this, v.value)}>{v.text}</div>
-    ))
+    return (
+      <React.Fragment>
+        {_.map(blockTypeList, v => (
+          <div
+            key={v.value}
+            onClick={this.handleInsertBlock.bind(this, v.value)}
+          >{v.text}</div>
+        ))}
+        <Hr/>
+        <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
+        <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
+        <Hr/>
+        <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
+        <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
+        <hr/>
+        <div onClick={this.handleRemoveContent}>移除区域</div>
+      </React.Fragment>
+    )
   }
 
   handleRemove = () => {
@@ -168,15 +202,17 @@ class ContextMenu extends React.Component {
     return (
       <div {...rest} onContextMenu={this.handleContextMenu}>
         {children}
-        <div className='gm-printer-edit-contextmenu' style={{
-          position: 'fixed',
-          ...popup
-        }}>
-          {name && arr.length === 1 && this.renderPanel()}
-          {name && arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
-          {name && arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
-          {name && arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
-        </div>
+        {name && (
+          <div className='gm-printer-edit-contextmenu' style={{
+            position: 'fixed',
+            ...popup
+          }}>
+            {arr.length === 1 && this.renderPanel()}
+            {arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
+            {arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
+            {arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
+          </div>
+        )}
       </div>
     )
   }

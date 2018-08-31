@@ -102,7 +102,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{行.category_title_1}}",
+          "text": "{{行._original.category_title_1}}",
           "style": {
             "textAlign": "center"
           }
@@ -112,7 +112,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{行.sale_unit_name}}",
+          "text": "{{行._original.sale_unit_name}}",
           "style": {
             "textAlign": "center"
           }
@@ -156,7 +156,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{行.category_title_1}}",
+          "text": "{{行._original.category_title_1}}",
           "style": {
             "textAlign": "center"
           }
@@ -166,7 +166,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{行.sale_unit_name}}",
+          "text": "{{行._original.sale_unit_name}}",
           "style": {
             "textAlign": "center"
           }

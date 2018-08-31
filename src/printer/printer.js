@@ -67,6 +67,7 @@ class Printer extends React.Component {
               config={content}
               range={{begin: 0, end: list.length}}
               pageIndex={0}
+              placeholder={`区域 ${index}`}
             />
           } else {
             return (
@@ -75,7 +76,7 @@ class Printer extends React.Component {
                 name={`contents.panel.${index}`}
                 config={content}
                 pageIndex={0}
-                placeholder={`内容 ${index}`}
+                placeholder={`区域 ${index}`}
               />
             )
           }
@@ -109,6 +110,7 @@ class Printer extends React.Component {
                       begin: panel.begin,
                       end: panel.end
                     }}
+                    placeholder={`区域 ${panel.index}`}
                     pageIndex={i}
                   />
                 } else {
@@ -118,7 +120,7 @@ class Printer extends React.Component {
                       name={`contents.panel.${panel.index}`}
                       config={config.contents[panel.index]}
                       pageIndex={i}
-                      placeholder={`内容 ${panel.index}`}
+                      placeholder={`区域 ${panel.index}`}
                     />
                   )
                 }

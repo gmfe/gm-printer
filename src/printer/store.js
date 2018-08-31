@@ -90,6 +90,7 @@ class PrinterStore {
 
     let page = []
 
+    // TODO 有bug
     // 轮 contents
     while (index < this.config.contents.length) {
       if (this.config.contents[index].type === 'table') {
@@ -123,7 +124,6 @@ class PrinterStore {
                 begin,
                 end
               })
-              index++
             }
           }
         }

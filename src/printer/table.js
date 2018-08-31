@@ -121,13 +121,17 @@ class Table extends React.Component {
   }
 
   render () {
-    const {config: {className}} = this.props
+    const {config: {className}, name, placeholder} = this.props
 
     return (
-      <div className={classNames(
-        'gm-printer-table',
-        'gm-printer-table-classname-' + (className || 'default')
-      )}>
+      <div
+        className={classNames(
+          'gm-printer-table',
+          'gm-printer-table-classname-' + (className || 'default')
+        )}
+        data-name={name}
+        data-placeholder={placeholder}
+      >
         {this.renderDefault()}
       </div>
     )
