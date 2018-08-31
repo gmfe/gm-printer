@@ -1,4 +1,4 @@
-import { observable, action, configure, toJS } from 'mobx'
+import { observable, action, configure } from 'mobx'
 import _ from 'lodash'
 import { pageSizeMap } from '../config'
 import { toKey } from './key'
@@ -154,7 +154,9 @@ class PrinterStore {
 
   template (text, pageIndex) {
     try {
-      return _.template(text)({
+      return _.template(text, {
+        interpolate: /{{([\s\S]+?)}}/g
+      })({
         ...this.data,
         '当前页码': pageIndex + 1,
         '总页码数': this.pages.length
@@ -169,7 +171,9 @@ class PrinterStore {
     try {
       const list = this.data[dataKey] || this.data.orders
 
-      return _.template(text)({
+      return _.template(text, {
+        interpolate: /{{([\s\S]+?)}}/g
+      })({
         ...this.data,
         '行': list[index],
         '索引': index + 1,

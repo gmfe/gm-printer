@@ -24,7 +24,6 @@ class EditTop extends React.Component {
   }
 
   render () {
-
     return (
       <div className='gm-printer-edit-header-top'>
         <div style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>

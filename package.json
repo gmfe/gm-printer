@@ -9,11 +9,7 @@
     "build": "webpack -p"
   },
   "lint-staged": {
-    "./printer/*.js": [
-      "eslint --cache --fix",
-      "git add"
-    ],
-    "./src/*.js": [
+    "./src/**/*.js": [
       "eslint --cache --fix",
       "git add"
     ]

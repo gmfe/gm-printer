@@ -14,22 +14,34 @@ import { insertCSS } from '../util'
 insertCSS(normalizeCSS.toString())
 insertCSS(printerCSS.toString())
 
-_.templateSettings.interpolate = /{{([\s\S]+?)}}/g
-
-const Header = (props) => <Panel {...props} name='header' placeholder='页眉'/>
-const Sign = (props) => <Panel {...props} style={{
-  ...props.style,
-  position: 'absolute',
-  left: 0,
-  right: 0
-}} name='sign' placeholder='签名'/>
-const Footer = (props) => <Panel {...props} style={{
-  ...props.style,
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0
-}} name='footer' placeholder='页脚'/>
+const Header = (props) => <Panel
+  {...props}
+  name='header'
+  placeholder='页眉'
+/>
+const Sign = (props) => <Panel
+  {...props}
+  style={{
+    ...props.style,
+    position: 'absolute',
+    left: 0,
+    right: 0
+  }}
+  name='sign'
+  placeholder='签名'
+/>
+const Footer = (props) => <Panel
+  {...props}
+  style={{
+    ...props.style,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0
+  }}
+  name='footer'
+  placeholder='页脚'
+/>
 
 @observer
 class Printer extends React.Component {
