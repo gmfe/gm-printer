@@ -81,13 +81,107 @@
 
   // mark
   .gm-printer {
+    margin: 10px auto;
+
     img {
       outline: 1px solid red;
+    }
+
+    .gm-printer-page {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      overflow: visible;
+
+      + .gm-printer-page {
+        margin-top: 10px;
+      }
+
+      &-inner {
+        outline: 1px dotted #daebf4;
+      }
+    }
+
+    .gm-printer-panel {
+      outline: 1px dotted #daebf4;
+
+      &::before {
+        content: attr(data-placeholder);
+        position: absolute;
+        font-style: italic;
+        font-size: 2em;
+        color: rgba(0, 0, 0, 0.1);
+        left: calc(50% - 1.5em);
+        top: calc(50% - 0.5em);
+      }
+
+      .gm-printer-panel-drag {
+        display: block;
+        cursor: ns-resize;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        border: 4px solid rgb(82, 146, 247);
+        width: 0;
+        height: 0;
+      }
+    }
+
+    .gm-printer-block {
+      &:hover,
+      &.active {
+        outline: 1px solid rgb(82, 146, 247);
+      }
+
+      .gm-printer-block-text-edit {
+        display: inline-block;
+        position: absolute;
+        z-index: 99;
+        background: whitesmoke;
+        top: calc(100% + 5px);
+        left: 0;
+        min-width: 100%;
+        width: 300px;
+        font-size: initial;
+      }
+    }
+
+    .gm-printer-table {
+      outline: 1px dotted #daebf4;
+
+      &::before {
+        content: attr(data-placeholder);
+        position: absolute;
+        font-style: italic;
+        font-size: 2em;
+        color: rgba(0, 0, 0, 0.1);
+        left: calc(50% - 1.5em);
+        top: calc(50% - 0.5em);
+      }
+
+      table {
+        td,
+        th {
+          &.active {
+            outline: 1px solid rgb(82, 146, 247);
+          }
+        }
+
+        th {
+          cursor: move;
+
+          &:hover {
+            outline: 1px solid rgb(82, 146, 247);
+          }
+        }
+      }
     }
   }
 }
 
 @media print {
+  * {
+    outline: none !important;
+  }
+
   .gm-printer-edit {
     .gm-printer-edit-content {
       padding-right: 0;

@@ -72,23 +72,23 @@ class Edit extends React.Component {
   }
 
   handlePrinterSelect = (e) => {
-    const {selected} = e.detail
+    const { selected } = e.detail
 
     editStore.setSelected(selected)
   }
 
   handlePrinterPanelStyleSet = (e) => {
-    const {name, style} = e.detail
+    const { name, style } = e.detail
     editStore.setConfigPanelStyle(name, style)
   }
 
   handlePrinterBlockStyleSet = (e) => {
-    const {style} = e.detail
+    const { style } = e.detail
     editStore.setConfigBlockBy('style', style)
   }
 
   handlePrinterBlockTextSet = (e) => {
-    const {text} = e.detail
+    const { text } = e.detail
     console.log('text', text)
     editStore.setConfigBlockBy('text', text)
   }

@@ -32,7 +32,7 @@ function init () {
   }
 }
 
-function toDoPrint ({data, config}) {
+function toDoPrint ({ data, config }) {
   ReactDOM.render((
     <Printer
       config={config}
@@ -42,7 +42,7 @@ function toDoPrint ({data, config}) {
   $printer.contentWindow.print()
 }
 
-function toDoPrintBatch ({datas, config}) {
+function toDoPrintBatch ({ datas, config }) {
   ReactDOM.render((
     <BatchPrinter
       config={config}
@@ -52,16 +52,16 @@ function toDoPrintBatch ({datas, config}) {
   $printer.contentWindow.print()
 }
 
-function doPrint ({data, config}) {
+function doPrint ({ data, config }) {
   init()
 
-  toDoPrint({data, config})
+  toDoPrint({ data, config })
 }
 
-function doBatchPrint ({datas, config}) {
+function doBatchPrint ({ datas, config }) {
   init()
 
-  toDoPrintBatch({datas, config})
+  toDoPrintBatch({ datas, config })
 }
 
 export {

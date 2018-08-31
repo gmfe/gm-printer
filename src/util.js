@@ -69,29 +69,48 @@ function exchange (arr, target, source) {
 }
 
 // TODO
-function _fixConfigPanel (config, panel) {
-  config[panel] = config[panel] || {}
-  config[panel]['blocks'] = config[panel]['blocks'] || []
-  config[panel]['style'] = config[panel]['style'] || {}
+function _fixConfigPanel (panel) {
+  panel.blocks = panel.blocks || []
+  panel.style = panel.style || {}
+}
+
+function _fixConfigTable (table) {
+  table.columns = table.columns || []
+  if (table.columns.length === 0) {
+    table.columns.push({
+      head: '表头',
+      headStyle: {
+        textAlign: 'center'
+      },
+      text: '内容',
+      style: {
+        textAlign: 'center'
+      }
+    })
+  }
 }
 
 function fixConfig (config) {
   config = _.cloneDeep(config)
 
-  _fixConfigPanel(config, 'header')
-  _fixConfigPanel(config, 'sign')
-  _fixConfigPanel(config, 'footer')
-
   config.page = config.page || {}
   config.page.type = config.page.type || 'A4'
-  _.each(config.page.blocks, v => {
-    v.type = v.type || ''
+
+  config.header = config.header || {}
+  _fixConfigPanel(config.header)
+
+  config.contents = _.map(config.contents, content => {
+    if (content.type === 'table') {
+      _fixConfigTable(content)
+    } else {
+      _fixConfigPanel(content)
+    }
   })
 
-  config.table = config.table || {}
-  config.table.columns = config.table.columns || []
-  config.table.className = config.table.className || ''
-  config.table.type = config.table.type || ''
+  config.sign = config.sign || {}
+  _fixConfigPanel(config, 'sign')
+  config.footer = config.footer || {}
+  _fixConfigPanel(config, 'footer')
 
   return config
 }

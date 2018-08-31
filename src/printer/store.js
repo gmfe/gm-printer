@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { pageSizeMap } from '../config'
 import { toKey } from './key'
 
-configure({enforceActions: true})
+configure({ enforceActions: true })
 
 class PrinterStore {
   @observable

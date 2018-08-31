@@ -8,7 +8,7 @@ import { observer } from 'mobx-react/index'
 @observer
 class EditTop extends React.Component {
   handleTestPrint = () => {
-    const {data} = this.props
+    const { data } = this.props
     doPrint({
       config: toJS(editStore.config),
       data
@@ -26,7 +26,7 @@ class EditTop extends React.Component {
   render () {
     return (
       <div className='gm-printer-edit-header-top'>
-        <div style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
           <div>
             <button onClick={this.handleUndo} disabled={!editStore.hasUndo}>撤销</button>
             <button onClick={this.handleRedo} disabled={!editStore.hasRedo}>重做</button>

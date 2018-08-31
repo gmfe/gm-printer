@@ -40,7 +40,7 @@ class ContextMenu extends React.Component {
   }
 
   handleContextMenu = (e) => {
-    const {target: {dataset: {name}}, clientX, clientY} = e
+    const { target: { dataset: { name } }, clientX, clientY } = e
 
     if (!name) {
       return
@@ -74,7 +74,7 @@ class ContextMenu extends React.Component {
   }
 
   handleInsertBlock = (type) => {
-    const {name, block} = this.state
+    const { name, block } = this.state
 
     editStore.addConfigBlock(name, type, {
       left: block.left + 'px',
@@ -87,7 +87,7 @@ class ContextMenu extends React.Component {
   }
 
   handleRemoveContent = () => {
-    const {name} = this.state
+    const { name } = this.state
     editStore.removeContent(name)
 
     this.setState({
@@ -96,7 +96,7 @@ class ContextMenu extends React.Component {
   }
 
   handleAddContent = (diff, type) => {
-    const {name} = this.state
+    const { name } = this.state
 
     editStore.addContentByDiff(name, diff, type)
 
@@ -127,7 +127,7 @@ class ContextMenu extends React.Component {
   }
 
   handleRemove = () => {
-    const {name} = this.state
+    const { name } = this.state
 
     editStore.setSelected(name)
     editStore.removeConfig()
@@ -146,7 +146,7 @@ class ContextMenu extends React.Component {
   }
 
   handleAddColumn = (diff) => {
-    const {name} = this.state
+    const { name } = this.state
 
     editStore.setSelected(name)
     editStore.addTableColumnByDiff(diff)
@@ -157,7 +157,7 @@ class ContextMenu extends React.Component {
   }
 
   handleTableBy = (who, className) => {
-    const {name} = this.state
+    const { name } = this.state
     editStore.setConfigTableBy(name, who, className)
 
     this.setState({
@@ -195,8 +195,8 @@ class ContextMenu extends React.Component {
   }
 
   render () {
-    const {children, ...rest} = this.props
-    const {name, popup} = this.state
+    const { children, ...rest } = this.props
+    const { name, popup } = this.state
     const arr = (name && name.split('.')) || []
 
     return (

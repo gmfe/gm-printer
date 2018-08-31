@@ -16,8 +16,8 @@ class Block extends React.Component {
     }
   }
 
-  handleDragStart = ({clientX, clientY}) => {
-    const {name} = this.props
+  handleDragStart = ({ clientX, clientY }) => {
+    const { name } = this.props
 
     this.setState({
       clientX,
@@ -31,8 +31,8 @@ class Block extends React.Component {
     }))
   }
 
-  handleDragEnd = ({clientX, clientY}) => {
-    const {config} = this.props
+  handleDragEnd = ({ clientX, clientY }) => {
+    const { config } = this.props
     const diffX = clientX - this.state.clientX
     const diffY = clientY - this.state.clientY
 
@@ -44,7 +44,7 @@ class Block extends React.Component {
   }
 
   handleClick = () => {
-    const {name} = this.props
+    const { name } = this.props
 
     dispatchMsg('gm-printer-select', {
       selected: name
@@ -52,7 +52,7 @@ class Block extends React.Component {
   }
 
   handleDoubleClick = () => {
-    const {config: {type}} = this.props
+    const { config: { type } } = this.props
     if (!type || type === 'text') {
       this.setState({
         isEdit: true
@@ -77,12 +77,12 @@ class Block extends React.Component {
   render () {
     const {
       name,
-      config: {type, text, link, style},
+      config: { type, text, link, style },
       pageIndex,
       className,
       ...rest
     } = this.props
-    const {isEdit} = this.state
+    const { isEdit } = this.state
 
     let content = null
     if (!type || type === 'text') {
@@ -90,7 +90,7 @@ class Block extends React.Component {
     } else if (type === 'line') {
       content = null
     } else if (type === 'image') {
-      content = <img src={link} style={{width: '100%', height: '100%'}} alt=''/>
+      content = <img src={link} style={{ width: '100%', height: '100%' }} alt=''/>
     }
 
     const active = name === printerStore.selected

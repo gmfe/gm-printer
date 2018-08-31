@@ -10,7 +10,7 @@ import Block from './block'
 @observer
 class Panel extends React.Component {
   componentDidMount () {
-    const {name} = this.props
+    const { name } = this.props
 
     if (!printerStore.ready) {
       const $dom = ReactDOM.findDOMNode(this)
@@ -23,14 +23,14 @@ class Panel extends React.Component {
     }
   }
 
-  handleDragStart = ({clientY}) => {
+  handleDragStart = ({ clientY }) => {
     this.setState({
       clientY
     })
   }
 
-  handleDragEnd = ({clientY}) => {
-    const {name, config} = this.props
+  handleDragEnd = ({ clientY }) => {
+    const { name, config } = this.props
 
     const diffY = clientY - this.state.clientY
 
@@ -43,7 +43,7 @@ class Panel extends React.Component {
   }
 
   render () {
-    const {name, config, placeholder, pageIndex, style} = this.props
+    const { name, config, placeholder, pageIndex, style } = this.props
 
     return (
       <div

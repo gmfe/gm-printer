@@ -5,50 +5,28 @@ body {
 }
 
 .gm-printer {
-  margin: 10px auto;
   background: white;
 }
 
 // page
 .gm-printer-page {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  // 开发阶段不 overflow
-  //overflow: hidden;
+  overflow: hidden;
 
   + .gm-printer-page {
     page-break-before: always;
-    margin-top: 10px;
   }
 
   &-inner {
     position: relative;
-    outline: 1px dotted #daebf4;
   }
 }
 
 // panel
 .gm-printer-panel {
   position: relative;
-  outline: 1px dotted #daebf4;
-
-  &::before {
-    content: attr(data-placeholder);
-    position: absolute;
-    font-style: italic;
-    font-size: 2em;
-    color: rgba(0, 0, 0, 0.1);
-    left: calc(50% - 1.5em);
-    top: calc(50% - 0.5em);
-  }
 
   .gm-printer-panel-drag {
-    cursor: ns-resize;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    border: 4px solid rgb(82, 146, 247);
-    width: 0;
-    height: 0;
+    display: none;
   }
 }
 
@@ -57,20 +35,8 @@ body {
   position: relative;
   cursor: move;
 
-  &:hover,
-  &.active {
-    outline: 1px solid rgb(82, 146, 247);
-  }
-
   .gm-printer-block-text-edit {
-    position: absolute;
-    z-index: 99;
-    background: whitesmoke;
-    top: calc(100% + 5px);
-    left: 0;
-    min-width: 100%;
-    width: 300px;
-    font-size: initial;
+    display: none;
   }
 
   img {
@@ -83,37 +49,11 @@ body {
 // table
 .gm-printer-table {
   position: relative;
-  outline: 1px dotted #daebf4;
 
   table {
     border-collapse: collapse;
     width: 100%;
     max-width: 100%;
-
-    td,
-    th {
-      &.active {
-        outline: 1px solid rgb(82, 146, 247);
-      }
-    }
-
-    th {
-      cursor: move;
-
-      &:hover {
-        outline: 1px solid rgb(82, 146, 247);
-      }
-    }
-  }
-
-  &::before {
-    content: attr(data-placeholder);
-    position: absolute;
-    font-style: italic;
-    font-size: 2em;
-    color: rgba(0, 0, 0, 0.1);
-    left: calc(50% - 1.5em);
-    top: calc(50% - 0.5em);
   }
 }
 
@@ -137,48 +77,6 @@ body {
     th {
       border-top: 1px solid black;
       border-bottom: 1px solid black;
-    }
-  }
-}
-
-@media print {
-  * {
-    outline: none !important;
-  }
-
-  .gm-printer {
-    margin: 0;
-  }
-
-  .gm-printer-page {
-    box-shadow: none;
-    overflow: hidden;
-
-    + .gm-printer-page {
-      margin-top: 0;
-    }
-  }
-
-  // panel
-  .gm-printer-panel {
-    &::before {
-      display: none;
-    }
-
-    .gm-printer-panel-drag {
-      display: none;
-    }
-  }
-
-  .gm-printer-block {
-    .gm-printer-block-text-edit {
-      display: none;
-    }
-  }
-
-  .gm-printer-table {
-    &::before {
-      display: none;
     }
   }
 }

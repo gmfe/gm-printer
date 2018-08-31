@@ -14,12 +14,12 @@ class Page extends React.Component {
   }
 
   render () {
-    const {children} = this.props
-    const {paddingTop, paddingRight, paddingBottom, paddingLeft} = printerStore.config.page.gap
+    const { children } = this.props
+    const { paddingTop, paddingRight, paddingBottom, paddingLeft } = printerStore.config.page.gap
 
     // -3px 是避免运算误差而溢出
 
-    const {width, height} = printerStore.config.page.size
+    const { width, height } = printerStore.config.page.size
 
     return (
       <div className='gm-printer-page' style={{

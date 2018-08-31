@@ -17,7 +17,7 @@ class Table extends React.Component {
   }
 
   componentDidMount () {
-    const {name} = this.props
+    const { name } = this.props
 
     if (!printerStore.ready) {
       const $table = ReactDOM.findDOMNode(this).querySelector('table')
@@ -40,8 +40,8 @@ class Table extends React.Component {
   }
 
   handleClick = (e) => {
-    const {name} = this.props
-    const {index} = e.target.dataset
+    const { name } = this.props
+    const { index } = e.target.dataset
 
     dispatchMsg('gm-printer-select', {
       selected: getTableColumnName(name, index)
@@ -49,8 +49,8 @@ class Table extends React.Component {
   }
 
   handleDragStart = (e) => {
-    const {name} = this.props
-    const {index} = e.target.dataset
+    const { name } = this.props
+    const { index } = e.target.dataset
 
     this.setState({
       index
@@ -62,7 +62,7 @@ class Table extends React.Component {
   }
 
   handleDrop = (e) => {
-    const {index} = e.target.dataset
+    const { index } = e.target.dataset
 
     if (this.state.index !== index) {
       dispatchMsg('gm-printer-table-drag', {
@@ -77,51 +77,52 @@ class Table extends React.Component {
   }
 
   renderDefault () {
-    const {config: {columns, dataKey}, name, range, pageIndex} = this.props
+    const { config: { columns, dataKey }, name, range, pageIndex } = this.props
 
     return (
       <table>
         <thead>
-        <tr>
-          {_.map(columns, (col, i) => (
-            <th
-              key={i}
-              data-index={i}
-              data-name={getTableColumnName(name, i)}
-              draggable
-              style={Object.assign({}, col.headStyle)}
-              className={classNames({
-                active: getTableColumnName(name, i) === printerStore.selected
-              })}
-              onClick={this.handleClick}
-              onDragStart={this.handleDragStart}
-              onDrop={this.handleDrop}
-              onDragOver={this.handleDragOver}
-            >{col.head}</th>
-          ))}
-        </tr>
-        </thead>
-        <tbody>
-        {_.map(_.range(range.begin, range.end), i => (
-          <tr key={i}>
-            {_.map(columns, (col, j) => (
-              <td
-                key={j}
-                style={col.style}
+          <tr>
+            {_.map(columns, (col, i) => (
+              <th
+                key={i}
+                data-index={i}
+                data-name={getTableColumnName(name, i)}
+                draggable
+                style={Object.assign({}, col.headStyle)}
                 className={classNames({
-                  active: getTableColumnName(name, j) === printerStore.selected
+                  active: getTableColumnName(name, i) === printerStore.selected
                 })}
-              >{printerStore.templateTable(col.text, dataKey, i, pageIndex)}</td>
+                onClick={this.handleClick}
+                onDragStart={this.handleDragStart}
+                onDrop={this.handleDrop}
+                onDragOver={this.handleDragOver}
+              >{col.head}</th>
             ))}
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {_.map(_.range(range.begin, range.end), i => (
+            <tr key={i}>
+              {_.map(columns, (col, j) => (
+                <td
+                  key={j}
+                  data-name={getTableColumnName(name, i)}
+                  style={col.style}
+                  className={classNames({
+                    active: getTableColumnName(name, j) === printerStore.selected
+                  })}
+                >{printerStore.templateTable(col.text, dataKey, i, pageIndex)}</td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
     )
   }
 
   render () {
-    const {config: {className}, name, placeholder} = this.props
+    const { config: { className }, name, placeholder } = this.props
 
     return (
       <div

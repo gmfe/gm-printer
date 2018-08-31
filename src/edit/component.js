@@ -20,13 +20,13 @@ class IconAlign extends React.Component {
         width: '1em',
         verticalAlign: 'middle',
         flexDirection: 'column',
-        alignItems: ({left: 'flex-start', center: 'center', right: 'flex-end'})[this.props.textAlign]
+        alignItems: ({ left: 'flex-start', center: 'center', right: 'flex-end' })[this.props.textAlign]
       }}>
-        <span style={{...style}}/>
-        <span style={{...style, width: '60%'}}/>
-        <span style={{...style}}/>
-        <span style={{...style, width: '60%'}}/>
-        <span style={{...style}}/>
+        <span style={{ ...style }}/>
+        <span style={{ ...style, width: '60%' }}/>
+        <span style={{ ...style }}/>
+        <span style={{ ...style, width: '60%' }}/>
+        <span style={{ ...style }}/>
       </span>
     )
   }
@@ -56,12 +56,12 @@ class Separator extends React.Component {
 
 class Text extends React.Component {
   handleChange = (e) => {
-    const {onChange} = this.props
+    const { onChange } = this.props
     onChange(e.target.value)
   }
 
   render () {
-    const {value, placeholder, style} = this.props
+    const { value, placeholder, style } = this.props
     return (
       <input
         type='text'
@@ -82,12 +82,12 @@ Text.propTypes = {
 
 class Textarea extends React.Component {
   handleChange = (e) => {
-    const {onChange} = this.props
+    const { onChange } = this.props
     onChange(e.target.value)
   }
 
   render () {
-    const {value, placeholder, style} = this.props
+    const { value, placeholder, style } = this.props
     return (
       <textarea
         value={value}
@@ -111,7 +111,7 @@ Textarea.propTypes = {
 // 10px => 10  10% => 10%
 class TextPX extends React.Component {
   handleChange = (value) => {
-    const {onChange} = this.props
+    const { onChange } = this.props
     if (value === '') {
       onChange('')
     } else if (value.endsWith('%')) {
@@ -122,7 +122,7 @@ class TextPX extends React.Component {
   }
 
   render () {
-    const {value = ''} = this.props
+    const { value = '' } = this.props
 
     let nValue = value
     if (value.endsWith('px')) {
@@ -130,7 +130,7 @@ class TextPX extends React.Component {
     }
 
     return (
-      <Text value={nValue} onChange={this.handleChange} style={{width: '35px'}}/>
+      <Text value={nValue} onChange={this.handleChange} style={{ width: '35px' }}/>
     )
   }
 }
@@ -142,7 +142,7 @@ TextPX.propTypes = {
 
 class Fonter extends React.Component {
   handleChange = (type, value) => {
-    const {style, onChange} = this.props
+    const { style, onChange } = this.props
 
     onChange({
       ...style,
@@ -151,7 +151,7 @@ class Fonter extends React.Component {
   }
 
   render () {
-    const {style} = this.props
+    const { style } = this.props
 
     return (
       <span className='gm-printer-edit-fonter'>
@@ -163,21 +163,21 @@ class Fonter extends React.Component {
           className={classNames('gm-printer-edit-btn', {
             active: style.fontWeight === 'bold'
           })}
-          style={{fontWeight: 'bold'}}
+          style={{ fontWeight: 'bold' }}
           onClick={() => this.handleChange('fontWeight', style.fontWeight === 'bold' ? '' : 'bold')}
         >
           B
         </span>
         <span
-          className={classNames('gm-printer-edit-btn', {active: style.fontStyle === 'italic'})}
-          style={{fontStyle: 'italic'}}
+          className={classNames('gm-printer-edit-btn', { active: style.fontStyle === 'italic' })}
+          style={{ fontStyle: 'italic' }}
           onClick={() => this.handleChange('fontStyle', style.fontStyle === 'italic' ? '' : 'italic')}
         >
           I
         </span>
         <span
-          className={classNames('gm-printer-edit-btn', {active: style.textDecoration === 'underline'})}
-          style={{textDecoration: 'underline'}}
+          className={classNames('gm-printer-edit-btn', { active: style.textDecoration === 'underline' })}
+          style={{ textDecoration: 'underline' }}
           onClick={() => this.handleChange('textDecoration', style.textDecoration === 'underline' ? '' : 'underline')}
         >
           U
@@ -194,7 +194,7 @@ Fonter.propTypes = {
 
 class TextAlign extends React.Component {
   handleChange = (textAlign) => {
-    const {style, onChange} = this.props
+    const { style, onChange } = this.props
     onChange({
       ...style,
       textAlign
@@ -202,7 +202,7 @@ class TextAlign extends React.Component {
   }
 
   render () {
-    const {style: {textAlign}} = this.props
+    const { style: { textAlign } } = this.props
 
     return (
       <span className='gm-printer-edit-text-align'>
@@ -236,7 +236,7 @@ TextAlign.propTypes = {
 
 class Position extends React.Component {
   handleChange = (type, value) => {
-    const {style, onChange} = this.props
+    const { style, onChange } = this.props
 
     onChange({
       ...style,
@@ -245,7 +245,7 @@ class Position extends React.Component {
   }
 
   render () {
-    const {style: {top, right, bottom, left}} = this.props
+    const { style: { top, right, bottom, left } } = this.props
 
     return (
       <span>
@@ -268,7 +268,7 @@ Position.propTypes = {
 
 class Line extends React.Component {
   handleChange = (type, value) => {
-    const {style, onChange} = this.props
+    const { style, onChange } = this.props
 
     onChange({
       ...style,
@@ -277,11 +277,11 @@ class Line extends React.Component {
   }
 
   render () {
-    const {style: {borderTopWidth, borderTopStyle, width}} = this.props
+    const { style: { borderTopWidth, borderTopStyle, width } } = this.props
 
     return (
       <span>
-        宽 <TextPX value={width} onChange={this.handleChange.bind(this, 'width')} style={{width: '35px'}}/>
+        宽 <TextPX value={width} onChange={this.handleChange.bind(this, 'width')} style={{ width: '35px' }}/>
         &nbsp;
         粗细 <TextPX value={borderTopWidth} onChange={this.handleChange.bind(this, 'borderTopWidth')}/>
         &nbsp;
@@ -299,7 +299,7 @@ Line.propTypes = {
 
 class Size extends React.Component {
   handleChange = (type, value) => {
-    const {onChange, style} = this.props
+    const { onChange, style } = this.props
 
     onChange({
       ...style,
@@ -308,7 +308,7 @@ class Size extends React.Component {
   }
 
   render () {
-    const {style} = this.props
+    const { style } = this.props
     return (
       <React.Fragment>
         高 <TextPX value={style.height} onChange={this.handleChange.bind(this, 'height')}/>
@@ -327,7 +327,7 @@ Size.propTypes = {
 class Hr extends React.Component {
   render () {
     return (
-      <div style={{backgroundColor: '#9a9a9a', height: '1px', margin: '5px 0', padding: '0'}}/>
+      <div style={{ backgroundColor: '#9a9a9a', height: '1px', margin: '5px 0', padding: '0' }}/>
     )
   }
 }

@@ -50,32 +50,32 @@ const fontSizeList = [
 ]
 
 const borderStyleList = [
-  {value: 'solid', text: '实线'},
-  {value: 'dashed', text: '虚线'},
-  {value: 'dotted', text: '圆点'}
+  { value: 'solid', text: '实线' },
+  { value: 'dashed', text: '虚线' },
+  { value: 'dotted', text: '圆点' }
 ]
 
 const tableClassNameList = [
-  {value: '', text: '默认样式'},
-  {value: 'className1', text: '样式一'}
+  { value: '', text: '默认样式' },
+  { value: 'className1', text: '样式一' }
 ]
 
 const tableDataKeyList = [
-  {value: '', text: '订单数据'},
-  {value: 'category', text: '分类订单数据'},
-  {value: 'abnormal', text: '异常数据'}
+  { value: '', text: '订单数据' },
+  { value: 'category', text: '分类订单数据' },
+  { value: 'abnormal', text: '异常数据' }
 ]
 
 const panelList = [
-  {value: 'header', text: '页眉'},
-  {value: 'sign', text: '签名'},
-  {value: 'footer', text: '页脚'}
+  { value: 'header', text: '页眉' },
+  { value: 'sign', text: '签名' },
+  { value: 'footer', text: '页脚' }
 ]
 
 const blockTypeList = [
-  {value: '', text: '文本'},
-  {value: 'line', text: '线条'},
-  {value: 'image', text: '图片'}
+  { value: '', text: '文本' },
+  { value: 'line', text: '线条' },
+  { value: 'image', text: '图片' }
 ]
 
 export {

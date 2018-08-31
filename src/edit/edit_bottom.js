@@ -26,7 +26,7 @@ class EditBottom extends React.Component {
   }
 
   renderBlocks () {
-    const {type, text, style, link} = editStore.computedSelectedInfo
+    const { type, text, style, link } = editStore.computedSelectedInfo
 
     return (
       <React.Fragment>
@@ -69,7 +69,7 @@ class EditBottom extends React.Component {
   }
 
   renderTable () {
-    const {head, headStyle, text, style} = editStore.computedSelectedInfo
+    const { head, headStyle, text, style } = editStore.computedSelectedInfo
 
     return (
       <React.Fragment>

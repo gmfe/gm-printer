@@ -64,7 +64,7 @@ class Printer extends React.Component {
   }
 
   renderBefore () {
-    const {config} = this.props
+    const { config } = this.props
 
     return (
       <Page pageIndex={0}>
@@ -77,7 +77,7 @@ class Printer extends React.Component {
               key={`contents.table.${index}`}
               name={`contents.table.${index}`}
               config={content}
-              range={{begin: 0, end: list.length}}
+              range={{ begin: 0, end: list.length }}
               pageIndex={0}
               placeholder={`区域 ${index}`}
             />
@@ -138,7 +138,7 @@ class Printer extends React.Component {
                 }
               })}
               {isLastPage && (
-                <Sign config={config.sign} pageIndex={i} style={{bottom: config.footer.style.height}}/>
+                <Sign config={config.sign} pageIndex={i} style={{ bottom: config.footer.style.height }}/>
               )}
               <Footer config={config.footer} pageIndex={i}/>
             </Page>
@@ -155,7 +155,7 @@ class Printer extends React.Component {
       style,
       ...rest
     } = this.props
-    const {width} = printerStore.config.page.size
+    const { width } = printerStore.config.page.size
 
     return (
       <div

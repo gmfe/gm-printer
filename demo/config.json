@@ -1,16 +1,6 @@
 {
   "page": {
-    "type": "A4",
-    "size": {
-      "width": "210mm",
-      "height": "297mm"
-    },
-    "gap": {
-      "paddingTop": "2mm",
-      "paddingRight": "2mm",
-      "paddingBottom": "2mm",
-      "paddingLeft": "2mm"
-    }
+    "type": "A4"
   },
   "header": {
     "blocks": [

@@ -6,7 +6,7 @@ import UndoManager from './undo_manager'
 const undoManager = new UndoManager()
 undoManager.setLimit(30)
 
-configure({enforceActions: true})
+configure({ enforceActions: true })
 
 class EditStore {
   @observable
@@ -222,7 +222,7 @@ class EditStore {
   exchangeTableColumn (target, source) {
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
-      const {columns} = this.config.contents[arr[2]]
+      const { columns } = this.config.contents[arr[2]]
 
       if (target >= 0 && target < columns.length) {
         exchange(columns, target, source)
@@ -245,7 +245,7 @@ class EditStore {
   addTableColumn (index) { // index 可选
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
-      const {columns} = this.config.contents[arr[2]]
+      const { columns } = this.config.contents[arr[2]]
 
       index = index === undefined ? columns.length : index
 
