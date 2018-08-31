@@ -213,12 +213,6 @@ class EditStore {
   }
 
   @action
-  setConfigTableType (type) {
-    // TODO
-    this.config.table.type = type
-  }
-
-  @action
   setConfigTableBy (name, who, className) {
     const arr = name.split('.')
     this.config.contents[arr[2]][who] = className

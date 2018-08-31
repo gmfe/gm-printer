@@ -38,7 +38,6 @@ class PrinterStore {
 
   data = {}
 
-  // TODO
   // 选中某个东西，具体见 edit/store.js 定义
   @observable
   selected = null
