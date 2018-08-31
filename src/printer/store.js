@@ -159,7 +159,7 @@ class PrinterStore {
       })({
         ...this.data,
         '当前页码': pageIndex + 1,
-        '总页码数': this.pages.length
+        '页码总数': this.pages.length
       })
     } catch (err) {
       // console.warn(err)
@@ -169,16 +169,16 @@ class PrinterStore {
 
   templateTable (text, dataKey, index, pageIndex) {
     try {
-      const list = this.data[dataKey] || this.data.orders
+      const list = this.data._table[dataKey] || this.data._table.orders
 
       return _.template(text, {
         interpolate: /{{([\s\S]+?)}}/g
       })({
         ...this.data,
         '行': list[index],
-        '索引': index + 1,
+        '序号': index + 1, // TODO remove
         '当前页码': pageIndex + 1,
-        '总页码数': this.pages.length
+        '页码总数': this.pages.length
       })
     } catch (err) {
       // console.warn(err)

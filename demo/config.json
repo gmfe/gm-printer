@@ -1,6 +1,16 @@
 {
   "page": {
-    "type": "A4"
+    "type": "A4",
+    "size": {
+      "width": "210mm",
+      "height": "297mm"
+    },
+    "gap": {
+      "paddingTop": "3mm",
+      "paddingRight": "3mm",
+      "paddingBottom": "3mm",
+      "paddingLeft": "3mm"
+    }
   },
   "header": {
     "blocks": [
@@ -84,7 +94,17 @@
     }
   },
   "footer": {
-    "blocks": [],
+    "blocks": [
+      {
+        "text": "页码: {{当前页码}} / {{页码总数}}",
+        "style": {
+          "position": "absolute",
+          "left": "",
+          "top": "-0.15625px",
+          "right": "0px"
+        }
+      }
+    ],
     "style": {
       "height": "15px"
     }

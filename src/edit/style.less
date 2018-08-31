@@ -81,7 +81,7 @@
 
   // cover mark
   .gm-printer {
-    margin: 10px auto;
+    margin: 10px auto 200px;
 
     img {
       outline: 1px solid red;
@@ -97,6 +97,8 @@
 
       &-inner {
         outline: 1px dotted #daebf4;
+        background-image: linear-gradient(whitesmoke 1px, transparent 0), linear-gradient(90deg, whitesmoke 1px, transparent 0);
+        background-size: 10px 10px, 10px 10px;
       }
     }
 
@@ -213,6 +215,10 @@
 
         + .gm-printer-page {
           margin-top: 0;
+        }
+
+        &-inner {
+          background: none;
         }
       }
 

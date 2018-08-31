@@ -106,6 +106,9 @@ class ContextMenu extends React.Component {
   }
 
   renderPanel () {
+    const { name } = this.state
+    const arr = name.split('.')
+
     return (
       <React.Fragment>
         {_.map(blockTypeList, v => (
@@ -114,14 +117,18 @@ class ContextMenu extends React.Component {
             onClick={this.handleInsertBlock.bind(this, v.value)}
           >{v.text}</div>
         ))}
-        <Hr/>
-        <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
-        <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
-        <Hr/>
-        <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
-        <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
-        <hr/>
-        <div onClick={this.handleRemoveContent}>移除区域</div>
+        {arr[0] === 'contents' && (
+          <React.Fragment>
+            <Hr/>
+            <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
+            <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
+            <Hr/>
+            <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
+            <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
+            <hr/>
+            <div onClick={this.handleRemoveContent}>移除区域</div>
+          </React.Fragment>
+        )}
       </React.Fragment>
     )
   }
