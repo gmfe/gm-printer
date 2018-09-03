@@ -26,12 +26,14 @@ class Edit extends React.Component {
     let sConfig = window.localStorage.getItem(STORAGE_CACHE)
     if (sConfig) {
       try {
-        sConfig = JSON.parse(sConfig)
+        if (sConfig !== JSON.stringify(config)) {
+          sConfig = JSON.parse(sConfig)
 
-        if (window.confirm('发现草稿，是否加载')) {
-          config = sConfig
-        } else {
-          window.localStorage.removeItem(STORAGE_CACHE)
+          if (window.confirm('发现草稿，是否加载')) {
+            config = sConfig
+          } else {
+            window.localStorage.removeItem(STORAGE_CACHE)
+          }
         }
       } catch (err) {
       }
@@ -51,6 +53,10 @@ class Edit extends React.Component {
     this.autoSaveTimer = setInterval(() => {
       editStore.saveConfigToStack()
     }, 1000)
+
+    this.draftSaveTimer = setInterval(() => {
+      this.handleDraft()
+    }, 5000)
   }
 
   componentWillUnmount () {
@@ -62,6 +68,7 @@ class Edit extends React.Component {
     window.document.removeEventListener('keydown', this.handleKeyDown)
 
     clearInterval(this.autoSaveTimer)
+    clearInterval(this.draftSaveTimer)
   }
 
   handleDraft = () => {

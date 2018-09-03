@@ -16,6 +16,29 @@ class Block extends React.Component {
     }
   }
 
+  componentDidMount () {
+    window.document.addEventListener('gm-printer-block-edit', this.handleBlockEdit)
+  }
+
+  componentWillUnmount () {
+    window.document.removeEventListener('gm-printer-block-edit', this.handleBlockEdit)
+  }
+
+  handleBlockEdit = (e) => {
+    const { name } = this.props
+
+    if (e.detail.name !== name) {
+      return
+    }
+
+    this.setState({
+      isEdit: true
+    }, () => {
+      this.refEdit.focus()
+      this.refEdit.select()
+    })
+  }
+
   handleDragStart = ({ clientX, clientY }) => {
     const { name } = this.props
 

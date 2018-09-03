@@ -175,8 +175,7 @@ class PrinterStore {
         interpolate: /{{([\s\S]+?)}}/g
       })({
         ...this.data,
-        '行': list[index],
-        '序号': index + 1, // TODO remove
+        '列': list[index],
         '当前页码': pageIndex + 1,
         '页码总数': this.pages.length
       })

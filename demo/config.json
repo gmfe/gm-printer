@@ -25,29 +25,143 @@
           "fontSize": "26px",
           "fontWeight": "bold"
         }
+      },
+      {
+        "text": "订单号: {{订单号}}",
+        "style": {
+          "position": "absolute",
+          "left": "2px",
+          "top": "32px"
+        }
+      },
+      {
+        "text": "配送时间：{{配送时间}}",
+        "style": {
+          "position": "absolute",
+          "left": "237px",
+          "top": "62px"
+        }
+      },
+      {
+        "text": "打印时间：{{当前时间}}",
+        "style": {
+          "position": "absolute",
+          "left": "",
+          "top": "62px",
+          "right": "9px"
+        }
+      },
+      {
+        "text": "序号：{{序号}}",
+        "style": {
+          "position": "absolute",
+          "left": "",
+          "top": "30px",
+          "right": "0px"
+        }
+      },
+      {
+        "text": "下单时间：{{下单时间}}",
+        "style": {
+          "position": "absolute",
+          "left": "1px",
+          "top": "59px"
+        }
+      },
+      {
+        "text": "收货商户：{{收货商户}}({{收货商户ID}})",
+        "style": {
+          "position": "absolute",
+          "left": "237px",
+          "top": "81px"
+        }
+      },
+      {
+        "text": "收货人：{{收货人}} {{收货人电话}}",
+        "style": {
+          "position": "absolute",
+          "left": "2px",
+          "top": "81px"
+        }
+      },
+      {
+        "text": "地理标签：{{地理标签}}",
+        "style": {
+          "position": "absolute",
+          "left": "2px",
+          "top": "101px"
+        }
+      },
+      {
+        "text": "司机：{{司机名称}} {{司机电话}}",
+        "style": {
+          "position": "absolute",
+          "left": "238.515625px",
+          "top": "105.671875px"
+        }
       }
     ],
     "style": {
-      "height": "120px"
+      "height": "131px"
     }
   },
   "contents": [
     {
       "blocks": [],
       "style": {
-        "height": "100px"
+        "height": "39px"
       }
     },
     {
       "type": "table",
-      "dataKey": "abnormal",
+      "dataKey": "",
       "columns": [
         {
           "head": "序号",
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{索引}}",
+          "text": "{{列.序号}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "类别",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.类别}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "商品名",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.商品名}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "下单数",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.下单数}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "应付金额",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.应付金额}}",
           "style": {
             "textAlign": "center"
           }
@@ -56,26 +170,66 @@
       "className": ""
     },
     {
-      "blocks": [],
+      "blocks": [
+        {
+          "text": "异常明细：",
+          "style": {
+            "position": "absolute",
+            "left": "0px",
+            "top": "18px"
+          }
+        }
+      ],
       "style": {
-        "height": "50px"
+        "height": "37px"
       }
     },
     {
       "type": "table",
       "columns": [
         {
-          "head": "表头",
+          "head": "商品名",
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{索引}}",
+          "text": "{{列.商品名}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "异常原因",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.异常原因}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "异常数量",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.异常数量}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "异常金额",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.异常金额}}",
           "style": {
             "textAlign": "center"
           }
         }
       ],
-      "className": ""
+      "className": "",
+      "dataKey": "abnormal"
     }
   ],
   "sign": {

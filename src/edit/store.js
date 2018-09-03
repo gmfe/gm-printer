@@ -1,6 +1,6 @@
 import { observable, action, computed, configure } from 'mobx'
 import _ from 'lodash'
-import { exchange, getBlockName } from '../util'
+import { dispatchMsg, exchange, getBlockName } from '../util'
 import UndoManager from './undo_manager'
 
 const undoManager = new UndoManager()
@@ -200,6 +200,15 @@ class EditStore {
     }
 
     this.selected = getBlockName(name, blocks.length - 1)
+
+    if (!type || type === 'text') {
+      // 延迟下 打开textarea
+      setTimeout(() => {
+        dispatchMsg('gm-printer-block-edit', {
+          name: this.selected
+        })
+      }, 200)
+    }
   }
 
   @action
@@ -249,7 +258,7 @@ class EditStore {
 
       index = index === undefined ? columns.length : index
 
-      if (index >= 0 && index < columns.length) {
+      if (index >= 0 && index <= columns.length) {
         columns.splice(index, 0, {
           head: '表头',
           headStyle: {
@@ -260,6 +269,9 @@ class EditStore {
             textAlign: 'center'
           }
         })
+
+        arr[4] = index
+        this.selected = arr.join('.')
       }
     }
   }

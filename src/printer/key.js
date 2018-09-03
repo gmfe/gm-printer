@@ -28,7 +28,7 @@ function toKey (data, options) {
     '收货商户': data.resname,
     '收货商户ID': data.sid,
 
-    '地理标签': `${data.area_sign}`,
+    '地理标签': `${data.area_sign || ''}`,
     '城市': `${data.city}`,
 
     '商户公司': data.cname,
@@ -43,8 +43,6 @@ function toKey (data, options) {
   const Other = {
     '当前时间': moment().format('YYYY-MM-DD HH:mm:ss')
   }
-
-  const idMap = {}
 
   const kOrders = _.map(data.details, (v, index) => {
     return {
@@ -61,12 +59,23 @@ function toKey (data, options) {
     }
   })
 
+  const idMap = {}
   _.each(data.details, sku => {
     idMap[sku.id] = sku
   })
 
+  const kIdMap = {}
+  _.each(kOrders, kSku => {
+    kIdMap[kSku._original.id] = kSku
+  })
+
   const kAbnormal = _.map(data.abnormals.concat(data.refunds), v => {
     return {
+      '异常原因': v.type_text,
+      '异常描述': v.text,
+      '异常数量': v.amount_delta,
+      '异常金额': v.money_delta,
+      ...kIdMap[v.detail_id],
       _original: {
         ...v,
         ...idMap[v.detail_id]

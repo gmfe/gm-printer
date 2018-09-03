@@ -21,7 +21,7 @@ function getWidth (el) {
 }
 
 function pxAdd (origin, add) {
-  return parseFloat(origin, 10) + add + 'px'
+  return parseInt(origin, 10) + parseInt(add) + 'px'
 }
 
 function getStyleWithDiff (style, diffX, diffY) {
