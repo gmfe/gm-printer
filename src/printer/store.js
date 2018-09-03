@@ -100,7 +100,7 @@ class PrinterStore {
         while (end < info.body.heights.length) {
           height += info.body.heights[end]
           if (height > this.pageHeight) {
-            // 即只有表头，没有必要加进去，下一页显示
+            // 即只有表头，没有必要加进去，放下一页显示
             if (end !== 0) {
               page.push({
                 type: 'table',
@@ -127,6 +127,7 @@ class PrinterStore {
                 begin,
                 end
               })
+              index++
             }
           }
         }

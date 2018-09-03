@@ -24,8 +24,8 @@ class Help extends React.Component {
             if (k !== '_origin' && k !== '_table') {
               return (
                 <Copy key={k} text={`{{${k}}}`}>
-                  <div style={{ margin: '5px' }}>
-                    <span style={{ padding: '0 10px', display: 'inline-block' }}>
+                  <div>
+                    <span style={{ padding: '0 10px' }}>
                       {'{{'}{k}{'}}'}
                       &nbsp;=>&nbsp;
                       {_.template(`{{${k}}}`, {
