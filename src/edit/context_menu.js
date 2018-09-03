@@ -197,6 +197,16 @@ class ContextMenu extends React.Component {
             {v.text}
           </div>
         ))}
+        <React.Fragment>
+          <Hr/>
+          <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
+          <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
+          <Hr/>
+          <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
+          <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
+          <hr/>
+          <div onClick={this.handleRemoveContent}>移除区域</div>
+        </React.Fragment>
       </React.Fragment>
     )
   }

@@ -21,11 +21,15 @@ function getWidth (el) {
 }
 
 function pxAdd (origin, add) {
-  return parseInt(origin, 10) + parseInt(add) + 'px'
+  origin = origin.replace('px', '')
+
+  return parseInt(~~origin, 10) + add + 'px'
 }
 
 function getStyleWithDiff (style, diffX, diffY) {
   const newStyle = Object.assign({}, style)
+
+  console.log(newStyle, diffX)
 
   if (!style.left && style.right) {
     newStyle.right = pxAdd(newStyle.right, -diffX)

@@ -311,14 +311,16 @@ class EditStore {
     const arr = name.split('.')
     if (arr.length === 3 && arr[0] === 'contents') {
       this.addContent(name, ~~arr[2] + diff, type)
+    } else if (arr.length === 5 && arr[3] === 'column') {
+      this.addContent(name, ~~arr[2] + diff, type)
     }
   }
 
   @action
   addContent (name, index, type) {
     const arr = name.split('.')
-    if (arr.length === 3 && arr[0] === 'contents') {
-      if (index >= 0 && index < this.config.contents.length) {
+    if ((arr.length === 3 || arr.length === 5) && arr[0] === 'contents') {
+      if (index >= 0 && index <= this.config.contents.length) {
         if (type === 'table') {
           this.config.contents.splice(index, 0, {
             type: 'table',
