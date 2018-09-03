@@ -73,9 +73,9 @@ const panelList = [
 ]
 
 const blockTypeList = [
-  { value: '', text: '文本' },
-  { value: 'line', text: '线条' },
-  { value: 'image', text: '图片' }
+  { value: '', text: '插入文本' },
+  { value: 'line', text: '插入线条' },
+  { value: 'image', text: '插入图片' }
 ]
 
 export {

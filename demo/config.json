@@ -230,6 +230,53 @@
       ],
       "className": "",
       "dataKey": "abnormal"
+    },
+    {
+      "blocks": [
+        {
+          "text": "下单金额：￥{{下单金额}}",
+          "style": {
+            "position": "absolute",
+            "left": "1px",
+            "top": "7px"
+          }
+        },
+        {
+          "text": "出库金额：￥{{出库金额}}",
+          "style": {
+            "position": "absolute",
+            "left": "162px",
+            "top": "8px"
+          }
+        },
+        {
+          "text": "运费：￥{{运费}}",
+          "style": {
+            "position": "absolute",
+            "left": "321px",
+            "top": "7px"
+          }
+        },
+        {
+          "text": "异常金额：￥{{异常金额}}",
+          "style": {
+            "position": "absolute",
+            "left": "462px",
+            "top": "8px"
+          }
+        },
+        {
+          "text": "应付金额：￥{{应付金额}}",
+          "style": {
+            "position": "absolute",
+            "left": "631px",
+            "top": "8px"
+          }
+        }
+      ],
+      "style": {
+        "height": "100px"
+      }
     }
   ],
   "sign": {
@@ -238,19 +285,19 @@
         "text": "签收人：",
         "style": {
           "position": "absolute",
-          "left": "556px",
-          "top": "2px"
+          "left": "542px",
+          "top": "1px"
         }
       }
     ],
     "style": {
-      "height": "30px"
+      "height": "46px"
     }
   },
   "footer": {
     "blocks": [
       {
-        "text": "页码: {{当前页码}} / {{页码总数}}",
+        "text": "页码： {{当前页码}} / {{页码总数}}",
         "style": {
           "position": "absolute",
           "left": "",
