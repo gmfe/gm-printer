@@ -89,7 +89,6 @@ class PrinterStore {
 
     let page = []
 
-    // TODO 有bug
     // 轮 contents
     while (index < this.config.contents.length) {
       if (this.config.contents[index].type === 'table') {
@@ -101,12 +100,15 @@ class PrinterStore {
         while (end < info.body.heights.length) {
           height += info.body.heights[end]
           if (height > this.pageHeight) {
-            page.push({
-              type: 'table',
-              index,
-              begin,
-              end
-            })
+            // 即只有表头，没有必要加进去，下一页显示
+            if (end !== 0) {
+              page.push({
+                type: 'table',
+                index,
+                begin,
+                end
+              })
+            }
             this.pages.push(page)
             page = []
             height =
@@ -114,6 +116,8 @@ class PrinterStore {
               this.height.footer +
               info.head.height
             begin = end
+
+            index++
           } else {
             end++
             if (end === info.body.heights.length) {
@@ -126,8 +130,6 @@ class PrinterStore {
             }
           }
         }
-
-        index++
       } else {
         height += this.height[`contents.panel.${index}`]
 

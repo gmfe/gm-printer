@@ -72,7 +72,6 @@ function exchange (arr, target, source) {
   return arr
 }
 
-// TODO
 function _fixConfigPanel (panel) {
   panel.blocks = panel.blocks || []
   panel.style = panel.style || {}
