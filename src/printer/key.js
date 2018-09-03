@@ -55,7 +55,7 @@ function toKey (data, options) {
       '出库数_基本单位': `${v.real_weight}${v.std_unit_name}`,
       '出库数_销售单位': '', // TODO
       '应付金额': v.real_item_price,
-      _original: v
+      _origin: v
     }
   })
 
@@ -66,7 +66,7 @@ function toKey (data, options) {
 
   const kIdMap = {}
   _.each(kOrders, kSku => {
-    kIdMap[kSku._original.id] = kSku
+    kIdMap[kSku._origin.id] = kSku
   })
 
   const kAbnormal = _.map(data.abnormals.concat(data.refunds), v => {
@@ -76,7 +76,7 @@ function toKey (data, options) {
       '异常数量': v.amount_delta,
       '异常金额': v.money_delta,
       ...kIdMap[v.detail_id],
-      _original: {
+      _origin: {
         ...v,
         ...idMap[v.detail_id]
       }
@@ -94,7 +94,7 @@ function toKey (data, options) {
       category: kCategory,
       abnormal: kAbnormal
     },
-    _original: data
+    _origin: data
   }
 }
 

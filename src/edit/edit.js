@@ -11,6 +11,7 @@ import EditBottom from './edit_bottom'
 import EditTop from './edit_top'
 import ContextMenu from './context_menu'
 import data from './data'
+import Help from './help'
 
 const STORAGE_CACHE = 'gm-printer-config-cache'
 
@@ -159,6 +160,7 @@ class Edit extends React.Component {
           <EditTop data={data} onSave={this.handleSave} onDraft={this.handleDraft}/>
           <hr/>
           <EditBottom/>
+          <Help data={data}/>
         </div>
         <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
           <div className='gm-printer-edit-content-tip'>
