@@ -79,6 +79,8 @@ class Table extends React.Component {
   renderDefault () {
     const { config: { columns, dataKey }, name, range, pageIndex } = this.props
 
+    const tableData = printerStore.data._table[dataKey] || this.data._table.orders
+
     return (
       <table>
         <thead>
@@ -102,20 +104,31 @@ class Table extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {_.map(_.range(range.begin, range.end), i => (
-            <tr key={i}>
-              {_.map(columns, (col, j) => (
-                <td
-                  key={j}
-                  data-name={getTableColumnName(name, i)}
-                  style={col.style}
-                  className={classNames({
-                    active: getTableColumnName(name, j) === printerStore.selected
-                  })}
-                >{printerStore.templateTable(col.text, dataKey, i, pageIndex)}</td>
-              ))}
-            </tr>
-          ))}
+          {_.map(_.range(range.begin, range.end), i => {
+            const special = tableData[i]._special
+
+            if (special) {
+              return (
+                <tr key={i}>
+                  <td colSpan={99}>小计：{special.total}</td>
+                </tr>
+              )
+            }
+            return (
+              <tr key={i}>
+                {_.map(columns, (col, j) => (
+                  <td
+                    key={j}
+                    data-name={getTableColumnName(name, i)}
+                    style={col.style}
+                    className={classNames({
+                      active: getTableColumnName(name, j) === printerStore.selected
+                    })}
+                  >{printerStore.templateTable(col.text, dataKey, i, pageIndex)}</td>
+                ))}
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     )

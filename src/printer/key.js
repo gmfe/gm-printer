@@ -1,5 +1,11 @@
 import _ from 'lodash'
 import moment from 'moment'
+import Big from 'big.js'
+
+const SETTLE_WAY = {
+  0: '先款后货',
+  1: '先货后款'
+}
 
 // TODO 超明
 
@@ -37,7 +43,7 @@ function toKey (data, options) {
     '司机名称': data.driver_name,
     '司机电话': data.driver_phone,
 
-    '结款方式': data.settle_way // TODO
+    '结款方式': SETTLE_WAY[data.settle_way]
   }
 
   const Other = {
@@ -49,11 +55,11 @@ function toKey (data, options) {
       '序号': index + 1,
       '类别': v.category_title_1,
       '商品名': (v.real_is_weight && !v.is_weight) ? `*${v.name}` : v.name,
-      '规格': '', // TODO
-      '单价_基本单位': '', // TODO
+      '规格': 'TODO', // TODO
+      '单价_基本单位': 'TODO', // TODO
       '下单数': v.quantity,
       '出库数_基本单位': `${v.real_weight}${v.std_unit_name}`,
-      '出库数_销售单位': '', // TODO
+      '出库数_销售单位': 'TODO', // TODO
       '应付金额': v.real_item_price,
       _origin: v
     }
@@ -83,8 +89,31 @@ function toKey (data, options) {
     }
   })
 
-  // TODO
-  const kCategory = []
+  let kCategory = []
+
+  // 序号
+
+  const group = _.groupBy(kOrders, v => v._origin.category_title_1)
+
+  let kCIndex = 1
+  _.forEach(group, (value) => {
+    _.each(value, v => {
+      // eslint-disable-next-line
+      v['序号'] = kCIndex++
+    })
+
+    kCategory = kCategory.concat(value)
+
+    let total = Big(0)
+
+    _.each(value, v => (total = total.plus(v._origin.sale_price)))
+
+    kCategory.push({
+      _special: {
+        total: total.valueOf()
+      }
+    })
+  })
 
   return {
     ...Order,
