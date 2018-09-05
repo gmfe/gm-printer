@@ -176,10 +176,10 @@ class ContextMenu extends React.Component {
     return (
       <React.Fragment>
         <div onClick={this.handleAddColumn.bind(this, -1)}>
-          向左插入
+          向左插入列
         </div>
         <div onClick={this.handleAddColumn.bind(this, 1)}>
-          向右插入
+          向右插入列
         </div>
         <Hr/>
         <div onClick={this.handleRemove}>
