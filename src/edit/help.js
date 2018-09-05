@@ -12,7 +12,6 @@ class Help extends React.Component {
 
     return (
       <div className='gm-printer-edit-help' style={{ padding: '10px', fontSize: '12px' }}>
-        <hr/>
         使用举例：
         <br/>
         "订单号：{'{{订单号}}'}" 生成 "订单号：{data.id}"

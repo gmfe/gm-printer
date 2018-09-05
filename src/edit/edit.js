@@ -6,6 +6,7 @@ import editStore from './store'
 import { Printer } from '../printer'
 import editCSS from './style.less'
 import { getStyleWithDiff, insertCSS } from '../util'
+import { Hr } from './component'
 import { observer } from 'mobx-react/index'
 import EditBottom from './edit_bottom'
 import EditTop from './edit_top'
@@ -158,8 +159,9 @@ class Edit extends React.Component {
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header'>
           <EditTop data={data} onSave={this.handleSave} onDraft={this.handleDraft}/>
-          <hr/>
+          <Hr/>
           <EditBottom/>
+          <Hr/>
           <Help data={data}/>
         </div>
         <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>

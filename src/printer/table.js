@@ -79,7 +79,7 @@ class Table extends React.Component {
   renderDefault () {
     const { config: { columns, dataKey }, name, range, pageIndex } = this.props
 
-    const tableData = printerStore.data._table[dataKey] || this.data._table.orders
+    const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
 
     return (
       <table>

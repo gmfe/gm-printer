@@ -1,4 +1,4 @@
-const pageSizeMap = {
+const pageTypeMap = {
   'A4': {
     size: {
       width: '210mm',
@@ -23,16 +23,16 @@ const pageSizeMap = {
       paddingLeft: '3mm'
     }
   },
-  '自定义1': {
+  '241x280': {
     size: {
-      width: '210mm',
-      height: '150mm'
+      width: '241mm',
+      height: '280mm'
     },
     gap: {
       paddingTop: '3mm',
-      paddingRight: '3mm',
+      paddingRight: '16mm',
       paddingBottom: '3mm',
-      paddingLeft: '3mm'
+      paddingLeft: '16mm'
     }
   }
 }
@@ -78,6 +78,11 @@ const blockTypeList = [
   { value: 'image', text: '插入图片' }
 ]
 
+const configTempList = [
+  { value: '1', text: '模板一', config: require('./config_temp/1.json') },
+  { value: '2', text: '模板二', config: require('./config_temp/2.json') }
+]
+
 export {
   fontSizeList,
   borderStyleList,
@@ -85,5 +90,6 @@ export {
   tableDataKeyList,
   panelList,
   blockTypeList,
-  pageSizeMap
+  pageTypeMap,
+  configTempList
 }

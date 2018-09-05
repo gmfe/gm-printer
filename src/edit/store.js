@@ -34,7 +34,9 @@ class EditStore {
   @computed
   get computedPrinterKey () {
     return _.map(this.config, (v, k) => {
-      if (k === 'contents') {
+      if (k === 'page') {
+        return v.type
+      } else if (k === 'contents') {
         return _.map(v, vv => {
           if (vv.type === 'table') {
             return vv.columns.length + '_' + vv.className + '_' + vv.dataKey
@@ -70,6 +72,16 @@ class EditStore {
     this.insertPanel = 'header'
 
     this._cacheConfig.push(JSON.stringify(config))
+  }
+
+  @action
+  setConfig (config) {
+    this.config = config
+  }
+
+  @action
+  setSizePageType (type) {
+    this.config.page.type = type
   }
 
   @action
