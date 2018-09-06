@@ -78,7 +78,6 @@ class Table extends React.Component {
 
   renderDefault () {
     const { config: { columns, dataKey }, name, range, pageIndex } = this.props
-
     const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
 
     return (
@@ -110,7 +109,7 @@ class Table extends React.Component {
             if (special) {
               return (
                 <tr key={i}>
-                  <td colSpan={99}>小计：{special.total}</td>
+                  <td colSpan={99} style={{ fontWeight: 'bold' }}>小计：{special.total}</td>
                 </tr>
               )
             }

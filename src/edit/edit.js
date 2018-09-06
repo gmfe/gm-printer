@@ -1,10 +1,11 @@
+import './style.less'
+
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import { toJS } from 'mobx'
 import editStore from './store'
-import { Printer } from '../printer'
-import editCSS from './style.less'
+import { Printer, getCSS } from '../printer'
 import { getStyleWithDiff, insertCSS } from '../util'
 import { Hr } from './component'
 import { observer } from 'mobx-react/index'
@@ -14,9 +15,11 @@ import ContextMenu from './context_menu'
 import data from './data'
 import Help from './help'
 
+data.details = data.details.concat(data.details).concat(data.details).concat(data.details)
+
 const STORAGE_CACHE = 'gm-printer-config-cache'
 
-insertCSS(editCSS)
+insertCSS(getCSS())
 
 @observer
 class Edit extends React.Component {

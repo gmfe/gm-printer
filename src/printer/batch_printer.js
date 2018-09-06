@@ -1,10 +1,9 @@
 import React from 'react'
 import Printer from './printer'
-import 'normalize.css/normalize.css'
-import './style.less'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 
+// TODO
 class BatchPrinter extends React.Component {
   render () {
     const {

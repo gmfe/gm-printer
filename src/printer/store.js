@@ -21,15 +21,6 @@ class PrinterStore {
   @observable
   contents = []
 
-  /* {
-    head: {
-      widths: [],
-      height: 0
-    },
-    body: {
-      heights: []
-    }
-  } */
   @observable
   tablesInfo = {}
 
@@ -44,12 +35,13 @@ class PrinterStore {
 
   @action
   init (config, data) {
-    this.config = config
     this.ready = false
+    this.config = config
     this.height = {}
+    this.contents = []
+    this.tablesInfo = {}
     this.pages = []
     this.data = toKey(data)
-    this.tablesInfo = {}
     this.selected = null
 
     const temp = pageTypeMap[this.config.page.type]
@@ -116,8 +108,6 @@ class PrinterStore {
               this.height.footer +
               info.head.height
             begin = end
-
-            index++
           } else {
             end++
             if (end === info.body.heights.length) {

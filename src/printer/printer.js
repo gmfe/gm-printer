@@ -1,5 +1,3 @@
-import normalizeCSS from 'normalize.css/normalize.css'
-import printerCSS from './style.less'
 import React from 'react'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
@@ -9,10 +7,6 @@ import Page from './page'
 import _ from 'lodash'
 import Panel from './panel'
 import Table from './table'
-import { insertCSS } from '../util'
-
-insertCSS(normalizeCSS.toString())
-insertCSS(printerCSS.toString())
 
 const Header = (props) => <Panel
   {...props}
@@ -61,6 +55,11 @@ class Printer extends React.Component {
     printerStore.setReady(true)
 
     printerStore.setPages()
+
+    // 此刻强制更新
+    this.forceUpdate(() => {
+      this.props.onReady()
+    })
   }
 
   renderBefore () {
@@ -150,7 +149,7 @@ class Printer extends React.Component {
 
   render () {
     const {
-      selected, data, config, //eslint-disable-line
+      selected, data, config, onReady, //eslint-disable-line
       className,
       style,
       ...rest
@@ -174,7 +173,12 @@ class Printer extends React.Component {
 Printer.propTypes = {
   selected: PropTypes.string,
   data: PropTypes.object.isRequired,
-  config: PropTypes.object.isRequired
+  config: PropTypes.object.isRequired,
+  onReady: PropTypes.func
+}
+
+Printer.defaultProps = {
+  onReady: _.noop
 }
 
 export default Printer

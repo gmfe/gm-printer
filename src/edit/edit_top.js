@@ -60,7 +60,7 @@ class EditTop extends React.Component {
               <option value=''>请选择</option>
               {_.map(configTempList, temp => <option key={temp.value} value={temp.value}>{temp.text}</option>)}
             </select>
-            <br/>
+            &nbsp;
             尺寸
             <select value={editStore.config.page.type} onChange={this.handlePageType}>
               {_.map(pageTypeMap, (v, k) => <option key={k} value={k}>{k}</option>)}

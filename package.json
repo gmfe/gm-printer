@@ -24,6 +24,21 @@
     "url": "https://github.com/gmfe/gm-printer/issues"
   },
   "homepage": "https://github.com/gmfe/gm-printer#readme",
+  "peerDependencies": {
+    "big.js": "^5.1.2",
+    "classnames": "^2.2.6",
+    "css-loader": "^0.28.11",
+    "postcss-loader": "^3.0.0",
+    "less-loader": "^4.1.0",
+    "lodash": "^4.17.10",
+    "mobx": "^4.3.0",
+    "mobx-react": "^5.2.6",
+    "moment": "^2.22.2",
+    "precss": "^3.1.2",
+    "prop-types": "^15.6.2",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
+  },
   "devDependencies": {
     "autoprefixer": "^9.1.5",
     "babel-core": "^6.26.3",
@@ -54,7 +69,6 @@
     "mobx": "^4.3.0",
     "mobx-react": "^5.2.6",
     "moment": "^2.22.2",
-    "normalize.css": "^8.0.0",
     "postcss-loader": "^3.0.0",
     "precss": "^3.1.2",
     "prop-types": "^15.6.2",

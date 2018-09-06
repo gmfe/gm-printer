@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Printer from './printer'
+import getCSS from './get_css'
 import BatchPrinter from './batch_printer'
-import printerCSS from './style.less'
 
 const printerId = '_gm-printer_' + Math.random()
 let $printer = window.document.getElementById(printerId)
@@ -13,16 +13,21 @@ function init () {
     $printer.id = printerId
     $printer.style.position = 'fixed'
     $printer.style.top = '0'
-    $printer.style.left = '-1200px'
+    $printer.style.left = '-2000px'
     $printer.style.width = '1000px'
 
     window.document.body.appendChild($printer)
+
+    const idocument = $printer.contentDocument
+    idocument.open()
+    idocument.write('<!DOCTYPE html><html><head></head><body></body></html>')
+    idocument.close()
 
     const doc = $printer.contentWindow.document
 
     const style = doc.createElement('style')
     style.type = 'text/css'
-    style.appendChild(document.createTextNode(printerCSS.toString()))
+    style.appendChild(doc.createTextNode(getCSS()))
     doc.head.appendChild(style)
 
     const div = doc.createElement('div')
@@ -33,15 +38,23 @@ function init () {
 }
 
 function toDoPrint ({ data, config }) {
-  ReactDOM.render((
-    <Printer
-      config={config}
-      data={data}
-    />
-  ), $printer.contentWindow.document.getElementById('appContainer'))
-  $printer.contentWindow.print()
+  return new window.Promise(resolve => {
+    const $app = $printer.contentWindow.document.getElementById('appContainer')
+    ReactDOM.unmountComponentAtNode($app)
+    ReactDOM.render((
+      <Printer
+        config={config}
+        data={data}
+        onReady={() => {
+          $printer.contentWindow.print()
+          resolve()
+        }}
+      />
+    ), $app)
+  })
 }
 
+// TODO
 function toDoPrintBatch ({ datas, config }) {
   ReactDOM.render((
     <BatchPrinter
@@ -55,7 +68,7 @@ function toDoPrintBatch ({ datas, config }) {
 function doPrint ({ data, config }) {
   init()
 
-  toDoPrint({ data, config })
+  return toDoPrint({ data, config })
 }
 
 function doBatchPrint ({ datas, config }) {

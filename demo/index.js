@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import config from '../demo/config.json'
-import 'normalize.css/normalize.css'
 import { PrinterEdit } from '../src'
 
 class App extends React.Component {
