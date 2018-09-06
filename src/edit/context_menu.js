@@ -175,7 +175,7 @@ class ContextMenu extends React.Component {
   renderColumn () {
     return (
       <React.Fragment>
-        <div onClick={this.handleAddColumn.bind(this, -1)}>
+        <div onClick={this.handleAddColumn.bind(this, 0)}>
           向左插入列
         </div>
         <div onClick={this.handleAddColumn.bind(this, 1)}>

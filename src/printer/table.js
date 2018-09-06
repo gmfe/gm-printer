@@ -119,7 +119,7 @@ class Table extends React.Component {
                 {_.map(columns, (col, j) => (
                   <td
                     key={j}
-                    data-name={getTableColumnName(name, i)}
+                    data-name={getTableColumnName(name, j)}
                     style={col.style}
                     className={classNames({
                       active: getTableColumnName(name, j) === printerStore.selected
