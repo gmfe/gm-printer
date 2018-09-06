@@ -32,7 +32,12 @@ class Panel extends React.Component {
   handleDragEnd = ({ clientY }) => {
     const { name, config } = this.props
 
-    const diffY = clientY - this.state.clientY
+    let diffY = clientY - this.state.clientY
+
+    // 如果是签名和 footer 则反向
+    if (name === 'sign' || name === 'footer') {
+      diffY = -diffY
+    }
 
     dispatchMsg('gm-printer-panel-style-set', {
       name,
