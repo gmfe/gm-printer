@@ -227,6 +227,7 @@ class ContextMenu extends React.Component {
             {arr.length === 1 && this.renderPanel()}
             {arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
             {arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
+            {arr.length === 5 && arr[3] === 'block' && this.renderBlock()}
             {arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
           </div>
         )}
