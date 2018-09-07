@@ -72,11 +72,18 @@ class PrinterStore {
   }
 
   @action
-  setPages () {
+  setSelected (selected) {
+    this.selected = selected || null
+  }
+
+  @action
+  computedPages () {
+    // 每页必有 header footer
     let height =
       this.height.header +
       this.height.footer
 
+    // 当前在处理 contents 的索引
     let index = 0
 
     let page = []
@@ -88,11 +95,15 @@ class PrinterStore {
         let begin = 0
         let end = 0
 
+        // 必有表头
         height += info.head.height
+
         while (end < info.body.heights.length) {
           height += info.body.heights[end]
+
+          // 如果没有多余空间了
           if (height > this.pageHeight) {
-            // 即只有表头，没有必要加进去，放下一页显示
+            // end 为 0 ，即只有表头，没有必要加进去，应放下一页显示
             if (end !== 0) {
               page.push({
                 type: 'table',
@@ -101,15 +112,23 @@ class PrinterStore {
                 end
               })
             }
+
+            begin = end
+
+            // 此页完成任务
             this.pages.push(page)
+
+            // 为下页做好准备
             page = []
             height =
               this.height.header +
               this.height.footer +
               info.head.height
-            begin = end
           } else {
+            // 有空间，继续做下行
             end++
+
+            // 最后一行，把信息加入 page，并轮下一个contents
             if (end === info.body.heights.length) {
               page.push({
                 type: 'table',
@@ -125,27 +144,31 @@ class PrinterStore {
         height += this.height[`contents.panel.${index}`]
 
         if (height < this.pageHeight) {
+          // 空间充足，把信息加入 page，并轮下一个contents
           page.push({
             type: 'panel',
             index
           })
+
           index++
         } else {
+          // 空间不足，此页完成任务
+          this.pages.push(page)
+
+          // 为下一页做准备
+          page = []
           height =
             this.height.header +
             this.height.footer
-          this.pages.push(page)
-          page = []
         }
       }
     }
 
     this.pages.push(page)
-
-    return true
   }
 
   template (text, pageIndex) {
+    // 做好保护，出错就返回 text
     try {
       return _.template(text, {
         interpolate: /{{([\s\S]+?)}}/g
@@ -161,6 +184,7 @@ class PrinterStore {
   }
 
   templateTable (text, dataKey, index, pageIndex) {
+    // 做好保护，出错就返回 text
     try {
       const list = this.data._table[dataKey] || this.data._table.orders
 
@@ -176,11 +200,6 @@ class PrinterStore {
       // console.warn(err)
       return text
     }
-  }
-
-  @action
-  setSelected (selected) {
-    this.selected = selected || null
   }
 }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { observer, Provider } from 'mobx-react'
+import { observer, Provider, inject } from 'mobx-react'
 import PropTypes from 'prop-types'
 import PrinterStore from './store'
 import Page from './page'
@@ -8,6 +8,7 @@ import _ from 'lodash'
 import Panel from './panel'
 import Table from './table'
 
+// Header Sign Footer 相对特殊，要单独处理
 const Header = (props) => <Panel
   {...props}
   name='header'
@@ -37,42 +38,50 @@ const Footer = (props) => <Panel
   placeholder='页脚'
 />
 
+@inject('printerStore')
 @observer
 class Printer extends React.Component {
   constructor (props) {
     super(props)
 
-    this.printerStore = new PrinterStore()
+    // 无实际意义，辅助 onReady，见 didMount
+    this.state = {}
 
-    this.printerStore.init(props.config, props.data)
+    props.printerStore.init(props.config, props.data)
 
-    this.printerStore.setSelected(props.selected)
+    props.printerStore.setSelected(props.selected)
   }
 
-  componentDidUpdate () {
-    this.printerStore.setSelected(this.props.selected)
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.selected !== this.props.selected) {
+      this.props.printerStore.setSelected(nextProps.selected)
+    }
   }
 
   componentDidMount () {
-    this.printerStore.setReady(true)
+    const { printerStore } = this.props
 
-    this.printerStore.setPages()
+    // didMount 代表第一次渲染完成
+    printerStore.setReady(true)
 
-    // 此刻强制更新
-    this.forceUpdate(() => {
+    // 开始计算，获取各种数据
+    printerStore.computedPages()
+
+    // Printer 不是立马就呈现出最终样式，有个过程。这个过程需要时间，什么 ready，不太清楚，估借 setState 来获取过程结束时刻
+    this.setState({}, () => {
       this.props.onReady()
     })
   }
 
   renderBefore () {
-    const { config } = this.props
+    const { config, printerStore } = this.props
 
     return (
       <Page pageIndex={0}>
         <Header config={config.header} pageIndex={0}/>
         {_.map(config.contents, (content, index) => {
           if (content.type === 'table') {
-            const list = this.printerStore.data._table[content.dataKey] || this.printerStore.data._table.orders
+            const list = printerStore.data._table[content.dataKey] || printerStore.data._table.orders
 
             return <Table
               key={`contents.table.${index}`}
@@ -102,13 +111,14 @@ class Printer extends React.Component {
 
   renderPage () {
     const {
-      config
+      config,
+      printerStore
     } = this.props
 
     return (
       <React.Fragment>
-        {_.map(this.printerStore.pages, (page, i) => {
-          const isLastPage = i === this.printerStore.pages.length - 1
+        {_.map(printerStore.pages, (page, i) => {
+          const isLastPage = i === printerStore.pages.length - 1
 
           return (
             <Page key={i} pageIndex={i}>
@@ -154,22 +164,23 @@ class Printer extends React.Component {
       selected, data, config, onReady, //eslint-disable-line
       className,
       style,
+      printerStore,
       ...rest
     } = this.props
-    const { width } = this.printerStore.config.page.size
+    const { width } = printerStore.config.page.size
+
+    // 第一个 renderBefore ，拿到各种数据，以便做计算，哪些模块哪些内容放合适位置
 
     return (
-      <Provider printerStore={this.printerStore}>
-        <div
-          {...rest}
-          className={classNames('gm-printer', className)}
-          style={Object.assign({}, style, {
-            width
-          })}
-        >
-          {this.printerStore.ready ? this.renderPage() : this.renderBefore()}
-        </div>
-      </Provider>
+      <div
+        {...rest}
+        className={classNames('gm-printer', className)}
+        style={Object.assign({}, style, {
+          width
+        })}
+      >
+        {printerStore.ready ? this.renderPage() : this.renderBefore()}
+      </div>
     )
   }
 }
@@ -185,4 +196,19 @@ Printer.defaultProps = {
   onReady: _.noop
 }
 
-export default Printer
+class WithStorePrinter extends React.Component {
+  constructor (props) {
+    super(props)
+    this.printerStore = new PrinterStore()
+  }
+
+  render () {
+    return (
+      <Provider printerStore={this.printerStore}>
+        <Printer {...this.props}/>
+      </Provider>
+    )
+  }
+}
+
+export default WithStorePrinter

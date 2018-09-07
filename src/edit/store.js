@@ -12,6 +12,7 @@ class EditStore {
   @observable
   config = null
 
+  // 一个能唯一标识某个东西的字符串
   // header
   // header.block.1
   // contents.panel.1.block.1
