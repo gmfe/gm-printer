@@ -1,8 +1,8 @@
 import React from 'react'
 import classNames from 'classnames'
-import { observer } from 'mobx-react'
+import { observer, Provider } from 'mobx-react'
 import PropTypes from 'prop-types'
-import printerStore from './store'
+import PrinterStore from './store'
 import Page from './page'
 import _ from 'lodash'
 import Panel from './panel'
@@ -42,19 +42,21 @@ class Printer extends React.Component {
   constructor (props) {
     super(props)
 
-    printerStore.init(props.config, props.data)
+    this.printerStore = new PrinterStore()
 
-    printerStore.setSelected(props.selected)
+    this.printerStore.init(props.config, props.data)
+
+    this.printerStore.setSelected(props.selected)
   }
 
   componentDidUpdate () {
-    printerStore.setSelected(this.props.selected)
+    this.printerStore.setSelected(this.props.selected)
   }
 
   componentDidMount () {
-    printerStore.setReady(true)
+    this.printerStore.setReady(true)
 
-    printerStore.setPages()
+    this.printerStore.setPages()
 
     // 此刻强制更新
     this.forceUpdate(() => {
@@ -70,7 +72,7 @@ class Printer extends React.Component {
         <Header config={config.header} pageIndex={0}/>
         {_.map(config.contents, (content, index) => {
           if (content.type === 'table') {
-            const list = printerStore.data._table[content.dataKey] || printerStore.data._table.orders
+            const list = this.printerStore.data._table[content.dataKey] || this.printerStore.data._table.orders
 
             return <Table
               key={`contents.table.${index}`}
@@ -105,8 +107,8 @@ class Printer extends React.Component {
 
     return (
       <React.Fragment>
-        {_.map(printerStore.pages, (page, i) => {
-          const isLastPage = i === printerStore.pages.length - 1
+        {_.map(this.printerStore.pages, (page, i) => {
+          const isLastPage = i === this.printerStore.pages.length - 1
 
           return (
             <Page key={i} pageIndex={i}>
@@ -154,18 +156,20 @@ class Printer extends React.Component {
       style,
       ...rest
     } = this.props
-    const { width } = printerStore.config.page.size
+    const { width } = this.printerStore.config.page.size
 
     return (
-      <div
-        {...rest}
-        className={classNames('gm-printer', className)}
-        style={Object.assign({}, style, {
-          width
-        })}
-      >
-        {printerStore.ready ? this.renderPage() : this.renderBefore()}
-      </div>
+      <Provider printerStore={this.printerStore}>
+        <div
+          {...rest}
+          className={classNames('gm-printer', className)}
+          style={Object.assign({}, style, {
+            width
+          })}
+        >
+          {this.printerStore.ready ? this.renderPage() : this.renderBefore()}
+        </div>
+      </Provider>
     )
   }
 }

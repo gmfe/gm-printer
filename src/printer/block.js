@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import { observer } from 'mobx-react/index'
-import printerStore from './store'
+import { observer, inject } from 'mobx-react'
 import { getStyleWithDiff, dispatchMsg } from '../util'
 
+@inject('printerStore')
 @observer
 class Block extends React.Component {
   constructor (props) {
@@ -103,6 +103,7 @@ class Block extends React.Component {
       config: { type, text, link, style },
       pageIndex,
       className,
+      printerStore,
       ...rest
     } = this.props
     const { isEdit } = this.state

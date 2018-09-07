@@ -1,16 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
-import { observer } from 'mobx-react'
-import printerStore from './store'
+import { observer, inject } from 'mobx-react'
 import _ from 'lodash'
 import { getHeight, getBlockName, dispatchMsg, pxAdd } from '../util'
 import Block from './block'
 
+@inject('printerStore')
 @observer
 class Panel extends React.Component {
   componentDidMount () {
-    const { name } = this.props
+    const { name, printerStore } = this.props
 
     if (!printerStore.ready) {
       const $dom = ReactDOM.findDOMNode(this)

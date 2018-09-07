@@ -3,8 +3,19 @@ import Printer from './printer'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 
-// TODO
 class BatchPrinter extends React.Component {
+  constructor (props) {
+    super(props)
+    this.ready = 0
+  }
+
+  handleReady = () => {
+    this.ready++
+    if (this.ready === this.props.datas.length) {
+      this.props.onReady()
+    }
+  }
+
   render () {
     const {
       config,
@@ -18,6 +29,7 @@ class BatchPrinter extends React.Component {
             key={i}
             data={datas[i]}
             config={config}
+            onReady={this.handleReady}
           />
         ))}
       </div>
@@ -27,7 +39,12 @@ class BatchPrinter extends React.Component {
 
 BatchPrinter.propTypes = {
   config: PropTypes.object.isRequired,
-  datas: PropTypes.object
+  datas: PropTypes.array,
+  onReady: PropTypes.func
+}
+
+BatchPrinter.defaultProps = {
+  onReady: _.noop
 }
 
 export default BatchPrinter

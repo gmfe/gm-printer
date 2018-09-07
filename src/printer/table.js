@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import ReactDOM from 'react-dom'
 import { getHeight, getWidth, dispatchMsg, getTableColumnName } from '../util'
-import printerStore from './store'
-import { observer } from 'mobx-react/index'
+import { observer, inject } from 'mobx-react'
 import classNames from 'classnames'
 
+@inject('printerStore')
 @observer
 class Table extends React.Component {
   constructor (props) {
@@ -17,7 +17,7 @@ class Table extends React.Component {
   }
 
   componentDidMount () {
-    const { name } = this.props
+    const { name, printerStore } = this.props
 
     if (!printerStore.ready) {
       const $table = ReactDOM.findDOMNode(this).querySelector('table')
@@ -77,7 +77,7 @@ class Table extends React.Component {
   }
 
   renderDefault () {
-    const { config: { columns, dataKey }, name, range, pageIndex } = this.props
+    const { config: { columns, dataKey }, name, range, pageIndex, printerStore } = this.props
     const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
 
     return (

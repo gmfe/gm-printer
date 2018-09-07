@@ -184,6 +184,4 @@ class PrinterStore {
   }
 }
 
-const printerStore = new PrinterStore()
-
-export default printerStore
+export default PrinterStore
