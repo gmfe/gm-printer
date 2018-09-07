@@ -15,8 +15,6 @@ import ContextMenu from './context_menu'
 import data from './data'
 import Help from './help'
 
-data.details = data.details.concat(data.details).concat(data.details).concat(data.details)
-
 const STORAGE_CACHE = 'gm-printer-config-cache'
 
 insertCSS(getCSS())
