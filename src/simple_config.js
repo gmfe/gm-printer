@@ -45,7 +45,8 @@ class SimpleConfig extends React.Component {
   }
 
   handlePrint = () => {
-    const {data, tableData, isBatch, config} = this.props
+    const {data, tableData, isBatch, config, handlePrint} = this.props
+    handlePrint && handlePrint()
 
     if (isBatch) {
       doPrintBatch({datas: data, tableDatas: tableData, config})
@@ -81,7 +82,8 @@ SimpleConfig.propTypes = {
   data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   tableData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   config: PropTypes.object.isRequired,
-  style: PropTypes.object
+  style: PropTypes.object,
+  handlePrint: PropTypes.func
 }
 
 export default SimpleConfig
