@@ -1,7 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import config from '../demo/config.json'
-import { PrinterEdit } from '../src'
+import { Editor } from '../src'
+import 'gm-xfont/iconfont.css'
 
 class App extends React.Component {
   constructor (props) {
@@ -22,7 +23,7 @@ class App extends React.Component {
   render () {
     return (
       <div>
-        <PrinterEdit
+        <Editor
           config={this.state.config}
           onSave={this.handleSave}
         />
