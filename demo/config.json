@@ -1,6 +1,8 @@
 {
+  "name": "默认模板",
   "page": {
     "type": "A4",
+    "printDirection": "horizontal",
     "size": {
       "width": "210mm",
       "height": "297mm"
@@ -104,6 +106,9 @@
     "style": {
       "height": "118px"
     }
+  },
+  "counter": {
+    "show": "false"
   },
   "contents": [
     {

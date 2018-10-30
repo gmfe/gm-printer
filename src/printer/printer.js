@@ -7,6 +7,7 @@ import Page from './page'
 import _ from 'lodash'
 import Panel from './panel'
 import Table from './table'
+import Counter from './counter'
 
 // Header Sign Footer 相对特殊，要单独处理
 const Header = (props) => <Panel
@@ -79,6 +80,7 @@ class Printer extends React.Component {
     return (
       <Page pageIndex={0}>
         <Header config={config.header} pageIndex={0}/>
+        <Counter config={config.counter} pageIndex={0}/>
         {_.map(config.contents, (content, index) => {
           if (content.type === 'table') {
             const list = printerStore.data._table[content.dataKey] || printerStore.data._table.orders
@@ -119,10 +121,13 @@ class Printer extends React.Component {
       <React.Fragment>
         {_.map(printerStore.pages, (page, i) => {
           const isLastPage = i === printerStore.pages.length - 1
+          const isFirstPage = i === 0
 
           return (
             <Page key={i} pageIndex={i}>
               <Header config={config.header} pageIndex={i}/>
+              {isFirstPage && <Counter config={config.counter} pageIndex={i}/>}
+
               {_.map(page, (panel, ii) => {
                 if (panel.type === 'table') {
                   return <Table

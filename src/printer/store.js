@@ -79,10 +79,10 @@ class PrinterStore {
   @action
   computedPages () {
     // 每页必有 header footer
-    let height =
-      this.height.header +
-      this.height.footer
-
+    const allPagesHaveThisHeight = this.height.header + this.height.footer
+    // 只有第一页有counter
+    let height = allPagesHaveThisHeight + this.height.counter
+    console.log(this.height.counter)
     // 当前在处理 contents 的索引
     let index = 0
 
@@ -120,10 +120,7 @@ class PrinterStore {
 
             // 为下页做好准备
             page = []
-            height =
-              this.height.header +
-              this.height.footer +
-              info.head.height
+            height = allPagesHaveThisHeight + info.head.height
           } else {
             // 有空间，继续做下行
             end++
@@ -157,9 +154,7 @@ class PrinterStore {
 
           // 为下一页做准备
           page = []
-          height =
-            this.height.header +
-            this.height.footer
+          height = allPagesHaveThisHeight
         }
       }
     }

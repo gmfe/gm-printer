@@ -57,6 +57,31 @@ body {
   }
 }
 
+// 分类数量
+.gm-printer-count {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow: hidden;
+  padding: 4px 0;
+
+  .gm-printer-count-item {
+    border: 1px solid black;
+    margin: 2px 0;
+    .gm-printer-count-item-1 {
+      border-bottom: 1px solid black;
+    }
+
+    div {
+      padding: 3px;
+      text-align: center;
+    }
+  }
+  .gm-printer-count-item + .gm-printer-count-item {
+    border-left: none;
+  }
+}
+
 .gm-printer-table.gm-printer-table-classname-default {
   table {
     td,

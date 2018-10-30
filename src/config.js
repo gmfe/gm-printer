@@ -1,5 +1,6 @@
 const pageTypeMap = {
   'A4': {
+    name: 'A4',
     size: {
       width: '210mm',
       height: '297mm'
@@ -12,6 +13,7 @@ const pageTypeMap = {
     }
   },
   'A5': {
+    name: 'A5',
     size: {
       width: '180mm',
       height: '260mm'
@@ -24,6 +26,7 @@ const pageTypeMap = {
     }
   },
   '241x280': {
+    name: '241x280',
     size: {
       width: '241mm',
       height: '280mm'
@@ -33,6 +36,19 @@ const pageTypeMap = {
       paddingRight: '16mm',
       paddingBottom: '3mm',
       paddingLeft: '16mm'
+    }
+  },
+  'DIY': {
+    name: '自定义纸张',
+    size: {
+      width: '210mm',
+      height: '297mm'
+    },
+    gap: {
+      paddingTop: '3mm',
+      paddingRight: '3mm',
+      paddingBottom: '3mm',
+      paddingLeft: '3mm'
     }
   }
 }
@@ -47,6 +63,11 @@ const fontSizeList = [
   '24px',
   '26px',
   '28px'
+]
+
+const printDirection = [
+  { value: 'horizontal', text: '横向' },
+  { value: 'vertical', text: '竖向' }
 ]
 
 const borderStyleList = [
@@ -91,5 +112,6 @@ export {
   panelList,
   blockTypeList,
   pageTypeMap,
-  configTempList
+  configTempList,
+  printDirection
 }
