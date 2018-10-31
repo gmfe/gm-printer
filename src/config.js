@@ -65,9 +65,14 @@ const fontSizeList = [
   '28px'
 ]
 
-const printDirection = [
-  { value: 'horizontal', text: '横向' },
-  { value: 'vertical', text: '竖向' }
+const printDirectionList = [
+  { value: 'vertical', text: '纵向' },
+  { value: 'horizontal', text: '横向' }
+]
+
+const counterStateList = [
+  { value: true, text: '展示' },
+  { value: false, text: '不展示' }
 ]
 
 const borderStyleList = [
@@ -113,5 +118,6 @@ export {
   blockTypeList,
   pageTypeMap,
   configTempList,
-  printDirection
+  printDirectionList,
+  counterStateList
 }

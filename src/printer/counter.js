@@ -11,7 +11,7 @@ class Counter extends React.Component {
 
     if (!printerStore.ready) {
       const $dom = ReactDOM.findDOMNode(this)
-      if (show === 'true') {
+      if (show === true) {
         printerStore.setHeight('counter', getHeight($dom))
       } else {
         printerStore.setHeight('counter', 0)
@@ -23,7 +23,7 @@ class Counter extends React.Component {
     const { printerStore, config: { show } } = this.props
     const { categoryCount = [] } = printerStore.data
 
-    if (show === 'false') return null
+    if (show === false) return null
 
     return (
       <div className='gm-printer-count'>

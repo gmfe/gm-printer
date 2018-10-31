@@ -49,7 +49,6 @@ class Printer extends React.Component {
     this.state = {}
 
     props.printerStore.init(props.config, props.data)
-
     props.printerStore.setSelected(props.selected)
   }
 
@@ -175,7 +174,6 @@ class Printer extends React.Component {
     const { width } = printerStore.config.page.size
 
     // 第一个 renderBefore ，拿到各种数据，以便做计算，哪些模块哪些内容放合适位置
-
     return (
       <div
         {...rest}

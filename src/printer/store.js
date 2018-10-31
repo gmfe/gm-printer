@@ -82,7 +82,8 @@ class PrinterStore {
     const allPagesHaveThisHeight = this.height.header + this.height.footer
     // 只有第一页有counter
     let height = allPagesHaveThisHeight + this.height.counter
-    console.log(this.height.counter)
+    // console.log(this.pageHeight)
+
     // 当前在处理 contents 的索引
     let index = 0
 

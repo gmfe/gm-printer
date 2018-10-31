@@ -9,8 +9,8 @@ import { Printer, getCSS } from '../printer'
 import { getStyleWithDiff, insertCSS } from '../util'
 import { observer } from 'mobx-react/index'
 import EditorTitle from './editor_title'
+import EditorSelect from './editor_select'
 import mockData from './mockData'
-
 insertCSS(getCSS())
 
 @observer
@@ -111,17 +111,14 @@ class Editor extends React.Component {
     }
   }
 
-  handleCancel = (e) => {
-    if (e.target === e.currentTarget) {
-      editStore.setSelected(null)
-    }
-  }
-
   render () {
+    console.log(JSON.stringify(editStore.config.page.size), 'eee')
+
     return (
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header'>
           <EditorTitle data={mockData} onSave={this.handleSave} onDraft={this.handleDraft}/>
+          <EditorSelect/>
         </div>
         {/* Printer config 的 高度调整需要重新 render ，可把高度做key */}
         <Printer
@@ -129,7 +126,6 @@ class Editor extends React.Component {
           selected={editStore.selected}
           config={editStore.config}
           data={mockData}
-          onChange={this.handleChange}
         />
       </div>
     )

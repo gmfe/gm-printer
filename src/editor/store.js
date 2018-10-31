@@ -36,7 +36,7 @@ class EditStore {
   get computedPrinterKey () {
     return _.map(this.config, (v, k) => {
       if (k === 'page') {
-        return v.type
+        return v.type + v.printDirection
       } else if (k === 'contents') {
         return _.map(v, vv => {
           if (vv.type === 'table') {
@@ -73,6 +73,38 @@ class EditStore {
     this.insertPanel = 'header'
 
     this._cacheConfig.push(JSON.stringify(config))
+  }
+
+  @action
+  setConfigName (name) {
+    this.config.name = name
+  }
+
+  @action
+  setPageSize (field, value) {
+    this.config.page.size[field] = value
+  }
+
+  @action
+  setPagePrintDirection (value) {
+    let { size, printDirection } = this.config.page
+    console.log(size, 333)
+    // 打印方向切换了, 宽高互换
+    if (value !== printDirection) {
+      this.config.page = {
+        ...this.config.page,
+        printDirection: value,
+        size: {
+          width: size.height,
+          height: size.width
+        }
+      }
+    }
+  }
+
+  @action
+  setCounterShow (bool) {
+    this.config.counter.show = bool
   }
 
   @action
