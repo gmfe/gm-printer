@@ -1,6 +1,6 @@
 const pageTypeMap = {
   'A4': {
-    name: 'A4',
+    name: 'A4', // name 仅仅作为select展示用
     size: {
       width: '210mm',
       height: '297mm'

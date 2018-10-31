@@ -1,6 +1,5 @@
 import { observable, action, configure } from 'mobx'
 import _ from 'lodash'
-import { pageTypeMap } from '../config'
 import { toKey } from './key'
 
 configure({ enforceActions: true })
@@ -13,7 +12,7 @@ class PrinterStore {
   config = {}
 
   @observable
-  pageHeight = pageTypeMap
+  pageHeight = {}
 
   @observable
   height = {}
@@ -43,12 +42,6 @@ class PrinterStore {
     this.pages = []
     this.data = toKey(data)
     this.selected = null
-
-    const temp = pageTypeMap[this.config.page.type]
-    if (temp) {
-      this.config.page.size = temp.size
-      this.config.page.gap = temp.gap
-    }
   }
 
   @action

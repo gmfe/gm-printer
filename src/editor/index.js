@@ -46,7 +46,6 @@ class Editor extends React.Component {
 
   handlePrinterSelect = (e) => {
     const { selected } = e.detail
-
     editStore.setSelected(selected)
   }
 
@@ -62,7 +61,6 @@ class Editor extends React.Component {
 
   handlePrinterBlockTextSet = (e) => {
     const { text } = e.detail
-    console.log('text', text)
     editStore.setConfigBlockBy('text', text)
   }
 
@@ -112,7 +110,7 @@ class Editor extends React.Component {
   }
 
   render () {
-    console.log(JSON.stringify(editStore.config.page.size), 'eee')
+    console.log(JSON.stringify(editStore.config), 'editor')
 
     return (
       <div className='gm-printer-edit'>

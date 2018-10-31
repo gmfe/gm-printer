@@ -1,4 +1,5 @@
 import { observable, action, computed, configure } from 'mobx'
+import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, exchange, getBlockName } from '../util'
 import UndoManager from './undo_manager'
@@ -88,7 +89,6 @@ class EditStore {
   @action
   setPagePrintDirection (value) {
     let { size, printDirection } = this.config.page
-    console.log(size, 333)
     // 打印方向切换了, 宽高互换
     if (value !== printDirection) {
       this.config.page = {
@@ -114,7 +114,14 @@ class EditStore {
 
   @action
   setSizePageType (type) {
-    this.config.page.type = type
+    const { size, gap } = pageTypeMap[type]
+
+    this.config.page = {
+      ...this.config.page,
+      type,
+      size,
+      gap
+    }
   }
 
   @action
