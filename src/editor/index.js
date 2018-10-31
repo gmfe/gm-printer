@@ -10,7 +10,7 @@ import { getStyleWithDiff, insertCSS } from '../util'
 import { observer } from 'mobx-react/index'
 import EditorTitle from './editor_title'
 import EditorSelect from './editor_select'
-import mockData from './mockData'
+import mockData from './mock'
 insertCSS(getCSS())
 
 @observer
