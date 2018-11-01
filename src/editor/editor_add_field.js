@@ -1,94 +1,87 @@
 import React from 'react'
+import { Flex } from 'react-gm'
 import PropTypes from 'prop-types'
 import { toKey } from '../printer/key'
 import _ from 'lodash'
-import { Copy } from './component'
+import editStore from './store'
+import { observer } from 'mobx-react'
 
-class Help extends React.Component {
+const FieldBtn = ({ name }) => (
+  <Flex alignCenter justifyBetween style={{ width: '50%', padding: '2px 8px 2px 0px' }}>
+    <span>{name}</span>
+    <button className='btn-primary btn btn-xs' style={{ borderRadius: '4px' }}>
+      <i className='xfont xfont-plus gm-font-12'/>
+    </button>
+  </Flex>
+)
+
+@observer
+class OrderField extends React.Component {
   render () {
-    const { data } = this.props
+    const { order } = this.props
 
-    const newData = toKey(data)
-    console.log(newData)
     return (
-      <div className='gm-printer-edit-help' style={{ padding: '10px', fontSize: '12px' }}>
-        使用举例：
-        <br/>
-        "订单号：{'{{订单号}}'}" 生成 "订单号：{data.id}"
-        <div style={{ padding: '10px' }}/>
-        订单字段：
-        <br/>
-        <div>
-          {_.map(newData, (v, k) => {
-            if (k !== '_origin' && k !== '_table') {
-              return (
-                <Copy key={k} text={`{{${k}}}`}>
-                  <div>
-                    <span style={{ padding: '0 10px' }}>
-                      {'{{'}{k}{'}}'}
-                      &nbsp;=>&nbsp;
-                      {_.template(`{{${k}}}`, {
-                        interpolate: /{{([\s\S]+?)}}/g
-                      })({ ...newData })}
-                    </span>
-                    <button>复制</button>
-                  </div>
-                </Copy>
-              )
-            }
-          })}
-        </div>
-        表格字段：
-        <br/>
-        <div>
-          {_.map(newData._table.orders[0], (v, k) => {
-            if (k !== '_origin') {
-              return (
-                <Copy key={k} text={`{{列.${k}}}`}>
-                  <div style={{ margin: '5px' }}>
-                    <span style={{ padding: '0 10px', display: 'inline-block' }}>
-                      {'{{'}列.{k}{'}}'}
-                      &nbsp;=>&nbsp;
-                      {_.template(`{{${k}}}`, {
-                        interpolate: /{{([\s\S]+?)}}/g
-                      })({ ...newData._table.orders[0] })}
-                    </span>
-                    <button>复制</button>
-                  </div>
-                </Copy>
-              )
-            }
-          })}
-        </div>
-        异常表格字段：
-        <br/>
-        <div>
-          {_.map(newData._table.abnormal[0], (v, k) => {
-            if (k !== '_origin') {
-              return (
-                <Copy key={k} text={`{{列.${k}}}`}>
-                  <div style={{ margin: '5px' }}>
-                    <span style={{ padding: '0 10px', display: 'inline-block' }}>
-                      {'{{'}列.{k}{'}}'}
-                      &nbsp;=>&nbsp;
-                      {_.template(`{{${k}}}`, {
-                        interpolate: /{{([\s\S]+?)}}/g
-                      })({ ...newData._table.abnormal[0] })}
-                    </span>
-                    <button>复制</button>
-                  </div>
-                </Copy>
-              )
-            }
-          })}
-        </div>
+      <div>
+        <Flex alignCenter>
+          <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>添加字段
+        </Flex>
+
+        <div className='gm-bg-info'>订单信息:</div>
+        <Flex wrap>
+          {_.map(order, (v, key) => <FieldBtn name={key} key={key}/>)}
+        </Flex>
       </div>
     )
   }
 }
 
-Help.propTypes = {
+@observer
+class TableField extends React.Component {
+  render () {
+    const { orders, abnormal } = this.props._table
+    return (
+      <div>
+        <Flex alignCenter>
+          <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>添加字段
+        </Flex>
+
+        <div className='gm-bg-info'>商品表格:</div>
+        <Flex wrap>
+          {_.map(orders[0], (v, key) => {
+            if (key !== '_origin') return <FieldBtn name={key} key={key}/>
+          })}
+        </Flex>
+
+        <div className='gm-bg-info'>异常表格:</div>
+        <Flex wrap>
+          {_.map(abnormal[0], (v, key) => {
+            if (key !== '_origin') return <FieldBtn name={key} key={key}/>
+          })}</Flex>
+      </div>
+    )
+  }
+}
+
+@observer
+class EditorAddField extends React.Component {
+  render () {
+    const newData = toKey(this.props.data)
+    // eslint-disable-next-line
+    const {_counter, _origin, _table, ...order} = newData
+    console.log(newData)
+
+    let content = null
+    if (editStore.computedIsSelectBlock) {
+      content = <OrderField order={order}/>
+    } else if (editStore.computedIsSelectTable) {
+      content = <TableField _table={_table}/>
+    }
+    return <div className='gm-padding-10'>{content}</div>
+  }
+}
+
+EditorAddField.propTypes = {
   data: PropTypes.object
 }
 
-export default Help
+export default EditorAddField

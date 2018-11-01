@@ -1,6 +1,6 @@
 import React from 'react'
 import editStore from './store'
-import { observer } from 'mobx-react/index'
+import { observer } from 'mobx-react'
 import { Flex, Select, Option } from 'react-gm'
 import { pageTypeMap, printDirectionList, counterStateList } from '../config'
 import _ from 'lodash'

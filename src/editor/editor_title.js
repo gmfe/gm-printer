@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import editStore from './store'
-import { observer } from 'mobx-react/index'
+import { observer } from 'mobx-react'
 import { Flex } from 'react-gm'
 import { doPrint } from '../printer'
 import { toJS } from 'mobx'

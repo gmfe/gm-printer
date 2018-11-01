@@ -120,7 +120,7 @@ function toKey (data, options) {
   return {
     ...Order,
     ...Other,
-    categoryCount: counter,
+    _counter: counter,
     _table: {
       orders: kOrders,
       category: kCategory,

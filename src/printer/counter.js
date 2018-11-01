@@ -21,14 +21,14 @@ class Counter extends React.Component {
 
   render () {
     const { printerStore, config: { show } } = this.props
-    const { counter = [] } = printerStore.data
+    const { _counter = [] } = printerStore.data
 
     if (show === false) return null
 
     return (
       <div className='gm-printer-count'>
         {
-          counter.map(item => (
+          _counter.map(item => (
             <div key={item.text} className='gm-printer-count-item'>
               <div className='gm-printer-count-item-1'>{item.text}</div>
               <div>{item.len}</div>
