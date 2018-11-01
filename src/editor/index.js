@@ -10,6 +10,7 @@ import { getStyleWithDiff, insertCSS } from '../util'
 import { observer } from 'mobx-react/index'
 import EditorTitle from './editor_title'
 import EditorSelect from './editor_select'
+import EditorField from './editor_field'
 import mockData from './mock'
 insertCSS(getCSS())
 
@@ -110,13 +111,14 @@ class Editor extends React.Component {
   }
 
   render () {
-    console.log(JSON.stringify(editStore.config), 'editor')
+    // console.log(JSON.stringify(editStore.config), 'editor')
 
     return (
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header'>
           <EditorTitle data={mockData} onSave={this.handleSave} onDraft={this.handleDraft}/>
           <EditorSelect/>
+          <EditorField/>
         </div>
         {/* Printer config 的 高度调整需要重新 render ，可把高度做key */}
         <Printer

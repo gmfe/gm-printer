@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import editStore from './store'
 import { observer } from 'mobx-react/index'
 import { Flex } from 'react-gm'
+import { doPrint } from '../printer'
+import { toJS } from 'mobx'
 
 @observer
 class EditorTitle extends React.Component {
@@ -14,17 +16,23 @@ class EditorTitle extends React.Component {
     editStore.redo()
   }
 
-  handlePageType = (value) => {
-    editStore.setSizePageType(value)
+  handleTestPrint = () => {
+    const { data } = this.props
+    doPrint({
+      config: toJS(editStore.config),
+      data
+    })
   }
 
   render () {
     return (
       <Flex justifyBetween className='gm-padding-10'>
         <Flex alignCenter>
-          <i className='xfont xfont-bill'/>基本信息
+          <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>基本信息
         </Flex>
         <div>
+          <button className='btn btn-primary btn-md' onClick={this.handleTestPrint}>打印
+          </button>
           <button className='btn btn-primary btn-md' onClick={this.handleUndo} disabled={!editStore.hasUndo}>撤销
           </button>
           <div className='gm-gap-10'/>
