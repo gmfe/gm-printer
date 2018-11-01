@@ -95,7 +95,7 @@ function toKey (data, options) {
   const group = _.groupBy(kOrders, v => v._origin.category_title_1)
 
   // 分类数量
-  const categoryCount = _.map(group, (o, k) => ({ text: k, len: o.length }))
+  const counter = _.map(group, (o, k) => ({ text: k, len: o.length }))
 
   let kCIndex = 1
   _.forEach(group, (value) => {
@@ -120,7 +120,7 @@ function toKey (data, options) {
   return {
     ...Order,
     ...Other,
-    categoryCount,
+    categoryCount: counter,
     _table: {
       orders: kOrders,
       category: kCategory,
