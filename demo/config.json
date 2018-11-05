@@ -45,7 +45,7 @@
         }
       },
       {
-        "text": "打印时间：{{当前时间}}",
+        "text": "打印时间：{{打印时间}}",
         "style": {
           "position": "absolute",
           "left": "",
@@ -71,7 +71,7 @@
         }
       },
       {
-        "text": "收货商户：{{收货商户}}({{收货商户ID}})",
+        "text": "收货商户：{{收货商户}}",
         "style": {
           "position": "absolute",
           "left": "232px",

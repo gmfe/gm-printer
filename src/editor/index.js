@@ -12,7 +12,9 @@ import EditorTitle from './editor_title'
 import EditorSelect from './editor_select'
 import EditorField from './editor_field'
 import EditorAddField from './editor_add_field'
+import ContextMenu from './context_menu'
 import mockData from './mock'
+
 insertCSS(getCSS())
 
 @observer
@@ -111,6 +113,12 @@ class Editor extends React.Component {
     }
   }
 
+  handleCancel = (e) => {
+    if (e.target === e.currentTarget) {
+      editStore.setSelected(null)
+    }
+  }
+
   render () {
     // console.log(JSON.stringify(editStore.config), 'editor')
 
@@ -123,12 +131,14 @@ class Editor extends React.Component {
           <EditorAddField data={mockData}/>
         </div>
         {/* Printer config 的 高度调整需要重新 render ，可把高度做key */}
-        <Printer
-          key={editStore.computedPrinterKey}
-          selected={editStore.selected}
-          config={editStore.config}
-          data={mockData}
-        />
+        <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
+          <Printer
+            key={editStore.computedPrinterKey}
+            selected={editStore.selected}
+            config={editStore.config}
+            data={mockData}
+          />
+        </ContextMenu>
       </div>
     )
   }

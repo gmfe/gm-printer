@@ -302,8 +302,13 @@ class EditStore {
     }
   }
 
+  /**
+   * 添加列到table
+   * @param index 可选,如果是undefined则添加到table最后一列
+   * @param field 可选,如果不填那么就用默认的
+   */
   @action
-  addTableColumn (index) { // index 可选
+  addTableColumn (index, field) {
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
       const { columns } = this.config.contents[arr[2]]
@@ -312,11 +317,11 @@ class EditStore {
 
       if (index >= 0 && index <= columns.length) {
         columns.splice(index, 0, {
-          head: '表头',
+          head: field === undefined ? '表头' : field,
           headStyle: {
             textAlign: 'center'
           },
-          text: '内容',
+          text: field === undefined ? field : `{{列.${field}}}`,
           style: {
             textAlign: 'center'
           }
