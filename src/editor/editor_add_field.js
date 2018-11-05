@@ -18,8 +18,7 @@ const FieldBtn = ({ name, onClick }) => (
 @observer
 class OrderField extends React.Component {
   handleAddOrderField (field) {
-    const { selected } = editStore
-    editStore.addConfigBlock(selected, 'text')
+    editStore.addFieldInPanel(field)
   }
 
   render () {
@@ -84,14 +83,16 @@ class EditorAddField extends React.Component {
     const newData = toKey(this.props.data)
     // eslint-disable-next-line
     const {_counter, _origin, _table, ...order} = newData
-    console.log(newData)
 
     let content = null
-    if (editStore.computedIsSelectBlock) {
-      content = <OrderField order={order}/>
-    } else if (editStore.computedIsSelectTable) {
+    if (editStore.selectedRegion === null) {
+      content = null
+    } else if (editStore.computedRegionIsTable) {
       content = <TableField _table={_table}/>
+    } else {
+      content = <OrderField order={order}/>
     }
+
     return <div className='gm-padding-10 gm-overflow-y'>{content}</div>
   }
 }

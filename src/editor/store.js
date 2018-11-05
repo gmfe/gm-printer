@@ -136,14 +136,22 @@ class EditStore {
 
   @action
   setSelected (selected = null) {
-    console.log(selected)
     this.selected = selected
   }
 
   // 选择区域
   @action
   setSelectedRegion (selected) {
+    console.log(selected)
     this.selectedRegion = selected
+  }
+
+  @computed
+  get computedRegionIsTable () {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      return arr.includes('table')
+    }
   }
 
   @computed
@@ -280,8 +288,26 @@ class EditStore {
   }
 
   @action
-  addFieldInBlock (field) {
+  addFieldInPanel (field) {
+    if (!this.selectedRegion) return
+    const arr = this.selectedRegion.split('.')
+    let blocks
+    // 在header,footer,sign
+    if (arr.length === 1) {
+      blocks = this.config[arr[0]].blocks
+      // contents 里面
+    } else if (arr.length === 3) {
+      blocks = this.config.contents[arr[2]].blocks
+    }
 
+    blocks.push({
+      text: `${field}: {{${field}}}`,
+      style: {
+        position: 'absolute',
+        left: '0px',
+        top: '0px'
+      }
+    })
   }
 
   @action
