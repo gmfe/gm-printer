@@ -47,7 +47,9 @@ class EditStore {
   get computedPrinterKey () {
     return _.map(this.config, (v, k) => {
       if (k === 'page') {
-        return v.type + v.printDirection
+        return v.type + '_' + v.printDirection
+      } else if (k === 'counter') {
+        return 'counter' + v.show
       } else if (k === 'contents') {
         return _.map(v, vv => {
           if (vv.type === 'table') {
