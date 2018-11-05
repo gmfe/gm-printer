@@ -61,6 +61,13 @@ class Table extends React.Component {
     })
   }
 
+  handleSelectedRegion = () => {
+    const { name, printerStore } = this.props
+    printerStore.setSelectedRegion(name)
+
+    dispatchMsg('gm-printer-select-region', { selected: name })
+  }
+
   handleDrop = (e) => {
     const { index } = e.target.dataset
 
@@ -134,16 +141,19 @@ class Table extends React.Component {
   }
 
   render () {
-    const { config: { className }, name, placeholder } = this.props
+    const { config: { className }, name, placeholder, printerStore } = this.props
+    const active = printerStore.selectedRegion === name
 
     return (
       <div
         className={classNames(
           'gm-printer-table',
-          'gm-printer-table-classname-' + (className || 'default')
+          'gm-printer-table-classname-' + (className || 'default'),
+          { active }
         )}
         data-name={name}
         data-placeholder={placeholder}
+        onClick={this.handleSelectedRegion}
       >
         {this.renderDefault()}
       </div>

@@ -21,6 +21,16 @@ class EditStore {
   @observable
   selected = null
 
+  /* 选择中区域, 区域唯一标识字符串
+     header
+     footer
+     sign
+     contents.panel.n
+     contents.table.n
+   */
+  @observable
+  selectedRegion = null
+
   @observable
   insertPanel = 'header'
 
@@ -128,6 +138,12 @@ class EditStore {
   setSelected (selected = null) {
     console.log(selected)
     this.selected = selected
+  }
+
+  // 选择区域
+  @action
+  setSelectedRegion (selected) {
+    this.selectedRegion = selected
   }
 
   @computed
@@ -261,6 +277,11 @@ class EditStore {
         })
       }, 200)
     }
+  }
+
+  @action
+  addFieldInBlock (field) {
+
   }
 
   @action

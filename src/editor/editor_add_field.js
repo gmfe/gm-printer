@@ -18,7 +18,8 @@ const FieldBtn = ({ name, onClick }) => (
 @observer
 class OrderField extends React.Component {
   handleAddOrderField (field) {
-
+    const { selected } = editStore
+    editStore.addConfigBlock(selected, 'text')
   }
 
   render () {

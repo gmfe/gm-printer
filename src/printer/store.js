@@ -32,6 +32,10 @@ class PrinterStore {
   @observable
   selected = null
 
+  // 选择中区域
+  @observable
+  selectedRegion = null
+
   @action
   init (config, data) {
     this.ready = false
@@ -67,6 +71,11 @@ class PrinterStore {
   @action
   setSelected (selected) {
     this.selected = selected || null
+  }
+
+  @action
+  setSelectedRegion (selected) {
+    this.selectedRegion = selected || null
   }
 
   @action

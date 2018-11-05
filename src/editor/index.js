@@ -28,6 +28,7 @@ class Editor extends React.Component {
 
   componentDidMount () {
     window.document.addEventListener('gm-printer-select', this.handlePrinterSelect)
+    window.document.addEventListener('gm-printer-select-region', this.handleSelectedRegion)
     window.document.addEventListener('gm-printer-panel-style-set', this.handlePrinterPanelStyleSet)
     window.document.addEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
     window.document.addEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
@@ -37,6 +38,7 @@ class Editor extends React.Component {
 
   componentWillUnmount () {
     window.document.removeEventListener('gm-printer-select', this.handlePrinterSelect)
+    window.document.removeEventListener('gm-printer-select-region', this.handleSelectedRegion)
     window.document.removeEventListener('gm-printer-panel-style-set', this.handlePrinterPanelStyleSet)
     window.document.removeEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
     window.document.removeEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
@@ -46,6 +48,11 @@ class Editor extends React.Component {
 
   handleSave = () => {
     this.props.onSave(toJS(editStore.config))
+  }
+
+  handleSelectedRegion = e => {
+    const { selected } = e.detail
+    editStore.setSelectedRegion(selected)
   }
 
   handlePrinterSelect = (e) => {

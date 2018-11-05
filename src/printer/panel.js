@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { observer, inject } from 'mobx-react'
 import _ from 'lodash'
 import { getHeight, getBlockName, dispatchMsg, pxAdd } from '../util'
+import classnames from 'classnames'
 import Block from './block'
 
 @inject('printerStore')
@@ -47,15 +48,28 @@ class Panel extends React.Component {
     })
   }
 
+  handleSelectedRegion = () => {
+    const { name, printerStore } = this.props
+    printerStore.setSelectedRegion(name)
+
+    dispatchMsg('gm-printer-select-region', { selected: name })
+  }
+
   render () {
-    const { name, config, placeholder, pageIndex, style } = this.props
+    const { name, config, placeholder, pageIndex, style, printerStore } = this.props
+    const active = name === printerStore.selectedRegion
 
     return (
       <div
-        className={`gm-printer-panel gm-printer-${name}`}
+        className={classnames(
+          'gm-printer-panel',
+          `gm-printer-${name}`,
+          { active }
+        )}
         data-name={name}
         data-placeholder={placeholder}
         style={Object.assign({}, style, config.style)}
+        onClick={this.handleSelectedRegion}
       >
         {_.map(config.blocks, (block, i) => (
           <Block
