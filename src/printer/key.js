@@ -7,11 +7,7 @@ const SETTLE_WAY = {
   1: '先货后款'
 }
 
-function toKey (data) {
-  // what
-  // child_sort_id
-  // source_origin_id
-
+function generateOrder (data) {
   // 收货人信息分两种情况
   let customerInfo = {}
   const originCustomer = data.origin_customer
@@ -31,7 +27,7 @@ function toKey (data) {
     }
   }
 
-  const Order = {
+  return {
     '订单号': data.id,
     '序号': `${data.sort_id} ${data.child_sort_id}`,
 
@@ -68,9 +64,13 @@ function toKey (data) {
     // 收货人信息
     ...customerInfo
   }
+}
 
+function toKey (data) {
+  // 商品按分类排序
+  const sortByCategory = _.sortBy(data.details, v => v.category_title_1)
   // 普通订单
-  const kOrders = _.map(data.details, (v, index) => {
+  const kOrders = _.map(sortByCategory, (v, index) => {
     return {
       '序号': index + 1,
       '商品ID': v.id,
@@ -118,6 +118,7 @@ function toKey (data) {
     taxSumStd = taxSumStd.plus(kSku['商品税额_基本单位'])
   })
 
+  // 异常明细
   const kAbnormal = _.map(data.abnormals.concat(data.refunds), v => {
     return {
       ..._.pick(kIdMap[v.detail_id], '商品名'),
@@ -129,34 +130,28 @@ function toKey (data) {
     }
   })
 
-  // 序号
   const group = _.groupBy(kOrders, v => v._origin.category_title_1)
+
   // 分类数量
   const counter = _.map(group, (o, k) => ({ text: k, len: o.length }))
 
   let kCategory = []
-  let kCIndex = 1
-  _.forEach(group, (value) => {
-    _.each(value, v => {
-      // eslint-disable-next-line
-      v['序号'] = kCIndex++
-    })
-
+  _.forEach(group, (value, key) => {
     kCategory = kCategory.concat(value)
 
     let total = Big(0)
-
     _.each(value, v => (total = total.plus(v._origin.real_item_price)))
 
     kCategory.push({
       _special: {
+        category_title_1: key,
         total: total.valueOf()
       }
     })
   })
 
   return {
-    ...Order,
+    ...generateOrder(data),
     _counter: counter,
     _table: {
       orders: kOrders,
