@@ -114,6 +114,9 @@
     {
       "type": "table",
       "dataKey": "category",
+      "subtotal": {
+        "show": true
+      },
       "columns": [
         {
           "head": "序号",
@@ -185,6 +188,9 @@
     },
     {
       "type": "table",
+      "subtotal": {
+        "show": false
+      },
       "columns": [
         {
           "head": "商品名",

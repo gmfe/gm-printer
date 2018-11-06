@@ -100,6 +100,10 @@ class PrinterStore {
 
         // 必有表头
         height += info.head.height
+        // 如果显示每页小计,那么table高度多预留一行, 一行的高度默认26
+        if (this.config.contents[index].subtotal.show) {
+          height += 26
+        }
 
         while (end < info.body.heights.length) {
           height += info.body.heights[end]

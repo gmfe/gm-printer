@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom'
 import { getHeight, getWidth, dispatchMsg, getTableColumnName } from '../util'
 import { observer, inject } from 'mobx-react'
 import classNames from 'classnames'
+import Big from 'big.js'
 
 @inject('printerStore')
 @observer
@@ -84,8 +85,16 @@ class Table extends React.Component {
   }
 
   renderDefault () {
-    const { config: { columns, dataKey }, name, range, pageIndex, printerStore } = this.props
+    const { config: { columns, dataKey, subtotal }, name, range, pageIndex, printerStore } = this.props
     const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
+
+    // 每页小计
+    let subtotalForEachPage = null
+    if (subtotal.show) {
+      const list = tableData.slice(range.begin, range.end)
+      const sum = _.sumBy(list, o => o._origin ? o._origin.real_item_price : 0)
+      subtotalForEachPage = <tr><td colSpan={99} style={{ fontWeight: 'bold' }}>每页小计：{Big(sum).toFixed(2)}</td></tr>
+    }
 
     return (
       <table>
@@ -112,7 +121,6 @@ class Table extends React.Component {
         <tbody>
           {_.map(_.range(range.begin, range.end), i => {
             const special = tableData[i]._special
-
             if (special) {
               return (
                 <tr key={i}>
@@ -120,6 +128,7 @@ class Table extends React.Component {
                 </tr>
               )
             }
+
             return (
               <tr key={i}>
                 {_.map(columns, (col, j) => (
@@ -135,6 +144,8 @@ class Table extends React.Component {
               </tr>
             )
           })}
+          {/* 注意的是: ready = true 才插入每页小计 */}
+          {printerStore.ready && subtotalForEachPage}
         </tbody>
       </table>
     )
