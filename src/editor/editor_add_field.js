@@ -66,7 +66,7 @@ class TableField extends React.Component {
 
         <div className='gm-bg-info'>异常表格:</div>
         <Flex wrap>
-          {_.map(abnormal[0], (v, key) => {
+          {_.map(abnormal[0]._abnormal, (v, key) => {
             if (key !== '_origin') {
               return <FieldBtn name={key} key={key}
                 onClick={this.handleAddTableColumn.bind(this, key)}/>

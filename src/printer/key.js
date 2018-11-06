@@ -120,13 +120,17 @@ function toKey (data) {
 
   // 异常明细
   const kAbnormal = _.map(data.abnormals.concat(data.refunds), v => {
-    return {
-      ..._.pick(kIdMap[v.detail_id], '商品名'),
+    const abnormal = {
       '异常原因': v.type_text,
       '异常描述': v.text,
       '异常数量': v.amount_delta,
-      '异常金额': v.money_delta,
-      _origin: v
+      '异常金额': v.money_delta
+    }
+    return {
+      ...kIdMap[v.detail_id],
+      ...abnormal,
+      _origin: v,
+      _abnormal: abnormal
     }
   })
 
