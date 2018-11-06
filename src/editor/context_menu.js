@@ -1,8 +1,31 @@
 import React from 'react'
-import { blockTypeList, tableClassNameList, tableDataKeyList } from '../config'
+import { blockTypeList } from '../config'
 import editStore from './store'
 import _ from 'lodash'
 import { Hr } from './component'
+
+function isSubtotalShow (name) {
+  if (!name) return false
+
+  const arr = name.split('.')
+  return _.includes(arr, 'table') ? editStore.config.contents[arr[2]].subtotal.show : false
+}
+
+/**
+ * 是否存在每页合计按钮
+ * @param name => ContextMenu ,this.state.name
+ * @return {boolean}
+ */
+function hasSubtotalBtn (name) {
+  if (!name) return false
+
+  const arr = name.split('.')
+  if (_.includes(arr, 'table')) {
+    const dataKey = editStore.config.contents[arr[2]].dataKey
+    // 异常明细没有每页小计
+    return dataKey !== 'abnormal'
+  }
+}
 
 class ContextMenu extends React.Component {
   constructor (props) {
@@ -95,6 +118,15 @@ class ContextMenu extends React.Component {
     })
   }
 
+  handleSubtotal = () => {
+    const { name } = this.state
+
+    editStore.setSubtotalShow(name)
+    this.setState({
+      name: null
+    })
+  }
+
   handleAddContent = (diff, type) => {
     const { name } = this.state
 
@@ -122,11 +154,10 @@ class ContextMenu extends React.Component {
             <Hr/>
             <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
             <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
+            <div onClick={this.handleRemoveContent}>移除区域</div>
             <Hr/>
             <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
             <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
-            <hr/>
-            <div onClick={this.handleRemoveContent}>移除区域</div>
           </React.Fragment>
         )}
       </React.Fragment>
@@ -152,60 +183,22 @@ class ContextMenu extends React.Component {
     )
   }
 
-  handleAddColumn = (diff) => {
-    const { name } = this.state
-
-    editStore.setSelected(name)
-    editStore.addTableColumnByDiff(diff)
-
-    this.setState({
-      name: null
-    })
-  }
-
-  handleTableBy = (who, className) => {
-    const { name } = this.state
-    editStore.setConfigTableBy(name, who, className)
-
-    this.setState({
-      name: null
-    })
-  }
-
   renderColumn () {
+    const { name } = this.state
+
     return (
       <React.Fragment>
-        <div onClick={this.handleAddColumn.bind(this, 0)}>
-          向左插入列
-        </div>
-        <div onClick={this.handleAddColumn.bind(this, 1)}>
-          向右插入列
-        </div>
-        <Hr/>
-        <div onClick={this.handleRemove}>
-          移除
-        </div>
-        <Hr/>
-        {_.map(tableClassNameList, v => (
-          <div key={v.value} onClick={this.handleTableBy.bind(this, 'className', v.value)}>
-            {v.text}
-          </div>
-        ))}
-        <Hr/>
-        {_.map(tableDataKeyList, v => (
-          <div key={v.value} onClick={this.handleTableBy.bind(this, 'dataKey', v.value)}>
-            {v.text}
-          </div>
-        ))}
+        {hasSubtotalBtn(name) &&
+        <div onClick={this.handleSubtotal} className={isSubtotalShow(name) ? 'active' : ''}>每页合计</div>}
+        <div onClick={this.handleRemove}>移除列</div>
         <React.Fragment>
           <Hr/>
           <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
           <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
+          <div onClick={this.handleRemoveContent}>移除区域</div>
           <Hr/>
           <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
           <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
-          <hr/>
-          <div onClick={this.handleRemoveContent}>移除区域</div>
         </React.Fragment>
       </React.Fragment>
     )

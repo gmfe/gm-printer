@@ -1,4 +1,4 @@
-import { observable, action, computed, configure } from 'mobx'
+import { action, computed, configure, observable } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, exchange, getBlockName } from '../util'
@@ -290,6 +290,13 @@ class EditStore {
   }
 
   @action
+  setSubtotalShow (name) {
+    const arr = name.split('.')
+    const table = this.config.contents[arr[2]]
+    table.subtotal.show = !table.subtotal.show
+  }
+
+  @action
   addFieldInPanel (field) {
     if (!this.selectedRegion) return
     const arr = this.selectedRegion.split('.')
@@ -430,6 +437,9 @@ class EditStore {
         if (type === 'table') {
           this.config.contents.splice(index, 0, {
             type: 'table',
+            subtotal: {
+              show: false
+            },
             columns: [{
               head: '表头',
               headStyle: {
