@@ -107,7 +107,7 @@ class Table extends React.Component {
   renderDefault () {
     const { config: { dataKey, subtotal }, name, range, pageIndex, printerStore } = this.props
     const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
-    // console.log(printerStore.data._table)
+    console.log(printerStore.data._table)
     // 每页小计
     let subtotalForEachPage = null
     if (subtotal.show) {
