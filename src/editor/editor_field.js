@@ -22,17 +22,13 @@ class EditorField extends React.Component {
     editStore.setConfigTable(who, value)
   }
 
-  handleRemove = () => {
-    editStore.removeConfig()
-  }
-
   renderBlocks () {
     const { type, text, style, link } = editStore.computedSelectedInfo
 
     return (
       <React.Fragment>
         <Flex alignCenter>
-          <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>基本信息
+          <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>编辑自定义
         </Flex>
         <div>
           <Position style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>
@@ -74,7 +70,7 @@ class EditorField extends React.Component {
     return (
       <React.Fragment>
         <Flex alignCenter>
-          <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>基本信息
+          <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>编辑自定义
         </Flex>
         <div>
           <Fonter style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>
