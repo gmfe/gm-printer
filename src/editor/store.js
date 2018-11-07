@@ -148,6 +148,28 @@ class EditStore {
     this.selectedRegion = selected
   }
 
+  // 可选区域
+  @computed
+  get computedRegionList () {
+    if (!this.config) return []
+
+    const contentRegions = this.config.contents.map((v, i) => {
+      if (v.type === 'table') {
+        return { value: `contents.table.${i}`, text: `区域${i}` }
+      } else {
+        return { value: `contents.panel.${i}`, text: `区域${i}` }
+      }
+    })
+
+    return [
+      { value: 'all', text: '请选择区域' },
+      { value: 'header', text: '页眉' },
+      ...contentRegions,
+      { value: 'sign', text: '签名' },
+      { value: 'footer', text: '页脚' }
+    ]
+  }
+
   @computed
   get computedRegionIsTable () {
     if (this.selectedRegion) {

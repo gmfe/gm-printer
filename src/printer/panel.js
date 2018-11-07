@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
-import { observer, inject } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
-import { getHeight, getBlockName, dispatchMsg, pxAdd } from '../util'
+import { dispatchMsg, getBlockName, getHeight, pxAdd } from '../util'
 import classnames from 'classnames'
 import Block from './block'
 
@@ -49,8 +49,7 @@ class Panel extends React.Component {
   }
 
   handleSelectedRegion = () => {
-    const { name, printerStore } = this.props
-    printerStore.setSelectedRegion(name)
+    const { name } = this.props
 
     dispatchMsg('gm-printer-select-region', { selected: name })
   }

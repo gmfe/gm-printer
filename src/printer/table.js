@@ -63,8 +63,7 @@ class Table extends React.Component {
   }
 
   handleSelectedRegion = () => {
-    const { name, printerStore } = this.props
-    printerStore.setSelectedRegion(name)
+    const { name } = this.props
 
     dispatchMsg('gm-printer-select-region', { selected: name })
   }

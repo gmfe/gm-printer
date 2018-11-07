@@ -1,9 +1,10 @@
 import React from 'react'
 import editStore from './store'
 import { observer } from 'mobx-react'
-import { Flex, Select, Option } from 'react-gm'
-import { pageTypeMap, printDirectionList, counterStateList } from '../config'
+import { Flex, Option, Select } from 'react-gm'
+import { counterStateList, pageTypeMap, printDirectionList } from '../config'
 import _ from 'lodash'
+import { dispatchMsg } from '../util'
 
 @observer
 class EditorSelector extends React.Component {
@@ -27,8 +28,12 @@ class EditorSelector extends React.Component {
     editStore.setCounterShow(value)
   }
 
+  handleSelectedRegion = (selected) => {
+    dispatchMsg('gm-printer-select-region', { selected })
+  }
+
   render () {
-    const { name, page, counter } = editStore.config
+    const { config: { name, page, counter }, computedRegionList } = editStore
     const isDIY = page.type === 'DIY'
 
     return (
@@ -78,8 +83,8 @@ class EditorSelector extends React.Component {
 
         <Flex alignCenter className='gm-padding-top-5'>
           <div>选择区域：</div>
-          <Select value={editStore.config.page.type} onChange={this.handlePageType}>
-            {_.map(pageTypeMap, (v, k) => <Option key={k} value={k}>{k}</Option>)}
+          <Select value={editStore.selectedRegion || 'all'} onChange={this.handleSelectedRegion}>
+            {_.map(computedRegionList, v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
           </Select>
         </Flex>
       </div>

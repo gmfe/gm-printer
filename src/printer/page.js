@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { observer, inject } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import ReactDOM from 'react-dom'
 import { getHeight } from '../util'
 
@@ -11,6 +11,16 @@ class Page extends React.Component {
     const $dom = ReactDOM.findDOMNode(this)
 
     this.props.printerStore.setPageHeight(getHeight($dom))
+    window.document.addEventListener('gm-printer-select-region', this.handleSelectedRegion)
+  }
+
+  componentWillUnmount () {
+    window.document.removeEventListener('gm-printer-select-region', this.handleSelectedRegion)
+  }
+
+  handleSelectedRegion = e => {
+    const { selected } = e.detail
+    this.props.printerStore.setSelectedRegion(selected)
   }
 
   render () {
