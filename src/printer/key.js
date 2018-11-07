@@ -95,7 +95,7 @@ function toKey (data) {
 
       '单价_基本单位': v.std_sale_price,
       '单价_销售单位': v.sale_price,
-      '原单价': v, // TODO 报价单价格
+      '原单价': 'xx', // TODO 报价单价格
 
       '应付金额': v.real_item_price,
       '应付金额_不含税': v.real_item_price_without_tax,
@@ -140,18 +140,46 @@ function toKey (data) {
   const counter = _.map(group, (o, k) => ({ text: k, len: o.length }))
 
   let kCategory = []
+  let kCategoryMulti = []
   _.forEach(group, (value, key) => {
-    kCategory = kCategory.concat(value)
-
+    // 分类小计
     let total = Big(0)
     _.each(value, v => (total = total.plus(v._origin.real_item_price)))
-
-    kCategory.push({
+    const categoryTotal = {
       _special: {
         category_title_1: key,
         total: total.valueOf()
       }
-    })
+    }
+
+    // 单列分类商品
+    kCategory = kCategory.concat(value)
+    kCategory.push(categoryTotal)
+
+    // 2列分类商品.
+    // 假设数据有数据 [{a: 1}, {a:2}, {a: 3}, {a: 4}], 变为 [{a:1, a#2:3}, {a:2, a#2: 4}]
+    const skuGroup = value
+    if (value.length % 2 !== 0) {
+      skuGroup.push({})
+    }
+    let index = 0
+    const median = skuGroup.length / 2
+
+    while (index < median) {
+      // 举例: '下单数' => '下单数#2'
+      const sku = {}
+      _.each(skuGroup[median + index], (val, key) => {
+        sku[key + '$2'] = val
+      })
+
+      kCategoryMulti = kCategoryMulti.concat({
+        ...skuGroup[index],
+        ...sku
+      })
+
+      index++
+    }
+    kCategoryMulti.push(categoryTotal)
   })
 
   return {
@@ -160,7 +188,8 @@ function toKey (data) {
     _table: {
       orders: kOrders,
       category: kCategory,
-      abnormal: kAbnormal
+      abnormal: kAbnormal,
+      category_multi: kCategoryMulti
     },
     _origin: data
   }

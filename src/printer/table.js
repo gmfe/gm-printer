@@ -83,17 +83,42 @@ class Table extends React.Component {
     e.preventDefault()
   }
 
-  renderDefault () {
-    const { config: { columns, dataKey, subtotal }, name, range, pageIndex, printerStore } = this.props
-    const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
+  getColumns = () => {
+    const { config: { columns, dataKey } } = this.props
+    const arr = dataKey.split('_')
 
+    const columns1 = columns.map((val, index) => ({ ...val, index }))
+    // 多列表格
+    if (arr.includes('multi')) {
+      // 第二列
+      const columns2 = columns.map((val, index) => {
+        return {
+          ...val,
+          index,
+          text: val.text.replace('}}', '') + '$2}}'
+        }
+      })
+      return columns1.concat(columns2)
+    } else {
+      return columns1
+    }
+  }
+
+  renderDefault () {
+    const { config: { dataKey, subtotal }, name, range, pageIndex, printerStore } = this.props
+    const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
+    // console.log(printerStore.data._table)
     // 每页小计
     let subtotalForEachPage = null
     if (subtotal.show) {
       const list = tableData.slice(range.begin, range.end)
       const sum = _.sumBy(list, o => o._origin ? o._origin.real_item_price : 0)
-      subtotalForEachPage = <tr><td colSpan={99} style={{ fontWeight: 'bold' }}>每页小计：{Big(sum).toFixed(2)}</td></tr>
+      subtotalForEachPage = <tr>
+        <td colSpan={99} style={{ fontWeight: 'bold' }}>每页小计：{Big(sum).toFixed(2)}</td>
+      </tr>
     }
+
+    const columns = this.getColumns()
 
     return (
       <table>
@@ -102,12 +127,12 @@ class Table extends React.Component {
             {_.map(columns, (col, i) => (
               <th
                 key={i}
-                data-index={i}
-                data-name={getTableColumnName(name, i)}
+                data-index={col.index}
+                data-name={getTableColumnName(name, col.index)}
                 draggable
                 style={Object.assign({}, col.headStyle)}
                 className={classNames({
-                  active: getTableColumnName(name, i) === printerStore.selected
+                  active: getTableColumnName(name, col.index) === printerStore.selected
                 })}
                 onClick={this.handleClick}
                 onDragStart={this.handleDragStart}
@@ -133,10 +158,10 @@ class Table extends React.Component {
                 {_.map(columns, (col, j) => (
                   <td
                     key={j}
-                    data-name={getTableColumnName(name, j)}
+                    data-name={getTableColumnName(name, col.index)}
                     style={col.style}
                     className={classNames({
-                      active: getTableColumnName(name, j) === printerStore.selected
+                      active: getTableColumnName(name, col.index) === printerStore.selected
                     })}
                   >{printerStore.templateTable(col.text, dataKey, i, pageIndex)}</td>
                 ))}

@@ -113,7 +113,7 @@
   "contents": [
     {
       "type": "table",
-      "dataKey": "category",
+      "dataKey": "category_multi",
       "subtotal": {
         "show": true
       },
