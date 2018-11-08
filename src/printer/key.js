@@ -66,10 +66,47 @@ function generateOrder (data) {
   }
 }
 
+/**
+ * 生成多列商品展示数据
+ * @param list
+ * @param categoryTotal
+ * @return {Array}
+ */
+function generateMultiData (list, categoryTotal) {
+  let multiList = []
+  // 假设skuGroup = [{a: 1}, {a:2}, {a: 3}, {a: 4}], 转化为 [{a:1, a#2:3}, {a:2, a#2: 4}]
+  const skuGroup = list
+
+  let index = 0
+  const len = skuGroup.length
+
+  while (index < len) {
+    const sku1 = skuGroup[index]
+    const sku2 = {}
+    _.each(skuGroup[1 + index], (val, key) => {
+      sku2[key + '$2'] = val
+    })
+
+    multiList.push({
+      ...sku1,
+      ...sku2
+    })
+
+    index += 2
+  }
+
+  if (categoryTotal) {
+    multiList.push(categoryTotal)
+  }
+
+  return multiList
+}
+
 function toKey (data) {
   // 商品按分类排序
   const sortByCategory = _.sortBy(data.details, v => v.category_title_1)
-  // 普通订单
+
+  /* ----------- 普通订单  ------------ */
   const kOrders = _.map(sortByCategory, (v, index) => {
     return {
       '序号': index + 1,
@@ -108,6 +145,9 @@ function toKey (data) {
     }
   })
 
+  /* ----------- 一行2列普通订单 ---------- */
+  const kOrdersMulti = generateMultiData(kOrders)
+
   const kIdMap = {}
   let taxSumStd = Big(0)
   let taxSumSale = Big(0)
@@ -118,7 +158,7 @@ function toKey (data) {
     taxSumStd = taxSumStd.plus(kSku['商品税额_基本单位'])
   })
 
-  // 异常明细
+  /* ------------ 异常明细 ----------- */
   const kAbnormal = _.map(data.abnormals.concat(data.refunds), v => {
     const abnormal = {
       '异常原因': v.type_text,
@@ -136,9 +176,10 @@ function toKey (data) {
 
   const group = _.groupBy(kOrders, v => v._origin.category_title_1)
 
-  // 分类数量
+  /* --------- 分类商品统计 ---------------- */
   const counter = _.map(group, (o, k) => ({ text: k, len: o.length }))
 
+  /* -------- 单列分类商品 和 一行2列分类商品 ------- */
   let kCategory = []
   let kCategoryMulti = []
   _.forEach(group, (value, key) => {
@@ -153,33 +194,10 @@ function toKey (data) {
     }
 
     // 单列分类商品
-    kCategory = kCategory.concat(value)
-    kCategory.push(categoryTotal)
+    kCategory = kCategory.concat(value, categoryTotal)
 
-    // 2列分类商品.
-    // 假设数据有数据 [{a: 1}, {a:2}, {a: 3}, {a: 4}], 变为 [{a:1, a#2:3}, {a:2, a#2: 4}]
-    const skuGroup = value
-    if (value.length % 2 !== 0) {
-      skuGroup.push({})
-    }
-    let index = 0
-    const median = skuGroup.length / 2
-
-    while (index < median) {
-      // 举例: '下单数' => '下单数#2'
-      const sku = {}
-      _.each(skuGroup[median + index], (val, key) => {
-        sku[key + '$2'] = val
-      })
-
-      kCategoryMulti = kCategoryMulti.concat({
-        ...skuGroup[index],
-        ...sku
-      })
-
-      index++
-    }
-    kCategoryMulti.push(categoryTotal)
+    // 多列商品
+    kCategoryMulti = kCategoryMulti.concat(generateMultiData(value, categoryTotal))
   })
 
   return {
@@ -188,8 +206,9 @@ function toKey (data) {
     _table: {
       orders: kOrders,
       category: kCategory,
-      abnormal: kAbnormal,
-      category_multi: kCategoryMulti
+      category_multi: kCategoryMulti,
+      orders_multi: kOrdersMulti,
+      abnormal: kAbnormal
     },
     _origin: data
   }

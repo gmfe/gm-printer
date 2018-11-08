@@ -108,13 +108,22 @@ class Table extends React.Component {
     const { config: { dataKey, subtotal }, name, range, pageIndex, printerStore } = this.props
     const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
     console.log(printerStore.data._table)
+
     // 每页小计
     let subtotalForEachPage = null
-    if (subtotal.show) {
+    if (subtotal.show && printerStore.ready) {
       const list = tableData.slice(range.begin, range.end)
-      const sum = _.sumBy(list, o => o._origin ? o._origin.real_item_price : 0)
+      let sum = Big(0)
+      _.each(list, ({ _origin = {}, _origin$2 = {} }) => {
+        sum = sum.plus(_origin.real_item_price || 0)
+        // 如果是多列
+        if (_origin$2.real_item_price) {
+          sum = sum.plus(_origin$2.real_item_price)
+        }
+      })
+
       subtotalForEachPage = <tr>
-        <td colSpan={99} style={{ fontWeight: 'bold' }}>每页小计：{Big(sum).toFixed(2)}</td>
+        <td colSpan={99} style={{ fontWeight: 'bold' }}>每页小计：{sum.toFixed(2)}</td>
       </tr>
     }
 
@@ -168,8 +177,7 @@ class Table extends React.Component {
               </tr>
             )
           })}
-          {/* 注意的是: ready = true 才插入每页小计 */}
-          {printerStore.ready && subtotalForEachPage}
+          {subtotalForEachPage}
         </tbody>
       </table>
     )

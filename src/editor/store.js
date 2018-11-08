@@ -459,6 +459,7 @@ class EditStore {
         if (type === 'table') {
           this.config.contents.splice(index, 0, {
             type: 'table',
+            dataKey: 'orders',
             subtotal: {
               show: false
             },
