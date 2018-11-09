@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { blockTypeList } from '../config'
 import editStore from './store'
 import _ from 'lodash'
@@ -250,8 +251,8 @@ class ContextMenu extends React.Component {
   }
 }
 
-ContextMenu.propTypes = {}
-
-ContextMenu.deaultProps = {}
+ContextMenu.propTypes = {
+  children: PropTypes.element.isRequired
+}
 
 export default ContextMenu

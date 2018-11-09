@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import { toJS } from 'mobx'
 import editStore from './store'
-import { Printer, getCSS } from '../printer'
+import { getCSS, Printer } from '../printer'
 import { getStyleWithDiff, insertCSS } from '../util'
 import { observer } from 'mobx-react/index'
 import EditorTitle from './editor_title'
@@ -34,6 +34,10 @@ class Editor extends React.Component {
     window.document.addEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
     window.document.addEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
     window.document.addEventListener('keydown', this.handleKeyDown)
+
+    this.autoSaveTimer = setInterval(() => {
+      editStore.saveConfigToStack()
+    }, 1000)
   }
 
   componentWillUnmount () {
@@ -44,6 +48,8 @@ class Editor extends React.Component {
     window.document.removeEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
     window.document.removeEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
     window.document.removeEventListener('keydown', this.handleKeyDown)
+
+    clearInterval(this.autoSaveTimer)
   }
 
   handleSave = () => {
@@ -127,8 +133,6 @@ class Editor extends React.Component {
   }
 
   render () {
-    // console.log(JSON.stringify(editStore.config), 'editor')
-
     return (
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header'>
