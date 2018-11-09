@@ -83,6 +83,7 @@ class EditStore {
   init (config) {
     this.config = config
     this.selected = null
+    this.selectedRegion = null
     this.insertPanel = 'header'
 
     this._cacheConfig.push(JSON.stringify(config))
@@ -500,6 +501,25 @@ class EditStore {
             }
           })
         }
+      }
+    }
+  }
+
+  @action
+  setTableDataKey (dataKey) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      this.config.contents[arr[2]].dataKey = dataKey
+    }
+  }
+
+  @computed
+  get computedTableDataKeyOfSelectedRegion () {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      if (arr.includes('table')) {
+        const dataKey = this.config.contents[arr[2]].dataKey
+        return dataKey.split('_')[0]
       }
     }
   }

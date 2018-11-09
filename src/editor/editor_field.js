@@ -1,8 +1,9 @@
 import React from 'react'
-import { Flex } from 'react-gm'
+import { Flex, Option, Select } from 'react-gm'
 import { observer } from 'mobx-react'
 import editStore from './store'
-import { Separator, Fonter, Position, TextAlign, Textarea, Line, Size } from './component'
+import { tableDataKeyList } from '../config'
+import { Fonter, Line, Position, Separator, Size, TextAlign, Textarea } from './component'
 
 @observer
 class EditorField extends React.Component {
@@ -20,6 +21,10 @@ class EditorField extends React.Component {
     }
 
     editStore.setConfigTable(who, value)
+  }
+
+  handleSetTableDataKey = (dataKey) => {
+    editStore.setTableDataKey(dataKey)
   }
 
   renderBlocks () {
@@ -72,28 +77,42 @@ class EditorField extends React.Component {
         <Flex alignCenter>
           <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>编辑自定义
         </Flex>
-        <div>
-          <Fonter style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>
-          <Separator/>
-          <TextAlign style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>
-          <br/>
-          <Textarea
-            value={head}
-            placeholder='请输入表头填充内容'
-            onChange={this.handleChangeTable.bind(this, 'head')}
-          />
-        </div>
-        <div>
-          <Fonter style={style} onChange={this.handleChangeTable.bind(this, 'style')}/>
-          <Separator/>
-          <TextAlign style={style} onChange={this.handleChangeTable.bind(this, 'style')}/>
-          <br/>
-          <Textarea
-            value={text}
-            placeholder='请输入内容填充内容'
-            onChange={this.handleChangeTable.bind(this, 'text')}
-          />
-        </div>
+
+        <Flex>
+          <Flex alignCenter>数据类型:</Flex>
+          <Select value={editStore.computedTableDataKeyOfSelectedRegion} onChange={this.handleSetTableDataKey}>
+            {tableDataKeyList.map(v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
+          </Select>
+        </Flex>
+
+        <Flex>
+          <Flex>字段设置:</Flex>
+          <div>
+            <div>
+              <Fonter style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>
+              <Separator/>
+              <TextAlign style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>
+              <br/>
+              <Textarea
+                value={head}
+                placeholder='请输入表头填充内容'
+                onChange={this.handleChangeTable.bind(this, 'head')}
+              />
+            </div>
+            <div>
+              <Fonter style={style} onChange={this.handleChangeTable.bind(this, 'style')}/>
+              <Separator/>
+              <TextAlign style={style} onChange={this.handleChangeTable.bind(this, 'style')}/>
+              <br/>
+              <Textarea
+                value={text}
+                placeholder='请输入内容填充内容'
+                onChange={this.handleChangeTable.bind(this, 'text')}
+              />
+            </div>
+          </div>
+        </Flex>
+
       </React.Fragment>
     )
   }

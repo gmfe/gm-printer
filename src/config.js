@@ -87,9 +87,8 @@ const tableClassNameList = [
 ]
 
 const tableDataKeyList = [
-  { value: '', text: '订单数据' },
-  { value: 'category', text: '分类订单数据' },
-  { value: 'abnormal', text: '异常数据' }
+  { value: 'orders', text: '全部商品' },
+  { value: 'abnormal', text: '异常商品' }
 ]
 
 const panelList = [

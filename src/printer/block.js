@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import { observer, inject } from 'mobx-react'
-import { getStyleWithDiff, dispatchMsg } from '../util'
+import { inject, observer } from 'mobx-react'
+import { dispatchMsg, getStyleWithDiff } from '../util'
 
 @inject('printerStore')
 @observer
@@ -47,11 +47,9 @@ class Block extends React.Component {
       clientY
     })
 
-    window.document.dispatchEvent(new window.CustomEvent('gm-printer-select', {
-      detail: {
-        selected: name
-      }
-    }))
+    dispatchMsg('gm-printer-select', {
+      selected: name
+    })
   }
 
   handleDragEnd = ({ clientX, clientY }) => {
