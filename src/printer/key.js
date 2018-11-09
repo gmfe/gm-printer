@@ -204,11 +204,11 @@ function toKey (data) {
     ...generateOrder(data),
     _counter: counter,
     _table: {
-      orders: kOrders,
-      category: kCategory,
-      category_multi: kCategoryMulti,
-      orders_multi: kOrdersMulti,
-      abnormal: kAbnormal
+      orders: kOrders, // 商品
+      orders_multi: kOrdersMulti, // 多列商品
+      orders_category: kCategory, // 分类的商品
+      orders_category_multi: kCategoryMulti, // 分类的多列的商品
+      abnormal: kAbnormal // 异常明细
     },
     _origin: data
   }

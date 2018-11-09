@@ -12,8 +12,8 @@ function isSubtotalShow (name) {
 }
 
 /**
- * 是否存在每页合计按钮
- * @param name => ContextMenu ,this.state.name
+ * 是否存在每页合计按钮,非异常明细才有按钮
+ * @param name => ContextMenu 的 this.state.name
  * @return {boolean}
  */
 function hasSubtotalBtn (name) {
@@ -183,13 +183,42 @@ class ContextMenu extends React.Component {
     )
   }
 
-  renderColumn () {
+  handleChangeTableDataKey = (key) => {
     const { name } = this.state
+    editStore.changeTableDataKey(name, key)
+  }
+
+  renderOrderActionBtn = () => {
+    const { name } = this.state
+    if (!hasSubtotalBtn(name)) {
+      return null
+    }
+
+    const arr = name.split('.')
+    const dataKey = editStore.config.contents[arr[2]].dataKey
+    const keyArr = dataKey.split('_')
+
+    const isMultiActive = keyArr.includes('multi')
+    const isCategoryActive = keyArr.includes('category')
 
     return (
       <React.Fragment>
-        {hasSubtotalBtn(name) &&
-        <div onClick={this.handleSubtotal} className={isSubtotalShow(name) ? 'active' : ''}>每页合计</div>}
+        <div onClick={this.handleChangeTableDataKey.bind(this, 'multi')}
+          className={isMultiActive ? 'active' : ''}>多列商品
+        </div>
+        <div onClick={this.handleChangeTableDataKey.bind(this, 'category')}
+          className={isCategoryActive ? 'active' : ''}>商品分类
+        </div>
+        <div onClick={this.handleSubtotal} className={isSubtotalShow(name) ? 'active' : ''}>每页合计</div>
+      </React.Fragment>
+    )
+  }
+
+  renderColumn () {
+    return (
+      <React.Fragment>
+        {this.renderOrderActionBtn()}
+
         <div onClick={this.handleRemove}>移除列</div>
         <React.Fragment>
           <Hr/>

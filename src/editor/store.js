@@ -352,6 +352,24 @@ class EditStore {
   }
 
   @action
+  changeTableDataKey (name, key) {
+    const arr = name.split('.')
+    const { dataKey } = this.config.contents[arr[2]]
+    const keyArr = dataKey.split('_')
+    let newDataKey
+    // 当前有这个key则去掉
+    if (keyArr.includes(key)) {
+      newDataKey = _.without(keyArr, key)
+    } else {
+      newDataKey = _.concat(keyArr, key)
+    }
+
+    newDataKey = _.sortBy(newDataKey, [o => o === 'multi', o => o === 'category', o => o === 'orders'])
+
+    this.config.contents[arr[2]].dataKey = newDataKey.join('_')
+  }
+
+  @action
   setConfigTableBy (name, who, className) {
     const arr = name.split('.')
     this.config.contents[arr[2]][who] = className

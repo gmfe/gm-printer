@@ -90,7 +90,7 @@ class Table extends React.Component {
     const columns1 = columns.map((val, index) => ({ ...val, index }))
     // 多列表格
     if (arr.includes('multi')) {
-      // 第二列
+      // 多列商品的第二列有点特殊,都带$2后缀
       const columns2 = columns.map((val, index) => {
         return {
           ...val,
@@ -107,7 +107,6 @@ class Table extends React.Component {
   renderDefault () {
     const { config: { dataKey, subtotal }, name, range, pageIndex, printerStore } = this.props
     const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
-    console.log(printerStore.data._table)
 
     // 每页小计
     let subtotalForEachPage = null
