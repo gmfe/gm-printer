@@ -127,8 +127,14 @@ class Editor extends React.Component {
   }
 
   handleCancel = (e) => {
+    const { selected, selectedRegion } = editStore
+    // 点击区域不包含selected的时候
+    if (!_.includes(selected, selectedRegion)) {
+      editStore.setSelected(null)
+    }
     if (e.target === e.currentTarget) {
       editStore.setSelected(null)
+      editStore.setSelectedRegion(null)
     }
   }
 
@@ -146,6 +152,7 @@ class Editor extends React.Component {
           <Printer
             key={editStore.computedPrinterKey}
             selected={editStore.selected}
+            selectedRegion={editStore.selectedRegion}
             config={editStore.config}
             data={mockData}
           />

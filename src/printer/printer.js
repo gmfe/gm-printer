@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { observer, Provider, inject } from 'mobx-react'
+import { inject, observer, Provider } from 'mobx-react'
 import PropTypes from 'prop-types'
 import PrinterStore from './store'
 import Page from './page'
@@ -50,11 +50,15 @@ class Printer extends React.Component {
 
     props.printerStore.init(props.config, props.data)
     props.printerStore.setSelected(props.selected)
+    props.printerStore.setSelectedRegion(props.selectedRegion)
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.selected !== this.props.selected) {
       this.props.printerStore.setSelected(nextProps.selected)
+    }
+    if (nextProps.selectedRegion !== this.props.selectedRegion) {
+      this.props.printerStore.setSelectedRegion(nextProps.selectedRegion)
     }
   }
 
@@ -165,7 +169,7 @@ class Printer extends React.Component {
 
   render () {
     const {
-      selected, data, config, onReady, //eslint-disable-line
+      selected, data, config, onReady, selectedRegion, //eslint-disable-line
       className,
       style,
       printerStore,
@@ -190,6 +194,7 @@ class Printer extends React.Component {
 
 Printer.propTypes = {
   selected: PropTypes.string,
+  selectedRegion: PropTypes.string,
   data: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
   onReady: PropTypes.func

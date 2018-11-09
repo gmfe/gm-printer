@@ -79,14 +79,14 @@ class EditorField extends React.Component {
         </Flex>
 
         <Flex>
-          <Flex alignCenter>数据类型:</Flex>
+          <Flex alignCenter>数据类型：</Flex>
           <Select value={editStore.computedTableDataKeyOfSelectedRegion} onChange={this.handleSetTableDataKey}>
             {tableDataKeyList.map(v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
           </Select>
         </Flex>
 
         <Flex>
-          <Flex>字段设置:</Flex>
+          <Flex>字段设置：</Flex>
           <div>
             <div>
               <Fonter style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>

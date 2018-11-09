@@ -11,16 +11,6 @@ class Page extends React.Component {
     const $dom = ReactDOM.findDOMNode(this)
 
     this.props.printerStore.setPageHeight(getHeight($dom))
-    window.document.addEventListener('gm-printer-select-region', this.handleSelectedRegion)
-  }
-
-  componentWillUnmount () {
-    window.document.removeEventListener('gm-printer-select-region', this.handleSelectedRegion)
-  }
-
-  handleSelectedRegion = e => {
-    const { selected } = e.detail
-    this.props.printerStore.setSelectedRegion(selected)
   }
 
   render () {
