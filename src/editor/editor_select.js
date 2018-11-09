@@ -44,13 +44,6 @@ class EditorSelector extends React.Component {
         </Flex>
 
         <Flex alignCenter className='gm-padding-top-5'>
-          <div>模板样式：</div>
-          <Select value={page.type} onChange={this.handlePageType}>
-            {_.map(pageTypeMap, (v, k) => <Option key={k} value={k}>{v.name}</Option>)}
-          </Select>
-        </Flex>
-
-        <Flex alignCenter className='gm-padding-top-5'>
           <div>打印规格：</div>
           <Select value={page.type} onChange={this.handlePageType}>
             {_.map(pageTypeMap, (v, k) => <Option key={k} value={k}>{v.name}</Option>)}

@@ -4,13 +4,6 @@ import editStore from './store'
 import _ from 'lodash'
 import { Hr } from './component'
 
-function isSubtotalShow (name) {
-  if (!name) return false
-
-  const arr = name.split('.')
-  return _.includes(arr, 'table') ? editStore.config.contents[arr[2]].subtotal.show : false
-}
-
 /**
  * 是否存在每页合计按钮,非异常明细才有按钮
  * @param name => ContextMenu 的 this.state.name
@@ -122,9 +115,6 @@ class ContextMenu extends React.Component {
     const { name } = this.state
 
     editStore.setSubtotalShow(name)
-    this.setState({
-      name: null
-    })
   }
 
   handleAddContent = (diff, type) => {
@@ -195,11 +185,12 @@ class ContextMenu extends React.Component {
     }
 
     const arr = name.split('.')
-    const dataKey = editStore.config.contents[arr[2]].dataKey
+    const { dataKey, subtotal } = editStore.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
 
     const isMultiActive = keyArr.includes('multi')
     const isCategoryActive = keyArr.includes('category')
+    const isSubtotalActive = subtotal.show
 
     return (
       <React.Fragment>
@@ -209,7 +200,7 @@ class ContextMenu extends React.Component {
         <div onClick={this.handleChangeTableDataKey.bind(this, 'category')}
           className={isCategoryActive ? 'active' : ''}>商品分类
         </div>
-        <div onClick={this.handleSubtotal} className={isSubtotalShow(name) ? 'active' : ''}>每页合计</div>
+        <div onClick={this.handleSubtotal} className={isSubtotalActive ? 'active' : ''}>每页合计</div>
       </React.Fragment>
     )
   }
@@ -219,16 +210,17 @@ class ContextMenu extends React.Component {
       <React.Fragment>
         {this.renderOrderActionBtn()}
 
+        <Hr/>
         <div onClick={this.handleRemove}>移除列</div>
-        <React.Fragment>
-          <Hr/>
-          <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
-          <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
-          <div onClick={this.handleRemoveContent}>移除区域</div>
-          <Hr/>
-          <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
-          <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
-        </React.Fragment>
+
+        <Hr/>
+        <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
+        <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
+        <div onClick={this.handleRemoveContent}>移除区域</div>
+
+        <Hr/>
+        <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
+        <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
       </React.Fragment>
     )
   }

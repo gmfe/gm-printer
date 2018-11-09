@@ -53,7 +53,7 @@ class EditStore {
       } else if (k === 'contents') {
         return _.map(v, vv => {
           if (vv.type === 'table') {
-            return vv.columns.length + '_' + vv.className + '_' + vv.dataKey
+            return vv.columns.length + '_' + vv.className + '_' + vv.dataKey + '_' + vv.subtotal.show
           } else {
             return vv.style ? vv.style.height : ''
           }
