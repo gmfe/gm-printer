@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import ReactDOM from 'react-dom'
 import { dispatchMsg, getHeight, getTableColumnName, getWidth } from '../util'
 import { inject, observer } from 'mobx-react'
 import classNames from 'classnames'
@@ -12,6 +11,7 @@ import Big from 'big.js'
 class Table extends React.Component {
   constructor (props) {
     super(props)
+    this.ref = React.createRef()
     this.state = {
       index: null
     }
@@ -21,7 +21,7 @@ class Table extends React.Component {
     const { name, printerStore } = this.props
 
     if (!printerStore.ready) {
-      const $table = ReactDOM.findDOMNode(this).querySelector('table')
+      const $table = this.ref.current.querySelector('table')
       const tHead = $table.querySelector('thead')
       const ths = tHead.querySelectorAll('th') || []
       const trs = $table.querySelectorAll('tbody tr') || []
@@ -188,6 +188,7 @@ class Table extends React.Component {
 
     return (
       <div
+        ref={this.ref}
         className={classNames(
           'gm-printer-table',
           'gm-printer-table-classname-' + (className || 'default'),

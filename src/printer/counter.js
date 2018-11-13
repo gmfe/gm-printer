@@ -1,16 +1,20 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react/index'
 import { getHeight } from '../util'
-import ReactDOM from 'react-dom'
 
 @inject('printerStore')
 @observer
 class Counter extends React.Component {
+  constructor () {
+    super()
+    this.ref = React.createRef()
+  }
+
   componentDidMount () {
     const { printerStore, config: { show } } = this.props
 
     if (!printerStore.ready) {
-      const $dom = ReactDOM.findDOMNode(this)
+      const $dom = this.ref.current
       if (show === true) {
         printerStore.setHeight('counter', getHeight($dom))
       } else {
@@ -26,7 +30,7 @@ class Counter extends React.Component {
     if (show === false) return null
 
     return (
-      <div className='gm-printer-count'>
+      <div className='gm-printer-count' ref={this.ref}>
         {
           _counter.map(item => (
             <div key={item.text} className='gm-printer-count-item'>

@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ReactDOM from 'react-dom'
 import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName, getHeight, pxAdd } from '../util'
@@ -10,11 +9,15 @@ import Block from './block'
 @inject('printerStore')
 @observer
 class Panel extends React.Component {
+  constructor () {
+    super()
+    this.ref = React.createRef()
+  }
   componentDidMount () {
     const { name, printerStore } = this.props
 
     if (!printerStore.ready) {
-      const $dom = ReactDOM.findDOMNode(this)
+      const $dom = this.ref.current
 
       printerStore.setHeight(name, getHeight($dom))
     }
@@ -60,6 +63,7 @@ class Panel extends React.Component {
 
     return (
       <div
+        ref={this.ref}
         className={classnames(
           'gm-printer-panel',
           `gm-printer-${name}`,
