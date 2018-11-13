@@ -1,10 +1,8 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import _ from 'lodash'
-import Clipboard from 'clipboard'
-import { fontSizeList, borderStyleList } from '../config'
+import { borderStyleList, fontSizeList } from '../config'
 
 class IconAlign extends React.Component {
   render () {
@@ -334,30 +332,7 @@ class Hr extends React.Component {
   }
 }
 
-class Copy extends React.Component {
-  componentDidMount () {
-    this.clipboard = new Clipboard(ReactDOM.findDOMNode(this), {
-      text: () => this.props.text
-    })
-
-    this.clipboard.on('success', () => {
-    })
-
-    this.clipboard.on('error', () => {
-    })
-  }
-
-  componentWillUnmount () {
-    this.clipboard.destroy()
-  }
-
-  render () {
-    return this.props.children
-  }
-}
-
 export {
-  Copy,
   Text,
   Textarea,
   TextPX,
