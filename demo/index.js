@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import config from '../demo/config.json'
 import { Editor } from '../src'
 import 'gm-xfont/iconfont.css'
+import '../node_modules/react-gm/src/index.less'
 
 class App extends React.Component {
   constructor (props) {

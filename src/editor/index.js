@@ -1,5 +1,3 @@
-import './style.less'
-
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
@@ -14,6 +12,8 @@ import EditorField from './editor_field'
 import EditorAddField from './editor_add_field'
 import ContextMenu from './context_menu'
 import mockData from './mock'
+
+import './style.less'
 
 insertCSS(getCSS())
 
