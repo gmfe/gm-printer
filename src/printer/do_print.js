@@ -54,14 +54,13 @@ function toDoPrint ({ data, config }) {
   })
 }
 
-function toDoPrintBatch ({ datas, config }) {
+function toDoPrintBatch (list) {
   return new window.Promise(resolve => {
     const $app = $printer.contentWindow.document.getElementById('appContainer')
     ReactDOM.unmountComponentAtNode($app)
     ReactDOM.render((
       <BatchPrinter
-        config={config}
-        datas={datas}
+        list={list}
         onReady={() => {
           $printer.contentWindow.print()
           resolve()
@@ -77,10 +76,10 @@ function doPrint ({ data, config }) {
   return toDoPrint({ data, config })
 }
 
-function doBatchPrint ({ datas, config }) {
+function doBatchPrint (list) {
   init()
 
-  toDoPrintBatch({ datas, config })
+  toDoPrintBatch(list)
 }
 
 export {

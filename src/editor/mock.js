@@ -1,4 +1,5 @@
-const mockData = {
+export default {
+  '__gm_printer_data_type': 'order',
   'date_time': '2018-08-29 19:21:30',
   'address': '南山大道12号',
   'carrier': '',
@@ -890,5 +891,3 @@ const mockData = {
   'freight': 12.0,
   'address_sign_id': '30200100000'
 }
-
-export default mockData

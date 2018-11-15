@@ -11,7 +11,7 @@ import EditorSelect from './editor_select'
 import EditorField from './editor_field'
 import EditorAddField from './editor_add_field'
 import ContextMenu from './context_menu'
-import mockData from './mock'
+import mockData from './data'
 
 import './style.less'
 

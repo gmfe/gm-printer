@@ -11,23 +11,20 @@ class BatchPrinter extends React.Component {
 
   handleReady = () => {
     this.ready++
-    if (this.ready === this.props.datas.length) {
+    if (this.ready === this.props.list.length) {
       this.props.onReady()
     }
   }
 
   render () {
-    const {
-      config,
-      datas
-    } = this.props
+    const { list } = this.props
 
     return (
       <div>
-        {_.map(datas, (v, i) => (
+        {_.map(list, ({ config, data }, i) => (
           <Printer
             key={i}
-            data={datas[i]}
+            data={data}
             config={config}
             onReady={this.handleReady}
           />
@@ -38,8 +35,7 @@ class BatchPrinter extends React.Component {
 }
 
 BatchPrinter.propTypes = {
-  config: PropTypes.object.isRequired,
-  datas: PropTypes.array,
+  list: PropTypes.array.isRequired,
   onReady: PropTypes.func
 }
 
