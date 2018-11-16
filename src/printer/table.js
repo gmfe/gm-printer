@@ -156,7 +156,7 @@ class Table extends React.Component {
             if (special) {
               return (
                 <tr key={i}>
-                  <td colSpan={99} style={{ fontWeight: 'bold' }}>{special.category_title_1}小计：{special.total}</td>
+                  <td colSpan={99} style={{ fontWeight: 'bold' }}>{special.text}</td>
                 </tr>
               )
             }

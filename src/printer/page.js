@@ -26,6 +26,7 @@ class Page extends React.Component {
     // -3px 是避免运算误差而溢出
     return (
       <div ref={this.ref} className='gm-printer-page' style={{
+        boxSizing: 'content-box',
         width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
         height: `calc(${height} - ${paddingTop} - ${paddingBottom} - 3px)`,
         padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`

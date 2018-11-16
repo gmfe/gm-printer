@@ -43,8 +43,8 @@ function generateOrder (data) {
     '异常金额': data.abnormal_money,
     '应付金额': data.total_pay,
 
-    '税额_基本单位': '', // 商品税额（基本单位）加总, 由下面的函数算
-    '税额_销售单位': '',
+    '税额_基本单位': data.total_tax, // 商品税额（基本单位）加总
+    '税额_销售单位': data.total_sale_unit_tax,
 
     '商户公司': data.cname,
     '承运商': data.carrier,
@@ -102,7 +102,7 @@ function generateMultiData (list, categoryTotal) {
   return multiList
 }
 
-function toKey (data) {
+function order (data) {
   // 商品按分类排序
   const sortByCategory = _.sortBy(data.details, v => v.category_title_1)
 
@@ -121,18 +121,18 @@ function toKey (data) {
 
       '下单数': v.quantity + v.sale_unit_name,
       '出库数_基本单位': `${v.real_weight}${v.std_unit_name}`,
-      '出库数_销售单位': v.sale_ratio === 1 ? v.real_weight_std
+      '出库数_销售单位': v.sale_ratio === 1 ? v.real_weight
         : parseFloat(Big(v.real_weight).div(v.sale_ratio).toFixed(2)) + v.sale_unit_name,
 
       '税率': v.tax_rate ? Big(v.tax_rate).div(100).toFixed(2) + '%' : 0,
       '不含税单价_基本单位': v.sale_price_without_tax || 0,
       '不含税单价_销售单位': v.sale_price_without_tax ? Big(v.sale_price_without_tax).div(v.sale_ratio || 1).toFixed(2) : 0,
       '商品税额_基本单位': v.tax || 0,
-      '商品税额_销售单位': v.tax ? Big(v.tax).div(v.sale_ratio).toFixed(2) : 0, // TODO 后台重新提供
+      '商品税额_销售单位': v.sale_unit_tax || 0,
 
       '单价_基本单位': v.std_sale_price,
       '单价_销售单位': v.sale_price,
-      '原单价': 'xx', // TODO 报价单价格
+      '原单价': 'TODO后台提供', // TODO 报价单价格
 
       '应付金额': v.real_item_price,
       '应付金额_不含税': v.real_item_price_without_tax,
@@ -149,13 +149,8 @@ function toKey (data) {
   const kOrdersMulti = generateMultiData(kOrders)
 
   const kIdMap = {}
-  let taxSumStd = Big(0)
-  let taxSumSale = Big(0)
   _.each(kOrders, kSku => {
     kIdMap[kSku._origin.id] = kSku
-
-    taxSumSale = taxSumSale.plus(kSku['商品税额_销售单位'])
-    taxSumStd = taxSumStd.plus(kSku['商品税额_基本单位'])
   })
 
   /* ------------ 异常明细 ----------- */
@@ -188,8 +183,7 @@ function toKey (data) {
     _.each(value, v => (total = total.plus(v._origin.real_item_price)))
     const categoryTotal = {
       _special: {
-        category_title_1: key,
-        total: total.valueOf()
+        text: `${key}小计: ${total.valueOf()}`
       }
     }
 
@@ -211,6 +205,100 @@ function toKey (data) {
       abnormal: kAbnormal // 异常明细
     },
     _origin: data
+  }
+}
+
+function sku (data) {
+  // 司机装车信息(分拣方式: 八卦, 统配) => 只打印统配的!
+  const skuList = _.filter(data.sku_detail, o => o.sort_name === '统配')
+  const skuListAfterSort = _.sortBy(skuList, ['category_1_id', 'category_2_id'])
+  const skuGroup = _.groupBy(skuListAfterSort, 'category_1_name')
+
+  /* --------- 分类商品统计 ---------------- */
+  const counter = _.map(skuGroup, (o, k) => ({ text: k, len: o.length }))
+
+  /* --------- 分类商品 -------------------- */
+  function getDetail (sku) {
+    const len = sku.customer_detail.length
+    return _.flatten(_.map(sku.customer_detail, (customer, index) =>
+      [
+        `[${customer.sort_id || '-'}]${customer.customer_name}*`,
+        customer.sku_amount,
+        (index + 1) % 2 === 0 ? '\n' : len !== 1 && index !== len - 1 ? '+' : ''
+      ]
+    ))
+  }
+
+  let driverSku = []
+  _.forEach(skuGroup, (skuArr, categoryName) => {
+    const skuList = _.map(skuArr, sku => ({
+      '商品名称': sku.sku_name || '-',
+      '总计': sku.quantity + sku.std_unit || '-',
+      '分类': sku.category_2_name || '-',
+      '明细': getDetail(sku)
+    }))
+    // 每种分类的数量
+    const groupLength = skuGroup[categoryName].length
+    const categoryLen = {
+      _special: {
+        text: `${categoryName}: ${groupLength}`
+      }
+    }
+
+    driverSku = driverSku.concat(skuList, categoryLen)
+  })
+
+  return {
+    '配送司机': data.driver_name || '-',
+    '车牌号': data.car_num || '-',
+    '联系方式': data.driver_phone || '-',
+    '打印时间': moment().format('YYYY-MM-DD HH:mm:ss'),
+    _counter: counter,
+    _table: {
+      driver_sku: driverSku
+    },
+    _origin: data
+  }
+}
+
+function task (data) {
+  const taskList = _.sortBy(data.order_detail, 'sort_id')
+
+  const driverTask = _.map(taskList, o => {
+    return {
+      '序号': o.sort_id || '-',
+      '订单号': o.order_id || '-',
+      '商户名': o.customer_name || '-',
+      '收货地址': o.receive_address || '-',
+      '收货时间': moment(o.receive_begin_time).format('MM/DD-HH:mm') + '~\n' + moment(o.receive_end_time).format('MM/DD-HH:mm'),
+      '配送框数': '',
+      '回收框数': '',
+      '订单备注': ''
+    }
+  })
+
+  return {
+    '配送司机': data.driver_name || '-',
+    '车牌号': data.car_num || '-',
+    '联系方式': data.driver_phone || '-',
+    '打印时间': moment().format('YYYY-MM-DD HH:mm:ss'),
+    _table: {
+      driver_task: driverTask
+    },
+    _origin: data
+  }
+}
+
+function toKey (data) {
+  switch (data.__gm_printer_data_type) {
+    case 'order':
+      return order(data)
+    case 'sku':
+      return sku(data)
+    case 'task':
+      return task(data)
+    default:
+      return console.log('没有此类型数据')
   }
 }
 
