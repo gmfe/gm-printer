@@ -48,6 +48,9 @@ class TableField extends React.Component {
 
   render () {
     const { orders, abnormal } = this.props._table
+    const orderKeys = (orders && orders[0]) || []
+    const abnormalKeys = (abnormal && abnormal[0] && abnormal[0]._abnormal) || []
+
     return (
       <div>
         <Flex alignCenter>
@@ -56,7 +59,7 @@ class TableField extends React.Component {
 
         <div className='gm-bg-info'>商品表格:</div>
         <Flex wrap>
-          {_.map(orders[0], (v, key) => {
+          {_.map(orderKeys, (v, key) => {
             if (key !== '_origin') {
               return <FieldBtn name={key} key={key}
                 onClick={this.handleAddTableColumn.bind(this, key)}/>
@@ -66,7 +69,7 @@ class TableField extends React.Component {
 
         <div className='gm-bg-info'>异常表格:</div>
         <Flex wrap>
-          {_.map(abnormal[0]._abnormal, (v, key) => {
+          {_.map(abnormalKeys, (v, key) => {
             if (key !== '_origin') {
               return <FieldBtn name={key} key={key}
                 onClick={this.handleAddTableColumn.bind(this, key)}/>

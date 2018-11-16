@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import config from '../demo/config.json'
+import config from '../src/config_temp/default_config'
 import { Editor } from '../src'
 import 'gm-xfont/iconfont.css'
 import '../node_modules/react-gm/src/index.less'

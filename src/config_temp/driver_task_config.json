@@ -17,7 +17,7 @@
   "header": {
     "blocks": [
       {
-        "text": "配送装车清单",
+        "text": "配送任务清单",
         "style": {
           "position": "absolute",
           "left": "0px",
@@ -32,16 +32,16 @@
         "text": "配送司机: {{配送司机}}",
         "style": {
           "position": "absolute",
-          "left": "2px",
-          "top": "32px"
+          "left": "4px",
+          "top": "39px"
         }
       },
       {
         "text": "车牌号：{{车牌号}}",
         "style": {
           "position": "absolute",
-          "left": "232px",
-          "top": "52px"
+          "left": "154px",
+          "top": "39px"
         }
       },
       {
@@ -49,8 +49,8 @@
         "style": {
           "position": "absolute",
           "left": "",
-          "top": "52px",
-          "right": "9px"
+          "top": "39px",
+          "right": "11px"
         }
       },
       {
@@ -58,13 +58,13 @@
         "style": {
           "position": "absolute",
           "left": "",
-          "top": "30px",
-          "right": "0px"
+          "top": "39px",
+          "right": "297px"
         }
       }
     ],
     "style": {
-      "height": "118px"
+      "height": "57px"
     }
   },
   "counter": {
@@ -81,6 +81,7 @@
         {
           "head": "序号",
           "headStyle": {
+            "width": "2em",
             "textAlign": "center"
           },
           "text": "{{列.序号}}",
@@ -121,6 +122,7 @@
         {
           "head": "收货时间",
           "headStyle": {
+            "width": "92px",
             "textAlign": "center"
           },
           "text": "{{列.收货时间}}",

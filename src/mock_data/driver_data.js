@@ -161,5 +161,6 @@ export default {
   ],
   'driver_phone': '13512341234',
   'driver_name': 'min',
-  'car_num': '粤B54321'
+  'car_num': '粤B54321',
+  '__gm_printer_data_type': 'task'
 }

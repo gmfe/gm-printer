@@ -32,16 +32,16 @@
         "text": "配送司机: {{配送司机}}",
         "style": {
           "position": "absolute",
-          "left": "2px",
-          "top": "32px"
+          "left": "4px",
+          "top": "39px"
         }
       },
       {
         "text": "车牌号：{{车牌号}}",
         "style": {
           "position": "absolute",
-          "left": "232px",
-          "top": "52px"
+          "left": "154px",
+          "top": "39px"
         }
       },
       {
@@ -49,8 +49,8 @@
         "style": {
           "position": "absolute",
           "left": "",
-          "top": "52px",
-          "right": "9px"
+          "top": "39px",
+          "right": "11px"
         }
       },
       {
@@ -58,13 +58,13 @@
         "style": {
           "position": "absolute",
           "left": "",
-          "top": "30px",
-          "right": "0px"
+          "top": "39px",
+          "right": "297px"
         }
       }
     ],
     "style": {
-      "height": "118px"
+      "height": "57px"
     }
   },
   "counter": {
@@ -123,8 +123,7 @@
     }
   ],
   "sign": {
-    "blocks": [
-    ],
+    "blocks": [],
     "style": {
       "height": "0"
     }
