@@ -1,6 +1,6 @@
 import { version } from '../package.json'
 
-const printerJS = `//js.guanmai.cn/build/libs/gm-printer/${version}/build/printer.js` // eslint-disable-line
+const printerJS = `//js.guanmai.cn/build/libs/gm-printer_malai/${version}/build/printer.js` // eslint-disable-line
 
 const fontSizeList = [
   '12px',
