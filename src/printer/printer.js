@@ -86,7 +86,7 @@ class Printer extends React.Component {
         <Counter config={config.counter} pageIndex={0}/>
         {_.map(config.contents, (content, index) => {
           if (content.type === 'table') {
-            const list = printerStore.data._table[content.dataKey] || printerStore.data._table.orders
+            const list = printerStore.data._table[content.dataKey]
 
             return <Table
               key={`contents.table.${index}`}

@@ -1,4 +1,4 @@
-import { observable, action, configure } from 'mobx'
+import { action, configure, observable } from 'mobx'
 import _ from 'lodash'
 import { toKey } from './key'
 
@@ -98,49 +98,55 @@ class PrinterStore {
         let begin = 0
         let end = 0
 
-        // 必有表头
-        height += info.head.height
         // 如果显示每页小计,那么table高度多预留一行, 一行的高度默认26
         if (this.config.contents[index].subtotal.show) {
           height += 26
         }
 
-        while (end < info.body.heights.length) {
-          height += info.body.heights[end]
+        // 如果表格没有数据,那么轮一下个content
+        if (info.body.heights.length === 0) {
+          index++
+        } else {
+          // 表格有数据,必有表头(虽然表头高度可能为0)
+          height += info.head.height
 
-          // 如果没有多余空间了
-          if (height > this.pageHeight) {
-            // end 为 0 ，即只有表头，没有必要加进去，应放下一页显示
-            if (end !== 0) {
-              page.push({
-                type: 'table',
-                index,
-                begin,
-                end
-              })
-            }
+          while (end < info.body.heights.length) {
+            height += info.body.heights[end]
 
-            begin = end
+            // 如果没有多余空间了
+            if (height > this.pageHeight) {
+              // end 为 0 ，即只有表头，没有必要加进去，应放下一页显示
+              if (end !== 0) {
+                page.push({
+                  type: 'table',
+                  index,
+                  begin,
+                  end
+                })
+              }
 
-            // 此页完成任务
-            this.pages.push(page)
+              begin = end
 
-            // 为下页做好准备
-            page = []
-            height = allPagesHaveThisHeight + info.head.height
-          } else {
-            // 有空间，继续做下行
-            end++
+              // 此页完成任务
+              this.pages.push(page)
 
-            // 最后一行，把信息加入 page，并轮下一个contents
-            if (end === info.body.heights.length) {
-              page.push({
-                type: 'table',
-                index,
-                begin,
-                end
-              })
-              index++
+              // 为下页做好准备
+              page = []
+              height = allPagesHaveThisHeight + info.head.height
+            } else {
+              // 有空间，继续做下行
+              end++
+
+              // 最后一行，把信息加入 page，并轮下一个contents
+              if (end === info.body.heights.length) {
+                page.push({
+                  type: 'table',
+                  index,
+                  begin,
+                  end
+                })
+                index++
+              }
             }
           }
         }

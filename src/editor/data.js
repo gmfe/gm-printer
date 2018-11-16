@@ -139,7 +139,22 @@ export default {
     }
   ],
   'tax_number': 1,
-  'abnormals': [],
+  'abnormals': [
+    {
+      'text': '',
+      'type_text': '某异常原因',
+      'money_delta': 0,
+      'detail_id': 'D3628127',
+      'amount_delta': 0
+    },
+    {
+      'text': '',
+      'type_text': '某异常原因',
+      'money_delta': 0,
+      'detail_id': 'D4216198',
+      'amount_delta': 0
+    }
+  ],
   'settle_way': 1,
   'bill_address': null,
   'abnormal_money': 0.0,

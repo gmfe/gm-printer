@@ -106,7 +106,7 @@ class Table extends React.Component {
 
   renderDefault () {
     const { config: { dataKey, subtotal }, name, range, pageIndex, printerStore } = this.props
-    const tableData = printerStore.data._table[dataKey] || printerStore.data._table.orders
+    const tableData = printerStore.data._table[dataKey]
 
     // 每页小计
     let subtotalForEachPage = null
@@ -182,8 +182,22 @@ class Table extends React.Component {
     )
   }
 
+  renderEmptyTable () {
+    return (
+      <table>
+        <thead/>
+        <tbody>
+          <tr>
+            <td colSpan={99} style={{ fontWeight: 'bold' }}>没有数据</td>
+          </tr>
+        </tbody>
+      </table>
+    )
+  }
+
   render () {
-    const { config: { className }, name, placeholder, printerStore } = this.props
+    const { config: { className, dataKey }, name, placeholder, printerStore } = this.props
+    const tableData = printerStore.data._table[dataKey]
     const active = printerStore.selectedRegion === name
 
     return (
@@ -198,7 +212,7 @@ class Table extends React.Component {
         data-placeholder={placeholder}
         onClick={this.handleSelectedRegion}
       >
-        {this.renderDefault()}
+        {tableData.length ? this.renderDefault() : this.renderEmptyTable()}
       </div>
     )
   }
