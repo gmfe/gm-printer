@@ -1,0 +1,148 @@
+{
+  "name": "配送装车清单",
+  "page": {
+    "type": "A4",
+    "printDirection": "vertical",
+    "size": {
+      "width": "210mm",
+      "height": "297mm"
+    },
+    "gap": {
+      "paddingTop": "3mm",
+      "paddingRight": "3mm",
+      "paddingBottom": "3mm",
+      "paddingLeft": "3mm"
+    }
+  },
+  "header": {
+    "blocks": [
+      {
+        "text": "配送装车清单",
+        "style": {
+          "position": "absolute",
+          "left": "0px",
+          "top": "0px",
+          "right": "0px",
+          "textAlign": "center",
+          "fontSize": "26px",
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "text": "配送司机: {{配送司机}}",
+        "style": {
+          "position": "absolute",
+          "left": "2px",
+          "top": "32px"
+        }
+      },
+      {
+        "text": "车牌号：{{车牌号}}",
+        "style": {
+          "position": "absolute",
+          "left": "232px",
+          "top": "52px"
+        }
+      },
+      {
+        "text": "打印时间：{{打印时间}}",
+        "style": {
+          "position": "absolute",
+          "left": "",
+          "top": "52px",
+          "right": "9px"
+        }
+      },
+      {
+        "text": "联系方式：{{联系方式}}",
+        "style": {
+          "position": "absolute",
+          "left": "",
+          "top": "30px",
+          "right": "0px"
+        }
+      }
+    ],
+    "style": {
+      "height": "118px"
+    }
+  },
+  "counter": {
+    "show": true
+  },
+  "contents": [
+    {
+      "type": "table",
+      "dataKey": "driver_sku",
+      "subtotal": {
+        "show": false
+      },
+      "columns": [
+        {
+          "head": "商品名称",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.商品名称}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "总计",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.总计}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "分类",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.分类}}",
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "head": "明细",
+          "headStyle": {
+            "textAlign": "center"
+          },
+          "text": "{{列.明细}}",
+          "style": {
+            "textAlign": "center"
+          }
+        }
+      ],
+      "className": ""
+    }
+  ],
+  "sign": {
+    "blocks": [
+    ],
+    "style": {
+      "height": "0"
+    }
+  },
+  "footer": {
+    "blocks": [
+      {
+        "text": "页码： {{当前页码}} / {{页码总数}}",
+        "style": {
+          "position": "absolute",
+          "left": "",
+          "top": "-0.15625px",
+          "right": "0px"
+        }
+      }
+    ],
+    "style": {
+      "height": "15px"
+    }
+  }
+}
