@@ -31,8 +31,6 @@ class EditorTitle extends React.Component {
           <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>基本信息
         </Flex>
         <div>
-          <button className='btn btn-primary btn-md' onClick={this.handleTestPrint}>打印
-          </button>
           <button className='btn btn-primary btn-md' onClick={this.handleUndo} disabled={!editStore.hasUndo}>撤销
           </button>
           <div className='gm-gap-10'/>
