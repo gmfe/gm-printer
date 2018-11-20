@@ -1,5 +1,5 @@
-import _ from 'lodash'
 import moment from 'moment'
+import _ from 'lodash'
 import Big from 'big.js'
 
 const SETTLE_WAY = {
@@ -7,7 +7,88 @@ const SETTLE_WAY = {
   1: '先货后款'
 }
 
-function generateOrder (data) {
+/* i18n-scan-disable */
+const coverDigit2Uppercase = (n) => {
+  if (_.isNil(n) || _.isNaN(n)) {
+    return '-'
+  }
+
+  const fraction = ['角', '分']
+
+  const digit = [
+    '零', '壹', '贰', '叁', '肆',
+    '伍', '陆', '柒', '捌', '玖'
+  ]
+
+  const unit = [
+    ['元', '万', '亿'],
+    ['', '拾', '佰', '仟']
+  ]
+
+  const head = n < 0 ? '欠' : ''
+
+  n = Math.abs(n)
+
+  let left = ''; let right = ''
+  let i = 0
+  for (i; i < fraction.length; i++) {
+    right += digit[Math.floor(Big(n).times(Big(10).pow(i + 1)).mod(10).toString())] + fraction[i]
+  }
+
+  right = right.replace(/(零.)+$/, '').replace(/(零.)/, '零') || '整'
+
+  n = Math.floor(n)
+
+  for (i = 0; i < unit[0].length && n > 0; i++) {
+    let p = ''
+    for (let j = 0; j < unit[1].length && n > 0; j++) {
+      p = digit[n % 10] + unit[1][j] + p
+      n = Math.floor(n / 10)
+    }
+    left = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + left
+  }
+
+  return head + (left.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零') + right).replace(/^整$/, '零元整')
+}
+
+/**
+ * 生成多列商品展示数据
+ * @param list
+ * @param categoryTotal
+ * @return {Array}
+ */
+function generateMultiData (list, categoryTotal) {
+  let multiList = []
+  // 假设skuGroup = [{a: 1}, {a:2}, {a: 3}, {a: 4}], 转化为 [{a:1, a#2:3}, {a:2, a#2: 4}]
+  const skuGroup = list
+
+  let index = 0
+  const len = skuGroup.length
+
+  while (index < len) {
+    const sku1 = skuGroup[index]
+    const sku2 = {}
+    _.each(skuGroup[1 + index], (val, key) => {
+      sku2[key + '$2'] = val
+    })
+
+    multiList.push({
+      ...sku1,
+      ...sku2
+    })
+
+    index += 2
+  }
+
+  if (categoryTotal) {
+    multiList.push(categoryTotal)
+  }
+
+  return multiList
+}
+
+// 非表格数据
+function generateCommon (data) {
   // 收货人信息分两种情况
   let customerInfo = {}
   const originCustomer = data.origin_customer
@@ -66,48 +147,23 @@ function generateOrder (data) {
   }
 }
 
-/**
- * 生成多列商品展示数据
- * @param list
- * @param categoryTotal
- * @return {Array}
- */
-function generateMultiData (list, categoryTotal) {
-  let multiList = []
-  // 假设skuGroup = [{a: 1}, {a:2}, {a: 3}, {a: 4}], 转化为 [{a:1, a#2:3}, {a:2, a#2: 4}]
-  const skuGroup = list
+// 大写金额数据
+function generateUpperPrice (data) {
+  return {
+    '下单金额_大写': coverDigit2Uppercase(data.total_price),
+    '出库金额_大写': coverDigit2Uppercase(data.real_price),
+    '运费_大写': coverDigit2Uppercase(data.freight),
+    '异常金额_大写': coverDigit2Uppercase(data.abnormal_money),
+    '应付金额_大写': coverDigit2Uppercase(data.total_pay),
 
-  let index = 0
-  const len = skuGroup.length
-
-  while (index < len) {
-    const sku1 = skuGroup[index]
-    const sku2 = {}
-    _.each(skuGroup[1 + index], (val, key) => {
-      sku2[key + '$2'] = val
-    })
-
-    multiList.push({
-      ...sku1,
-      ...sku2
-    })
-
-    index += 2
+    '税额_基本单位_大写': coverDigit2Uppercase(data.total_tax), // 商品税额（基本单位）加总
+    '税额_销售单位_大写': coverDigit2Uppercase(data.total_sale_unit_tax)
   }
-
-  if (categoryTotal) {
-    multiList.push(categoryTotal)
-  }
-
-  return multiList
 }
 
-function order (data) {
-  // 商品按分类排序
-  const sortByCategory = _.sortBy(data.details, v => v.category_title_1)
-
-  /* ----------- 普通订单  ------------ */
-  const kOrders = _.map(sortByCategory, (v, index) => {
+// 普通订单数据
+function generateOrderData (list) {
+  return _.map(list, (v, index) => {
     return {
       '序号': index + 1,
       '商品ID': v.id,
@@ -144,17 +200,12 @@ function order (data) {
       _origin: v
     }
   })
+}
 
-  /* ----------- 一行2列普通订单 ---------- */
-  const kOrdersMulti = generateMultiData(kOrders)
-
-  const kIdMap = {}
-  _.each(kOrders, kSku => {
-    kIdMap[kSku._origin.id] = kSku
-  })
-
-  /* ------------ 异常明细 ----------- */
-  const kAbnormal = _.map(data.abnormals.concat(data.refunds), v => {
+// 异常商品表单
+function generateAbnormalData (data, kIdMap) {
+  // 异常表单 = 退货商品 + 异常商品
+  return _.map(data.abnormals.concat(data.refunds), v => {
     const abnormal = {
       '异常原因': v.type_text,
       '异常描述': v.text,
@@ -162,22 +213,39 @@ function order (data) {
       '异常金额': v.money_delta
     }
     return {
-      ...kIdMap[v.detail_id],
+      ...kIdMap[v.detail_id], // 异常商品的商品信息
       ...abnormal,
       _origin: v,
-      _abnormal: abnormal
+      _abnormal: abnormal // editor_add_field用到这些字段
     }
   })
+}
 
-  const group = _.groupBy(kOrders, v => v._origin.category_title_1)
+// 商品分类统计
+function generateCounter (groupByCategory1) {
+  return _.map(groupByCategory1, (o, k) => ({text: k, len: o.length}))
+}
 
-  /* --------- 分类商品统计 ---------------- */
-  const counter = _.map(group, (o, k) => ({ text: k, len: o.length }))
+function order (data) {
+  // 商品按分类排序
+  const sortByCategory1 = _.sortBy(data.details, v => v.category_title_1)
 
-  /* -------- 单列分类商品 和 一行2列分类商品 ------- */
+  /* ----------- 普通订单  ------------ */
+  const kOrders = generateOrderData(sortByCategory1)
+
+  // 商品map
+  const kIdMap = _.reduce(kOrders, (res, cur) => {
+    res[cur._origin.id] = cur
+    return res
+  }, {})
+
+  // 按一级分类分组
+  const groupByCategory1 = _.groupBy(kOrders, v => v._origin.category_title_1)
+
+  /* -------- 单列分类商品 和 一行展示两商品的分类的表单 ------- */
   let kCategory = []
   let kCategoryMulti = []
-  _.forEach(group, (value, key) => {
+  _.forEach(groupByCategory1, (value, key) => {
     // 分类小计
     let total = Big(0)
     _.each(value, v => (total = total.plus(v._origin.real_item_price)))
@@ -195,113 +263,18 @@ function order (data) {
   })
 
   return {
-    ...generateOrder(data),
-    _counter: counter,
+    common: generateCommon(data),
+    _upperPrice: generateUpperPrice(data),
+    _counter: generateCounter(groupByCategory1), // 分类商品统计
     _table: {
       orders: kOrders, // 商品
-      orders_multi: kOrdersMulti, // 多列商品
+      orders_multi: generateMultiData(kOrders), // 一行展示两商品的普通订单
       orders_category: kCategory, // 分类的商品
       orders_category_multi: kCategoryMulti, // 分类的多列的商品
-      abnormal: kAbnormal // 异常明细
+      abnormal: generateAbnormalData(data, kIdMap) // 异常明细
     },
     _origin: data
   }
 }
 
-function sku (data) {
-  // 司机装车信息(分拣方式: 八卦, 统配) => 只打印统配的!
-  const skuList = _.filter(data.sku_detail, o => o.sort_name === '统配')
-  const skuListAfterSort = _.sortBy(skuList, ['category_1_id', 'category_2_id'])
-  const skuGroup = _.groupBy(skuListAfterSort, 'category_1_name')
-
-  /* --------- 分类商品统计 ---------------- */
-  const counter = _.map(skuGroup, (o, k) => ({ text: k, len: o.length }))
-
-  /* --------- 分类商品 -------------------- */
-  function getDetail (sku) {
-    const len = sku.customer_detail.length
-    return _.flatten(_.map(sku.customer_detail, (customer, index) =>
-      [
-        `[${customer.sort_id || '-'}]${customer.customer_name}*`,
-        customer.sku_amount,
-        (index + 1) % 2 === 0 ? '\n' : len !== 1 && index !== len - 1 ? '+' : ''
-      ]
-    ))
-  }
-
-  let driverSku = []
-  _.forEach(skuGroup, (skuArr, categoryName) => {
-    const skuList = _.map(skuArr, sku => ({
-      '商品名称': sku.sku_name || '-',
-      '总计': sku.quantity + sku.std_unit || '-',
-      '分类': sku.category_2_name || '-',
-      '明细': getDetail(sku)
-    }))
-    // 每种分类的数量
-    const groupLength = skuGroup[categoryName].length
-    const categoryLen = {
-      _special: {
-        text: `${categoryName}: ${groupLength}`
-      }
-    }
-
-    driverSku = driverSku.concat(skuList, categoryLen)
-  })
-
-  return {
-    '配送司机': data.driver_name || '-',
-    '车牌号': data.car_num || '-',
-    '联系方式': data.driver_phone || '-',
-    '打印时间': moment().format('YYYY-MM-DD HH:mm:ss'),
-    _counter: counter,
-    _table: {
-      driver_sku: driverSku
-    },
-    _origin: data
-  }
-}
-
-function task (data) {
-  const taskList = _.sortBy(data.order_detail, 'sort_id')
-
-  const driverTask = _.map(taskList, o => {
-    return {
-      '序号': o.sort_id || '-',
-      '订单号': o.order_id || '-',
-      '商户名': o.customer_name || '-',
-      '收货地址': o.receive_address || '-',
-      '收货时间': moment(o.receive_begin_time).format('MM/DD-HH:mm') + '~\n' + moment(o.receive_end_time).format('MM/DD-HH:mm'),
-      '配送框数': '',
-      '回收框数': '',
-      '订单备注': ''
-    }
-  })
-
-  return {
-    '配送司机': data.driver_name || '-',
-    '车牌号': data.car_num || '-',
-    '联系方式': data.driver_phone || '-',
-    '打印时间': moment().format('YYYY-MM-DD HH:mm:ss'),
-    _table: {
-      driver_task: driverTask
-    },
-    _origin: data
-  }
-}
-
-function toKey (data) {
-  switch (data.__gm_printer_data_type) {
-    case 'order':
-      return order(data)
-    case 'sku':
-      return sku(data)
-    case 'task':
-      return task(data)
-    default:
-      return console.log('没有此类型数据')
-  }
-}
-
-export {
-  toKey
-}
+export default order

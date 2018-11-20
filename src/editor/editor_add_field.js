@@ -1,7 +1,7 @@
 import React from 'react'
 import { Flex } from 'react-gm'
 import PropTypes from 'prop-types'
-import { toKey } from '../printer/key'
+import toKey from '../data_2_key'
 import _ from 'lodash'
 import editStore from './store'
 import { observer } from 'mobx-react'
@@ -22,7 +22,7 @@ class OrderField extends React.Component {
   }
 
   render () {
-    const { order } = this.props
+    const {data} = this.props
 
     return (
       <div>
@@ -32,7 +32,7 @@ class OrderField extends React.Component {
 
         <div className='gm-bg-info'>订单信息:</div>
         <Flex wrap>
-          {_.map(order, (v, key) => <FieldBtn name={key} key={key}
+          {_.map(data, (v, key) => <FieldBtn name={key} key={key}
             onClick={this.handleAddOrderField.bind(this, key)}/>)}
         </Flex>
       </div>
@@ -47,7 +47,7 @@ class TableField extends React.Component {
   }
 
   render () {
-    const { orders, abnormal } = this.props._table
+    const {orders, abnormal} = this.props.data
     const orderKeys = (orders && orders[0]) || []
     const abnormalKeys = (abnormal && abnormal[0] && abnormal[0]._abnormal) || []
 
@@ -84,16 +84,15 @@ class TableField extends React.Component {
 class EditorAddField extends React.Component {
   render () {
     const newData = toKey(this.props.data)
-    // eslint-disable-next-line
-    const {_counter, _origin, _table, ...order} = newData
+    const {_table, common} = newData
 
     let content = null
     if (editStore.selectedRegion === null) {
       content = null
     } else if (editStore.computedRegionIsTable) {
-      content = <TableField _table={_table}/>
+      content = <TableField data={_table}/>
     } else {
-      content = <OrderField order={order}/>
+      content = <OrderField data={common}/>
     }
 
     return <div className='gm-padding-10 gm-overflow-y'>{content}</div>

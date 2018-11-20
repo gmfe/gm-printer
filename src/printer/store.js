@@ -1,8 +1,8 @@
 import { action, configure, observable } from 'mobx'
 import _ from 'lodash'
-import { toKey } from './key'
+import toKey from '../data_2_key'
 
-configure({ enforceActions: true })
+configure({enforceActions: 'observed'})
 
 class PrinterStore {
   @observable
@@ -181,7 +181,8 @@ class PrinterStore {
       return _.template(text, {
         interpolate: /{{([\s\S]+?)}}/g
       })({
-        ...this.data,
+        ...this.data.common,
+        ...this.data._upperPrice,
         '当前页码': pageIndex + 1,
         '页码总数': this.pages.length
       })
@@ -199,7 +200,7 @@ class PrinterStore {
       return _.template(text, {
         interpolate: /{{([\s\S]+?)}}/g
       })({
-        ...this.data,
+        ...this.data.common,
         '列': list[index],
         '当前页码': pageIndex + 1,
         '页码总数': this.pages.length

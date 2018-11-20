@@ -7,7 +7,7 @@ import UndoManager from './undo_manager'
 const undoManager = new UndoManager()
 undoManager.setLimit(30)
 
-configure({ enforceActions: true })
+configure({enforceActions: 'observed'})
 
 class EditStore {
   @observable
@@ -101,7 +101,7 @@ class EditStore {
 
   @action
   setPagePrintDirection (value) {
-    let { size, printDirection } = this.config.page
+    let {size, printDirection} = this.config.page
     // 打印方向切换了, 宽高互换
     if (value !== printDirection) {
       this.config.page = {
@@ -127,7 +127,7 @@ class EditStore {
 
   @action
   setSizePageType (type) {
-    const { size, gap } = pageTypeMap[type]
+    const {size, gap} = pageTypeMap[type]
 
     this.config.page = {
       ...this.config.page,
@@ -156,18 +156,18 @@ class EditStore {
 
     const contentRegions = this.config.contents.map((v, i) => {
       if (v.type === 'table') {
-        return { value: `contents.table.${i}`, text: `区域${i}` }
+        return {value: `contents.table.${i}`, text: `区域${i}`}
       } else {
-        return { value: `contents.panel.${i}`, text: `区域${i}` }
+        return {value: `contents.panel.${i}`, text: `区域${i}`}
       }
     })
 
     return [
-      { value: 'all', text: '请选择区域' },
-      { value: 'header', text: '页眉' },
+      {value: 'all', text: '请选择区域'},
+      {value: 'header', text: '页眉'},
       ...contentRegions,
-      { value: 'sign', text: '签名' },
-      { value: 'footer', text: '页脚' }
+      {value: 'sign', text: '签名'},
+      {value: 'footer', text: '页脚'}
     ]
   }
 
@@ -355,7 +355,7 @@ class EditStore {
   @action
   changeTableDataKey (name, key) {
     const arr = name.split('.')
-    const { dataKey } = this.config.contents[arr[2]]
+    const {dataKey} = this.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
     let newDataKey
     // 当前有这个key则去掉
@@ -380,7 +380,7 @@ class EditStore {
   exchangeTableColumn (target, source) {
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
-      const { columns } = this.config.contents[arr[2]]
+      const {columns} = this.config.contents[arr[2]]
 
       if (target >= 0 && target < columns.length) {
         exchange(columns, target, source)
@@ -408,7 +408,7 @@ class EditStore {
   addTableColumn (index, field) {
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
-      const { columns } = this.config.contents[arr[2]]
+      const {columns} = this.config.contents[arr[2]]
 
       index = index === undefined ? columns.length : index
 
