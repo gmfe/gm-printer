@@ -17,11 +17,15 @@ function task (data) {
     }
   })
 
-  return {
+  const common = {
     '配送司机': data.driver_name || '-',
     '车牌号': data.car_num || '-',
     '联系方式': data.driver_phone || '-',
-    '打印时间': moment().format('YYYY-MM-DD HH:mm:ss'),
+    '打印时间': moment().format('YYYY-MM-DD HH:mm:ss')
+  }
+
+  return {
+    common,
     _table: {
       driver_task: driverTask
     },
