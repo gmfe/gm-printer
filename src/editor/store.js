@@ -473,6 +473,8 @@ class EditStore {
   @action
   addContent (name, index, type) {
     const arr = name.split('.')
+    // 添加之前清除selected,否则content改变之后,computedSelectedSource会计算错误
+    this.selected = null
     if ((arr.length === 3 || arr.length === 5) && arr[0] === 'contents') {
       if (index >= 0 && index <= this.config.contents.length) {
         if (type === 'table') {
