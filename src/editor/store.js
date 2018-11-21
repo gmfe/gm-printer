@@ -530,7 +530,7 @@ class EditStore {
   @action
   removeContent (name) {
     const arr = name.split('.')
-    if (arr.length === 3 && arr[0] === 'contents') {
+    if (arr[0] === 'contents') {
       // 保留一个
       if (this.config.contents.length > 1) {
         this.config.contents.splice(arr[2], 1)
