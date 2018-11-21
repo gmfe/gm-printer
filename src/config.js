@@ -103,11 +103,6 @@ const blockTypeList = [
   { value: 'image', text: '插入图片' }
 ]
 
-const configTempList = [
-  { value: '1', text: '模板一', config: require('./config_temp/1.json') },
-  { value: '2', text: '模板二', config: require('./config_temp/2.json') }
-]
-
 export {
   fontSizeList,
   borderStyleList,
@@ -116,7 +111,6 @@ export {
   panelList,
   blockTypeList,
   pageTypeMap,
-  configTempList,
   printDirectionList,
   counterStateList
 }

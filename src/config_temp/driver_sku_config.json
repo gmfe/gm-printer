@@ -2,6 +2,7 @@
   "name": "配送装车清单",
   "page": {
     "type": "A4",
+    "name": "A4",
     "printDirection": "vertical",
     "size": {
       "width": "210mm",

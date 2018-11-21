@@ -2,6 +2,7 @@
   "name": "默认模板",
   "page": {
     "type": "A4",
+    "name": "A4",
     "printDirection": "vertical",
     "size": {
       "width": "210mm",

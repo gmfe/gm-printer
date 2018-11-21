@@ -127,13 +127,14 @@ class EditStore {
 
   @action
   setSizePageType (type) {
-    const {size, gap} = pageTypeMap[type]
+    const {size, gap, name} = pageTypeMap[type]
 
     this.config.page = {
       ...this.config.page,
       type,
       size,
-      gap
+      gap,
+      name
     }
   }
 
