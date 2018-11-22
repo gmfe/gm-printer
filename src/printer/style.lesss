@@ -1,7 +1,7 @@
 html,
 body {
   background: whitesmoke;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .gm-printer {
