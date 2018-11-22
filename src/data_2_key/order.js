@@ -8,7 +8,7 @@ const SETTLE_WAY = {
 }
 
 /* i18n-scan-disable */
-const coverDigit2Uppercase = (n) => {
+const coverDigit2Uppercase = n => {
   if (_.isNil(n) || _.isNaN(n)) {
     return '-'
   }
@@ -51,6 +51,8 @@ const coverDigit2Uppercase = (n) => {
 
   return head + (left.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零') + right).replace(/^整$/, '零元整')
 }
+
+const price = n => Big(n || 0).toFixed(2)
 
 /**
  * 生成多列商品展示数据
@@ -118,14 +120,14 @@ function generateCommon (data) {
     '当前时间': moment().format('YYYY-MM-DD HH:mm:ss'),
     '订单备注': data.remark,
 
-    '下单金额': data.total_price,
-    '出库金额': data.real_price,
-    '运费': data.freight,
-    '异常金额': data.abnormal_money,
-    '应付金额': data.total_pay,
+    '下单金额': price(data.total_price),
+    '出库金额': price(data.real_price),
+    '运费': price(data.freight),
+    '异常金额': price(data.abnormal_money),
+    '应付金额': price(data.total_pay),
 
-    '税额_基本单位': data.total_tax, // 商品税额（基本单位）加总
-    '税额_销售单位': data.total_sale_unit_tax,
+    '税额_基本单位': price(data.total_tax), // 商品税额（基本单位）加总
+    '税额_销售单位': price(data.total_sale_unit_tax),
 
     '商户公司': data.cname,
     '承运商': data.carrier,
@@ -136,8 +138,8 @@ function generateCommon (data) {
     '城区': data.area_l1 || '-',
     '街道': data.area_l2 || '-',
 
-    '司机名称': data.driver_name,
-    '司机电话': data.driver_phone,
+    '司机名称': data.driver_name || '-',
+    '司机电话': data.driver_phone || '-',
     '销售经理': data.sale_manager.name || '-',
     '销售经理电话': data.sale_manager.phone || '-',
 
@@ -173,6 +175,9 @@ function generateOrderData (list) {
       'SPU名称': v.spu_name,
       '规格': v.std_unit_name === v.sale_unit_name && v.sale_ratio === 1 ? `按${v.sale_unit_name}`
         : `${v.sale_ratio}${v.std_unit_name}/${v.sale_unit_name}`,
+      '自定义编码': v.outer_id,
+      '商品描述': v.desc,
+      '备注': v.remark, // 商品备注
 
       '下单数': v.quantity + v.sale_unit_name,
       '出库数_基本单位': `${v.real_weight}${v.std_unit_name}`,
@@ -180,22 +185,15 @@ function generateOrderData (list) {
         : parseFloat(Big(v.real_weight).div(v.sale_ratio).toFixed(2)) + v.sale_unit_name,
 
       '税率': v.tax_rate ? Big(v.tax_rate).div(100).toFixed(2) + '%' : 0,
-      '不含税单价_基本单位': v.sale_price_without_tax || 0,
-      '不含税单价_销售单位': v.sale_price_without_tax ? Big(v.sale_price_without_tax).div(v.sale_ratio || 1).toFixed(2) : 0,
-      '商品税额_基本单位': v.tax || 0,
-      '商品税额_销售单位': v.sale_unit_tax || 0,
+      '不含税单价_基本单位': price(v.sale_price_without_tax),
+      '不含税单价_销售单位': price(Big(v.sale_price_without_tax || 0).div(v.sale_ratio || 1)),
+      '商品税额_基本单位': price(v.tax),
+      '商品税额_销售单位': price(v.sale_unit_tax),
 
-      '单价_基本单位': v.std_sale_price,
-      '单价_销售单位': v.sale_price,
-      '原单价': 'TODO后台提供', // TODO 报价单价格
-
-      '应付金额': v.real_item_price,
-      '应付金额_不含税': v.real_item_price_without_tax,
-
-      '自定义编码': v.outer_id,
-      '商品描述': v.desc,
-      '备注': v.remark, // 商品备注
-
+      '单价_基本单位': price(v.std_sale_price),
+      '单价_销售单位': price(v.sale_price),
+      '应付金额': price(v.real_item_price),
+      '应付金额_不含税': price(v.real_item_price_without_tax),
       _origin: v
     }
   })
@@ -209,7 +207,7 @@ function generateAbnormalData (data, kIdMap) {
       '异常原因': v.type_text,
       '异常描述': v.text,
       '异常数量': v.amount_delta,
-      '异常金额': v.money_delta,
+      '异常金额': price(v.money_delta),
       ...kIdMap[v.detail_id], // 异常商品的商品信息
       _origin: v
     }
