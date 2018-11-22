@@ -95,7 +95,7 @@ class Table extends React.Component {
         return {
           ...val,
           index,
-          text: val.text.replace('}}', '') + '$2}}'
+          text: val.text.replace(/{{列\.(\s)}}/g, match => `{{列.${match}$2}`) // {{列.xx}} => {{列.xx$2}}
         }
       })
       return columns1.concat(columns2)
