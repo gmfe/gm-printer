@@ -34,10 +34,6 @@ class Editor extends React.Component {
     window.document.addEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
     window.document.addEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
     window.document.addEventListener('keydown', this.handleKeyDown)
-
-    this.autoSaveTimer = setInterval(() => {
-      editStore.saveConfigToStack()
-    }, 1000)
   }
 
   componentWillUnmount () {
@@ -48,8 +44,6 @@ class Editor extends React.Component {
     window.document.removeEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
     window.document.removeEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
     window.document.removeEventListener('keydown', this.handleKeyDown)
-
-    clearInterval(this.autoSaveTimer)
   }
 
   handleSave = () => {
@@ -142,7 +136,7 @@ class Editor extends React.Component {
     return (
       <div className='gm-printer-edit'>
         <div className='gm-printer-edit-header'>
-          <EditorTitle data={mockData} onSave={this.handleSave} onDraft={this.handleDraft}/>
+          <EditorTitle data={mockData} onSave={this.handleSave}/>
           <EditorSelect/>
           <EditorField/>
           <EditorAddField data={mockData}/>

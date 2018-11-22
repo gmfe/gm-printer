@@ -5,15 +5,12 @@ import { observer } from 'mobx-react'
 import { Flex } from 'react-gm'
 import { doPrint } from '../printer'
 import { toJS } from 'mobx'
+import config from '../../src/config_temp/default_config'
 
 @observer
 class EditorTitle extends React.Component {
-  handleUndo = () => {
-    editStore.undo()
-  }
-
-  handleRedo = () => {
-    editStore.redo()
+  handleReset = () => {
+    editStore.init(config)
   }
 
   handleTestPrint = () => {
@@ -31,13 +28,13 @@ class EditorTitle extends React.Component {
           <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>基本信息
         </Flex>
         <div>
-          <button className='btn btn-primary btn-md' onClick={this.handleUndo} disabled={!editStore.hasUndo}>撤销
+          <button className='btn btn-primary btn-xs' onClick={this.handleTestPrint}>测试打印
           </button>
           <div className='gm-gap-10'/>
-          <button className='btn btn-primary btn-md' onClick={this.handleRedo} disabled={!editStore.hasRedo}>重做
+          <button className='btn btn-primary btn-xs' onClick={this.handleReset}>重置
           </button>
           <div className='gm-gap-10'/>
-          <button className='btn btn-primary btn-md' onClick={this.props.onSave}>保存</button>
+          <button className='btn btn-primary btn-xs' onClick={this.props.onSave}>保存</button>
         </div>
       </Flex>
     )

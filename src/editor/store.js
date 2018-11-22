@@ -2,10 +2,6 @@ import { action, computed, configure, observable } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, exchange, getBlockName } from '../util'
-import UndoManager from './undo_manager'
-
-const undoManager = new UndoManager()
-undoManager.setLimit(30)
 
 configure({enforceActions: 'observed'})
 
@@ -85,8 +81,6 @@ class EditStore {
     this.selected = null
     this.selectedRegion = null
     this.insertPanel = 'header'
-
-    this._cacheConfig.push(JSON.stringify(config))
   }
 
   @action
@@ -102,6 +96,7 @@ class EditStore {
   @action
   setPagePrintDirection (value) {
     let {size, printDirection} = this.config.page
+
     // 打印方向切换了, 宽高互换
     if (value !== printDirection) {
       this.config.page = {
@@ -526,65 +521,6 @@ class EditStore {
       }
     }
   }
-
-  @action
-  saveConfigToStack () {
-    const lastConfig = this._cacheConfig.slice(-1)[0]
-    const configStr = JSON.stringify(this.config)
-
-    if (lastConfig !== configStr) {
-      this._cacheConfig.push(configStr)
-      this._saveStack()
-
-      this._updateUndoRedo()
-
-      undoManager.add({
-        undo: () => {
-          if (this._cacheConfig.length > 1) {
-            this._cacheConfig.pop()
-            this.config = JSON.parse(this._cacheConfig.slice(-1)[0])
-            this._saveStack()
-          }
-        },
-        redo: () => {
-          this.config = JSON.parse(configStr)
-          this._cacheConfig.push(configStr)
-          this._saveStack()
-        }
-      })
-    }
-  }
-
-  @action
-  undo () {
-    this.selected = null
-    undoManager.undo()
-    this._updateUndoRedo()
-  }
-
-  @action
-  redo () {
-    this.selected = null
-    undoManager.redo()
-    this._updateUndoRedo()
-  }
-
-  @action
-  _updateUndoRedo () {
-    this.hasUndo = undoManager.hasUndo()
-    this.hasRedo = undoManager.hasRedo()
-  }
-
-  @action
-  _saveStack () {
-    if (this._cacheConfig.length > 30) {
-      this._cacheConfig = this._cacheConfig.slice(-30)
-    }
-  }
 }
 
-window.undoManager = undoManager
-
-const editStore = new EditStore()
-
-export default editStore
+export default new EditStore()

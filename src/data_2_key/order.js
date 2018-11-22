@@ -176,7 +176,7 @@ function generateOrderData (list) {
 
       '下单数': v.quantity + v.sale_unit_name,
       '出库数_基本单位': `${v.real_weight}${v.std_unit_name}`,
-      '出库数_销售单位': v.sale_ratio === 1 ? v.real_weight
+      '出库数_销售单位': v.sale_ratio === 1 ? v.real_weight + v.sale_unit_name
         : parseFloat(Big(v.real_weight).div(v.sale_ratio).toFixed(2)) + v.sale_unit_name,
 
       '税率': v.tax_rate ? Big(v.tax_rate).div(100).toFixed(2) + '%' : 0,
