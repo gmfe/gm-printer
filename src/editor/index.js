@@ -117,7 +117,7 @@ class Editor extends React.Component {
       editStore.setSelected(null)
     } else if (e.code === 'Backspace' && editStore.selected) {
       e.preventDefault()
-      editStore.removeConfig()
+      editStore.removeField()
     }
   }
 

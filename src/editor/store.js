@@ -425,7 +425,7 @@ class EditStore {
   }
 
   @action
-  removeConfig () {
+  removeField () {
     if (!this.selected) {
       return
     }
@@ -438,7 +438,10 @@ class EditStore {
     } else if (arr.length === 5 && arr[1] === 'panel') {
       source.splice(arr[4], 1)
     } else if (arr.length === 5 && arr[1] === 'table') {
-      source.splice(arr[4], 1)
+      // 表格至少保留一列
+      if (source.length > 1) {
+        source.splice(arr[4], 1)
+      }
     }
 
     this.selected = null

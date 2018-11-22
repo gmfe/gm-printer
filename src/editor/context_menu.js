@@ -159,7 +159,7 @@ class ContextMenu extends React.Component {
     const { name } = this.state
 
     editStore.setSelected(name)
-    editStore.removeConfig()
+    editStore.removeField()
 
     this.setState({
       name: null
