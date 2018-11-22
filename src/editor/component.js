@@ -324,13 +324,20 @@ Size.propTypes = {
   onChange: PropTypes.func.isRequired
 }
 
-class Hr extends React.Component {
-  render () {
-    return (
-      <div style={{ backgroundColor: '#9a9a9a', height: '1px', margin: '5px 0', padding: '0' }}/>
-    )
-  }
-}
+const Hr = () => <div style={{backgroundColor: '#eee', height: '1px', margin: '5px 0', padding: '0'}}/>
+
+const SubTitle = ({text}) => (
+  <div style={{backgroundColor: '#eee', height: '2px', margin: '8px 0', padding: '0', position: 'relative'}}>
+    <span style={{
+      position: 'absolute',
+      top: '-8px',
+      left: '20px',
+      padding: '0 5px',
+      backgroundColor: '#fff',
+      color: '#848586'
+    }}>{text}</span>
+  </div>
+)
 
 export {
   Text,
@@ -342,5 +349,6 @@ export {
   Position,
   Line,
   Size,
-  Hr
+  Hr,
+  SubTitle
 }

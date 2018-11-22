@@ -321,29 +321,6 @@ class EditStore {
   }
 
   @action
-  addFieldInPanel (field) {
-    if (!this.selectedRegion) return
-    const arr = this.selectedRegion.split('.')
-    let blocks
-    // 在header,footer,sign
-    if (arr.length === 1) {
-      blocks = this.config[arr[0]].blocks
-      // contents 里面
-    } else if (arr.length === 3) {
-      blocks = this.config.contents[arr[2]].blocks
-    }
-
-    blocks.push({
-      text: `${field}: {{${field}}}`,
-      style: {
-        position: 'absolute',
-        left: '0px',
-        top: '0px'
-      }
-    })
-  }
-
-  @action
   setConfigTable (who, value) {
     if (!this.computedIsSelectTable) {
       return
@@ -401,43 +378,54 @@ class EditStore {
   }
 
   /**
-   * 添加列到table
-   * @param index 可选,如果是undefined则添加到table最后一列
-   * @param field 可选,如果不填那么就用默认的
+   * 添加字段到Panel
+   * @param key
+   * @param value
    */
-  @action
-  addTableColumn (index, field) {
-    if (this.computedIsSelectTable) {
-      const arr = this.selected.split('.')
-      const {columns} = this.config.contents[arr[2]]
-
-      index = index === undefined ? columns.length : index
-
-      if (index >= 0 && index <= columns.length) {
-        columns.splice(index, 0, {
-          head: field === undefined ? '表头' : field,
-          headStyle: {
-            textAlign: 'center'
-          },
-          text: field === undefined ? field : `{{列.${field}}}`,
-          style: {
-            textAlign: 'center'
-          }
-        })
-
-        arr[4] = index
-        this.selected = arr.join('.')
-      }
+  @action.bound
+  addFieldToPanel ({key, value}) {
+    if (!this.selectedRegion) return
+    const arr = this.selectedRegion.split('.')
+    let blocks
+    // 在header,footer,sign
+    if (arr.length === 1) {
+      blocks = this.config[arr[0]].blocks
+      // contents 里面
+    } else if (arr.length === 3) {
+      blocks = this.config.contents[arr[2]].blocks
     }
+
+    blocks.push({
+      text: `${key}: ${value}`,
+      style: {
+        position: 'absolute',
+        left: '0px',
+        top: '0px'
+      }
+    })
   }
 
-  @action
-  addTableColumnByDiff (diff) {
-    if (this.computedIsSelectTable) {
-      const arr = this.selected.split('.')
-      const source = ~~arr[4]
+  /**
+   * 添加列到table
+   * @param key
+   * @param value
+   */
+  @action.bound
+  addFieldToTable ({key, value}) {
+    if (this.computedRegionIsTable) {
+      const arr = this.selectedRegion.split('.')
+      const {columns} = this.config.contents[arr[2]]
 
-      this.addTableColumn(source + diff)
+      columns.push({
+        head: key,
+        headStyle: {
+          textAlign: 'center'
+        },
+        text: value,
+        style: {
+          textAlign: 'center'
+        }
+      })
     }
   }
 

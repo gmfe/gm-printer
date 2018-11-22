@@ -46,7 +46,7 @@
         }
       },
       {
-        "text": "打印时间：{{打印时间}}",
+        "text": "打印时间：{{当前时间}}",
         "style": {
           "position": "absolute",
           "left": "",

@@ -1,80 +1,118 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Flex } from 'react-gm'
+import { SubTitle } from './component'
 import PropTypes from 'prop-types'
-import toKey from '../data_2_key'
 import _ from 'lodash'
 import editStore from './store'
 import { observer } from 'mobx-react'
 
-const FieldBtn = ({ name, onClick }) => (
-  <Flex alignCenter justifyBetween style={{ width: '50%', padding: '2px 8px 2px 0px' }}>
+const commonFields = {
+  '基础': [
+    {key: '下单时间', value: '{{下单时间}}'},
+    {key: '配送时间', value: '{{配送时间}}'},
+    {key: '打印时间', value: '{{当前时间}}'},
+    {key: '订单号', value: '{{订单号}}'},
+    {key: '序号', value: '{{序号}}'},
+    {key: '订单备注', value: '{{订单备注}}'},
+    {key: '结款方式', value: '{{结款方式}}'},
+    {key: '销售经理', value: '{{销售经理}}'},
+    {key: '销售经理电话', value: '{{销售经理电话}}'}
+  ],
+  '配送': [
+    {key: '线路', value: '{{线路}}'},
+    {key: '收货商户', value: '{{收货商户}}'},
+    {key: '收货人', value: '{{收货人}}'},
+    {key: '收货人电话', value: '{{收货人电话}}'},
+    {key: '收货地址', value: '{{收货地址}}'},
+    {key: '地理标签', value: '{{城市}}{{城区}}{{街道}}'},
+    {key: '商户公司', value: '{{商户公司}}'},
+    {key: '承运商', value: '{{承运商}}'},
+    {key: '司机名称', value: '{{司机名称}}'},
+    {key: '司机电话', value: '{{司机电话}}'}
+
+  ],
+  '金额': [
+    {key: '下单金额', value: '{{下单金额}}'},
+    {key: '出库金额', value: '{{出库金额}}'},
+    {key: '运费', value: '{{运费}}'},
+    {key: '异常金额', value: '{{异常金额}}'},
+    {key: '应付金额', value: '{{应付金额}}'}
+  ],
+  '其他': [
+    {key: '页码', value: '{{当前页码}} / {{页码总数}}'}
+  ]
+}
+
+const tableFields = {
+  '基础': [
+    {key: '序号', value: '{{列.序号}}'},
+    {key: '商品ID', value: '{{列.商品ID}}'},
+    {key: '商品名', value: '{{列.商品名}}'},
+    {key: '类别', value: '{{列.类别}}'},
+    {key: '商品二级分类', value: '{{列.商品二级分类}}'},
+    {key: '商品品类', value: '{{列.商品品类}}'},
+    {key: 'SPU名称', value: '{{列.SPU名称}}'},
+    {key: '规格', value: '{{列.规格}}'},
+    {key: '税率', value: '{{列.税率}}'},
+    {key: '自定义编码', value: '{{列.自定义编码}}'},
+    {key: '商品描述', value: '{{列.商品描述}}'},
+    {key: '备注', value: '{{列.备注}}'},
+    {key: '自定义', value: ''}
+  ],
+  '价格': [
+    {key: '不含税单价_基本单位', value: '{{列.不含税单价_基本单位}}'},
+    {key: '不含税单价_销售单位', value: '{{列.不含税单价_销售单位}}'},
+    {key: '单价_基本单位', value: '{{列.单价_基本单位}}'},
+    {key: '单价_销售单位', value: '{{列.单价_销售单位}}'}
+  ],
+  '数量': [
+    {key: '下单数', value: '{{列.下单数}}'},
+    {key: '出库数_基本单位', value: '{{列.出库数_基本单位}}'},
+    {key: '出库数_销售单位', value: '{{列.出库数_销售单位}}'}
+  ],
+  '金额': [
+    {key: '商品税额_基本单位', value: '{{列.商品税额_基本单位}}'},
+    {key: '商品税额_销售单位', value: '{{列.商品税额_销售单位}}'},
+    {key: '应付金额', value: '{{列.应付金额}}'},
+    {key: '应付金额_不含税', value: '{{列.应付金额_不含税}}'}
+  ],
+  '异常': [
+    {key: '异常原因', value: '{{列.异常原因}}'},
+    {key: '异常描述', value: '{{列.异常描述}}'},
+    {key: '异常数量', value: '{{列.异常数量}}'},
+    {key: '异常金额', value: '{{列.异常金额}}'}
+
+  ]
+}
+
+const FieldBtn = ({name, onClick}) => (
+  <Flex alignCenter justifyBetween style={{width: '50%', padding: '2px 8px 2px 0px'}}>
     <span>{name}</span>
-    <button className='btn-primary btn btn-xs' style={{ borderRadius: '4px' }} onClick={onClick}>
+    <button className='btn-primary btn btn-xs' style={{borderRadius: '4px'}} onClick={onClick}>
       <i className='xfont xfont-plus gm-font-12'/>
     </button>
   </Flex>
 )
 
-@observer
-class OrderField extends React.Component {
-  handleAddOrderField (field) {
-    editStore.addFieldInPanel(field)
-  }
-
+class FieldList extends React.Component {
   render () {
-    const {data} = this.props
-
+    const {fields, handleAddField} = this.props
     return (
       <div>
         <Flex alignCenter>
-          <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>添加字段
+          <i className='xfont xfont-bill' style={{color: 'rgb(253, 82, 113)'}}/>添加字段
         </Flex>
 
-        <div className='gm-bg-info'>订单信息:</div>
-        <Flex wrap>
-          {_.map(data, (v, key) => <FieldBtn name={key} key={key}
-            onClick={this.handleAddOrderField.bind(this, key)}/>)}
-        </Flex>
-      </div>
-    )
-  }
-}
-
-@observer
-class TableField extends React.Component {
-  handleAddTableColumn (field) {
-    editStore.addTableColumn(undefined, field)
-  }
-
-  render () {
-    const {orders, abnormal} = this.props.data
-    const orderKeys = (orders && orders[0]) || []
-    const abnormalKeys = (abnormal && abnormal[0] && abnormal[0]._abnormal) || []
-
-    return (
-      <div>
-        <Flex alignCenter>
-          <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>添加字段
-        </Flex>
-
-        <div className='gm-bg-info'>商品表格:</div>
-        <Flex wrap>
-          {_.map(orderKeys, (v, key) => {
-            if (key !== '_origin') {
-              return <FieldBtn name={key} key={key}
-                onClick={this.handleAddTableColumn.bind(this, key)}/>
-            }
-          })}
-        </Flex>
-
-        <div className='gm-bg-info'>异常表格:</div>
-        <Flex wrap>
-          {_.map(abnormalKeys, (v, key) => {
-            if (key !== '_origin') {
-              return <FieldBtn name={key} key={key}
-                onClick={this.handleAddTableColumn.bind(this, key)}/>
-            }
-          })}</Flex>
+        {_.map(fields, (arr, groupName) => {
+          return (
+            <Fragment key={groupName}>
+              <SubTitle text={groupName}/>
+              <Flex wrap>
+                {_.map(arr, o => <FieldBtn key={o.key} name={o.key} onClick={handleAddField.bind(this, o)}/>)}
+              </Flex>
+            </Fragment>
+          )
+        })}
       </div>
     )
   }
@@ -83,16 +121,13 @@ class TableField extends React.Component {
 @observer
 class EditorAddField extends React.Component {
   render () {
-    const newData = toKey(this.props.data)
-    const {_table, common} = newData
-
     let content = null
     if (editStore.selectedRegion === null) {
       content = null
     } else if (editStore.computedRegionIsTable) {
-      content = <TableField data={_table}/>
+      content = <FieldList fields={tableFields} handleAddField={editStore.addFieldToTable}/>
     } else {
-      content = <OrderField data={common}/>
+      content = <FieldList fields={commonFields} handleAddField={editStore.addFieldToPanel}/>
     }
 
     return <div className='gm-padding-10 gm-overflow-y'>{content}</div>

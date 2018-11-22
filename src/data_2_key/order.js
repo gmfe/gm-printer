@@ -29,7 +29,8 @@ const coverDigit2Uppercase = (n) => {
 
   n = Math.abs(n)
 
-  let left = ''; let right = ''
+  let left = ''
+  let right = ''
   let i = 0
   for (i; i < fraction.length; i++) {
     right += digit[Math.floor(Big(n).times(Big(10).pow(i + 1)).mod(10).toString())] + fraction[i]
@@ -114,7 +115,6 @@ function generateCommon (data) {
 
     '下单时间': moment(data.date_time).format('YYYY-MM-DD HH:mm:ss'),
     '配送时间': `${moment(data.receive_begin_time).format('MM-DD HH:mm:ss')} ~ ${moment(data.receive_end_time).format('MM-DD HH:mm:ss')}`,
-    '打印时间': moment().format('YYYY-MM-DD HH:mm:ss'), // 也就是当前时间
     '当前时间': moment().format('YYYY-MM-DD HH:mm:ss'),
     '订单备注': data.remark,
 
@@ -132,7 +132,6 @@ function generateCommon (data) {
     '结款方式': SETTLE_WAY[data.settle_way],
 
     '线路': data.address_route_name,
-    '地理标签': data.area_sign || '-',
     '城市': data.city || '-',
     '城区': data.area_l1 || '-',
     '街道': data.area_l2 || '-',
@@ -206,17 +205,13 @@ function generateOrderData (list) {
 function generateAbnormalData (data, kIdMap) {
   // 异常表单 = 退货商品 + 异常商品
   return _.map(data.abnormals.concat(data.refunds), v => {
-    const abnormal = {
+    return {
       '异常原因': v.type_text,
       '异常描述': v.text,
       '异常数量': v.amount_delta,
-      '异常金额': v.money_delta
-    }
-    return {
+      '异常金额': v.money_delta,
       ...kIdMap[v.detail_id], // 异常商品的商品信息
-      ...abnormal,
-      _origin: v,
-      _abnormal: abnormal // editor_add_field用到这些字段
+      _origin: v
     }
   })
 }
