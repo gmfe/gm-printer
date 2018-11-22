@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
+import { Flex } from 'react-gm'
 import { toJS } from 'mobx'
 import editStore from './store'
 import { getCSS, Printer } from '../printer'
@@ -20,7 +21,7 @@ insertCSS(getCSS())
 @observer
 class Editor extends React.Component {
   constructor (props) {
-    super(props)
+    super()
 
     let config = props.config
     editStore.init(config)
@@ -51,27 +52,27 @@ class Editor extends React.Component {
   }
 
   handleSelectedRegion = e => {
-    const { selected } = e.detail
+    const {selected} = e.detail
     editStore.setSelectedRegion(selected)
   }
 
   handlePrinterSelect = (e) => {
-    const { selected } = e.detail
+    const {selected} = e.detail
     editStore.setSelected(selected)
   }
 
   handlePrinterPanelStyleSet = (e) => {
-    const { name, style } = e.detail
+    const {name, style} = e.detail
     editStore.setConfigPanelStyle(name, style)
   }
 
   handlePrinterBlockStyleSet = (e) => {
-    const { style } = e.detail
+    const {style} = e.detail
     editStore.setConfigBlockBy('style', style)
   }
 
   handlePrinterBlockTextSet = (e) => {
-    const { text } = e.detail
+    const {text} = e.detail
     editStore.setConfigBlockBy('text', text)
   }
 
@@ -121,7 +122,7 @@ class Editor extends React.Component {
   }
 
   handleCancel = (e) => {
-    const { selected, selectedRegion } = editStore
+    const {selected, selectedRegion} = editStore
     // 点击区域不包含selected的时候
     if (!_.includes(selected, selectedRegion)) {
       editStore.setSelected(null)
@@ -135,13 +136,22 @@ class Editor extends React.Component {
   render () {
     return (
       <div className='gm-printer-edit'>
-        <div className='gm-printer-edit-header'>
+
+        <div className='gm-printer-edit-zone'>
           <EditorTitle data={mockData} onSave={this.handleSave}/>
           <EditorSelect/>
           <EditorField/>
           <EditorAddField data={mockData}/>
         </div>
-        {/* Printer config 的 高度调整需要重新 render ，可把高度做key */}
+
+        <Flex alignCenter className='gm-padding-tb-5'>
+          <i className='xfont xfont-bill' style={{color: 'rgb(253, 82, 113)'}}/>
+          <span className='gm-font-14'>模板预览</span>
+          <span className='gm-text-red gm-padding-left-5'>说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击
+            <a href=''>查看视频教程</a>
+          </span>
+        </Flex>
+
         <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
           <Printer
             key={editStore.computedPrinterKey}

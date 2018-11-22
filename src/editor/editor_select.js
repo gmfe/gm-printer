@@ -80,6 +80,10 @@ class EditorSelector extends React.Component {
             {_.map(computedRegionList, v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
           </Select>
         </Flex>
+
+        <Flex alignCenter className='gm-padding-top-5 gm-text-red'>
+          说明：区域中的内容仅打印一次
+        </Flex>
       </div>
     )
   }
