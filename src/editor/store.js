@@ -1,7 +1,7 @@
 import { action, computed, configure, observable } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
-import { dispatchMsg, exchange, getBlockName } from '../util'
+import { dispatchMsg, getBlockName } from '../util'
 
 configure({enforceActions: 'observed'})
 
@@ -351,13 +351,18 @@ class EditStore {
 
   @action
   exchangeTableColumn (target, source) {
+    console.log(target, source)
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
       const {columns} = this.config.contents[arr[2]]
 
       if (target >= 0 && target < columns.length) {
-        exchange(columns, target, source)
-        arr[4] = target
+        // 选中列插入到目标列前面
+        const sourceEle = columns.splice(source, 1)[0]
+        const insertIndex = target > source ? target - 1 : target
+        columns.splice(insertIndex, 0, sourceEle)
+
+        arr[4] = insertIndex
         this.selected = arr.join('.')
       }
     }
