@@ -1,6 +1,6 @@
 const pageTypeMap = {
   'A4': {
-    name: 'A4', // name 仅仅作为select展示用
+    name: 'A4',
     size: {
       width: '210mm',
       height: '297mm'
@@ -15,8 +15,34 @@ const pageTypeMap = {
   'A5': {
     name: 'A5',
     size: {
-      width: '180mm',
-      height: '260mm'
+      width: '148mm',
+      height: '210mm'
+    },
+    gap: {
+      paddingTop: '3mm',
+      paddingRight: '3mm',
+      paddingBottom: '3mm',
+      paddingLeft: '3mm'
+    }
+  },
+  'A4/2': {
+    name: '二分纸',
+    size: {
+      width: '210mm',
+      height: '148.5mm'
+    },
+    gap: {
+      paddingTop: '3mm',
+      paddingRight: '3mm',
+      paddingBottom: '3mm',
+      paddingLeft: '3mm'
+    }
+  },
+  'A4/3': {
+    name: '三分纸',
+    size: {
+      width: '210mm',
+      height: '99mm'
     },
     gap: {
       paddingTop: '3mm',
@@ -27,6 +53,19 @@ const pageTypeMap = {
   },
   '241x280': {
     name: '241x280',
+    size: {
+      width: '241mm',
+      height: '280mm'
+    },
+    gap: {
+      paddingTop: '3mm',
+      paddingRight: '16mm',
+      paddingBottom: '3mm',
+      paddingLeft: '16mm'
+    }
+  },
+  '241x140': {
+    name: '241x140',
     size: {
       width: '241mm',
       height: '280mm'

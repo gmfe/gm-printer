@@ -3,7 +3,7 @@ import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName } from '../util'
 
-configure({enforceActions: 'observed'})
+configure({ enforceActions: 'observed' })
 
 class EditStore {
   @observable
@@ -95,7 +95,7 @@ class EditStore {
 
   @action
   setPagePrintDirection (value) {
-    let {size, printDirection} = this.config.page
+    let { size, printDirection } = this.config.page
 
     // 打印方向切换了, 宽高互换
     if (value !== printDirection) {
@@ -122,7 +122,7 @@ class EditStore {
 
   @action
   setSizePageType (type) {
-    const {size, gap, name} = pageTypeMap[type]
+    const { size, gap, name } = pageTypeMap[type]
 
     this.config.page = {
       ...this.config.page,
@@ -141,7 +141,6 @@ class EditStore {
   // 选择区域
   @action
   setSelectedRegion (selected) {
-    console.log(selected)
     this.selectedRegion = selected
   }
 
@@ -152,18 +151,18 @@ class EditStore {
 
     const contentRegions = this.config.contents.map((v, i) => {
       if (v.type === 'table') {
-        return {value: `contents.table.${i}`, text: `区域${i}`}
+        return { value: `contents.table.${i}`, text: `区域${i}` }
       } else {
-        return {value: `contents.panel.${i}`, text: `区域${i}`}
+        return { value: `contents.panel.${i}`, text: `区域${i}` }
       }
     })
 
     return [
-      {value: 'all', text: '请选择区域'},
-      {value: 'header', text: '页眉'},
+      { value: 'all', text: '请选择区域' },
+      { value: 'header', text: '页眉' },
       ...contentRegions,
-      {value: 'sign', text: '签名'},
-      {value: 'footer', text: '页脚'}
+      { value: 'sign', text: '签名' },
+      { value: 'footer', text: '页脚' }
     ]
   }
 
@@ -238,7 +237,6 @@ class EditStore {
 
   @action
   setConfigBlockBy (who, value) {
-    console.log(1)
     if (this.computedIsSelectBlock) {
       const block = this.computedSelectedInfo
       block[who] = value
@@ -328,7 +326,7 @@ class EditStore {
   @action
   changeTableDataKey (name, key) {
     const arr = name.split('.')
-    const {dataKey} = this.config.contents[arr[2]]
+    const { dataKey } = this.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
     let newDataKey
     // 当前有这个key则去掉
@@ -351,10 +349,9 @@ class EditStore {
 
   @action
   exchangeTableColumn (target, source) {
-    console.log(target, source)
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
-      const {columns} = this.config.contents[arr[2]]
+      const { columns } = this.config.contents[arr[2]]
 
       if (target >= 0 && target < columns.length) {
         // 选中列插入到目标列前面
@@ -383,7 +380,7 @@ class EditStore {
    * @param value
    */
   @action.bound
-  addFieldToPanel ({key, value}) {
+  addFieldToPanel ({ key, value }) {
     if (!this.selectedRegion) return
     const arr = this.selectedRegion.split('.')
     let blocks
@@ -411,10 +408,10 @@ class EditStore {
    * @param value
    */
   @action.bound
-  addFieldToTable ({key, value}) {
+  addFieldToTable ({ key, value }) {
     if (this.computedRegionIsTable) {
       const arr = this.selectedRegion.split('.')
-      const {columns} = this.config.contents[arr[2]]
+      const { columns } = this.config.contents[arr[2]]
 
       columns.push({
         head: key,
