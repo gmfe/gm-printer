@@ -54,6 +54,10 @@ body {
     border-collapse: collapse;
     width: 100%;
     max-width: 100%;
+
+    th {
+      font-weight: normal; // 覆盖浏览默认
+    }
   }
 }
 
