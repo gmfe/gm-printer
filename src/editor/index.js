@@ -144,23 +144,25 @@ class Editor extends React.Component {
           <EditorAddField data={mockData}/>
         </div>
 
-        <Flex alignCenter className='gm-padding-tb-5'>
-          <i className='xfont xfont-bill' style={{color: 'rgb(253, 82, 113)'}}/>
-          <span className='gm-font-14'>模板预览</span>
-          <span className='gm-text-red gm-padding-left-5'>说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击
-            <a href=''>查看视频教程</a>
-          </span>
-        </Flex>
+        <div className='gm-padding-left-20'>
+          <Flex alignCenter className='gm-padding-tb-5'>
+            <i className='xfont xfont-bill' style={{color: 'rgb(253, 82, 113)'}}/>
+            <span className='gm-font-14'>模板预览</span>
+            <span className='gm-text-red gm-padding-left-5'>说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击
+              <a href=''>查看视频教程</a>
+            </span>
+          </Flex>
 
-        <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
-          <Printer
-            key={editStore.computedPrinterKey}
-            selected={editStore.selected}
-            selectedRegion={editStore.selectedRegion}
-            config={editStore.config}
-            data={mockData}
-          />
-        </ContextMenu>
+          <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
+            <Printer
+              key={editStore.computedPrinterKey}
+              selected={editStore.selected}
+              selectedRegion={editStore.selectedRegion}
+              config={editStore.config}
+              data={mockData}
+            />
+          </ContextMenu>
+        </div>
       </div>
     )
   }

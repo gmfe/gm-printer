@@ -36,7 +36,8 @@ const commonFields = {
     {key: '出库金额', value: '{{出库金额}}'},
     {key: '运费', value: '{{运费}}'},
     {key: '异常金额', value: '{{异常金额}}'},
-    {key: '应付金额', value: '{{应付金额}}'}
+    {key: '应付金额', value: '{{应付金额}}'},
+    {key: '税额', value: '{{税额}}'}
   ],
   '其他': [
     {key: '页码', value: '{{当前页码}} / {{页码总数}}'}
@@ -60,21 +61,20 @@ const tableFields = {
     {key: '自定义', value: ''}
   ],
   '价格': [
-    {key: '不含税单价_基本单位', value: '{{列.不含税单价_基本单位}}'},
-    {key: '不含税单价_销售单位', value: '{{列.不含税单价_销售单位}}'},
-    {key: '单价_基本单位', value: '{{列.单价_基本单位}}'},
-    {key: '单价_销售单位', value: '{{列.单价_销售单位}}'}
+    {key: '不含税单价(基本单位)', value: '{{列.不含税单价_基本单位}}'},
+    {key: '不含税单价(销售单位)', value: '{{列.不含税单价_销售单位}}'},
+    {key: '单价(基本单位)', value: '{{列.单价_基本单位}}'},
+    {key: '单价(销售单位)', value: '{{列.单价_销售单位}}'}
   ],
   '数量': [
     {key: '下单数', value: '{{列.下单数}}'},
-    {key: '出库数_基本单位', value: '{{列.出库数_基本单位}}'},
-    {key: '出库数_销售单位', value: '{{列.出库数_销售单位}}'}
+    {key: '出库数(基本单位)', value: '{{列.出库数_基本单位}}'},
+    {key: '出库数(销售单位)', value: '{{列.出库数_销售单位}}'}
   ],
   '金额': [
-    {key: '商品税额_基本单位', value: '{{列.商品税额_基本单位}}'},
-    {key: '商品税额_销售单位', value: '{{列.商品税额_销售单位}}'},
+    {key: '商品税额', value: '{{列.商品税额}}'},
     {key: '应付金额', value: '{{列.应付金额}}'},
-    {key: '应付金额_不含税', value: '{{列.应付金额_不含税}}'}
+    {key: '应付金额(不含税)', value: '{{列.应付金额_不含税}}'}
   ],
   '异常': [
     {key: '异常原因', value: '{{列.异常原因}}'},
@@ -86,11 +86,11 @@ const tableFields = {
 }
 
 const FieldBtn = ({name, onClick}) => (
-  <Flex alignCenter justifyBetween style={{width: '50%', padding: '2px 8px 2px 0px'}}>
-    <span>{name}</span>
+  <Flex alignCenter style={{width: '50%', padding: '2px 0'}}>
     <button className='btn-primary btn btn-xs' style={{borderRadius: '4px'}} onClick={onClick}>
       <i className='xfont xfont-plus gm-font-12'/>
     </button>
+    <span className='gm-padding-left-5'>{name}</span>
   </Flex>
 )
 

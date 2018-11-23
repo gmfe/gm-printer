@@ -126,8 +126,7 @@ function generateCommon (data) {
     '异常金额': price(data.abnormal_money),
     '应付金额': price(data.total_pay),
 
-    '税额_基本单位': price(data.total_tax), // 商品税额（基本单位）加总
-    '税额_销售单位': price(data.total_sale_unit_tax),
+    '税额': price(data.total_tax), // 商品税额加总
 
     '商户公司': data.cname,
     '承运商': data.carrier,
@@ -157,8 +156,7 @@ function generateUpperPrice (data) {
     '异常金额_大写': coverDigit2Uppercase(data.abnormal_money),
     '应付金额_大写': coverDigit2Uppercase(data.total_pay),
 
-    '税额_基本单位_大写': coverDigit2Uppercase(data.total_tax), // 商品税额（基本单位）加总
-    '税额_销售单位_大写': coverDigit2Uppercase(data.total_sale_unit_tax)
+    '商品税额_大写': coverDigit2Uppercase(data.total_tax) // 商品税额加总
   }
 }
 
@@ -187,8 +185,7 @@ function generateOrderData (list) {
       '税率': v.tax_rate ? Big(v.tax_rate).div(100).toFixed(2) + '%' : 0,
       '不含税单价_基本单位': price(v.sale_price_without_tax),
       '不含税单价_销售单位': price(Big(v.sale_price_without_tax || 0).div(v.sale_ratio || 1)),
-      '商品税额_基本单位': price(v.tax),
-      '商品税额_销售单位': price(v.sale_unit_tax),
+      '商品税额': price(v.tax),
 
       '单价_基本单位': price(v.std_sale_price),
       '单价_销售单位': price(v.sale_price),
