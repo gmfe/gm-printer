@@ -3,7 +3,7 @@ import { Flex, Option, Select } from 'react-gm'
 import { observer } from 'mobx-react'
 import editStore from './store'
 import { tableDataKeyList } from '../config'
-import { Fonter, Line, Position, Separator, Size, TextAlign, Textarea } from './component'
+import { Fonter, Line, Position, Separator, Size, TextAlign, Textarea, Title } from './component'
 
 const TipInfo = () => <Flex alignCenter className='gm-padding-top-5 gm-text-red'>
   {'说明：请勿修改{}中的内容,避免出现数据异常'}
@@ -36,9 +36,8 @@ class EditorField extends React.Component {
 
     return (
       <React.Fragment>
-        <Flex alignCenter>
-          <i className='xfont xfont-bill' style={{color: 'rgb(253, 82, 113)'}}/>编辑自定义
-        </Flex>
+        <Title title='编辑自定义'/>
+
         <div>
           <Position style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>
         </div>
@@ -79,9 +78,7 @@ class EditorField extends React.Component {
 
     return (
       <React.Fragment>
-        <Flex alignCenter>
-          <i className='xfont xfont-bill' style={{color: 'rgb(253, 82, 113)'}}/>编辑自定义
-        </Flex>
+        <Title title='编辑自定义'/>
 
         <Flex>
           <Flex alignCenter>数据类型：</Flex>

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import _ from 'lodash'
 import { borderStyleList, fontSizeList } from '../config'
+import Flex from 'react-gm/src/component/flex'
 
 class IconAlign extends React.Component {
   render () {
@@ -339,6 +340,12 @@ const SubTitle = ({text}) => (
   </div>
 )
 
+const Title = ({title, text}) => <Flex alignCenter className='gm-font-16'>
+  <i className='xfont xfont-bill' style={{color: 'rgb(253, 82, 113)'}}/>
+  <span>{title}</span>
+  <span className='gm-font-12'>{text}</span>
+</Flex>
+
 export {
   Text,
   Textarea,
@@ -350,5 +357,6 @@ export {
   Line,
   Size,
   Hr,
-  SubTitle
+  SubTitle,
+  Title
 }

@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { Flex } from 'react-gm'
-import { SubTitle } from './component'
+import { SubTitle, Title } from './component'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import editStore from './store'
@@ -99,9 +99,7 @@ class FieldList extends React.Component {
     const {fields, handleAddField} = this.props
     return (
       <div>
-        <Flex alignCenter>
-          <i className='xfont xfont-bill' style={{color: 'rgb(253, 82, 113)'}}/>添加字段
-        </Flex>
+        <Title title='添加字段'/>
 
         {_.map(fields, (arr, groupName) => {
           return (
