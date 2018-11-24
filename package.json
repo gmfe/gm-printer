@@ -84,11 +84,12 @@
     "webpack-dev-server": "^3.1.7"
   },
   "dependencies": {
-    "react-gm": "^7.9.2",
+    "gm-i18n": "^1.2.2",
+    "gm-util": "^5.6.7",
+    "gm-webpack": "^1.0.7",
     "gm-xfont": " ^1.0.42",
-    "gm-util": "^5.6.3",
     "query-string": "^6.1.0",
-    "react-table": "^6.8.6",
-    "gm-webpack": "^1.0.7"
+    "react-gm": "^7.9.2",
+    "react-table": "^6.8.6"
   }
 }

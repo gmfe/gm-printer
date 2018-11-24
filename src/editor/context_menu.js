@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { blockTypeList } from '../config'
 import editStore from './store'
 import _ from 'lodash'
-import { Hr } from './component'
+import { Hr, ImageUploader } from './component'
 
 /**
  * 是否存在每页合计按钮,非异常明细才有按钮
@@ -46,7 +46,7 @@ class ContextMenu extends React.Component {
   }
 
   handleClick = (e) => {
-    // 简单处理
+    // 简单处理,点击空白收起context_menu
     if (e.target.parentNode && e.target.parentNode.className === 'gm-printer-edit-contextmenu') {
       return
     }
@@ -58,6 +58,7 @@ class ContextMenu extends React.Component {
 
   handleContextMenu = (e) => {
     const { target: { dataset: { name } }, clientX, clientY } = e
+    console.log(name)
 
     if (!name) {
       return
@@ -70,8 +71,6 @@ class ContextMenu extends React.Component {
     // contents.panel.0.block.0
     // contents.table.0
     // contents.table.0.column.0
-
-    console.log(name)
 
     e.preventDefault()
 
@@ -90,13 +89,18 @@ class ContextMenu extends React.Component {
     })
   }
 
-  handleInsertBlock = (type) => {
+  handleInsertBlock = (type, link) => {
     const { name, block } = this.state
 
-    editStore.addConfigBlock(name, type, {
-      left: block.left + 'px',
-      top: block.top + 'px'
-    })
+    editStore.addConfigBlock(
+      name,
+      type,
+      {
+        left: block.left + 'px',
+        top: block.top + 'px'
+      },
+      link
+    )
 
     this.setState({
       name: null
@@ -128,6 +132,10 @@ class ContextMenu extends React.Component {
     })
   }
 
+  handleInsertImage = (imgURL) => {
+    this.handleInsertBlock('image', imgURL)
+  }
+
   renderPanel () {
     const { name } = this.state
     const arr = name.split('.')
@@ -140,6 +148,9 @@ class ContextMenu extends React.Component {
             onClick={this.handleInsertBlock.bind(this, v.value)}
           >{v.text}</div>
         ))}
+
+        <ImageUploader onSuccess={this.handleInsertImage}/>
+
         {arr[0] === 'contents' && (
           <React.Fragment>
             <Hr/>

@@ -244,7 +244,7 @@ class EditStore {
   }
 
   @action
-  addConfigBlock (name, type, pos = {}) {
+  addConfigBlock (name, type, pos = {}, link = '') {
     let blocks
     const arr = name.split('.')
 
@@ -281,7 +281,7 @@ class EditStore {
     } else if (type === 'image') {
       blocks.push({
         type: 'image',
-        link: '',
+        link: link,
         style: {
           position: 'absolute',
           left: pos.left || '0px',

@@ -46,13 +46,15 @@ class Block extends React.Component {
       clientX,
       clientY
     })
-
+    console.log(clientX, clientY, 'start')
     dispatchMsg('gm-printer-select', {
       selected: name
     })
   }
 
   handleDragEnd = ({ clientX, clientY }) => {
+    console.log(clientX, clientY, 'end')
+
     const { config } = this.props
     const diffX = clientX - this.state.clientX
     const diffY = clientY - this.state.clientY
@@ -112,7 +114,7 @@ class Block extends React.Component {
     } else if (type === 'line') {
       content = null
     } else if (type === 'image') {
-      content = <img src={link} style={{ width: '100%', height: '100%' }} alt=''/>
+      content = <img src={link} style={{ width: '100%', height: '100%' }} alt='' data-name={name}/>
     }
 
     const active = name === printerStore.selected

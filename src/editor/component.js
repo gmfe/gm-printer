@@ -3,7 +3,9 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import _ from 'lodash'
 import { borderStyleList, fontSizeList } from '../config'
-import Flex from 'react-gm/src/component/flex'
+import { Flex, Tip } from 'react-gm'
+import { Request } from 'gm-util'
+import { i18next } from 'gm-i18n'
 
 class IconAlign extends React.Component {
   render () {
@@ -325,10 +327,60 @@ Size.propTypes = {
   onChange: PropTypes.func.isRequired
 }
 
-const Hr = () => <div style={{backgroundColor: '#eee', height: '1px', margin: '5px 0', padding: '0'}}/>
+class ImageUploader extends React.Component {
+  constructor () {
+    super()
+    this.input = React.createRef()
+  }
 
-const SubTitle = ({text}) => (
-  <div style={{backgroundColor: '#eee', height: '2px', margin: '8px 0', padding: '0', position: 'relative'}}>
+  handleUpload = (event) => {
+    event.preventDefault()
+    // 只上传单张图片
+    const droppedFiles = event.dataTransfer ? event.dataTransfer.files : event.target.files
+    const file = droppedFiles[0]
+
+    if (file.size > 512 * 1024) {
+      Tip.warning(i18next.t('图片大小不能超过500Kb'))
+      return
+    }
+
+    Request('/station/image/upload').data({
+      image_file: file
+    }).post().then((json) => {
+      const imgURL = `http://img.guanmai.cn/station_pic/${json.data.img_path_id}`
+      this.props.onSuccess(imgURL)
+    })
+  }
+
+  handleClick = () => {
+    this.input.current.value = null
+    this.input.current.click()
+  }
+
+  render () {
+    return <React.Fragment>
+      <div onClick={this.handleClick} onDrop={this.handleUpload}>
+        插入图片
+      </div>
+      <input
+        style={{ display: 'none' }}
+        type='file'
+        ref={this.input}
+        accept='image/*'
+        onChange={this.handleUpload}
+      />
+    </React.Fragment>
+  }
+}
+
+ImageUploader.propTypes = {
+  onSuccess: PropTypes.func.isRequired
+}
+
+const Hr = () => <div style={{ backgroundColor: '#eee', height: '1px', margin: '5px 0', padding: '0' }}/>
+
+const SubTitle = ({ text }) => (
+  <div style={{ backgroundColor: '#eee', height: '2px', margin: '8px 0', padding: '0', position: 'relative' }}>
     <span style={{
       position: 'absolute',
       top: '-8px',
@@ -340,8 +392,8 @@ const SubTitle = ({text}) => (
   </div>
 )
 
-const Title = ({title, text}) => <Flex alignCenter className='gm-font-16'>
-  <i className='xfont xfont-bill' style={{color: 'rgb(253, 82, 113)'}}/>
+const Title = ({ title, text }) => <Flex alignCenter className='gm-font-16'>
+  <i className='xfont xfont-bill' style={{ color: 'rgb(253, 82, 113)' }}/>
   <span>{title}</span>
   <span className='gm-font-12'>{text}</span>
 </Flex>
@@ -356,6 +408,7 @@ export {
   Position,
   Line,
   Size,
+  ImageUploader,
   Hr,
   SubTitle,
   Title

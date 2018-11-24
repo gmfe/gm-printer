@@ -130,16 +130,9 @@ const tableDataKeyList = [
   { value: 'abnormal', text: '异常商品' }
 ]
 
-const panelList = [
-  { value: 'header', text: '页眉' },
-  { value: 'sign', text: '签名' },
-  { value: 'footer', text: '页脚' }
-]
-
 const blockTypeList = [
   { value: '', text: '插入文本' },
-  { value: 'line', text: '插入线条' },
-  { value: 'image', text: '插入图片' }
+  { value: 'line', text: '插入线条' }
 ]
 
 export {
@@ -147,7 +140,6 @@ export {
   borderStyleList,
   tableClassNameList,
   tableDataKeyList,
-  panelList,
   blockTypeList,
   pageTypeMap,
   printDirectionList,

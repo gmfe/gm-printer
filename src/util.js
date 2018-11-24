@@ -29,8 +29,6 @@ function pxAdd (origin, add) {
 function getStyleWithDiff (style, diffX, diffY) {
   const newStyle = Object.assign({}, style)
 
-  console.log(newStyle, diffX)
-
   if (!style.left && style.right) {
     newStyle.right = pxAdd(newStyle.right, -diffX)
   } else {
