@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { blockTypeList } from '../config'
+import { blockTypeList, tableClassNameList } from '../config'
 import editStore from './store'
 import _ from 'lodash'
 import { Hr, ImageUploader } from './component'
@@ -217,6 +217,10 @@ class ContextMenu extends React.Component {
     )
   }
 
+  handleSetTableConfig (value) {
+    editStore.setConfigTableBy(this.state.name, 'className', value)
+  }
+
   renderColumn () {
     return (
       <React.Fragment>
@@ -224,6 +228,11 @@ class ContextMenu extends React.Component {
 
         <Hr/>
         <div onClick={this.handleRemove}>移除列</div>
+
+        <Hr/>
+        {_.map(tableClassNameList, o => (
+          <div onClick={this.handleSetTableConfig.bind(this, o.value)}>{o.text}</div>
+        ))}
 
         <Hr/>
         <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
