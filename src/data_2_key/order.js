@@ -92,25 +92,6 @@ function generateMultiData (list, categoryTotal) {
 
 // 非表格数据
 function generateCommon (data) {
-  // 收货人信息分两种情况
-  let customerInfo = {}
-  const originCustomer = data.origin_customer
-  if (originCustomer.origin_area && originCustomer.origin_area.name) {
-    customerInfo = {
-      '收货商户': `${originCustomer.origin_resname}(${originCustomer.address_id || '-'})`,
-      '收货人': originCustomer.origin_receiver_name,
-      '收货人电话': originCustomer.origin_receiver_phone,
-      '收货地址': `${originCustomer.origin_area.first_name}-${originCustomer.origin_area.name}-${originCustomer.address}`
-    }
-  } else {
-    customerInfo = {
-      '收货商户': `${data.resname}(${data.sid || '-'})`,
-      '收货人': data.receiver_name,
-      '收货人电话': data.receiver_phone,
-      '收货地址': `${data.address_sign === '未指定' ? data.address : data.address_sign + '|' + data.address}`
-    }
-  }
-
   return {
     '订单号': data.id,
     '序号': `${data.sort_id} ${data.child_sort_id}`,
@@ -143,7 +124,10 @@ function generateCommon (data) {
     '销售经理电话': data.sale_manager.phone || '-',
 
     // 收货人信息
-    ...customerInfo
+    '收货商户': `${data.resname}(${data.sid || '-'})`,
+    '收货人': data.receiver_name,
+    '收货人电话': data.receiver_phone,
+    '收货地址': data.address
   }
 }
 
@@ -213,7 +197,7 @@ function generateAbnormalData (data, kIdMap) {
 
 // 商品分类统计
 function generateCounter (groupByCategory1) {
-  return _.map(groupByCategory1, (o, k) => ({text: k, len: o.length}))
+  return _.map(groupByCategory1, (o, k) => ({ text: k, len: o.length }))
 }
 
 function order (data) {
