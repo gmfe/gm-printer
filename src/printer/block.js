@@ -80,7 +80,7 @@ class Block extends React.Component {
       this.setState({
         isEdit: true
       }, () => {
-        this.refEdit.focus()
+        this.refEdit && this.refEdit.focus()
       })
     }
   }
