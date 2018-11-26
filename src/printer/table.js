@@ -5,6 +5,7 @@ import { dispatchMsg, getHeight, getTableColumnName, getWidth } from '../util'
 import { inject, observer } from 'mobx-react'
 import classNames from 'classnames'
 import Big from 'big.js'
+import { MULTI_SUFFIX } from '../config'
 
 @inject('printerStore')
 @observer
@@ -95,7 +96,7 @@ class Table extends React.Component {
         return {
           ...val,
           index,
-          text: val.text.replace(/{{列\.(\s)}}/g, match => `{{列.${match}$2}`) // {{列.xx}} => {{列.xx$2}}
+          text: val.text.replace(/{{列\.(\s)}}/g, match => `{{列.${match}${MULTI_SUFFIX}`) // {{列.xx}} => {{列.xx$2}}
         }
       })
       return columns1.concat(columns2)

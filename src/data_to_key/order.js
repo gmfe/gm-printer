@@ -1,6 +1,7 @@
 import moment from 'moment'
 import _ from 'lodash'
 import Big from 'big.js'
+import { MULTI_SUFFIX } from '../config'
 
 const SETTLE_WAY = {
   0: '先款后货',
@@ -72,7 +73,7 @@ function generateMultiData (list, categoryTotal) {
     const sku1 = skuGroup[index]
     const sku2 = {}
     _.each(skuGroup[1 + index], (val, key) => {
-      sku2[key + '$2'] = val
+      sku2[key + MULTI_SUFFIX] = val
     })
 
     multiList.push({

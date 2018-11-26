@@ -1,4 +1,4 @@
-const pageTypeMap = {
+export const pageTypeMap = {
   'A4': {
     name: 'A4',
     size: {
@@ -92,7 +92,7 @@ const pageTypeMap = {
   }
 }
 
-const fontSizeList = [
+export const fontSizeList = [
   '12px',
   '14px',
   '16px',
@@ -104,44 +104,35 @@ const fontSizeList = [
   '28px'
 ]
 
-const printDirectionList = [
+export const printDirectionList = [
   { value: 'vertical', text: '纵向' },
   { value: 'horizontal', text: '横向' }
 ]
 
-const counterStateList = [
+export const counterStateList = [
   { value: true, text: '展示' },
   { value: false, text: '不展示' }
 ]
 
-const borderStyleList = [
+export const borderStyleList = [
   { value: 'solid', text: '实线' },
   { value: 'dashed', text: '虚线' },
   { value: 'dotted', text: '圆点' }
 ]
 
-const tableClassNameList = [
+export const tableClassNameList = [
   { value: '', text: '默认样式' },
   { value: 'className1', text: '无实线样式' }
 ]
 
-const tableDataKeyList = [
+export const tableDataKeyList = [
   { value: 'orders', text: '全部商品' },
   { value: 'abnormal', text: '异常商品' }
 ]
 
-const blockTypeList = [
+export const blockTypeList = [
   { value: '', text: '插入文本' },
   { value: 'line', text: '插入线条' }
 ]
 
-export {
-  fontSizeList,
-  borderStyleList,
-  tableClassNameList,
-  tableDataKeyList,
-  blockTypeList,
-  pageTypeMap,
-  printDirectionList,
-  counterStateList
-}
+export const MULTI_SUFFIX = 'MULTI_SUFFIX'
