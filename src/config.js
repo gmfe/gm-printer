@@ -122,7 +122,7 @@ const borderStyleList = [
 
 const tableClassNameList = [
   { value: '', text: '默认样式' },
-  { value: 'className1', text: '样式一' }
+  { value: 'className1', text: '无实线样式' }
 ]
 
 const tableDataKeyList = [

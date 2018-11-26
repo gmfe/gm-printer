@@ -222,6 +222,10 @@ class ContextMenu extends React.Component {
   }
 
   renderColumn () {
+    const arr = this.state.name.split('.')
+    const { className } = editStore.config.contents[arr[2]]
+    const isActive = c => className === c
+
     return (
       <React.Fragment>
         {this.renderOrderActionBtn()}
@@ -231,7 +235,8 @@ class ContextMenu extends React.Component {
 
         <Hr/>
         {_.map(tableClassNameList, o => (
-          <div onClick={this.handleSetTableConfig.bind(this, o.value)}>{o.text}</div>
+          <div onClick={this.handleSetTableConfig.bind(this, o.value)}
+            className={isActive(o.value) ? 'active' : ''}>{o.text}</div>
         ))}
 
         <Hr/>
