@@ -39,6 +39,15 @@ class EditStore {
   @observable
   hasRedo = false
 
+  @action
+  init (config) {
+    this.config = config
+    this.selected = null
+    this.selectedRegion = null
+    this.insertPanel = 'header'
+  }
+
+  // 计算react-key用来唯一标识组件,key改变就重新渲染
   @computed
   get computedPrinterKey () {
     return _.map(this.config, (v, k) => {
@@ -73,14 +82,6 @@ class EditStore {
   @action
   setPanelHeight (height) {
     this.config[this.insertPanel].style.height = height
-  }
-
-  @action
-  init (config) {
-    this.config = config
-    this.selected = null
-    this.selectedRegion = null
-    this.insertPanel = 'header'
   }
 
   @action
