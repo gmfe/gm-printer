@@ -8,7 +8,7 @@ function sku (data) {
   const skuGroup = _.groupBy(skuListAfterSort, 'category_1_name')
 
   /* --------- 分类商品统计 ---------------- */
-  const counter = _.map(skuGroup, (o, k) => ({text: k, len: o.length}))
+  const counter = _.map(skuGroup, (o, k) => ({ text: k, len: o.length }))
 
   /* --------- 分类商品 -------------------- */
   function getDetail (sku) {

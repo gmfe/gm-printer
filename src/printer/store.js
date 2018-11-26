@@ -1,8 +1,8 @@
 import { action, configure, observable } from 'mobx'
 import _ from 'lodash'
-import toKey from '../data_2_key'
+import toKey from '../data_to_key'
 
-configure({enforceActions: 'observed'})
+configure({ enforceActions: 'observed' })
 
 class PrinterStore {
   @observable
