@@ -238,14 +238,14 @@
           "text": "{{列.单价_基本单位}}"
         },
         {
-          "head": "应付金额",
+          "head": "出库金额",
           "style": {
             "textAlign": "center"
           },
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{列.应付金额}}"
+          "text": "{{列.出库金额}}"
         }
       ]
     },
@@ -354,10 +354,10 @@
         {
           "style": {
             "top": "8px",
-            "left": "631px",
+            "left": "623px",
             "position": "absolute"
           },
-          "text": "应付金额：￥{{应付金额}}"
+          "text": "销售额(含运税)：￥{{销售额_含运税}}"
         }
       ]
     }

@@ -78,7 +78,7 @@ class PrinterStore {
     this.selectedRegion = selected || null
   }
 
-  @action
+  @action // TODO 页面高度低于某个值会有死循环
   computedPages () {
     // 每页必有 header footer
     const allPagesHaveThisHeight = this.height.header + this.height.footer
