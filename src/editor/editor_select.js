@@ -36,7 +36,7 @@ class EditorSelector extends React.Component {
   render () {
     const { config: { name, page, counter }, computedRegionList } = editStore
     const isDIY = page.type === 'DIY'
-
+    console.log(editStore.selectedRegion)
     return (
       <div>
         <Flex alignCenter>

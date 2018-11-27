@@ -529,6 +529,7 @@ class EditStore {
       if (this.config.contents.length > 1) {
         this.config.contents.splice(arr[2], 1)
         this.selected = null
+        this.selectedRegion = null
       }
     }
   }
