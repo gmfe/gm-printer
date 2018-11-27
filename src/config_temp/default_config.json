@@ -62,6 +62,7 @@
   },
   "page": {
     "type": "A4",
+    "name": "A4",
     "size": {
       "height": "297mm",
       "width": "210mm"
