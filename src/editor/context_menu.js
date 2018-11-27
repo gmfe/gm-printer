@@ -235,7 +235,7 @@ class ContextMenu extends React.Component {
 
         <Hr/>
         {_.map(tableClassNameList, o => (
-          <div onClick={this.handleSetTableConfig.bind(this, o.value)}
+          <div onClick={this.handleSetTableConfig.bind(this, o.value)} key={o.value}
             className={isActive(o.value) ? 'active' : ''}>{o.text}</div>
         ))}
 

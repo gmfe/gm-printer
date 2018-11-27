@@ -107,7 +107,7 @@ class Table extends React.Component {
 
   renderDefault () {
     const { config: { dataKey, subtotal }, name, range, pageIndex, printerStore } = this.props
-    const tableData = printerStore.data._table[dataKey]
+    const tableData = printerStore.data._table[dataKey] || []
 
     // 每页小计
     let subtotalForEachPage = null
@@ -153,7 +153,7 @@ class Table extends React.Component {
         </thead>
         <tbody>
           {_.map(_.range(range.begin, range.end), i => {
-            const special = tableData[i]._special
+            const special = tableData[i] && tableData[i]._special
             if (special) {
               return (
                 <tr key={i}>
@@ -198,7 +198,7 @@ class Table extends React.Component {
 
   render () {
     const { config: { className, dataKey }, name, placeholder, printerStore } = this.props
-    const tableData = printerStore.data._table[dataKey]
+    const tableData = printerStore.data._table[dataKey] || []
     const active = printerStore.selectedRegion === name
 
     return (

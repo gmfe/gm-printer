@@ -11,7 +11,7 @@ class EditStore {
     this.handlePrinterKey = reaction(
       () => _.map(this.config, (v, k) => {
         if (k === 'page') {
-          return v.type + '_' + v.printDirection + '_' + v.size.width + '-' + v.size.height
+          return v.type + '_' + v.printDirection + v.size.width + v.size.height
         } else if (k === 'counter') {
           return 'counter' + v.show
         } else if (k === 'contents') {
@@ -27,12 +27,15 @@ class EditStore {
         }
       }).join('_'),
       key => {
-        console.log(key)
         this.printerKey = key
+        console.log(this.printerKey)
       },
-      { delay: 500 }
+      { delay: 300 }
     )
   }
+
+  @observable
+  printerKey = 'initial'
 
   @observable
   config = null
@@ -76,6 +79,12 @@ class EditStore {
   }
 
   @action
+  forceUpdatePrinter () {
+    console.log('ss')
+    this.printerKey = Math.random()
+  }
+
+  @action
   setInsertPanel (panel) {
     this.insertPanel = panel
   }
@@ -97,7 +106,6 @@ class EditStore {
 
   @action.bound
   setPageSize (field, value) {
-    console.log(field, value, 'store')
     this.config.page.size[field] = value
   }
 
