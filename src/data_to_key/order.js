@@ -106,7 +106,7 @@ function generateCommon (data) {
     '出库金额': price(data.real_price),
     '运费': price(data.freight),
     '异常金额': price(data.abnormal_money),
-    '应付金额': price(data.total_pay),
+    '销售额_含运税': price(data.total_pay),
 
     '税额': price(data.total_tax), // 商品税额加总
 
@@ -139,7 +139,7 @@ function generateUpperPrice (data) {
     '出库金额_大写': coverDigit2Uppercase(data.real_price),
     '运费_大写': coverDigit2Uppercase(data.freight),
     '异常金额_大写': coverDigit2Uppercase(data.abnormal_money),
-    '应付金额_大写': coverDigit2Uppercase(data.total_pay),
+    '销售额_含运税_大写': coverDigit2Uppercase(data.total_pay),
 
     '商品税额_大写': coverDigit2Uppercase(data.total_tax) // 商品税额加总
   }
@@ -170,12 +170,12 @@ function generateOrderData (list) {
       '税率': v.tax_rate ? Big(v.tax_rate).div(100).toFixed(2) + '%' : 0,
       '不含税单价_基本单位': price(v.sale_price_without_tax),
       '不含税单价_销售单位': price(Big(v.sale_price_without_tax || 0).div(v.sale_ratio || 1)),
-      '商品税额': price(v.tax),
-
       '单价_基本单位': price(v.std_sale_price),
       '单价_销售单位': price(v.sale_price),
-      '应付金额': price(v.real_item_price),
-      '应付金额_不含税': price(v.real_item_price_without_tax),
+
+      '商品税额': price(v.tax),
+      '出库金额': price(v.real_item_price),
+      '销售额_不含税': price(v.real_item_price_without_tax),
       _origin: v
     }
   })
