@@ -140,8 +140,11 @@ class Editor extends React.Component {
 
         <div className='gm-printer-edit-zone'>
           <EditorTitle data={mockData} onSave={this.handleSave}/>
+          <div className='gm-gap-10'/>
           <EditorSelect/>
+          <div className='gm-gap-5'/>
           <EditorField/>
+          <div className='gm-gap-5'/>
           <EditorAddField data={mockData}/>
         </div>
 

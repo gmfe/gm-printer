@@ -29,7 +29,7 @@ class EditorTitle extends React.Component {
 
   render () {
     return (
-      <Flex justifyBetween className='gm-padding-10'>
+      <Flex justifyBetween>
         <Title title='基本信息'/>
         <div>
           <button className='btn btn-primary btn-sm' onClick={this.handleTestPrint}>测试打印

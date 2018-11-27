@@ -86,10 +86,10 @@ const tableFields = {
 }
 
 const FieldBtn = ({ name, onClick }) => (
-  <Flex alignCenter style={{ width: '50%', padding: '2px 0' }}>
-    <button className='btn-primary btn btn-xs' style={{ borderRadius: '4px' }} onClick={onClick}>
-      <i className='xfont xfont-plus gm-font-12'/>
-    </button>
+  <Flex alignCenter style={{ width: '50%', margin: '3px 0' }}>
+    <span className='gm-printer-edit-plus-btn' onClick={onClick}>
+      +
+    </span>
     <span className='gm-padding-left-5'>{name}</span>
   </Flex>
 )
@@ -128,7 +128,7 @@ class EditorAddField extends React.Component {
       content = <FieldList fields={commonFields} handleAddField={editStore.addFieldToPanel}/>
     }
 
-    return <div className='gm-padding-10 gm-overflow-y'>{content}</div>
+    return <div className='gm-overflow-y'>{content}</div>
   }
 }
 

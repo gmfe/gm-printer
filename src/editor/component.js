@@ -405,7 +405,7 @@ InputWithUnit.propTypes = {
 const Hr = () => <div style={{ backgroundColor: '#eee', height: '1px', margin: '5px 0', padding: '0' }}/>
 
 const SubTitle = ({ text }) => (
-  <div style={{ backgroundColor: '#eee', height: '2px', margin: '8px 0', padding: '0', position: 'relative' }}>
+  <div style={{ backgroundColor: '#eee', height: '2px', margin: '10px 0', padding: '0', position: 'relative' }}>
     <span style={{
       position: 'absolute',
       top: '-8px',
@@ -423,6 +423,8 @@ const Title = ({ title, text }) => <Flex alignCenter className='gm-font-16'>
   <span className='gm-font-12'>{text}</span>
 </Flex>
 
+const Gap = ({ width = '100%', height = '3px' }) => <div style={{ width, height }}/>
+
 export {
   Text,
   Textarea,
@@ -437,5 +439,6 @@ export {
   InputWithUnit,
   Hr,
   SubTitle,
-  Title
+  Title,
+  Gap
 }

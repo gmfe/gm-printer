@@ -38,7 +38,7 @@ class EditorSelector extends React.Component {
     const isDIY = page.type === 'DIY'
 
     return (
-      <div className='gm-padding-10'>
+      <div>
         <Flex alignCenter>
           <div>模板名称：</div>
           <input className='input-sm' type='text' value={name} onChange={this.handleConfigName}/>
