@@ -53,6 +53,20 @@ const coverDigit2Uppercase = n => {
   return head + (left.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零') + right).replace(/^整$/, '零元整')
 }
 
+// 12 => S000012  ,  1232131 => S1232131  sid显示,不足6位补足
+const convertNumber2Sid = (id) => {
+  if (/^\d+$/.test(id)) {
+    id = parseInt(id, 10)
+    if (id > 1000000) {
+      return 'S' + id
+    } else {
+      return 'S' + (1000000 + id + '').slice(1)
+    }
+  } else {
+    return id
+  }
+}
+
 const price = n => Big(n || 0).toFixed(2)
 
 /**
@@ -125,7 +139,8 @@ function generateCommon (data) {
     '销售经理电话': data.sale_manager.phone || '-',
 
     // 收货人信息
-    '收货商户': `${data.resname}(${data.sid || '-'})`,
+    '收货商户': data.resname,
+    '商户ID': convertNumber2Sid(data.sid),
     '收货人': data.receiver_name,
     '收货人电话': data.receiver_phone,
     '收货地址': data.address
@@ -162,10 +177,13 @@ function generateOrderData (list) {
       '商品描述': v.desc,
       '备注': v.remark, // 商品备注
 
-      '下单数': v.quantity + v.sale_unit_name,
-      '出库数_基本单位': `${v.real_weight}${v.std_unit_name}`,
-      '出库数_销售单位': v.sale_ratio === 1 ? v.real_weight + v.sale_unit_name
-        : parseFloat(Big(v.real_weight).div(v.sale_ratio).toFixed(2)) + v.sale_unit_name,
+      '基本单位': v.std_unit_name,
+      '销售单位': v.sale_unit_name,
+
+      '下单数': v.quantity,
+      '出库数_基本单位': v.real_weight,
+      '出库数_销售单位': v.sale_ratio === 1 ? v.real_weight
+        : parseFloat(Big(v.real_weight).div(v.sale_ratio).toFixed(2)),
 
       '税率': v.tax_rate ? Big(v.tax_rate).div(100).toFixed(2) + '%' : 0,
       '不含税单价_基本单位': price(v.sale_price_without_tax),

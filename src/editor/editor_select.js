@@ -41,7 +41,7 @@ class EditorSelector extends React.Component {
       <div>
         <Flex alignCenter>
           <div>模板名称：</div>
-          <input className='input-sm' type='text' value={name} onChange={this.handleConfigName}/>
+          <input className='gm-printer-edit-input-custom' type='text' value={name} onChange={this.handleConfigName}/>
         </Flex>
 
         <Flex alignCenter className='gm-padding-top-5'>
@@ -53,13 +53,13 @@ class EditorSelector extends React.Component {
 
         {isDIY && <Flex alignCenter className='gm-padding-top-5'>
           <div>纸张宽度：</div>
-          <InputWithUnit className='input-sm' unit='mm' value={page.size.width}
+          <InputWithUnit className='gm-printer-edit-input-custom' unit='mm' value={page.size.width}
             onChange={this.handlePageSize.bind(this, 'width')}/>
         </Flex>}
 
         {isDIY && <Flex alignCenter className='gm-padding-top-5'>
           <div>纸张高度：</div>
-          <InputWithUnit className='input-sm' unit='mm' value={page.size.height}
+          <InputWithUnit className='gm-printer-edit-input-custom' unit='mm' value={page.size.height}
             onChange={this.handlePageSize.bind(this, 'height')}/>
         </Flex>}
 

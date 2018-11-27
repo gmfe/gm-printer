@@ -121,7 +121,7 @@
             "left": "2px",
             "position": "absolute"
           },
-          "text": "收货商户: {{收货商户}}"
+          "text": "收货商户: {{收货商户}}({{商户ID}})"
         },
         {
           "style": {
