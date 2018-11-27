@@ -53,27 +53,27 @@ class Editor extends React.Component {
   }
 
   handleSelectedRegion = e => {
-    const {selected} = e.detail
+    const { selected } = e.detail
     editStore.setSelectedRegion(selected)
   }
 
   handlePrinterSelect = (e) => {
-    const {selected} = e.detail
+    const { selected } = e.detail
     editStore.setSelected(selected)
   }
 
   handlePrinterPanelStyleSet = (e) => {
-    const {name, style} = e.detail
+    const { name, style } = e.detail
     editStore.setConfigPanelStyle(name, style)
   }
 
   handlePrinterBlockStyleSet = (e) => {
-    const {style} = e.detail
+    const { style } = e.detail
     editStore.setConfigBlockBy('style', style)
   }
 
   handlePrinterBlockTextSet = (e) => {
-    const {text} = e.detail
+    const { text } = e.detail
     editStore.setConfigBlockBy('text', text)
   }
 
@@ -123,7 +123,7 @@ class Editor extends React.Component {
   }
 
   handleCancel = (e) => {
-    const {selected, selectedRegion} = editStore
+    const { selected, selectedRegion } = editStore
     // 点击区域不包含selected的时候
     if (!_.includes(selected, selectedRegion)) {
       editStore.setSelected(null)
@@ -154,7 +154,7 @@ class Editor extends React.Component {
 
           <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
             <Printer
-              key={editStore.computedPrinterKey}
+              key={editStore.printerKey}
               selected={editStore.selected}
               selectedRegion={editStore.selectedRegion}
               config={editStore.config}

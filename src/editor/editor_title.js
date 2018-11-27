@@ -32,13 +32,13 @@ class EditorTitle extends React.Component {
       <Flex justifyBetween className='gm-padding-10'>
         <Title title='基本信息'/>
         <div>
-          <button className='btn btn-primary btn-xs' onClick={this.handleTestPrint}>测试打印
+          <button className='btn btn-primary btn-sm' onClick={this.handleTestPrint}>测试打印
           </button>
           <div className='gm-gap-10'/>
-          <button className='btn btn-primary btn-xs' onClick={this.handleReset}>重置
+          <button className='btn btn-primary btn-sm' onClick={this.handleReset}>重置
           </button>
           <div className='gm-gap-10'/>
-          <button className='btn btn-primary btn-xs' onClick={this.props.onSave}>保存</button>
+          <button className='btn btn-primary btn-sm' onClick={this.props.onSave}>保存</button>
         </div>
       </Flex>
     )

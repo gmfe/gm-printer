@@ -32,10 +32,10 @@ class EditorField extends React.Component {
   }
 
   renderBlocks () {
-    const {type, text, style, link} = editStore.computedSelectedInfo
+    const { type, text, style, link } = editStore.computedSelectedInfo
 
     return (
-      <React.Fragment>
+      <div className='gm-padding-10'>
         <Title title='编辑自定义'/>
 
         <div>
@@ -69,15 +69,15 @@ class EditorField extends React.Component {
           </div>
         )}
         <TipInfo/>
-      </React.Fragment>
+      </div>
     )
   }
 
   renderTable () {
-    const {head, headStyle, text, style} = editStore.computedSelectedInfo
+    const { head, headStyle, text, style } = editStore.computedSelectedInfo
 
     return (
-      <React.Fragment>
+      <div className='gm-padding-10'>
         <Title title='编辑自定义'/>
 
         <Flex>
@@ -115,7 +115,7 @@ class EditorField extends React.Component {
           </div>
         </Flex>
         <TipInfo/>
-      </React.Fragment>
+      </div>
     )
   }
 
@@ -126,7 +126,7 @@ class EditorField extends React.Component {
     } else if (editStore.computedIsSelectTable) {
       content = this.renderTable()
     }
-    return <div className='gm-padding-10'>{content}</div>
+    return content
   }
 }
 

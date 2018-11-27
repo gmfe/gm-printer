@@ -1,4 +1,4 @@
-import { action, computed, configure, observable } from 'mobx'
+import { action, computed, configure, observable, reaction } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName } from '../util'
@@ -6,6 +6,34 @@ import { dispatchMsg, getBlockName } from '../util'
 configure({ enforceActions: 'observed' })
 
 class EditStore {
+  constructor () {
+    // 对config做出反应,config改变 => printerKey改变, 然后出发重新渲染 (500ms去抖)
+    this.handlePrinterKey = reaction(
+      () => _.map(this.config, (v, k) => {
+        if (k === 'page') {
+          return v.type + '_' + v.printDirection + '_' + v.size.width + '-' + v.size.height
+        } else if (k === 'counter') {
+          return 'counter' + v.show
+        } else if (k === 'contents') {
+          return _.map(v, vv => {
+            if (vv.type === 'table') {
+              return vv.columns.length + '_' + vv.className + '_' + vv.dataKey + '_' + vv.subtotal.show
+            } else {
+              return vv.style ? vv.style.height : ''
+            }
+          }).join('_')
+        } else {
+          return v.style ? v.style.height : ''
+        }
+      }).join('_'),
+      key => {
+        console.log(key)
+        this.printerKey = key
+      },
+      { delay: 500 }
+    )
+  }
+
   @observable
   config = null
 
@@ -47,28 +75,6 @@ class EditStore {
     this.insertPanel = 'header'
   }
 
-  // 计算react-key用来唯一标识组件,key改变就重新渲染
-  @computed
-  get computedPrinterKey () {
-    return _.map(this.config, (v, k) => {
-      if (k === 'page') {
-        return v.type + '_' + v.printDirection + '_' + v.size.width + '-' + v.size.height
-      } else if (k === 'counter') {
-        return 'counter' + v.show
-      } else if (k === 'contents') {
-        return _.map(v, vv => {
-          if (vv.type === 'table') {
-            return vv.columns.length + '_' + vv.className + '_' + vv.dataKey + '_' + vv.subtotal.show
-          } else {
-            return vv.style ? vv.style.height : ''
-          }
-        }).join('_')
-      } else {
-        return v.style ? v.style.height : ''
-      }
-    }).join('_')
-  }
-
   @action
   setInsertPanel (panel) {
     this.insertPanel = panel
@@ -89,8 +95,9 @@ class EditStore {
     this.config.name = name
   }
 
-  @action
+  @action.bound
   setPageSize (field, value) {
+    console.log(field, value, 'store')
     this.config.page.size[field] = value
   }
 

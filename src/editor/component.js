@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import _ from 'lodash'
@@ -64,9 +64,10 @@ class Text extends React.Component {
   }
 
   render () {
-    const { value, placeholder, style } = this.props
+    const { value, placeholder, style, className } = this.props
     return (
       <input
+        className={classNames('gm-printer-edit-input', className)}
         type='text'
         value={value}
         placeholder={placeholder}
@@ -377,6 +378,30 @@ ImageUploader.propTypes = {
   onSuccess: PropTypes.func.isRequired
 }
 
+class InputWithUnit extends React.Component {
+  handleChange = (e) => {
+    const { value } = e.target
+    const { unit, onChange } = this.props
+    // 把单位加上
+    onChange(value + unit)
+  }
+
+  render () {
+    const { unit, value, ...rest } = this.props
+    const val = value.replace(unit, '')
+
+    return <Fragment>
+      <input {...rest} type='number' onChange={this.handleChange} value={val}/>
+      {unit}
+    </Fragment>
+  }
+}
+
+InputWithUnit.propTypes = {
+  unit: PropTypes.string.isRequired,
+  value: PropTypes.any.isRequired
+}
+
 const Hr = () => <div style={{ backgroundColor: '#eee', height: '1px', margin: '5px 0', padding: '0' }}/>
 
 const SubTitle = ({ text }) => (
@@ -409,6 +434,7 @@ export {
   Line,
   Size,
   ImageUploader,
+  InputWithUnit,
   Hr,
   SubTitle,
   Title
