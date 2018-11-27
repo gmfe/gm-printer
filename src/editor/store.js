@@ -1,4 +1,4 @@
-import { action, computed, configure, observable, reaction } from 'mobx'
+import { action, computed, configure, observable } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName } from '../util'
@@ -6,36 +6,26 @@ import { dispatchMsg, getBlockName } from '../util'
 configure({ enforceActions: 'observed' })
 
 class EditStore {
-  constructor () {
-    // 对config做出反应,config改变 => printerKey改变, 然后出发重新渲染 (500ms去抖)
-    this.handlePrinterKey = reaction(
-      () => _.map(this.config, (v, k) => {
-        if (k === 'page') {
-          return v.type + '_' + v.printDirection + v.size.width + v.size.height
-        } else if (k === 'counter') {
-          return 'counter' + v.show
-        } else if (k === 'contents') {
-          return _.map(v, vv => {
-            if (vv.type === 'table') {
-              return vv.columns.length + '_' + vv.className + '_' + vv.dataKey + '_' + vv.subtotal.show
-            } else {
-              return vv.style ? vv.style.height : ''
-            }
-          }).join('_')
-        } else {
-          return v.style ? v.style.height : ''
-        }
-      }).join('_'),
-      key => {
-        this.printerKey = key
-        console.log(this.printerKey)
-      },
-      { delay: 300 }
-    )
+  @computed
+  get computedPrinterKey () {
+    return _.map(this.config, (v, k) => {
+      if (k === 'page') {
+        return v.type + '_' + v.printDirection + v.size.width + v.size.height
+      } else if (k === 'counter') {
+        return 'counter' + v.show
+      } else if (k === 'contents') {
+        return _.map(v, vv => {
+          if (vv.type === 'table') {
+            return vv.columns.length + '_' + vv.className + '_' + vv.dataKey + '_' + vv.subtotal.show
+          } else {
+            return vv.style ? vv.style.height : ''
+          }
+        }).join('_')
+      } else {
+        return v.style ? v.style.height : ''
+      }
+    }).join('_')
   }
-
-  @observable
-  printerKey = 'initial'
 
   @observable
   config = null
@@ -81,7 +71,7 @@ class EditStore {
   @action
   forceUpdatePrinter () {
     console.log('ss')
-    this.printerKey = Math.random()
+    this.computedPrinterKey = Math.random()
   }
 
   @action

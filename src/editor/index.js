@@ -157,7 +157,7 @@ class Editor extends React.Component {
 
           <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
             <Printer
-              key={editStore.printerKey}
+              key={editStore.computedPrinterKey}
               selected={editStore.selected}
               selectedRegion={editStore.selectedRegion}
               config={editStore.config}
