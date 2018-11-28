@@ -25,16 +25,12 @@ class EditorSelector extends React.Component {
     editStore.setPagePrintDirection(value)
   }
 
-  handleCounterShow = (value) => {
-    editStore.setCounterShow(value)
-  }
-
   handleSelectedRegion = (selected) => {
     dispatchMsg('gm-printer-select-region', { selected })
   }
 
   render () {
-    const { config: { name, page }, computedRegionList } = editStore
+    const { config: { name, page }, computedRegionList, computedSelectedRegionTip } = editStore
     const isDIY = page.type === 'DIY'
     console.log(editStore.selectedRegion)
     return (
@@ -79,7 +75,7 @@ class EditorSelector extends React.Component {
         </Flex>
 
         <Flex alignCenter className='gm-padding-top-5 gm-text-red'>
-          说明：区域中的内容仅打印一次
+          {computedSelectedRegionTip}
         </Flex>
       </div>
     )

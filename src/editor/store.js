@@ -165,6 +165,13 @@ class EditStore {
     ]
   }
 
+  // 可选区域做相应的提示
+  @computed
+  get computedSelectedRegionTip () {
+    if (!this.selectedRegion) return ''
+    return /(contents)|(sign)/g.test(this.selectedRegion) ? '说明：所选区域的内容仅打印一次' : '说明：所选区域的内容每页均打印'
+  }
+
   @computed
   get computedRegionIsTable () {
     if (this.selectedRegion) {

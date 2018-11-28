@@ -146,7 +146,7 @@ class Editor extends React.Component {
 
         <div className='gm-printer-edit-zone'>
           <EditorTitle data={mockData} onSave={this.handleSave}/>
-          <Gap height='5px'/>
+          <Gap height='10px'/>
           <EditorSelect/>
           <Gap height='5px'/>
           <EditorField/>
