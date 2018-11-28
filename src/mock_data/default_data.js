@@ -42,7 +42,7 @@ export default {
     'real_item_price': 0.0,
     'purchase_station_id': 'T7936',
     'sale_ratio': 1.0,
-    'is_weigh': false,
+    'is_weigh': true,
     'id': 'D6666666',
     'pinlei_title': '测试大白菜B',
     'salemenu_id': 'S8888',
