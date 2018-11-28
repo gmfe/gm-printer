@@ -109,11 +109,6 @@ export const printDirectionList = [
   { value: 'horizontal', text: '横向' }
 ]
 
-export const counterStateList = [
-  { value: true, text: '展示' },
-  { value: false, text: '不展示' }
-]
-
 export const borderStyleList = [
   { value: 'solid', text: '实线' },
   { value: 'dashed', text: '虚线' },
@@ -136,4 +131,4 @@ export const blockTypeList = [
   { value: 'counter', text: '插入分类' }
 ]
 
-export const MULTI_SUFFIX = 'MULTI_SUFFIX'
+export const MULTI_SUFFIX = '_MULTI_SUFFIX'

@@ -166,7 +166,7 @@ function generateOrderData (list) {
     return {
       '序号': index + 1,
       '商品ID': v.id,
-      '商品名': (v.real_is_weight && !v.is_weight) ? `*${v.name}` : v.name,
+      '商品名': v.real_is_weight && !v.is_weight ? `*${v.name}` : v.name,
       '类别': v.category_title_1,
       '商品二级分类': v.category_title_2,
       '商品品类': v.pinlei_title,
