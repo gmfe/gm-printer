@@ -36,8 +36,8 @@ class EditorField extends React.Component {
 
     return (
       <div>
-        <Title title='编辑自定义'/>
-
+        <Title title='编辑字段'/>
+        <Gap/>
         <Position style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>
         <Gap/>
 
@@ -80,11 +80,12 @@ class EditorField extends React.Component {
 
     return (
       <div>
-        <Title title='编辑自定义'/>
-
+        <Title title='编辑字段'/>
+        <Gap/>
         <Flex>
           <Flex alignCenter>数据类型：</Flex>
-          <Select value={editStore.computedTableDataKeyOfSelectedRegion} onChange={this.handleSetTableDataKey}>
+          <Select className='gm-printer-edit-select' value={editStore.computedTableDataKeyOfSelectedRegion}
+            onChange={this.handleSetTableDataKey}>
             {tableDataKeyList.map(v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
           </Select>
         </Flex>

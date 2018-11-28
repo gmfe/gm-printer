@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { Flex } from 'react-gm'
-import { SubTitle, Title } from './component'
+import { Gap, SubTitle, Title } from './component'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import editStore from './store'
@@ -100,7 +100,7 @@ class FieldList extends React.Component {
     return (
       <div>
         <Title title='添加字段'/>
-
+        <Gap/>
         {_.map(fields, (arr, groupName) => {
           return (
             <Fragment key={groupName}>

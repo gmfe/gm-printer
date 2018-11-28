@@ -12,10 +12,10 @@ import EditorSelect from './editor_select'
 import EditorField from './editor_field'
 import EditorAddField from './editor_add_field'
 import ContextMenu from './context_menu'
+import { Gap, Title } from './component'
 import mockData from '../mock_data/order_data'
 
 import './style.less'
-import { Title } from './component'
 
 insertCSS(getCSS())
 
@@ -140,11 +140,11 @@ class Editor extends React.Component {
 
         <div className='gm-printer-edit-zone'>
           <EditorTitle data={mockData} onSave={this.handleSave}/>
-          <div className='gm-gap-10'/>
+          <Gap height='5px'/>
           <EditorSelect/>
-          <div className='gm-gap-5'/>
+          <Gap height='5px'/>
           <EditorField/>
-          <div className='gm-gap-5'/>
+          <Gap height='5px'/>
           <EditorAddField data={mockData}/>
         </div>
 

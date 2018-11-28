@@ -405,7 +405,7 @@ InputWithUnit.propTypes = {
 const Hr = () => <div style={{ backgroundColor: '#eee', height: '1px', margin: '5px 0', padding: '0' }}/>
 
 const SubTitle = ({ text }) => (
-  <div style={{ backgroundColor: '#eee', height: '2px', margin: '10px 0', padding: '0', position: 'relative' }}>
+  <div style={{ backgroundColor: '#eee', height: '1px', margin: '10px 0 13px 0', position: 'relative' }}>
     <span style={{
       position: 'absolute',
       top: '-8px',

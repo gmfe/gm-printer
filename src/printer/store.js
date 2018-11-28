@@ -78,7 +78,7 @@ class PrinterStore {
     this.selectedRegion = selected || null
   }
 
-  @action // TODO 页面高度低于某个值会有死循环
+  @action
   computedPages () {
     // 每页必有 header footer
     const allPagesHaveThisHeight = this.height.header + this.height.footer
@@ -90,6 +90,11 @@ class PrinterStore {
     let index = 0
 
     let page = []
+
+    // 如果除了contents外组件总高度  大于 页面高度, 那么退出计算(计算没意义,页眉页脚都装不下)
+    if (height > this.pageHeight) {
+      return
+    }
 
     // 轮 contents
     while (index < this.config.contents.length) {

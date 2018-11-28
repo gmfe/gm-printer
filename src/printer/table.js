@@ -188,9 +188,7 @@ class Table extends React.Component {
       <table>
         <thead/>
         <tbody>
-          <tr>
-            <td colSpan={99} style={{ fontWeight: 'bold' }}>没有数据</td>
-          </tr>
+          <tr/>
         </tbody>
       </table>
     )
