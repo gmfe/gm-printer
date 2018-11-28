@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
+import Counter from './counter'
 import { inject, observer } from 'mobx-react'
 import { dispatchMsg, getStyleWithDiff } from '../util'
 
@@ -115,6 +116,8 @@ class Block extends React.Component {
       content = null
     } else if (type === 'image') {
       content = <img src={link} style={{ width: '100%', height: '100%' }} alt='' data-name={name}/>
+    } else if (type === 'counter') {
+      content = <Counter name={name}/>
     }
 
     const active = name === printerStore.selected

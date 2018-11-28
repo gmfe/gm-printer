@@ -11,8 +11,6 @@ class EditStore {
     return _.map(this.config, (v, k) => {
       if (k === 'page') {
         return v.type + '_' + v.printDirection + v.size.width + v.size.height
-      } else if (k === 'counter') {
-        return 'counter' + v.show
       } else if (k === 'contents') {
         return _.map(v, vv => {
           if (vv.type === 'table') {
@@ -114,11 +112,6 @@ class EditStore {
         }
       }
     }
-  }
-
-  @action
-  setCounterShow (bool) {
-    this.config.counter.show = bool
   }
 
   @action
@@ -262,42 +255,56 @@ class EditStore {
       return
     }
 
-    if (!type || type === 'text') {
-      blocks.push({
-        text: '请编辑',
-        style: {
-          position: 'absolute',
-          left: pos.left || '0px',
-          top: pos.top || '0px'
-        }
-      })
-    } else if (type === 'line') {
-      blocks.push({
-        type: 'line',
-        style: {
-          position: 'absolute',
-          left: '0px',
-          top: pos.top || '0px',
-          borderTopColor: 'black',
-          borderTopWidth: '1px',
-          borderTopStyle: 'solid',
-          width: '100%'
-        }
-      })
-    } else if (type === 'image') {
-      blocks.push({
-        type: 'image',
-        link: link,
-        style: {
-          position: 'absolute',
-          left: pos.left || '0px',
-          top: pos.top || '0px',
-          width: '100px',
-          height: '100px'
-        }
-      })
-    } else {
-      window.alert('出错啦，未识别类型，此信息不应该出现')
+    switch (type) {
+      case '':
+      case 'text':
+        blocks.push({
+          text: '请编辑',
+          style: {
+            position: 'absolute',
+            left: pos.left || '0px',
+            top: pos.top || '0px'
+          }
+        })
+        break
+      case 'line':
+        blocks.push({
+          type: 'line',
+          style: {
+            position: 'absolute',
+            left: '0px',
+            top: pos.top || '0px',
+            borderTopColor: 'black',
+            borderTopWidth: '1px',
+            borderTopStyle: 'solid',
+            width: '100%'
+          }
+        })
+        break
+      case 'image':
+        blocks.push({
+          type: 'image',
+          link: link,
+          style: {
+            position: 'absolute',
+            left: pos.left || '0px',
+            top: pos.top || '0px',
+            width: '100px',
+            height: '100px'
+          }
+        })
+        break
+      case 'counter':
+        blocks.push({
+          type: 'counter',
+          style: {
+            left: '0px',
+            top: '0px'
+          }
+        })
+        break
+      default:
+        window.alert('出错啦，未识别类型，此信息不应该出现')
     }
 
     this.selected = getBlockName(name, blocks.length - 1)

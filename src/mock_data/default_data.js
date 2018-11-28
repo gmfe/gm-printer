@@ -120,7 +120,7 @@ export default {
     'origin_item_price': 0.0,
     'quantity': 13.0,
     'std_unit_name': '斤',
-    'name': '长白菜|八卦',
+    'name': '长白菜',
     'real_is_weight': true,
     'tax_rate': null,
     'real_item_price': 0.0,

@@ -13,7 +13,7 @@ import EditorField from './editor_field'
 import EditorAddField from './editor_add_field'
 import ContextMenu from './context_menu'
 import { Gap, Title } from './component'
-import mockData from '../mock_data/order_data'
+import mockData from '../mock_data/default_data'
 
 import './style.less'
 

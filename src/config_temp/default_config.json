@@ -90,7 +90,7 @@
       }
     ]
   },
-  "name": "默认模板",
+  "name": "",
   "footer": {
     "style": {
       "height": "15px"
@@ -106,9 +106,6 @@
         "text": "页码： {{当前页码}} / {{页码总数}}"
       }
     ]
-  },
-  "counter": {
-    "show": false
   },
   "contents": [
     {
@@ -157,6 +154,18 @@
             "position": "absolute"
           },
           "text": "订单备注: {{订单备注}}"
+        }
+      ]
+    },
+    {
+      "style": {
+        "height": "55px"
+      },
+      "blocks": [
+        {
+          "style": {
+          },
+          "type": "counter"
         }
       ]
     },

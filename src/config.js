@@ -132,7 +132,8 @@ export const tableDataKeyList = [
 
 export const blockTypeList = [
   { value: '', text: '插入文本' },
-  { value: 'line', text: '插入线条' }
+  { value: 'line', text: '插入线条' },
+  { value: 'counter', text: '插入分类' }
 ]
 
 export const MULTI_SUFFIX = 'MULTI_SUFFIX'

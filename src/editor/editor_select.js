@@ -3,7 +3,7 @@ import editStore from './store'
 import { observer } from 'mobx-react'
 import { Flex, Option, Select } from 'react-gm'
 import { InputWithUnit } from './component'
-import { counterStateList, pageTypeMap, printDirectionList } from '../config'
+import { pageTypeMap, printDirectionList } from '../config'
 import _ from 'lodash'
 import { dispatchMsg } from '../util'
 
@@ -34,7 +34,7 @@ class EditorSelector extends React.Component {
   }
 
   render () {
-    const { config: { name, page, counter }, computedRegionList } = editStore
+    const { config: { name, page }, computedRegionList } = editStore
     const isDIY = page.type === 'DIY'
     console.log(editStore.selectedRegion)
     return (
@@ -67,13 +67,6 @@ class EditorSelector extends React.Component {
           <div>打印方向：</div>
           <Select className='gm-printer-edit-select' value={page.printDirection} onChange={this.handlePrintDirection}>
             {_.map(printDirectionList, v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
-          </Select>
-        </Flex>
-
-        <Flex alignCenter className='gm-padding-top-5'>
-          <div>分类数量：</div>
-          <Select className='gm-printer-edit-select' value={counter.show} onChange={this.handleCounterShow}>
-            {_.map(counterStateList, v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
           </Select>
         </Flex>
 

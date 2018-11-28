@@ -68,10 +68,19 @@
       "height": "57px"
     }
   },
-  "counter": {
-    "show": true
-  },
   "contents": [
+    {
+      "style": {
+        "height": "55px"
+      },
+      "blocks": [
+        {
+          "style": {
+          },
+          "type": "counter"
+        }
+      ]
+    },
     {
       "type": "table",
       "dataKey": "driver_sku",
