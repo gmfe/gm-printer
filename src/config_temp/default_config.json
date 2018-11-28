@@ -216,7 +216,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{列.下单数}}"
+          "text": "{{列.下单数}}{{列.基本单位}}"
         },
         {
           "head": "出库数(基本单位)",
@@ -226,7 +226,7 @@
           "headStyle": {
             "textAlign": "center"
           },
-          "text": "{{列.出库数_基本单位}}"
+          "text": "{{列.出库数_基本单位}}{{列.基本单位}}"
         },
         {
           "head": "单价(基本单位)",
@@ -255,14 +255,7 @@
         "height": "37px"
       },
       "blocks": [
-        {
-          "style": {
-            "top": "18px",
-            "left": "0px",
-            "position": "absolute"
-          },
-          "text": "异常明细："
-        }
+
       ]
     },
     {

@@ -1,12 +1,14 @@
 .gm-printer-edit {
   position: relative;
+  overflow: hidden;
 
   .gm-printer-edit-zone {
     position: absolute;
     right: 0;
     top: 0;
-    width: 320px;
-    min-height: 100%;
+    width: 330px;
+    height: 100vh;
+    overflow-y: auto;
     background: white;
     z-index: 20;
     padding: 10px 20px;
@@ -75,19 +77,25 @@
     }
   }
 
+  .gm-printer-edit-title-fixed {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 10px 20px;
+    z-index: 20;
+    background-color: #fff;
+  }
+
   .gm-printer-edit-wrap {
-    padding: 0 320px 0 20px;
+    padding: 50px 320px 0 20px;
+    height: 100vh;
+    overflow-y: auto;
   }
 
   .gm-printer-edit-content {
     display: flex;
     justify-content: center;
     position: relative;
-
-    .gm-printer-edit-content-tip {
-      text-align: center;
-      padding: 10px;
-    }
   }
 
   .gm-printer-edit-contextmenu {
@@ -237,10 +245,6 @@
   .gm-printer-edit {
     .gm-printer-edit-content {
       padding-right: 0;
-
-      .gm-printer-edit-content-tip {
-        display: none;
-      }
     }
 
     .gm-printer-edit-zone {

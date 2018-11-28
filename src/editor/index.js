@@ -138,6 +138,12 @@ class Editor extends React.Component {
     return (
       <div className='gm-printer-edit'>
 
+        <Flex className='gm-printer-edit-title-fixed'>
+          <Title title='模板预览' text={<span className='gm-text-red gm-padding-left-5'>说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击
+            <a href=''>查看视频教程</a>
+          </span>}/>
+        </Flex>
+
         <div className='gm-printer-edit-zone'>
           <EditorTitle data={mockData} onSave={this.handleSave}/>
           <Gap height='5px'/>
@@ -149,12 +155,6 @@ class Editor extends React.Component {
         </div>
 
         <div className='gm-printer-edit-wrap'>
-          <Flex className='gm-padding-tb-10'>
-            <Title title='模板预览' text={<span className='gm-text-red gm-padding-left-5'>说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击
-              <a href=''>查看视频教程</a>
-            </span>}/>
-          </Flex>
-
           <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
             <Printer
               key={editStore.computedPrinterKey}
