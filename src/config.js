@@ -6,10 +6,10 @@ export const pageTypeMap = {
       height: '297mm'
     },
     gap: {
-      paddingTop: '3mm',
-      paddingRight: '3mm',
-      paddingBottom: '3mm',
-      paddingLeft: '3mm'
+      paddingTop: '8mm',
+      paddingRight: '8mm',
+      paddingBottom: '8mm',
+      paddingLeft: '8mm'
     }
   },
   'A5': {
@@ -19,10 +19,10 @@ export const pageTypeMap = {
       height: '210mm'
     },
     gap: {
-      paddingTop: '3mm',
-      paddingRight: '3mm',
-      paddingBottom: '3mm',
-      paddingLeft: '3mm'
+      paddingTop: '5mm',
+      paddingRight: '5mm',
+      paddingBottom: '5mm',
+      paddingLeft: '5mm'
     }
   },
   'A4/2': {
@@ -32,10 +32,10 @@ export const pageTypeMap = {
       height: '148.5mm'
     },
     gap: {
-      paddingTop: '3mm',
-      paddingRight: '3mm',
-      paddingBottom: '3mm',
-      paddingLeft: '3mm'
+      paddingTop: '5mm',
+      paddingRight: '5mm',
+      paddingBottom: '5mm',
+      paddingLeft: '5mm'
     }
   },
   'A4/3': {
@@ -45,10 +45,10 @@ export const pageTypeMap = {
       height: '99mm'
     },
     gap: {
-      paddingTop: '3mm',
-      paddingRight: '3mm',
-      paddingBottom: '3mm',
-      paddingLeft: '3mm'
+      paddingTop: '5mm',
+      paddingRight: '5mm',
+      paddingBottom: '5mm',
+      paddingLeft: '5mm'
     }
   },
   '241x280': {
@@ -58,9 +58,9 @@ export const pageTypeMap = {
       height: '280mm'
     },
     gap: {
-      paddingTop: '3mm',
+      paddingTop: '5mm',
       paddingRight: '16mm',
-      paddingBottom: '3mm',
+      paddingBottom: '5mm',
       paddingLeft: '16mm'
     }
   },
@@ -71,9 +71,9 @@ export const pageTypeMap = {
       height: '280mm'
     },
     gap: {
-      paddingTop: '3mm',
+      paddingTop: '5mm',
       paddingRight: '16mm',
-      paddingBottom: '3mm',
+      paddingBottom: '5mm',
       paddingLeft: '16mm'
     }
   },
@@ -84,10 +84,10 @@ export const pageTypeMap = {
       height: '297mm'
     },
     gap: {
-      paddingTop: '3mm',
-      paddingRight: '3mm',
-      paddingBottom: '3mm',
-      paddingLeft: '3mm'
+      paddingTop: '5mm',
+      paddingRight: '5mm',
+      paddingBottom: '5mm',
+      paddingLeft: '5mm'
     }
   }
 }

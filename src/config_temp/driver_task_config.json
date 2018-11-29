@@ -9,10 +9,10 @@
       "height": "297mm"
     },
     "gap": {
-      "paddingTop": "3mm",
-      "paddingRight": "3mm",
-      "paddingBottom": "3mm",
-      "paddingLeft": "3mm"
+      "paddingRight": "5mm",
+      "paddingLeft": "5mm",
+      "paddingBottom": "5mm",
+      "paddingTop": "5mm"
     }
   },
   "header": {

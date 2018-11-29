@@ -1,258 +1,226 @@
 {
-  "header": {
-    "style": {
-      "height": "106px"
-    },
-    "blocks": [
-      {
-        "style": {
-          "fontSize": "26px",
-          "top": "0px",
-          "left": "0px",
-          "fontWeight": "bold",
-          "textAlign": "center",
-          "position": "absolute",
-          "right": "0px"
-        },
-        "text": "配送单"
-      },
-      {
-        "style": {
-          "top": "32px",
-          "left": "2px",
-          "position": "absolute"
-        },
-        "text": "订单号: {{订单号}}"
-      },
-      {
-        "style": {
-          "top": "67px",
-          "left": "232px",
-          "position": "absolute"
-        },
-        "text": "配送时间：{{配送时间}}"
-      },
-      {
-        "style": {
-          "top": "67px",
-          "left": "",
-          "position": "absolute",
-          "right": "9px"
-        },
-        "text": "打印时间：{{当前时间}}"
-      },
-      {
-        "style": {
-          "top": "32px",
-          "left": "450px",
-          "position": "absolute",
-          "right": ""
-        },
-        "text": "序号：{{序号}}"
-      },
-      {
-        "style": {
-          "top": "67px",
-          "left": "1px",
-          "position": "absolute"
-        },
-        "text": "下单时间：{{下单时间}}"
-      }
-    ]
-  },
+  "name": "",
   "page": {
-    "type": "A4",
     "name": "A4",
     "size": {
-      "height": "297mm",
-      "width": "210mm"
+      "width": "210mm",
+      "height": "297mm"
     },
+    "printDirection": "vertical",
+    "type": "A4",
     "gap": {
-      "paddingLeft": "3mm",
-      "paddingRight": "3mm",
-      "paddingBottom": "3mm",
-      "paddingTop": "3mm"
-    },
-    "printDirection": "vertical"
+      "paddingRight": "5mm",
+      "paddingLeft": "5mm",
+      "paddingBottom": "5mm",
+      "paddingTop": "5mm"
+    }
   },
-  "sign": {
-    "style": {
-      "height": "46px"
-    },
+  "header": {
     "blocks": [
       {
+        "text": "配送单",
         "style": {
-          "top": "5px",
-          "left": "600px",
-          "position": "absolute"
-        },
-        "text": "签收人："
-      }
-    ]
-  },
-  "name": "",
-  "footer": {
-    "style": {
-      "height": "15px"
-    },
-    "blocks": [
-      {
-        "style": {
-          "top": "-0.15625px",
-          "left": "",
+          "right": "0px",
+          "left": "0px",
           "position": "absolute",
-          "right": "0px"
-        },
-        "text": "页码： {{当前页码}} / {{页码总数}}"
+          "top": "0px",
+          "fontWeight": "bold",
+          "fontSize": "26px",
+          "textAlign": "center"
+        }
+      },
+      {
+        "text": "订单号: {{订单号}}",
+        "style": {
+          "left": "2px",
+          "position": "absolute",
+          "top": "50px"
+        }
+      },
+      {
+        "text": "配送时间：{{配送时间}}",
+        "style": {
+          "left": "261px",
+          "position": "absolute",
+          "top": "76px"
+        }
+      },
+      {
+        "text": "打印时间：{{当前时间}}",
+        "style": {
+          "right": "",
+          "left": "553px",
+          "position": "absolute",
+          "top": "76px"
+        }
+      },
+      {
+        "text": "序号：{{序号}}",
+        "style": {
+          "right": "",
+          "left": "450px",
+          "position": "absolute",
+          "top": "50px"
+        }
+      },
+      {
+        "text": "下单时间：{{下单时间}}",
+        "style": {
+          "left": "2px",
+          "position": "absolute",
+          "top": "76px"
+        }
       }
-    ]
+    ],
+    "style": {
+      "height": "97px"
+    }
   },
   "contents": [
     {
-      "style": {
-        "height": "100px"
-      },
       "blocks": [
         {
+          "text": "收货商户: {{收货商户}}({{商户ID}})",
           "style": {
-            "top": "0px",
             "left": "2px",
-            "position": "absolute"
-          },
-          "text": "收货商户: {{收货商户}}({{商户ID}})"
+            "position": "absolute",
+            "top": "5px"
+          }
         },
         {
+          "text": "收货人: {{收货人}}",
           "style": {
-            "top": "0px",
+            "right": "",
             "left": "450px",
             "position": "absolute",
-            "right": ""
-          },
-          "text": "收货人: {{收货人}}"
+            "top": "6px"
+          }
         },
         {
+          "text": "收货人电话: {{收货人电话}}",
           "style": {
-            "top": "33px",
             "left": "2px",
-            "position": "absolute"
-          },
-          "text": "收货人电话: {{收货人电话}}"
+            "position": "absolute",
+            "top": "30px"
+          }
         },
         {
+          "text": "收货地址: {{收货地址}}",
           "style": {
-            "top": "33px",
+            "right": "",
             "left": "450px",
             "position": "absolute",
-            "right": ""
-          },
-          "text": "收货地址: {{收货地址}}"
+            "top": "30px"
+          }
         },
         {
+          "text": "订单备注: {{订单备注}}",
           "style": {
-            "top": "66px",
             "left": "2px",
-            "position": "absolute"
-          },
-          "text": "订单备注: {{订单备注}}"
+            "position": "absolute",
+            "top": "55px"
+          }
         }
-      ]
+      ],
+      "style": {
+        "height": "78px"
+      }
     },
     {
+      "blocks": [
+        {
+          "type": "counter",
+          "style": {}
+        }
+      ],
       "style": {
         "height": "55px"
-      },
-      "blocks": [
-        {
-          "style": {
-          },
-          "type": "counter"
-        }
-      ]
+      }
     },
     {
-      "type": "table",
       "className": "",
+      "type": "table",
+      "dataKey": "orders_category",
       "subtotal": {
-        "show": true
+        "show": false
       },
-      "dataKey": "orders",
       "columns": [
         {
           "head": "序号",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.序号}}"
         },
         {
           "head": "类别",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.类别}}"
         },
         {
           "head": "商品名",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.商品名}}"
         },
         {
           "head": "规格",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.规格}}"
         },
         {
           "head": "下单数",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.下单数}}{{列.基本单位}}"
         },
         {
           "head": "出库数(基本单位)",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.出库数_基本单位}}{{列.基本单位}}"
         },
         {
           "head": "单价(基本单位)",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.单价_基本单位}}"
         },
         {
           "head": "出库金额",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.出库金额}}"
@@ -260,57 +228,55 @@
       ]
     },
     {
+      "blocks": [],
       "style": {
-        "height": "37px"
-      },
-      "blocks": [
-
-      ]
+        "height": "15px"
+      }
     },
     {
-      "type": "table",
       "className": "",
+      "type": "table",
+      "dataKey": "abnormal",
       "subtotal": {
         "show": false
       },
-      "dataKey": "abnormal",
       "columns": [
         {
           "head": "商品名",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.商品名}}"
         },
         {
           "head": "异常原因",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.异常原因}}"
         },
         {
           "head": "异常数量",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.异常数量}}"
         },
         {
           "head": "异常金额",
-          "style": {
+          "headStyle": {
             "textAlign": "center"
           },
-          "headStyle": {
+          "style": {
             "textAlign": "center"
           },
           "text": "{{列.异常金额}}"
@@ -318,51 +284,82 @@
       ]
     },
     {
-      "style": {
-        "height": "100px"
-      },
       "blocks": [
         {
+          "text": "下单金额：￥{{下单金额}}",
           "style": {
-            "top": "7px",
             "left": "1px",
-            "position": "absolute"
-          },
-          "text": "下单金额：￥{{下单金额}}"
+            "position": "absolute",
+            "top": "10px"
+          }
         },
         {
+          "text": "出库金额：￥{{出库金额}}",
           "style": {
-            "top": "8px",
             "left": "162px",
-            "position": "absolute"
-          },
-          "text": "出库金额：￥{{出库金额}}"
+            "position": "absolute",
+            "top": "10px"
+          }
         },
         {
+          "text": "运费：￥{{运费}}",
           "style": {
-            "top": "7px",
-            "left": "321px",
-            "position": "absolute"
-          },
-          "text": "运费：￥{{运费}}"
+            "left": "309px",
+            "position": "absolute",
+            "top": "10px"
+          }
         },
         {
+          "text": "异常金额：￥{{异常金额}}",
           "style": {
-            "top": "8px",
-            "left": "462px",
-            "position": "absolute"
-          },
-          "text": "异常金额：￥{{异常金额}}"
+            "left": "424px",
+            "position": "absolute",
+            "top": "10px"
+          }
         },
         {
+          "text": "销售额(含运税)：￥{{销售额_含运税}}",
           "style": {
-            "top": "8px",
-            "left": "623px",
-            "position": "absolute"
-          },
-          "text": "销售额(含运税)：￥{{销售额_含运税}}"
+            "left": "570px",
+            "position": "absolute",
+            "top": "10px"
+          }
         }
-      ]
+      ],
+      "style": {
+        "height": "69px"
+      }
     }
-  ]
+  ],
+  "sign": {
+    "blocks": [
+      {
+        "text": "签收人：",
+        "style": {
+          "left": "600px",
+          "position": "absolute",
+          "top": "5px"
+        }
+      }
+    ],
+    "style": {
+      "height": "46px"
+    }
+  },
+  "footer": {
+    "blocks": [
+      {
+        "text": "页码： {{当前页码}} / {{页码总数}}",
+        "style": {
+          "right": "",
+          "left": "48%",
+          "position": "absolute",
+          "top": "0px"
+        }
+      }
+    ],
+    "style": {
+      "height": "15px"
+    }
+  }
 }
