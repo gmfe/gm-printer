@@ -29,7 +29,7 @@ export const pageTypeMap = {
     name: '二分纸',
     size: {
       width: '210mm',
-      height: '148.5mm'
+      height: '140mm'
     },
     gap: {
       paddingTop: '5mm',
@@ -42,7 +42,7 @@ export const pageTypeMap = {
     name: '三分纸',
     size: {
       width: '210mm',
-      height: '99mm'
+      height: '93mm'
     },
     gap: {
       paddingTop: '5mm',
@@ -68,7 +68,7 @@ export const pageTypeMap = {
     name: '241x140',
     size: {
       width: '241mm',
-      height: '280mm'
+      height: '140mm'
     },
     gap: {
       paddingTop: '5mm',
