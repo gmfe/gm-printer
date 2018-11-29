@@ -47,15 +47,12 @@ class Block extends React.Component {
       clientX,
       clientY
     })
-    console.log(clientX, clientY, 'start')
     dispatchMsg('gm-printer-select', {
       selected: name
     })
   }
 
   handleDragEnd = ({ clientX, clientY }) => {
-    console.log(clientX, clientY, 'end')
-
     const { config } = this.props
     const diffX = clientX - this.state.clientX
     const diffY = clientY - this.state.clientY

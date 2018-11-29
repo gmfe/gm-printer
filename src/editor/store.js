@@ -67,12 +67,6 @@ class EditStore {
   }
 
   @action
-  forceUpdatePrinter () {
-    console.log('ss')
-    this.computedPrinterKey = Math.random()
-  }
-
-  @action
   setInsertPanel (panel) {
     this.insertPanel = panel
   }
