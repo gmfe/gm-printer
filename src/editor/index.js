@@ -140,7 +140,7 @@ class Editor extends React.Component {
 
         <Flex className='gm-printer-edit-title-fixed'>
           <Title title='模板预览' text={<span className='gm-text-red gm-padding-left-5'>说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击
-            <a href=''>查看视频教程</a>
+            <a href='https://v.qq.com/x/page/t08044292dd.html' target='_blank'>查看视频教程</a>
           </span>}/>
         </Flex>
 

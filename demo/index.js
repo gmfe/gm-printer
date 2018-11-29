@@ -27,6 +27,7 @@ class App extends React.Component {
         <Editor
           config={this.state.config}
           onSave={this.handleSave}
+          showEditor
         />
       </div>
     )
