@@ -193,7 +193,7 @@ function generateOrderData (list) {
 
       '商品税额': price(v.tax),
       '出库金额': price(v.real_item_price),
-      '销售额_不含税': price(v.real_item_price_without_tax),
+      '出库金额_不含税': price(v.real_item_price_without_tax),
       _origin: v
     }
   })
