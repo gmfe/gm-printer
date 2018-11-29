@@ -109,7 +109,7 @@ function generateMultiData (list, categoryTotal) {
 function generateCommon (data) {
   return {
     '订单号': data.id,
-    '序号': `${data.sort_id} ${data.child_sort_id}`,
+    '分拣序号': `${data.sort_id} ${data.child_sort_id}`,
 
     '下单时间': moment(data.date_time).format('YYYY-MM-DD HH:mm:ss'),
     '配送时间': `${moment(data.receive_begin_time).format('MM-DD HH:mm:ss')} ~ ${moment(data.receive_end_time).format('MM-DD HH:mm:ss')}`,
