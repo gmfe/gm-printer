@@ -186,8 +186,8 @@ function generateOrderData (list) {
         : parseFloat(Big(v.real_weight).div(v.sale_ratio).toFixed(2)),
 
       '税率': v.tax_rate ? Big(v.tax_rate).div(100).toFixed(2) + '%' : 0,
-      '不含税单价_基本单位': price(v.sale_price_without_tax),
-      '不含税单价_销售单位': price(Big(v.sale_price_without_tax || 0).div(v.sale_ratio || 1)),
+      '不含税单价_基本单位': price(Big(v.sale_price_without_tax || 0).div(v.sale_ratio)),
+      '不含税单价_销售单位': price(v.sale_price_without_tax),
       '单价_基本单位': price(v.std_sale_price),
       '单价_销售单位': price(v.sale_price),
 
