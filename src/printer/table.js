@@ -91,7 +91,7 @@ class Table extends React.Component {
     const columns1 = columns.map((val, index) => ({ ...val, index }))
     // 多列表格
     if (arr.includes('multi')) {
-      // 多列商品的第二列有点特殊,都带$2后缀
+      // 双栏商品的第二列有点特殊,都带 _MULTI_SUFFIX 后缀
       const columns2 = columns.map((val, index) => {
         return {
           ...val,

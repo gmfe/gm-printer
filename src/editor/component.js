@@ -361,7 +361,7 @@ class ImageUploader extends React.Component {
   render () {
     return <React.Fragment>
       <div onClick={this.handleClick} onDrop={this.handleUpload}>
-        插入图片
+        {this.props.text}
       </div>
       <input
         style={{ display: 'none' }}
@@ -375,7 +375,8 @@ class ImageUploader extends React.Component {
 }
 
 ImageUploader.propTypes = {
-  onSuccess: PropTypes.func.isRequired
+  onSuccess: PropTypes.func.isRequired,
+  text: PropTypes.string.isRequired
 }
 
 class InputWithUnit extends React.Component {

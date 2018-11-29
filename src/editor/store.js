@@ -322,7 +322,7 @@ class EditStore {
         dispatchMsg('gm-printer-block-edit', {
           name: this.selected
         })
-      }, 200)
+      }, 300)
     }
   }
 

@@ -60,7 +60,7 @@ class EditorSelector extends React.Component {
         </Flex>}
 
         <Flex alignCenter className='gm-padding-top-5'>
-          <div>打印方向：</div>
+          <div>打印布局：</div>
           <Select className='gm-printer-edit-select' value={page.printDirection} onChange={this.handlePrintDirection}>
             {_.map(printDirectionList, v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
           </Select>

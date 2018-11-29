@@ -128,7 +128,8 @@ export const tableDataKeyList = [
 export const blockTypeList = [
   { value: '', text: '插入文本' },
   { value: 'line', text: '插入线条' },
-  { value: 'counter', text: '插入分类' }
+  { value: 'image', text: '插入图片' },
+  { value: 'counter', text: '插入分类汇总' }
 ]
 
 export const MULTI_SUFFIX = '_MULTI_SUFFIX'

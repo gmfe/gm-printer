@@ -70,7 +70,7 @@ const convertNumber2Sid = (id) => {
 const price = n => Big(n || 0).toFixed(2)
 
 /**
- * 生成多列商品展示数据
+ * 生成双栏商品展示数据
  * @param list
  * @param categoryTotal
  * @return {Array}
@@ -251,7 +251,7 @@ function order (data) {
     // 单列分类商品
     kCategory = kCategory.concat(value, categoryTotal)
 
-    // 多列商品
+    // 双栏商品
     kCategoryMulti = kCategoryMulti.concat(generateMultiData(value, categoryTotal))
   })
 

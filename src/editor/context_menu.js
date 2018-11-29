@@ -143,13 +143,10 @@ class ContextMenu extends React.Component {
     return (
       <React.Fragment>
         {_.map(blockTypeList, v => (
-          <div
-            key={v.value}
-            onClick={this.handleInsertBlock.bind(this, v.value)}
-          >{v.text}</div>
+          v.value === 'image'
+            ? <ImageUploader onSuccess={this.handleInsertImage} key={v.value} text={v.text}/>
+            : <div key={v.value} onClick={this.handleInsertBlock.bind(this, v.value)}>{v.text}</div>
         ))}
-
-        <ImageUploader onSuccess={this.handleInsertImage}/>
 
         {arr[0] === 'contents' && (
           <React.Fragment>
@@ -207,7 +204,7 @@ class ContextMenu extends React.Component {
     return (
       <React.Fragment>
         <div onClick={this.handleChangeTableDataKey.bind(this, 'multi')}
-          className={isMultiActive ? 'active' : ''}>多列商品
+          className={isMultiActive ? 'active' : ''}>双栏商品
         </div>
         <div onClick={this.handleChangeTableDataKey.bind(this, 'category')}
           className={isCategoryActive ? 'active' : ''}>商品分类
