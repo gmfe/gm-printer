@@ -144,7 +144,7 @@ class Editor extends React.Component {
           </span>}/>
         </Flex>
 
-        <div className='gm-printer-edit-zone'>
+        {this.props.showEditor && <div className='gm-printer-edit-zone'>
           <EditorTitle data={mockData} onSave={this.handleSave}/>
           <Gap height='10px'/>
           <EditorSelect/>
@@ -152,7 +152,7 @@ class Editor extends React.Component {
           <EditorField/>
           <Gap height='5px'/>
           <EditorAddField data={mockData}/>
-        </div>
+        </div>}
 
         <div className='gm-printer-edit-wrap'>
           <ContextMenu className='gm-printer-edit-content' onClick={this.handleCancel}>
@@ -172,11 +172,13 @@ class Editor extends React.Component {
 
 Editor.propTypes = {
   config: PropTypes.object.isRequired,
-  onSave: PropTypes.func
+  onSave: PropTypes.func,
+  showEditor: PropTypes.bool
 }
 
 Editor.deaultProps = {
-  onSave: _.noop
+  onSave: _.noop,
+  showEditor: true
 }
 
 export default Editor
