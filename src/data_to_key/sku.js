@@ -13,13 +13,13 @@ function sku (data) {
   /* --------- 分类商品 -------------------- */
   function getDetail (sku) {
     const len = sku.customer_detail.length
-    return _.flatten(_.map(sku.customer_detail, (customer, index) =>
+    return _.map(sku.customer_detail, (customer, index) =>
       [
         `[${customer.sort_id || '-'}]${customer.customer_name}*`,
         customer.sku_amount,
-        (index + 1) % 2 === 0 ? '\n' : len !== 1 && index !== len - 1 ? '+' : ''
-      ]
-    ))
+        (index + 1) % 2 === 0 ? '<br>' : len !== 1 && index !== len - 1 ? '+' : ''
+      ].join('')
+    ).join('')
   }
 
   let driverSku = []

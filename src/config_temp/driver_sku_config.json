@@ -65,13 +65,13 @@
       }
     ],
     "style": {
-      "height": "57px"
+      "height": "62px"
     }
   },
   "contents": [
     {
       "style": {
-        "height": "55px"
+        "height": "60px"
       },
       "blocks": [
         {
@@ -86,6 +86,9 @@
       "dataKey": "driver_sku",
       "subtotal": {
         "show": false
+      },
+      "specialStyle": {
+        "font-size": "16px"
       },
       "columns": [
         {
@@ -121,11 +124,11 @@
         {
           "head": "明细",
           "headStyle": {
-            "textAlign": "center"
+            "textAlign": "left"
           },
           "text": "{{列.明细}}",
           "style": {
-            "textAlign": "center"
+            "textAlign": "left"
           }
         }
       ],

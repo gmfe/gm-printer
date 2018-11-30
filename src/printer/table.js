@@ -106,7 +106,7 @@ class Table extends React.Component {
   }
 
   renderDefault () {
-    const { config: { dataKey, subtotal }, name, range, pageIndex, printerStore } = this.props
+    const { config: { dataKey, subtotal, specialStyle }, name, range, pageIndex, printerStore } = this.props
     const tableData = printerStore.data._table[dataKey] || []
 
     // 每页小计
@@ -116,7 +116,7 @@ class Table extends React.Component {
       let sum = Big(0)
       _.each(list, ({ _origin = {}, _origin$2 = {} }) => {
         sum = sum.plus(_origin.real_item_price || 0)
-        // 如果是多列
+        // 如果是双栏商品
         if (_origin$2.real_item_price) {
           sum = sum.plus(_origin$2.real_item_price)
         }
@@ -157,7 +157,7 @@ class Table extends React.Component {
             if (special) {
               return (
                 <tr key={i}>
-                  <td colSpan={99} style={{ fontWeight: 'bold' }}>{special.text}</td>
+                  <td colSpan={99} style={Object.assign({ fontWeight: 'bold' }, specialStyle)}>{special.text}</td>
                 </tr>
               )
             }
@@ -172,7 +172,8 @@ class Table extends React.Component {
                     className={classNames({
                       active: getTableColumnName(name, col.index) === printerStore.selected
                     })}
-                  >{printerStore.templateTable(col.text, dataKey, i, pageIndex)}</td>
+                    dangerouslySetInnerHTML={{ __html: printerStore.templateTable(col.text, dataKey, i, pageIndex) }}
+                  />
                 ))}
               </tr>
             )

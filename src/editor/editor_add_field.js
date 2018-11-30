@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react'
 import { Flex } from 'react-gm'
 import { Gap, SubTitle, Title } from './component'
-import PropTypes from 'prop-types'
 import _ from 'lodash'
 import editStore from './store'
 import { observer } from 'mobx-react'
@@ -130,10 +129,6 @@ class EditorAddField extends React.Component {
 
     return <div className='gm-overflow-y'>{content}</div>
   }
-}
-
-EditorAddField.propTypes = {
-  data: PropTypes.object
 }
 
 export default EditorAddField

@@ -151,7 +151,7 @@ class Editor extends React.Component {
           <Gap height='5px'/>
           <EditorField/>
           <Gap height='5px'/>
-          <EditorAddField data={mockData}/>
+          <EditorAddField/>
         </div>}
 
         <div className='gm-printer-edit-wrap'>

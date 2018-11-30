@@ -1,36 +1,4 @@
 export default {
-  'order_detail': [
-    {
-      'area': '深圳市-宝安区-宝安中心区',
-      'receive_address': '街道办11',
-      'receive_begin_time': '2018-11-14 21:30',
-      'order_id': 'PL3553571',
-      'receive_end_time': '2018-11-15 06:00',
-      'sort_id': 1,
-      'order_pay_method': 2,
-      'customer_name': '喵喵zm商户'
-    },
-    {
-      'area': null,
-      'receive_address': '深圳市南山区软件园',
-      'receive_begin_time': '2018-11-17 00:00',
-      'order_id': 'LK1866541',
-      'receive_end_time': '2018-11-17 23:30',
-      'sort_id': null,
-      'order_pay_method': null,
-      'customer_name': '周敏-分仓1'
-    },
-    {
-      'area': '深圳市-宝安区-宝安中心区',
-      'receive_address': '街道办11',
-      'receive_begin_time': '2018-11-16 21:30',
-      'order_id': 'PL3583721',
-      'receive_end_time': '2018-11-17 06:00',
-      'sort_id': null,
-      'order_pay_method': 2,
-      'customer_name': '喵喵zm商户'
-    }
-  ],
   'sku_detail': [
     {
       'quantity': 13,
@@ -144,6 +112,36 @@ export default {
       'sku_name': '菜xcv',
       'category_1_name': '蔬菜',
       'customer_detail': [
+        {
+          'sku_amount': 11.7,
+          'sort_id': 1,
+          'customer_id': '86715',
+          'customer_name': '喵喵zm商户'
+        },
+        {
+          'sku_amount': 11.7,
+          'sort_id': 1,
+          'customer_id': '86715',
+          'customer_name': '喵喵zm商户'
+        },
+        {
+          'sku_amount': 11.7,
+          'sort_id': 1,
+          'customer_id': '86715',
+          'customer_name': '喵喵zm商户'
+        },
+        {
+          'sku_amount': 11.7,
+          'sort_id': 1,
+          'customer_id': '86715',
+          'customer_name': '喵喵zm商户'
+        },
+        {
+          'sku_amount': 11.7,
+          'sort_id': 1,
+          'customer_id': '86715',
+          'customer_name': '喵喵zm商户'
+        },
         {
           'sku_amount': 11.7,
           'sort_id': 1,
