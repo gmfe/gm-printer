@@ -5,7 +5,7 @@ import { observer } from 'mobx-react'
 import { Flex } from 'react-gm'
 import { doPrint } from '../printer'
 import { toJS } from 'mobx'
-import defaultConfig from '../../src/config_temp/default_config'
+import defaultConfig from '../template_config/default_config'
 import { Title } from './component'
 
 @observer

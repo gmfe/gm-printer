@@ -1,7 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import config from '../src/config_temp/default_config'
 import { Editor } from '../src'
+import config from '../src/template_config/driver_sku_config'
+import mockData from '../src/mock_data/driver_sku_data'
+
 import 'gm-xfont/iconfont.css'
 import '../node_modules/react-gm/src/index.less'
 
@@ -26,6 +28,7 @@ class App extends React.Component {
       <div>
         <Editor
           config={this.state.config}
+          mockData={mockData}
           onSave={this.handleSave}
           showEditor
         />
