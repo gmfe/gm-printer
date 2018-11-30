@@ -123,7 +123,7 @@ class Table extends React.Component {
       })
 
       subtotalForEachPage = <tr>
-        <td colSpan={99} style={{ fontWeight: 'bold' }}>每页小计：{sum.toFixed(2)}</td>
+        <td colSpan={99} style={{ fontWeight: 'bold' }}>每页合计：{sum.toFixed(2)}</td>
       </tr>
     }
 

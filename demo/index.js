@@ -1,8 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Editor } from '../src'
-import config from '../src/template_config/driver_sku_config'
-import mockData from '../src/mock_data/driver_sku_data'
+// 模板配置
+import config from '../src/template_config/default_config'
+// 模拟数据
+import mockData from '../src/mock_data/default_data'
 
 import 'gm-xfont/iconfont.css'
 import '../node_modules/react-gm/src/index.less'
