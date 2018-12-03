@@ -145,9 +145,9 @@ class EditStore {
 
     const contentRegions = this.config.contents.map((v, i) => {
       if (v.type === 'table') {
-        return { value: `contents.table.${i}`, text: i18next.t(/* src:`区域${i}` => tpl:区域${VAR1} */'KEY2', { VAR1: i }) }
+        return { value: `contents.table.${i}`, text: i18next.t('区域') + i }
       } else {
-        return { value: `contents.panel.${i}`, text: i18next.t(/* src:`区域${i}` => tpl:区域${VAR1} */'KEY3', { VAR1: i }) }
+        return { value: `contents.panel.${i}`, text: i18next.t('区域') + i }
       }
     })
 

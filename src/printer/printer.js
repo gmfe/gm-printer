@@ -94,7 +94,7 @@ class Printer extends React.Component {
                   config={content}
                   range={{ begin: 0, end: list.length }}
                   pageIndex={0}
-                  placeholder={i18next.t(/* src:`区域 ${index}` => tpl:区域 ${VAR1} */'KEY4', { VAR1: index })}
+                  placeholder={`${i18next.t('区域')} ${index}`}
                 />
               )
 
@@ -105,7 +105,7 @@ class Printer extends React.Component {
                   name={`contents.panel.${index}`}
                   config={content}
                   pageIndex={0}
-                  placeholder={i18next.t(/* src:`区域 ${index}` => tpl:区域 ${VAR1} */'KEY5', { VAR1: index })}
+                  placeholder={`${i18next.t('区域')} ${index}`}
                 />
               )
           }
@@ -143,7 +143,7 @@ class Printer extends React.Component {
                           begin: panel.begin,
                           end: panel.end
                         }}
-                        placeholder={i18next.t(/* src:`区域 ${panel.index}` => tpl:区域 ${VAR1} */'KEY6', { VAR1: panel.index })}
+                        placeholder={`${i18next.t('区域')} ${panel.index}`}
                         pageIndex={i}
                       />
                     )
@@ -155,7 +155,7 @@ class Printer extends React.Component {
                         name={`contents.panel.${panel.index}`}
                         config={config.contents[panel.index]}
                         pageIndex={i}
-                        placeholder={i18next.t(/* src:`区域 ${panel.index}` => tpl:区域 ${VAR1} */'KEY7', { VAR1: panel.index })}
+                        placeholder={`${i18next.t('区域')} ${panel.index}`}
                       />
                     )
                 }
