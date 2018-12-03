@@ -1,3 +1,4 @@
+import { i18next } from 'gm-i18n'
 import React from 'react'
 import classNames from 'classnames'
 import { inject, observer, Provider } from 'mobx-react'
@@ -12,7 +13,7 @@ import Table from './table'
 const Header = (props) => <Panel
   {...props}
   name='header'
-  placeholder='页眉'
+  placeholder={i18next.t('页眉')}
 />
 const Sign = (props) => <Panel
   {...props}
@@ -23,7 +24,7 @@ const Sign = (props) => <Panel
     right: 0
   }}
   name='sign'
-  placeholder='签名'
+  placeholder={i18next.t('签名')}
 />
 const Footer = (props) => <Panel
   {...props}
@@ -35,7 +36,7 @@ const Footer = (props) => <Panel
     right: 0
   }}
   name='footer'
-  placeholder='页脚'
+  placeholder={i18next.t('页脚')}
 />
 
 @inject('printerStore')
@@ -86,23 +87,27 @@ class Printer extends React.Component {
           switch (content.type) {
             case 'table':
               const list = printerStore.data._table[content.dataKey]
-              return <Table
-                key={`contents.table.${index}`}
-                name={`contents.table.${index}`}
-                config={content}
-                range={{ begin: 0, end: list.length }}
-                pageIndex={0}
-                placeholder={`区域 ${index}`}
-              />
+              return (
+                <Table
+                  key={`contents.table.${index}`}
+                  name={`contents.table.${index}`}
+                  config={content}
+                  range={{ begin: 0, end: list.length }}
+                  pageIndex={0}
+                  placeholder={i18next.t(/* src:`区域 ${index}` => tpl:区域 ${VAR1} */'KEY4', { VAR1: index })}
+                />
+              )
 
             default:
-              return <Panel
-                key={`contents.panel.${index}`}
-                name={`contents.panel.${index}`}
-                config={content}
-                pageIndex={0}
-                placeholder={`区域 ${index}`}
-              />
+              return (
+                <Panel
+                  key={`contents.panel.${index}`}
+                  name={`contents.panel.${index}`}
+                  config={content}
+                  pageIndex={0}
+                  placeholder={i18next.t(/* src:`区域 ${index}` => tpl:区域 ${VAR1} */'KEY5', { VAR1: index })}
+                />
+              )
           }
         })}
         <Sign config={config.sign} pageIndex={0}/>
@@ -129,26 +134,30 @@ class Printer extends React.Component {
               {_.map(page, (panel, ii) => {
                 switch (panel.type) {
                   case 'table':
-                    return <Table
-                      key={`contents.table.${panel.index}.${ii}`}
-                      name={`contents.table.${panel.index}`}
-                      config={config.contents[panel.index]}
-                      range={{
-                        begin: panel.begin,
-                        end: panel.end
-                      }}
-                      placeholder={`区域 ${panel.index}`}
-                      pageIndex={i}
-                    />
+                    return (
+                      <Table
+                        key={`contents.table.${panel.index}.${ii}`}
+                        name={`contents.table.${panel.index}`}
+                        config={config.contents[panel.index]}
+                        range={{
+                          begin: panel.begin,
+                          end: panel.end
+                        }}
+                        placeholder={i18next.t(/* src:`区域 ${panel.index}` => tpl:区域 ${VAR1} */'KEY6', { VAR1: panel.index })}
+                        pageIndex={i}
+                      />
+                    )
 
                   default:
-                    return <Panel
-                      key={`contents.panel.${panel.index}`}
-                      name={`contents.panel.${panel.index}`}
-                      config={config.contents[panel.index]}
-                      pageIndex={i}
-                      placeholder={`区域 ${panel.index}`}
-                    />
+                    return (
+                      <Panel
+                        key={`contents.panel.${panel.index}`}
+                        name={`contents.panel.${panel.index}`}
+                        config={config.contents[panel.index]}
+                        pageIndex={i}
+                        placeholder={i18next.t(/* src:`区域 ${panel.index}` => tpl:区域 ${VAR1} */'KEY7', { VAR1: panel.index })}
+                      />
+                    )
                 }
               })}
               {isLastPage && (

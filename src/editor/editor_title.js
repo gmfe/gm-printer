@@ -1,3 +1,4 @@
+import { i18next } from 'gm-i18n'
 import React from 'react'
 import PropTypes from 'prop-types'
 import editStore from './store'
@@ -30,15 +31,15 @@ class EditorTitle extends React.Component {
   render () {
     return (
       <Flex justifyBetween>
-        <Title title='基本信息'/>
+        <Title title={i18next.t('基本信息')}/>
         <div>
-          <button className='btn btn-default btn-sm' onClick={this.handleTestPrint}>测试打印
+          <button className='btn btn-default btn-sm' onClick={this.handleTestPrint}>{i18next.t('测试打印')}
           </button>
           <div className='gm-gap-10'/>
-          <button className='btn btn-default btn-sm' onClick={this.handleReset}>重置
+          <button className='btn btn-default btn-sm' onClick={this.handleReset}>{i18next.t('重置')}
           </button>
           <div className='gm-gap-10'/>
-          <button className='btn btn-primary btn-sm' onClick={this.props.onSave}>保存</button>
+          <button className='btn btn-primary btn-sm' onClick={this.props.onSave}>{i18next.t('保存')}</button>
         </div>
       </Flex>
     )

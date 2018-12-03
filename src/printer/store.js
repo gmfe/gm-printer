@@ -1,3 +1,4 @@
+import { i18next } from 'gm-i18n'
 import { action, configure, observable } from 'mobx'
 import _ from 'lodash'
 import toKey from '../data_to_key'
@@ -187,8 +188,8 @@ class PrinterStore {
       })({
         ...this.data.common,
         ...this.data._upperPrice,
-        '当前页码': pageIndex + 1,
-        '页码总数': this.pages.length
+        [i18next.t('当前页码')]: pageIndex + 1,
+        [i18next.t('页码总数')]: this.pages.length
       })
     } catch (err) {
       // console.warn(err)
@@ -205,9 +206,9 @@ class PrinterStore {
         interpolate: /{{([\s\S]+?)}}/g
       })({
         ...this.data.common,
-        '列': list[index],
-        '当前页码': pageIndex + 1,
-        '页码总数': this.pages.length
+        [i18next.t('列')]: list[index],
+        [i18next.t('当前页码')]: pageIndex + 1,
+        [i18next.t('页码总数')]: this.pages.length
       })
     } catch (err) {
       // console.warn(err)

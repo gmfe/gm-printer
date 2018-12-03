@@ -1,3 +1,4 @@
+import { i18next } from 'gm-i18n'
 import React from 'react'
 import PropTypes from 'prop-types'
 import { blockTypeList, tableClassNameList } from '../config'
@@ -151,12 +152,12 @@ class ContextMenu extends React.Component {
         {arr[0] === 'contents' && (
           <React.Fragment>
             <Hr/>
-            <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
-            <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
-            <div onClick={this.handleRemoveContent}>移除区域</div>
+            <div onClick={this.handleAddContent.bind(this, 0, '')}>{i18next.t('向上插入区域块')}</div>
+            <div onClick={this.handleAddContent.bind(this, 1, '')}>{i18next.t('向下插入区域块')}</div>
+            <div onClick={this.handleRemoveContent}>{i18next.t('移除区域')}</div>
             <Hr/>
-            <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
-            <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
+            <div onClick={this.handleAddContent.bind(this, 0, 'table')}>{i18next.t('向上插入表格')}</div>
+            <div onClick={this.handleAddContent.bind(this, 1, 'table')}>{i18next.t('向下插入表格')}</div>
           </React.Fragment>
         )}
       </React.Fragment>
@@ -177,7 +178,7 @@ class ContextMenu extends React.Component {
   renderBlock () {
     return (
       <div onClick={this.handleRemove}>
-        移除
+        {i18next.t('移除')}
       </div>
     )
   }
@@ -204,12 +205,12 @@ class ContextMenu extends React.Component {
     return (
       <React.Fragment>
         <div onClick={this.handleChangeTableDataKey.bind(this, 'multi')}
-          className={isMultiActive ? 'active' : ''}>双栏商品
+          className={isMultiActive ? 'active' : ''}>{i18next.t('双栏商品')}
         </div>
         <div onClick={this.handleChangeTableDataKey.bind(this, 'category')}
-          className={isCategoryActive ? 'active' : ''}>商品分类
+          className={isCategoryActive ? 'active' : ''}>{i18next.t('商品分类')}
         </div>
-        <div onClick={this.handleSubtotal} className={isSubtotalActive ? 'active' : ''}>每页合计</div>
+        <div onClick={this.handleSubtotal} className={isSubtotalActive ? 'active' : ''}>{i18next.t('每页合计')}</div>
       </React.Fragment>
     )
   }
@@ -228,7 +229,7 @@ class ContextMenu extends React.Component {
         {this.renderOrderActionBtn()}
 
         <Hr/>
-        <div onClick={this.handleRemove}>移除列</div>
+        <div onClick={this.handleRemove}>{i18next.t('移除列')}</div>
 
         <Hr/>
         {_.map(tableClassNameList, o => (
@@ -237,13 +238,13 @@ class ContextMenu extends React.Component {
         ))}
 
         <Hr/>
-        <div onClick={this.handleAddContent.bind(this, 0, '')}>向上插入区域块</div>
-        <div onClick={this.handleAddContent.bind(this, 1, '')}>向下插入区域块</div>
-        <div onClick={this.handleRemoveContent}>移除区域</div>
+        <div onClick={this.handleAddContent.bind(this, 0, '')}>{i18next.t('向上插入区域块')}</div>
+        <div onClick={this.handleAddContent.bind(this, 1, '')}>{i18next.t('向下插入区域块')}</div>
+        <div onClick={this.handleRemoveContent}>{i18next.t('移除区域')}</div>
 
         <Hr/>
-        <div onClick={this.handleAddContent.bind(this, 0, 'table')}>向上插入表格</div>
-        <div onClick={this.handleAddContent.bind(this, 1, 'table')}>向下插入表格</div>
+        <div onClick={this.handleAddContent.bind(this, 0, 'table')}>{i18next.t('向上插入表格')}</div>
+        <div onClick={this.handleAddContent.bind(this, 1, 'table')}>{i18next.t('向下插入表格')}</div>
       </React.Fragment>
     )
   }

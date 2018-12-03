@@ -1,3 +1,4 @@
+import { i18next } from 'gm-i18n'
 import React from 'react'
 import { Flex, Option, Select } from 'react-gm'
 import { observer } from 'mobx-react'
@@ -6,7 +7,7 @@ import { tableDataKeyList } from '../config'
 import { Fonter, Gap, Line, Position, Separator, Size, TextAlign, Textarea, Title } from './component'
 
 const TipInfo = () => <Flex alignCenter className='gm-padding-top-5 gm-text-red'>
-  {'说明：请勿修改{}中的内容,避免出现数据异常'}
+  {i18next.t('说明：请勿修改{}中的内容,避免出现数据异常')}
 </Flex>
 
 @observer
@@ -36,7 +37,7 @@ class EditorField extends React.Component {
 
     return (
       <div>
-        <Title title='编辑字段'/>
+        <Title title={i18next.t('编辑字段')}/>
         <Gap/>
         <Position style={style} onChange={this.handleChangeBlock.bind(this, 'style')}/>
         <Gap/>
@@ -50,7 +51,7 @@ class EditorField extends React.Component {
 
             <Textarea
               value={text}
-              placeholder='请输入填充内容'
+              placeholder={i18next.t('请输入填充内容')}
               onChange={this.handleChangeBlock.bind(this, 'text')}
             />
           </div>
@@ -65,7 +66,7 @@ class EditorField extends React.Component {
 
             <Textarea
               value={link}
-              placeholder='请输入链接'
+              placeholder={i18next.t('请输入链接')}
               onChange={this.handleChangeBlock.bind(this, 'link')}
             />
           </div>
@@ -80,10 +81,10 @@ class EditorField extends React.Component {
 
     return (
       <div>
-        <Title title='编辑字段'/>
+        <Title title={i18next.t('编辑字段')}/>
         <Gap/>
         <Flex>
-          <Flex alignCenter>数据类型：</Flex>
+          <Flex alignCenter>{i18next.t('数据类型')}：</Flex>
           <Select className='gm-printer-edit-select' value={editStore.computedTableDataKeyOfSelectedRegion}
             onChange={this.handleSetTableDataKey}>
             {tableDataKeyList.map(v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
@@ -93,7 +94,7 @@ class EditorField extends React.Component {
         <Gap height='5px'/>
 
         <Flex>
-          <Flex>字段设置：</Flex>
+          <Flex>{i18next.t('字段设置')}：</Flex>
           <div>
             <div>
               <Fonter style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>
@@ -103,7 +104,7 @@ class EditorField extends React.Component {
 
               <Textarea
                 value={head}
-                placeholder='请输入表头填充内容'
+                placeholder={i18next.t('请输入表头填充内容')}
                 onChange={this.handleChangeTable.bind(this, 'head')}
               />
             </div>
@@ -115,7 +116,7 @@ class EditorField extends React.Component {
 
               <Textarea
                 value={text}
-                placeholder='请输入内容填充内容'
+                placeholder={i18next.t('请输入内容填充内容')}
                 onChange={this.handleChangeTable.bind(this, 'text')}
               />
             </div>

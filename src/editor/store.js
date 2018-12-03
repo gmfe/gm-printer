@@ -1,3 +1,4 @@
+import { i18next } from 'gm-i18n'
 import { action, computed, configure, observable } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
@@ -144,18 +145,18 @@ class EditStore {
 
     const contentRegions = this.config.contents.map((v, i) => {
       if (v.type === 'table') {
-        return { value: `contents.table.${i}`, text: `区域${i}` }
+        return { value: `contents.table.${i}`, text: i18next.t(/* src:`区域${i}` => tpl:区域${VAR1} */'KEY2', { VAR1: i }) }
       } else {
-        return { value: `contents.panel.${i}`, text: `区域${i}` }
+        return { value: `contents.panel.${i}`, text: i18next.t(/* src:`区域${i}` => tpl:区域${VAR1} */'KEY3', { VAR1: i }) }
       }
     })
 
     return [
-      { value: 'all', text: '请选择区域' },
-      { value: 'header', text: '页眉' },
+      { value: 'all', text: i18next.t('请选择区域') },
+      { value: 'header', text: i18next.t('页眉') },
       ...contentRegions,
-      { value: 'sign', text: '签名' },
-      { value: 'footer', text: '页脚' }
+      { value: 'sign', text: i18next.t('签名') },
+      { value: 'footer', text: i18next.t('页脚') }
     ]
   }
 
@@ -163,7 +164,7 @@ class EditStore {
   @computed
   get computedSelectedRegionTip () {
     if (!this.selectedRegion) return ''
-    return /(contents)|(sign)/g.test(this.selectedRegion) ? '说明：所选区域的内容仅打印一次' : '说明：所选区域的内容每页均打印'
+    return /(contents)|(sign)/g.test(this.selectedRegion) ? i18next.t('说明：所选区域的内容仅打印一次') : i18next.t('说明：所选区域的内容每页均打印')
   }
 
   @computed
@@ -260,7 +261,7 @@ class EditStore {
       case '':
       case 'text':
         blocks.push({
-          text: '请编辑',
+          text: i18next.t('请编辑'),
           style: {
             position: 'absolute',
             left: pos.left || '0px',
@@ -305,7 +306,7 @@ class EditStore {
         })
         break
       default:
-        window.alert('出错啦，未识别类型，此信息不应该出现')
+        window.alert(i18next.t('出错啦，未识别类型，此信息不应该出现'))
     }
 
     this.selected = getBlockName(name, blocks.length - 1)
@@ -488,11 +489,11 @@ class EditStore {
               show: false
             },
             columns: [{
-              head: '表头',
+              head: i18next.t('表头'),
               headStyle: {
                 textAlign: 'center'
               },
-              text: '内容',
+              text: i18next.t('内容'),
               style: {
                 textAlign: 'center'
               }

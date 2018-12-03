@@ -3,7 +3,7 @@ import en from './en/default.json'
 import zh from './zh/default.json'
 
 // 初始化i18next
-const localesInit = () => i18nextInit({
+i18nextInit({
   resources: {
     'zh': {
       default: zh
@@ -13,5 +13,3 @@ const localesInit = () => i18nextInit({
     }
   }
 })
-
-export default localesInit

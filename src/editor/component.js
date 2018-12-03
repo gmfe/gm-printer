@@ -253,13 +253,10 @@ class Position extends React.Component {
 
     return (
       <span>
-        上 <TextPX value={top} onChange={this.handleChange.bind(this, 'top')}/>
-        &nbsp;
-        左 <TextPX value={left} onChange={this.handleChange.bind(this, 'left')}/>
-        &nbsp;
-        下 <TextPX value={bottom} onChange={this.handleChange.bind(this, 'bottom')}/>
-        &nbsp;
-        右 <TextPX value={right} onChange={this.handleChange.bind(this, 'right')}/>
+        {i18next.t('上')} <TextPX value={top} onChange={this.handleChange.bind(this, 'top')}/>&nbsp;
+        {i18next.t('左')}<TextPX value={left} onChange={this.handleChange.bind(this, 'left')}/>&nbsp;
+        {i18next.t('下')} <TextPX value={bottom} onChange={this.handleChange.bind(this, 'bottom')}/>&nbsp;
+        {i18next.t('右')} <TextPX value={right} onChange={this.handleChange.bind(this, 'right')}/>
       </span>
     )
   }
@@ -285,10 +282,10 @@ class Line extends React.Component {
 
     return (
       <span>
-        宽 <TextPX value={width} onChange={this.handleChange.bind(this, 'width')} style={{ width: '35px' }}/>
-        &nbsp;
-        粗细 <TextPX value={borderTopWidth} onChange={this.handleChange.bind(this, 'borderTopWidth')}/>
-        &nbsp;
+        {i18next.t('宽')}
+        <TextPX value={width} onChange={this.handleChange.bind(this, 'width')} style={{ width: '35px' }}/>&nbsp;
+        {i18next.t('粗细')}
+        <TextPX value={borderTopWidth} onChange={this.handleChange.bind(this, 'borderTopWidth')}/>
         <select value={borderTopStyle} onChange={e => this.handleChange('borderTopStyle', e.target.value)}>
           {_.map(borderStyleList, v => <option key={v.value} value={v.value}>{v.text}</option>)}</select>
       </span>
@@ -315,9 +312,10 @@ class Size extends React.Component {
     const { style } = this.props
     return (
       <React.Fragment>
-        高 <TextPX value={style.height} onChange={this.handleChange.bind(this, 'height')}/>
-        &nbsp;
-        宽 <TextPX value={style.width} onChange={this.handleChange.bind(this, 'width')}/>
+        {i18next.t('高')}
+        <TextPX value={style.height} onChange={this.handleChange.bind(this, 'height')}/>
+        &nbsp;{i18next.t('宽')}
+        <TextPX value={style.width} onChange={this.handleChange.bind(this, 'width')}/>
       </React.Fragment>
     )
   }

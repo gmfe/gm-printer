@@ -6,7 +6,7 @@ import { toJS } from 'mobx'
 import editStore from './store'
 import { getCSS, Printer } from '../printer'
 import { getStyleWithDiff, insertCSS } from '../util'
-import { observer } from 'mobx-react/index'
+import { observer } from 'mobx-react'
 import EditorTitle from './editor_title'
 import EditorSelect from './editor_select'
 import EditorField from './editor_field'
@@ -14,12 +14,10 @@ import EditorAddField from './editor_add_field'
 import ContextMenu from './context_menu'
 import { Gap, Title } from './component'
 
-import localesInit from '../locales'
 import { i18next } from 'gm-i18n'
 
 import './style.less'
 insertCSS(getCSS())
-localesInit()
 
 @observer
 class Editor extends React.Component {
@@ -143,8 +141,9 @@ class Editor extends React.Component {
       <div className='gm-printer-edit'>
 
         <Flex className='gm-printer-edit-title-fixed'>
-          <Title title={i18next.t('模板预览')} text={<span className='gm-text-red gm-padding-left-5'>说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击
-            <a href='https://v.qq.com/x/page/t08044292dd.html' target='_blank'>查看视频教程</a>
+          <Title title={i18next.t('模板预览')} text={<span
+            className='gm-text-red gm-padding-left-5'>{i18next.t('说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击')}
+            <a href='https://v.qq.com/x/page/t08044292dd.html' target='_blank'>{i18next.t('查看视频教程')}</a>
           </span>}/>
         </Flex>
 

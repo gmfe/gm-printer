@@ -16,6 +16,6 @@ export default function toKey (data) {
     case 'task':
       return task(data)
     default:
-      throw new Error(`${data}\n数据的__gm_printer_data_type错误`)
+      throw new Error(`${data.__gm_printer_data_type} error!`)
   }
 }

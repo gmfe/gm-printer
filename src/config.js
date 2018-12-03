@@ -1,3 +1,4 @@
+import { i18next } from 'gm-i18n'
 export const pageTypeMap = {
   'A4': {
     name: 'A4',
@@ -26,7 +27,7 @@ export const pageTypeMap = {
     }
   },
   'A4/2': {
-    name: '二分纸',
+    name: i18next.t('二分纸'),
     size: {
       width: '210mm',
       height: '140mm'
@@ -39,7 +40,7 @@ export const pageTypeMap = {
     }
   },
   'A4/3': {
-    name: '三分纸',
+    name: i18next.t('三分纸'),
     size: {
       width: '210mm',
       height: '93mm'
@@ -78,7 +79,7 @@ export const pageTypeMap = {
     }
   },
   'DIY': {
-    name: '自定义纸张',
+    name: i18next.t('自定义纸张'),
     size: {
       width: '210mm',
       height: '297mm'
@@ -105,31 +106,31 @@ export const fontSizeList = [
 ]
 
 export const printDirectionList = [
-  { value: 'vertical', text: '纵向' },
-  { value: 'horizontal', text: '横向' }
+  { value: 'vertical', text: i18next.t('纵向') },
+  { value: 'horizontal', text: i18next.t('横向') }
 ]
 
 export const borderStyleList = [
-  { value: 'solid', text: '实线' },
-  { value: 'dashed', text: '虚线' },
-  { value: 'dotted', text: '圆点' }
+  { value: 'solid', text: i18next.t('实线') },
+  { value: 'dashed', text: i18next.t('虚线') },
+  { value: 'dotted', text: i18next.t('圆点') }
 ]
 
 export const tableClassNameList = [
-  { value: '', text: '默认样式' },
-  { value: 'className1', text: '无实线样式' }
+  { value: '', text: i18next.t('默认样式') },
+  { value: 'className1', text: i18next.t('无实线样式') }
 ]
 
 export const tableDataKeyList = [
-  { value: 'orders', text: '全部商品' },
-  { value: 'abnormal', text: '异常商品' }
+  { value: 'orders', text: i18next.t('全部商品') },
+  { value: 'abnormal', text: i18next.t('异常商品') }
 ]
 
 export const blockTypeList = [
-  { value: '', text: '插入文本' },
-  { value: 'line', text: '插入线条' },
-  { value: 'image', text: '插入图片' },
-  { value: 'counter', text: '插入分类汇总' }
+  { value: '', text: i18next.t('插入文本') },
+  { value: 'line', text: i18next.t('插入线条') },
+  { value: 'image', text: i18next.t('插入图片') },
+  { value: 'counter', text: i18next.t('插入分类汇总') }
 ]
 
 export const MULTI_SUFFIX = '_MULTI_SUFFIX'
