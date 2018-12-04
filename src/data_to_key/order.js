@@ -69,7 +69,7 @@ function generateCommon (data) {
     [i18next.t('承运商')]: data.carrier,
     [i18next.t('结款方式')]: SETTLE_WAY[data.settle_way],
 
-    [i18next.t('线路')]: data.address_route_name,
+    [i18next.t('线路')]: data.address_route_name || '-',
     [i18next.t('城市')]: data.city || '-',
     [i18next.t('城区')]: data.area_l1 || '-',
     [i18next.t('街道')]: data.area_l2 || '-',
