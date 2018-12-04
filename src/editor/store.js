@@ -2,7 +2,7 @@ import { i18next } from 'gm-i18n'
 import { action, computed, observable } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
-import { dispatchMsg, getBlockName } from '../util'
+import { dispatchMsg, getBlockName, exchange } from '../util'
 
 class EditStore {
   @computed
@@ -90,52 +90,6 @@ class EditStore {
     this.config.page.size[field] = value
   }
 
-  @action
-  setPagePrintDirection (value) {
-    let { size, printDirection } = this.config.page
-
-    // 打印方向切换了, 宽高互换
-    if (value !== printDirection) {
-      this.config.page = {
-        ...this.config.page,
-        printDirection: value,
-        size: {
-          width: size.height,
-          height: size.width
-        }
-      }
-    }
-  }
-
-  @action
-  setConfig (config) {
-    this.config = config
-  }
-
-  @action
-  setSizePageType (type) {
-    const { size, gap, name } = pageTypeMap[type]
-
-    this.config.page = {
-      ...this.config.page,
-      type,
-      size,
-      gap,
-      name
-    }
-  }
-
-  @action
-  setSelected (selected = null) {
-    this.selected = selected
-  }
-
-  // 选择区域
-  @action
-  setSelectedRegion (selected) {
-    this.selectedRegion = selected
-  }
-
   // 可选区域
   @computed
   get computedRegionList () {
@@ -156,6 +110,52 @@ class EditStore {
       { value: 'sign', text: i18next.t('签名') },
       { value: 'footer', text: i18next.t('页脚') }
     ]
+  }
+
+  @action
+  setConfig (config) {
+    this.config = config
+  }
+
+  @action
+  setPagePrintDirection (value) {
+    let { size, printDirection } = this.config.page
+
+    // 打印方向切换了, 宽高互换
+    if (value !== printDirection) {
+      this.config.page = {
+        ...this.config.page,
+        printDirection: value,
+        size: {
+          width: size.height,
+          height: size.width
+        }
+      }
+    }
+  }
+
+  @action
+  setSelected (selected = null) {
+    this.selected = selected
+  }
+
+  // 选择区域
+  @action
+  setSelectedRegion (selected) {
+    this.selectedRegion = selected
+  }
+
+  @action
+  setSizePageType (type) {
+    const { size, gap, name } = pageTypeMap[type]
+
+    this.config.page = {
+      ...this.config.page,
+      type,
+      size,
+      gap,
+      name
+    }
   }
 
   // 可选区域做相应的提示
@@ -362,6 +362,7 @@ class EditStore {
 
   @action
   exchangeTableColumn (target, source) {
+    console.log(target, source)
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
       const { columns } = this.config.contents[arr[2]]
@@ -382,8 +383,17 @@ class EditStore {
   exchangeTableColumnByDiff (diff) {
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
+      const { columns } = this.config.contents[arr[2]]
+
       const source = ~~arr[4]
-      this.exchangeTableColumn(source + diff, source)
+      const target = source + diff
+
+      if (target >= 0 && target < columns.length) {
+        exchange(columns, target, source)
+
+        arr[4] = target
+        this.selected = arr.join('.')
+      }
     }
   }
 

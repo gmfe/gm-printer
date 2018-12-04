@@ -63,6 +63,11 @@ function dispatchMsg (event, data) {
   }))
 }
 
+function exchange (arr, target, source) {
+  [arr[target], arr[source]] = [arr[source], arr[target]]
+  return arr
+}
+
 export {
   getHeight,
   getWidth,
@@ -71,5 +76,6 @@ export {
   getBlockName,
   getTableColumnName,
   insertCSS,
-  dispatchMsg
+  dispatchMsg,
+  exchange
 }
