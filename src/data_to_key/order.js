@@ -189,8 +189,8 @@ function order (data) {
     const categoryTotal = {
       _special: {
         text: i18next.t(
-          /* src:`${key}小计: ${total.valueOf()}` => tpl:${VAR1}小计: ${VAR2} */'KEY10',
-          { VAR1: key, VAR2: total.valueOf() }
+          /* src:`${key}小计：${total.valueOf()}` => tpl:${VAR1}小计：${VAR2} */'KEY10',
+          { VAR1: key, VAR2: total.toFixed(2) }
         )
       }
     }
