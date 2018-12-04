@@ -4,8 +4,7 @@ const path = require('path')
 module.exports = {
   mode: 'development',
   entry: {
-    demo: './demo/index.js',
-    printer: './printer/index.js'
+    demo: './demo/index.js'
   },
   output: {
     path: path.resolve('build'),
@@ -47,6 +46,7 @@ module.exports = {
   devServer: {
     compress: true,
     host: '0.0.0.0',
+    port: 8081,
     inline: false,
     disableHostCheck: true
   }

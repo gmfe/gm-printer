@@ -1,0 +1,116 @@
+html,
+body {
+  background: whitesmoke;
+  font-size: 12px;
+}
+
+.gm-printer {
+  background: white;
+}
+
+// page
+.gm-printer-page {
+  overflow: hidden;
+
+  + .gm-printer-page {
+    page-break-before: always;
+  }
+
+  &-inner {
+    position: relative;
+  }
+}
+
+// panel
+.gm-printer-panel {
+  position: relative;
+
+  .gm-printer-panel-drag {
+    display: none;
+  }
+}
+
+// block
+.gm-printer-block {
+  position: relative;
+  cursor: move;
+
+  .gm-printer-block-text-edit {
+    display: none;
+  }
+
+  img {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// table
+.gm-printer-table {
+  position: relative;
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+
+    th {
+      font-weight: normal; // 覆盖浏览默认
+    }
+  }
+}
+
+// 分类数量
+.gm-printer-counter {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow: hidden;
+
+  .gm-printer-counter-item {
+    border: 1px solid black;
+    margin: 2px 0;
+
+    .gm-printer-counter-item-1 {
+      border-bottom: 1px solid black;
+    }
+
+    div {
+      padding: 3px;
+      text-align: center;
+    }
+  }
+
+  .gm-printer-counter-item + .gm-printer-counter-item {
+    border-left: none;
+  }
+}
+
+.gm-printer-table.gm-printer-table-classname-default {
+  table {
+    td,
+    th {
+      border: 1px solid black;
+      padding: 2px;
+    }
+  }
+}
+
+.gm-printer-table.gm-printer-table-classname-className1 {
+  table {
+    td,
+    th {
+      border: 1px solid transparent;
+    }
+
+    th {
+      border-top: 1px solid black;
+      border-bottom: 1px solid black;
+    }
+  }
+}
+
+@page {
+  margin: 0;
+}

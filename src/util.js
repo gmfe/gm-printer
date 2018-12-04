@@ -1,34 +1,81 @@
-import { version } from '../package.json'
+function getHeight (el) {
+  const styles = window.getComputedStyle(el)
+  const height = el.offsetHeight
+  const borderTopWidth = parseFloat(styles.borderTopWidth)
+  const borderBottomWidth = parseFloat(styles.borderBottomWidth)
+  const paddingTop = parseFloat(styles.paddingTop)
+  const paddingBottom = parseFloat(styles.paddingBottom)
+  return height - borderBottomWidth - borderTopWidth - paddingTop - paddingBottom
+}
 
-const printerJS = `//js.guanmai.cn/build/libs/gm-printer/${version}/build/printer.js` // eslint-disable-line
+function getWidth (el) {
+  const styles = window.getComputedStyle(el)
+  const width = el.offsetWidth
+  const borderLeftWidth = parseFloat(styles.borderLeftWidth)
+  const borderRightWidth = parseFloat(styles.borderRightWidth)
+  const paddingLeft = parseFloat(styles.paddingLeft)
+  const paddingRight = parseFloat(styles.paddingRight)
+  return width - borderLeftWidth - borderRightWidth - paddingLeft - paddingRight
+}
 
-const fontSizeList = [
-  '12px',
-  '14px',
-  '16px',
-  '18px',
-  '20px',
-  '22px',
-  '24px',
-  '26px',
-  '28px'
-]
+function pxAdd (origin, add) {
+  origin = origin.replace('px', '')
 
-const borderStyleList = [
-  {value: 'solid', text: '实线'},
-  {value: 'dashed', text: '虚线'},
-  {value: 'dotted', text: '圆点'}
-]
+  return parseInt(~~origin, 10) + add + 'px'
+}
 
-const tableStyleList = [
-  {value: 'gm-printer-table-style-1', text: '样式一'},
-  {value: 'gm-printer-table-style-2', text: '样式二'},
-  {value: 'gm-printer-table-style-3', text: '样式三'}
-]
+function getStyleWithDiff (style, diffX, diffY) {
+  const newStyle = Object.assign({}, style)
+
+  if (!style.left && style.right) {
+    newStyle.right = pxAdd(newStyle.right, -diffX)
+  } else {
+    newStyle.left = pxAdd(newStyle.left, diffX)
+  }
+
+  if (!style.top && style.bottom) {
+    newStyle.bottom = pxAdd(newStyle.bottom, -diffY)
+  } else {
+    newStyle.top = pxAdd(newStyle.top, diffY)
+  }
+
+  return newStyle
+}
+
+function getBlockName (name, index) {
+  return `${name}.block.${index}`
+}
+
+function getTableColumnName (name, index) {
+  return `${name}.column.${index}`
+}
+
+function insertCSS (cssString) {
+  const style = window.document.createElement('style')
+  style.type = 'text/css'
+  style.appendChild(document.createTextNode(cssString))
+  window.document.head.appendChild(style)
+}
+
+function dispatchMsg (event, data) {
+  window.document.dispatchEvent(new window.CustomEvent(event, {
+    detail: data
+  }))
+}
+
+function exchange (arr, target, source) {
+  [arr[target], arr[source]] = [arr[source], arr[target]]
+  return arr
+}
 
 export {
-  fontSizeList,
-  borderStyleList,
-  tableStyleList,
-  printerJS
+  getHeight,
+  getWidth,
+  pxAdd,
+  getStyleWithDiff,
+  getBlockName,
+  getTableColumnName,
+  insertCSS,
+  dispatchMsg,
+  exchange
 }

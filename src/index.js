@@ -1,10 +1,13 @@
-import PrinterConfig from './config'
-import SimpleConfig from './simple_config'
-import {doPrint, doPrintBatch} from './do_print'
+// ‼️优先初始化语言设置(必须先初始化语言)
+import '../locales'
+import Editor from './editor'
+import { BatchPrinter, doBatchPrint, doPrint, Printer, getCSS } from './printer'
+
+export * from './util'
 
 export {
-  doPrint,
-  doPrintBatch,
-  PrinterConfig,
-  SimpleConfig
+  Editor,
+  Printer, BatchPrinter,
+  doPrint, doBatchPrint,
+  getCSS
 }
