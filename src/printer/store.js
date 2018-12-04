@@ -1,9 +1,7 @@
 import { i18next } from 'gm-i18n'
-import { action, configure, observable } from 'mobx'
+import { action, observable } from 'mobx'
 import _ from 'lodash'
 import toKey from '../data_to_key'
-
-configure({ enforceActions: 'observed' })
 
 class PrinterStore {
   @observable

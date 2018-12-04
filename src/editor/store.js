@@ -1,10 +1,8 @@
 import { i18next } from 'gm-i18n'
-import { action, computed, configure, observable } from 'mobx'
+import { action, computed, observable } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName } from '../util'
-
-configure({ enforceActions: 'observed' })
 
 class EditStore {
   @computed
