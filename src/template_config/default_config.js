@@ -195,7 +195,7 @@ export default {
           'style': {
             'textAlign': 'center'
           },
-          'text': i18next.t('{{列.下单数}}{{列.基本单位}}')
+          'text': i18next.t('{{列.下单数}}{{列.销售单位}}')
         },
         {
           'head': i18next.t('出库数(基本单位)'),
