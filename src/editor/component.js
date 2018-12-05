@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { borderStyleList, fontSizeList } from '../config'
 import { Flex, Tip } from 'react-gm'
 import { Request } from 'gm-util'
-import { i18next } from 'gm-i18n'
+import i18next from '../../locales'
 
 class IconAlign extends React.Component {
   render () {

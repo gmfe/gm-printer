@@ -1,4 +1,4 @@
-import { i18next } from 'gm-i18n'
+import i18next from '../../locales'
 import React, { Fragment } from 'react'
 import { Flex } from 'react-gm'
 import { Gap, SubTitle, Title } from './component'
