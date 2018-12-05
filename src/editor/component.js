@@ -159,7 +159,7 @@ class Fonter extends React.Component {
 
     return (
       <span className='gm-printer-edit-fonter'>
-        <select value={style.fontSize || '14px'} onChange={e => this.handleChange('fontSize', e.target.value)}>
+        <select value={style.fontSize || '12px'} onChange={e => this.handleChange('fontSize', e.target.value)}>
           {_.map(fontSizeList, v => <option key={v} value={v}>{v.slice(0, -2)}</option>)}
         </select>
         <Separator/>
