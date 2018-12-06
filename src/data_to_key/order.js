@@ -1,4 +1,4 @@
-import { i18next } from 'gm-i18n'
+import i18next from '../../locales'
 import moment from 'moment'
 import _ from 'lodash'
 import Big from 'big.js'

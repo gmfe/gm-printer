@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { borderStyleList, fontSizeList } from '../config'
 import { Flex, Tip } from 'react-gm'
 import { Request } from 'gm-util'
-import { i18next } from 'gm-i18n'
+import i18next from '../../locales'
 
 class IconAlign extends React.Component {
   render () {
@@ -159,7 +159,7 @@ class Fonter extends React.Component {
 
     return (
       <span className='gm-printer-edit-fonter'>
-        <select value={style.fontSize || '14px'} onChange={e => this.handleChange('fontSize', e.target.value)}>
+        <select value={style.fontSize || '12px'} onChange={e => this.handleChange('fontSize', e.target.value)}>
           {_.map(fontSizeList, v => <option key={v} value={v}>{v.slice(0, -2)}</option>)}
         </select>
         <Separator/>

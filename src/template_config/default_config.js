@@ -1,4 +1,4 @@
-import { i18next } from 'gm-i18n'
+import i18next from '../../locales'
 
 export default {
   'name': '',

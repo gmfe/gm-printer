@@ -14,7 +14,7 @@ import EditorAddField from './editor_add_field'
 import ContextMenu from './context_menu'
 import { Gap, Title } from './component'
 
-import { i18next } from 'gm-i18n'
+import i18next from '../../locales'
 
 import './style.less'
 insertCSS(getCSS())

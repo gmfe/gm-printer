@@ -1,4 +1,4 @@
-import { i18next } from 'gm-i18n'
+import i18next from '../../locales'
 import { action, observable } from 'mobx'
 import _ from 'lodash'
 import toKey from '../data_to_key'

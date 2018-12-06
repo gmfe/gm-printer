@@ -1,4 +1,4 @@
-import { i18next } from 'gm-i18n'
+import i18next from '../../locales'
 import React from 'react'
 import classNames from 'classnames'
 import { inject, observer, Provider } from 'mobx-react'
