@@ -1,3 +1,10 @@
+// 层级
+@textEdit: 99;
+@contextMenu: 80;
+@zone: 20;
+@title: 20;
+@block: 10;
+
 .gm-printer-edit {
   position: relative;
   overflow: hidden;
@@ -10,7 +17,7 @@
     height: 100vh;
     overflow-y: auto;
     background: white;
-    z-index: 20;
+    z-index: @zone;
     padding: 10px 20px;
     box-shadow: -2px 0 3px 0 hsla(0, 0%, 39%, 0.1);
 
@@ -77,7 +84,7 @@
     top: 0;
     width: 100%;
     padding: 10px 20px;
-    z-index: 20;
+    z-index: @title;
     background-color: #fff;
   }
 
@@ -94,6 +101,7 @@
   }
 
   .gm-printer-edit-contextmenu {
+    z-index: @contextMenu;
     padding: 5px 0;
     width: auto;
     min-width: 100px;
@@ -174,6 +182,8 @@
     }
 
     .gm-printer-block {
+      z-index: @block;
+
       &:hover,
       &.active {
         outline: 1px solid rgb(82, 146, 247);
@@ -182,7 +192,7 @@
       .gm-printer-block-text-edit {
         display: inline-block;
         position: absolute;
-        z-index: 99;
+        z-index: @textEdit;
         background: whitesmoke;
         top: calc(100% + 5px);
         left: 0;

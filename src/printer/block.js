@@ -107,6 +107,7 @@ class Block extends React.Component {
     const { isEdit } = this.state
 
     let content = null
+    let specialStyle = null
     if (!type || type === 'text') {
       content = printerStore.template(text, pageIndex)
     } else if (type === 'line') {
@@ -114,6 +115,8 @@ class Block extends React.Component {
     } else if (type === 'image') {
       content = <img src={link} style={{ width: '100%', height: '100%' }} alt='' data-name={name}/>
     } else if (type === 'counter') {
+      // 🌡特殊处理: counter层级(9) 比 普通block层级(10)低. 为了让普通block被选中
+      specialStyle = { zIndex: 9 }
       content = <Counter name={name}/>
     }
 
@@ -122,7 +125,7 @@ class Block extends React.Component {
     return (
       <div
         {...rest}
-        style={style}
+        style={{ ...style, ...specialStyle }}
         className={classNames('gm-printer-block', className, {
           active
         })}
