@@ -18,7 +18,7 @@ function getWidth (el) {
   return width - borderLeftWidth - borderRightWidth - paddingLeft - paddingRight
 }
 
-function pxAdd (origin, add) {
+function pxAdd (origin = '0px', add) {
   origin = origin.replace('px', '')
 
   return parseInt(~~origin, 10) + add + 'px'
