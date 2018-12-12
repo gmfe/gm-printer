@@ -82,7 +82,8 @@ class PrinterStore {
     // 每页必有 header footer
     const allPagesHaveThisHeight = this.height.header + this.height.footer
     let height = allPagesHaveThisHeight
-    // console.log(this.pageHeight)
+    console.log(this.pageHeight)
+    console.log(allPagesHaveThisHeight)
 
     // 当前在处理 contents 的索引
     let index = 0
@@ -153,10 +154,16 @@ class PrinterStore {
             }
           }
         }
-      } else {
-        height += this.height[`contents.panel.${index}`]
+      } else { // 非表格
+        const panelHeight = this.height[`contents.panel.${index}`]
+        height += panelHeight
 
-        if (height < this.pageHeight) {
+        // 当 panel + allPagesHaveThisHeight > 页高度, 停止. 避免死循环
+        if (panelHeight + allPagesHaveThisHeight > this.pageHeight) {
+          break
+        }
+
+        if (height <= this.pageHeight) {
           // 空间充足，把信息加入 page，并轮下一个contents
           page.push({
             type: 'panel',
@@ -165,7 +172,7 @@ class PrinterStore {
 
           index++
         } else {
-          // 空间不足，此页完成任务
+          // 此页空间不足，此页完成任务
           this.pages.push(page)
 
           // 为下一页做准备
