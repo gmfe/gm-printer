@@ -97,10 +97,7 @@ class Table extends React.Component {
         return {
           ...val,
           index,
-          text: val.text.replace(/{{列\.(\S+)}}/g, (s, s1) => i18next.t(
-            /* src:`{{列.${s1}${MULTI_SUFFIX}}}` => tpl:{{列.${VAR1}${VAR2}}} */'KEY8',
-            { VAR1: s1, VAR2: MULTI_SUFFIX }
-          )) // {{列.xx}} => {{列.xxMULTI_SUFFIX}}
+          text: val.text.replace(/{{列\.([^{{]+)}}/g, (s, s1) => `{{列.${s1}${MULTI_SUFFIX}}}`) // {{列.xx}} => {{列.xxMULTI_SUFFIX}}
         }
       })
       return columns1.concat(columns2)
