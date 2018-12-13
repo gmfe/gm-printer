@@ -35,6 +35,7 @@ const commonFields = {
   ],
   [i18next.t('金额')]: [
     { key: i18next.t('下单金额'), value: i18next.t('{{下单金额}}') },
+    { key: i18next.t('优惠金额'), value: i18next.t('{{优惠金额}}') },
     { key: i18next.t('出库金额'), value: i18next.t('{{出库金额}}') },
     { key: i18next.t('运费'), value: i18next.t('{{运费}}') },
     { key: i18next.t('异常金额'), value: i18next.t('{{异常金额}}') },

@@ -58,6 +58,7 @@ function generateCommon (data) {
     [i18next.t('订单备注')]: data.remark,
 
     [i18next.t('下单金额')]: price(data.total_price),
+    [i18next.t('优惠金额')]: price(data.coupon_amount),
     [i18next.t('出库金额')]: price(data.real_price),
     [i18next.t('运费')]: price(data.freight),
     [i18next.t('异常金额')]: price(Big(data.abnormal_money).plus(data.refund_money)),
@@ -92,6 +93,7 @@ function generateCommon (data) {
 function generateUpperPrice (data) {
   return {
     [i18next.t('下单金额_大写')]: coverDigit2Uppercase(data.total_price),
+    [i18next.t('优惠金额_大写')]: coverDigit2Uppercase(data.coupon_amount),
     [i18next.t('出库金额_大写')]: coverDigit2Uppercase(data.real_price),
     [i18next.t('运费_大写')]: coverDigit2Uppercase(data.freight),
     [i18next.t('异常金额_大写')]: coverDigit2Uppercase(data.abnormal_money),
