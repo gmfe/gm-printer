@@ -115,11 +115,13 @@ class Table extends React.Component {
     if (subtotal.show && printerStore.ready) {
       const list = tableData.slice(range.begin, range.end)
       let sum = Big(0)
-      _.each(list, ({ _origin = {}, _origin$2 = {} }) => {
+      _.each(list, item => {
+        const _origin = item._origin || {}
+        const _origin2 = item['_origin' + MULTI_SUFFIX] || {}
         sum = sum.plus(_origin.real_item_price || 0)
         // 如果是双栏商品
-        if (_origin$2.real_item_price) {
-          sum = sum.plus(_origin$2.real_item_price)
+        if (_origin2.real_item_price) {
+          sum = sum.plus(_origin2.real_item_price)
         }
       })
 
