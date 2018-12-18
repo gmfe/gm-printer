@@ -192,7 +192,6 @@ class PrinterStore {
         interpolate: /{{([\s\S]+?)}}/g
       })({
         ...this.data.common,
-        ...this.data._upperPrice,
         [i18next.t('当前页码')]: pageIndex + 1,
         [i18next.t('页码总数')]: this.pages.length
       })

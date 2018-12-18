@@ -101,6 +101,23 @@ function generateUpperPrice (data) {
   }
 }
 
+// 商品统计数据(一些汇总之类的数据)
+function generateSummary (list) {
+  let quantityTotal = Big(0)
+  let realWeightSaleUnitTotal = Big(0)
+  _.each(list, v => {
+    quantityTotal = quantityTotal.plus(v.quantity || 0)
+
+    const realWeightSaleUnit = Big(v.real_weight || 0).div(v.sale_ratio)
+    realWeightSaleUnitTotal = realWeightSaleUnitTotal.plus(realWeightSaleUnit)
+  })
+  // 😂前方高能.  汇总是什么鬼.每个商品的单位很可能不一样! 😇👍但是客户想要!因为他只卖猪肉!单位都一致🤢
+  return {
+    [i18next.t('下单总数_销售单位')]: parseFloat(quantityTotal.toFixed(2)),
+    [i18next.t('出库总数_销售单位')]: parseFloat(realWeightSaleUnitTotal.toFixed(2))
+  }
+}
+
 // 普通订单数据
 function generateOrderData (list) {
   return _.map(list, (v, index) => {
@@ -203,8 +220,11 @@ function order (data) {
   })
 
   return {
-    common: generateCommon(data),
-    _upperPrice: generateUpperPrice(data),
+    common: {
+      ...generateCommon(data),
+      ...generateSummary(sortByCategory1),
+      ...generateUpperPrice(data)
+    },
     _counter: generateCounter(groupByCategory1), // 分类商品统计
     _table: {
       orders: kOrders, // 商品

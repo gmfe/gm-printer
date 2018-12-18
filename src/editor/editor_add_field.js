@@ -16,7 +16,9 @@ const commonFields = {
     { key: i18next.t('订单备注'), value: i18next.t('{{订单备注}}') },
     { key: i18next.t('结款方式'), value: i18next.t('{{结款方式}}') },
     { key: i18next.t('销售经理'), value: i18next.t('{{销售经理}}') },
-    { key: i18next.t('销售经理电话'), value: i18next.t('{{销售经理电话}}') }
+    { key: i18next.t('销售经理电话'), value: i18next.t('{{销售经理电话}}') },
+    { key: i18next.t('下单总数(销售单位)'), value: i18next.t('{{下单总数_销售单位}}') },
+    { key: i18next.t('出库总数(销售单位)'), value: i18next.t('{{出库总数_销售单位}}') }
   ],
   [i18next.t('配送')]: [
     { key: i18next.t('线路'), value: i18next.t('{{线路}}') },
