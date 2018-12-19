@@ -161,7 +161,12 @@ function generateOrderData (list) {
 }
 
 // 异常商品表单
-function generateAbnormalData (data, kIdMap) {
+function generateAbnormalData (data, kOrders) {
+  // 商品map
+  const kIdMap = _.reduce(kOrders, (res, cur) => {
+    res[cur._origin.id] = cur
+    return res
+  }, {})
   // 异常表单 = 退货商品 + 异常商品
   return _.map(data.abnormals.concat(data.refunds), v => {
     return {
@@ -181,28 +186,31 @@ function generateCounter (groupByCategory1) {
 }
 
 function order (data) {
-  // 商品按分类排序
-  const sortByCategory1 = _.sortBy(data.details, v => v.category_title_1)
+  // 商品列表
+  const skuList = data.details
 
-  /* ----------- 普通订单  ------------ */
-  const kOrders = generateOrderData(sortByCategory1)
-
-  // 商品map
-  const kIdMap = _.reduce(kOrders, (res, cur) => {
-    res[cur._origin.id] = cur
-    return res
-  }, {})
+  /* ----------- 普通  ------------ */
+  const kOrders = generateOrderData(skuList)
+  /* ----------- 双栏 -------------- */
+  const kOrdersMulti = generateMultiData(kOrders)
 
   // 按一级分类分组
   const groupByCategory1 = _.groupBy(kOrders, v => v._origin.category_title_1)
 
-  /* -------- 单列分类商品 和 一行展示两商品的分类的表单 ------- */
+  /* -------- 分类 和 双栏 + 分类 ------- */
   let kCategory = []
   let kCategoryMulti = []
+  let index = 1
   _.forEach(groupByCategory1, (value, key) => {
     // 分类小计
     let total = Big(0)
-    _.each(value, v => (total = total.plus(v._origin.real_item_price)))
+    const list = _.map(value, sku => {
+      total = total.plus(sku._origin.real_item_price)
+      return {
+        ...sku,
+        [i18next.t('序号')]: index++
+      }
+    })
     const categoryTotal = {
       _special: {
         text: i18next.t(
@@ -212,26 +220,25 @@ function order (data) {
       }
     }
 
-    // 单列分类商品
-    kCategory = kCategory.concat(value, categoryTotal)
-
-    // 双栏商品
-    kCategoryMulti = kCategoryMulti.concat(generateMultiData(value, categoryTotal))
+    /* -------- 分类  ------------- */
+    kCategory = kCategory.concat(list, categoryTotal)
+    /* -------- 双栏 + 分类 ------- */
+    kCategoryMulti = kCategoryMulti.concat(generateMultiData(list, categoryTotal))
   })
 
   return {
     common: {
       ...generateCommon(data),
-      ...generateSummary(sortByCategory1),
+      ...generateSummary(skuList),
       ...generateUpperPrice(data)
     },
     _counter: generateCounter(groupByCategory1), // 分类商品统计
     _table: {
-      orders: kOrders, // 商品
-      orders_multi: generateMultiData(kOrders), // 一行展示两商品的普通订单
-      orders_category: kCategory, // 分类的商品
-      orders_category_multi: kCategoryMulti, // 分类的多列的商品
-      abnormal: generateAbnormalData(data, kIdMap) // 异常明细
+      orders: kOrders, // 普通
+      orders_multi: kOrdersMulti, // 双栏
+      orders_category: kCategory, // 分类
+      orders_category_multi: kCategoryMulti, // 分类 + 双栏
+      abnormal: generateAbnormalData(data, kOrders) // 异常明细
     },
     _origin: data
   }
