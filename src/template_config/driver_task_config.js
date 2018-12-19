@@ -81,7 +81,6 @@ export default {
         {
           'head': i18next.t('序号'),
           'headStyle': {
-            'width': '2em',
             'textAlign': 'center'
           },
           'text': i18next.t('{{列.序号}}'),
