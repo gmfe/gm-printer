@@ -4,7 +4,7 @@ import { Flex, Option, Select } from 'react-gm'
 import { observer } from 'mobx-react'
 import editStore from './store'
 import { tableDataKeyList } from '../config'
-import { Fonter, Gap, Line, Position, Separator, Size, TextAlign, Textarea, Title } from './component'
+import { Fonter, Gap, Line, Position, Separator, Size, TextAlign, ColumnWidth, Textarea, Title } from './component'
 
 const TipInfo = () => <Flex alignCenter className='gm-padding-top-5 gm-text-red'>
   {i18next.t('说明：请勿修改{}中的内容,避免出现数据异常')}
@@ -89,6 +89,13 @@ class EditorField extends React.Component {
             onChange={this.handleSetTableDataKey}>
             {tableDataKeyList.map(v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
           </Select>
+        </Flex>
+
+        <Gap height='5px'/>
+
+        <Flex alignCenter>
+          <Flex alignCenter>{i18next.t('固定列宽')}：</Flex>
+          <ColumnWidth style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>
         </Flex>
 
         <Gap height='5px'/>

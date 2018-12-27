@@ -398,7 +398,30 @@ class InputWithUnit extends React.Component {
 
 InputWithUnit.propTypes = {
   unit: PropTypes.string.isRequired,
-  value: PropTypes.any.isRequired
+  value: PropTypes.any.isRequired,
+  onChange: PropTypes.func.isRequired
+}
+
+class ColumnWidth extends React.Component {
+  handleChange = (width) => {
+    const { style, onChange } = this.props
+    onChange({
+      ...style,
+      width
+    })
+  }
+
+  render () {
+    const { style: { width } } = this.props
+    return <InputWithUnit
+      unit='px' value={width || ''} onChange={this.handleChange}
+      className='gm-printer-edit-input-custom'/>
+  }
+}
+
+ColumnWidth.propTypes = {
+  style: PropTypes.object,
+  onChange: PropTypes.func.isRequired
 }
 
 const Hr = () => <div style={{ backgroundColor: '#eee', height: '1px', margin: '5px 0', padding: '0' }}/>
@@ -436,6 +459,7 @@ export {
   Size,
   ImageUploader,
   InputWithUnit,
+  ColumnWidth,
   Hr,
   SubTitle,
   Title,
