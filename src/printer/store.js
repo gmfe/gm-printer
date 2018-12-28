@@ -99,20 +99,18 @@ class PrinterStore {
     while (index < this.config.contents.length) {
       if (this.config.contents[index].type === 'table') {
         const info = this.tablesInfo[`contents.table.${index}`]
+        // 如果显示每页小计,那么table高度多预留一行, 一行的高度默认26
+        const subtotalTrHeight = this.config.contents[index].subtotal.show ? 26 : 0
+        let allTableHaveThisHeight = info.head.height + subtotalTrHeight
         let begin = 0
         let end = 0
-
-        // 如果显示每页小计,那么table高度多预留一行, 一行的高度默认26
-        if (this.config.contents[index].subtotal.show) {
-          height += 26
-        }
 
         // 如果表格没有数据,那么轮一下个content
         if (info.body.heights.length === 0) {
           index++
         } else {
-          // 表格有数据,必有表头(虽然表头高度可能为0)
-          height += info.head.height
+          // 表格有数据,必有表头和合计(虽然表头高度可能为0)
+          height += allTableHaveThisHeight
 
           while (end < info.body.heights.length) {
             height += info.body.heights[end]
@@ -136,7 +134,7 @@ class PrinterStore {
 
               // 为下页做好准备
               page = []
-              height = allPagesHaveThisHeight + info.head.height
+              height = allPagesHaveThisHeight + allTableHaveThisHeight
             } else {
               // 有空间，继续做下行
               end++
