@@ -24,8 +24,26 @@ class EditorField extends React.Component {
     if (!editStore.computedIsSelectTable) {
       return
     }
-
     editStore.setConfigTable(who, value)
+  }
+
+  handleChangeTableColumn = (headStyle) => {
+    if (!editStore.computedIsSelectTable) {
+      return
+    }
+    const { style } = editStore.computedSelectedInfo
+    const _style = { ...style }
+    if (headStyle.width === 'auto') {
+      delete _style.wordBreak
+      delete headStyle.wordBreak
+    } else {
+      _style.wordBreak = 'break-all'
+      headStyle.wordBreak = 'break-all'
+    }
+    // 设置tbody > tr > td
+    editStore.setConfigTable('style', _style)
+    // 设置thead > tr > td
+    editStore.setConfigTable('headStyle', headStyle)
   }
 
   handleSetTableDataKey = (dataKey) => {
@@ -95,7 +113,7 @@ class EditorField extends React.Component {
 
         <Flex alignCenter>
           <Flex alignCenter>{i18next.t('固定列宽')}：</Flex>
-          <ColumnWidth style={headStyle} onChange={this.handleChangeTable.bind(this, 'headStyle')}/>
+          <ColumnWidth style={headStyle} onChange={this.handleChangeTableColumn}/>
         </Flex>
 
         <Gap height='5px'/>

@@ -403,8 +403,10 @@ InputWithUnit.propTypes = {
 }
 
 class ColumnWidth extends React.Component {
-  handleChange = (width) => {
+  handleChange = (widthWithUnit) => {
     const { style, onChange } = this.props
+    const width = parseInt(widthWithUnit) > 0 ? widthWithUnit : 'auto'
+
     onChange({
       ...style,
       width
