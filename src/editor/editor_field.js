@@ -112,7 +112,7 @@ class EditorField extends React.Component {
         <Gap height='5px'/>
 
         <Flex alignCenter>
-          <Flex alignCenter>{i18next.t('固定列宽')}：</Flex>
+          <Flex alignCenter>{i18next.t('设置列宽')}：</Flex>
           <ColumnWidth style={headStyle} onChange={this.handleChangeTableColumn}/>
         </Flex>
 
