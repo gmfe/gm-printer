@@ -60,7 +60,7 @@ function generateCommon (data) {
     [i18next.t('下单金额')]: price(data.total_price),
     [i18next.t('出库金额')]: price(data.real_price),
     [i18next.t('运费')]: price(data.freight),
-    [i18next.t('异常金额')]: price(data.abnormal_money),
+    [i18next.t('异常金额')]: price(Big(data.abnormal_money).plus(data.refund_money)),
     [i18next.t('销售额_含运税')]: price(data.total_pay),
 
     [i18next.t('税额')]: price(data.total_tax), // 商品税额加总
