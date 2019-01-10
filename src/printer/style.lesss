@@ -6,11 +6,13 @@ body {
 
 .gm-printer {
   background: white;
+  page-break-after: always;
 }
 
 // page
 .gm-printer-page {
   overflow: hidden;
+  page-break-after: always;
 
   + .gm-printer-page {
     page-break-before: always;

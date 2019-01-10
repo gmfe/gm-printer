@@ -31,8 +31,7 @@ class Page extends React.Component {
         boxSizing: 'content-box',
         width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
         height: `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`,
-        padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`,
-        pageBreakAfter: 'always'
+        padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`
       }}>
         <div className='gm-printer-page-inner' style={{
           width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
