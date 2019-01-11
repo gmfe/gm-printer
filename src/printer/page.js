@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { inject, observer } from 'mobx-react'
-import { getHeight, correctionHeight } from '../util'
+import { getHeight } from '../util'
 
 @inject('printerStore')
 @observer
@@ -23,8 +23,8 @@ class Page extends React.Component {
 
     const { width, height } = printerStore.config.page.size
 
-    // 骚操作计算有误差,加上高度校正系数
-    const x = correctionHeight(height)
+    // 统一减2毫米,防止计算误差溢出
+    const x = '- 2mm'
 
     return (
       <div ref={this.ref} className='gm-printer-page' style={{
