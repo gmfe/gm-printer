@@ -106,21 +106,21 @@ export default {
           }
         },
         {
-          'head': i18next.t('商户ID'),
+          'head': i18next.t('商品ID'),
           'headStyle': {
             'textAlign': 'center'
           },
-          'text': i18next.t('{{列.商户ID}}'),
+          'text': i18next.t('{{列.商品ID}}'),
           'style': {
             'textAlign': 'center'
           }
         },
         {
-          'head': i18next.t('商户名'),
+          'head': i18next.t('商品名'),
           'headStyle': {
             'textAlign': 'center'
           },
-          'text': i18next.t('{{列.商户名}}'),
+          'text': i18next.t('{{列.商品名}}'),
           'style': {
             'textAlign': 'center'
           }
