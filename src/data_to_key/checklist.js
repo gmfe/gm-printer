@@ -16,7 +16,8 @@ function checklist (data) {
     return {
       [i18next.t('序号')]: index + 1,
       [i18next.t('分类')]: (`${sku.category_title_1}-${sku.category_title_2}-${sku.pinlei_title}`) || '-',
-      [i18next.t('商户ID')]: sku.id || '-',
+      [i18next.t('商品ID')]: sku.id || '-',
+      [i18next.t('商品名')]: sku.name || '-',
       [i18next.t('基本单位')]: sku.std_unit_name,
       [i18next.t('规格')]: (sku.std_unit_name === sku.sale_unit_name && sku.sale_ratio === 1) ? i18next.t(
         /* src:`按${sku.sale_unit_name}` => tpl:按${VAR1} */'KEY9',
