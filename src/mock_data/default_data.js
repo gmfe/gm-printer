@@ -162,6 +162,7 @@ export default {
   'area_l2': i18next.t('南山中心区测试地址'),
   'area_l1': i18next.t('南山区'),
   'total_price': 143.0,
+  'coupon_amount': 5.00,
   'child_sort_id': '',
   'driver_name': i18next.t('李四'),
   'city': i18next.t('深圳市'),
