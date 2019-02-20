@@ -67,7 +67,9 @@ const tableFields = {
     { key: i18next.t('不含税单价(基本单位)'), value: i18next.t('{{列.不含税单价_基本单位}}') },
     { key: i18next.t('不含税单价(销售单位)'), value: i18next.t('{{列.不含税单价_销售单位}}') },
     { key: i18next.t('单价(基本单位)'), value: i18next.t('{{列.单价_基本单位}}') },
-    { key: i18next.t('单价(销售单位)'), value: i18next.t('{{列.单价_销售单位}}') }
+    { key: i18next.t('单价(销售单位)'), value: i18next.t('{{列.单价_销售单位}}') },
+    { key: i18next.t('原单价(基本单位)'), value: i18next.t('{{列.原单价_基本单位}}') },
+    { key: i18next.t('原单价(销售单位)'), value: i18next.t('{{列.原单价_销售单位}}') }
   ],
   [i18next.t('数量')]: [
     { key: i18next.t('下单数'), value: i18next.t('{{列.下单数}}{{列.销售单位}}') },
@@ -77,7 +79,8 @@ const tableFields = {
   [i18next.t('金额')]: [
     { key: i18next.t('商品税额'), value: i18next.t('{{列.商品税额}}') },
     { key: i18next.t('出库金额'), value: i18next.t('{{列.出库金额}}') },
-    { key: i18next.t('出库金额(不含税)'), value: i18next.t('{{列.出库金额_不含税}}') }
+    { key: i18next.t('出库金额(不含税)'), value: i18next.t('{{列.出库金额_不含税}}') },
+    { key: i18next.t('原金额'), value: i18next.t('{{列.原金额}}') }
   ],
   [i18next.t('异常')]: [
     { key: i18next.t('异常原因'), value: i18next.t('{{列.异常原因}}') },
