@@ -154,6 +154,10 @@ function generateOrderData (list) {
       [i18next.t('单价_基本单位')]: price(v.std_sale_price),
       [i18next.t('单价_销售单位')]: price(v.sale_price),
 
+      [i18next.t('原单价_基本单位')]: price(v.org_std_sale_price),
+      [i18next.t('原单价_销售单位')]: price(Big(v.org_std_sale_price || 0).times(v.sale_ratio)),
+      [i18next.t('原金额')]: price(Big(v.org_std_sale_price).times(v.real_weight)),
+
       [i18next.t('商品税额')]: price(v.tax),
       [i18next.t('出库金额')]: price(v.real_item_price),
       [i18next.t('出库金额_不含税')]: price(v.real_item_price_without_tax),
