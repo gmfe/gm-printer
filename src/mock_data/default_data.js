@@ -55,7 +55,9 @@ export default {
     'spu_name': i18next.t('长白菜'),
     'remark': null,
     'category_title_2': i18next.t('甘蓝类'),
-    'org_std_sale_price': 10
+    'org_std_sale_price': 10,
+    'org_item_price': 20,
+    'org_sale_price': 15
   }, {
     'outer_id': '',
     'total_item_price': 0.0,
@@ -84,7 +86,9 @@ export default {
     'spu_name': i18next.t('大白菜'),
     'remark': null,
     'category_title_2': i18next.t('甘蓝类'),
-    'org_std_sale_price': 10
+    'org_std_sale_price': 10,
+    'org_item_price': 20,
+    'org_sale_price': 15
   }, {
     'outer_id': '',
     'total_item_price': 143.0,
@@ -113,7 +117,9 @@ export default {
     'spu_name': i18next.t('本地|大白菜'),
     'remark': '测试商品备注',
     'category_title_2': i18next.t('甘蓝类'),
-    'org_std_sale_price': 10
+    'org_std_sale_price': 10,
+    'org_item_price': 20,
+    'org_sale_price': 15
   }, {
     'outer_id': '',
     'total_item_price': 0.0,
@@ -142,7 +148,9 @@ export default {
     'spu_name': i18next.t('长白菜|八卦'),
     'remark': '测试商品备注',
     'category_title_2': i18next.t('甘蓝类'),
-    'org_std_sale_price': 10
+    'org_std_sale_price': 10,
+    'org_item_price': 20,
+    'org_sale_price': 15
   }],
   'tax_number': 1,
   'abnormals': [{
