@@ -2,7 +2,9 @@ import i18next from '../../locales'
 import { action, observable } from 'mobx'
 import _ from 'lodash'
 import toKey from '../data_to_key'
+import Big from 'big.js'
 
+const price = n => Big(n || 0).toFixed(2)
 class PrinterStore {
   @observable
   ready = false
@@ -195,7 +197,8 @@ class PrinterStore {
       })({
         ...this.data.common,
         [i18next.t('当前页码')]: pageIndex + 1,
-        [i18next.t('页码总数')]: this.pages.length
+        [i18next.t('页码总数')]: this.pages.length,
+        price: price
       })
     } catch (err) {
       // console.warn(err)
@@ -214,7 +217,8 @@ class PrinterStore {
         ...this.data.common,
         [i18next.t('列')]: list[index],
         [i18next.t('当前页码')]: pageIndex + 1,
-        [i18next.t('页码总数')]: this.pages.length
+        [i18next.t('页码总数')]: this.pages.length,
+        price: price // 提供一个价格处理函数
       })
     } catch (err) {
       // console.warn(err)
