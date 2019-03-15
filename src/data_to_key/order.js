@@ -10,6 +10,12 @@ const SETTLE_WAY = {
   1: i18next.t('先货后款')
 }
 
+const PAY_STATUS = {
+  1: i18next.t('未支付'),
+  5: i18next.t('部分支付'),
+  10: i18next.t('已支付')
+}
+
 /**
  * 生成双栏商品展示数据
  * @param list
@@ -51,6 +57,7 @@ function generateCommon (data) {
   return {
     [i18next.t('订单号')]: data.id,
     [i18next.t('分拣序号')]: `${data.sort_id} ${data.child_sort_id}`,
+    [i18next.t('支付状态')]: PAY_STATUS[data.pay_status],
 
     [i18next.t('下单时间')]: moment(data.date_time).format('YYYY-MM-DD HH:mm:ss'),
     [i18next.t('配送时间')]: `${moment(data.receive_begin_time).format('MM-DD HH:mm:ss')} ~ ${moment(data.receive_end_time).format('MM-DD HH:mm:ss')}`,
@@ -173,17 +180,38 @@ function generateAbnormalData (data, kOrders) {
     res[cur._origin.id] = cur
     return res
   }, {})
-  // 异常表单 = 退货商品 + 异常商品
-  return _.map(data.abnormals.concat(data.refunds), v => {
+
+  // 异常商品 + 非商品异常
+  const abnormals = _.map(data.abnormals, v => {
+    const isSku = v.detail_id !== '0' // 非商品异常detail_id为 '0'
+    const sku = isSku ? kIdMap[v.detail_id] : { [i18next.t('商品名')]: '-' }
+
+    return {
+      [i18next.t('异常原因')]: v.type_text,
+      [i18next.t('异常描述')]: v.text,
+      [i18next.t('异常数量')]: isSku ? v.amount_delta : '-',
+      [i18next.t('异常金额')]: price(v.money_delta),
+      [i18next.t('售后类型')]: isSku ? i18next.t('商品异常') : i18next.t('非商品异常'),
+      ...sku, // 异常商品的商品信息
+      _origin: v
+    }
+  })
+
+  // 退货商品
+  const refunds = _.map(data.refunds, v => {
     return {
       [i18next.t('异常原因')]: v.type_text,
       [i18next.t('异常描述')]: v.text,
       [i18next.t('异常数量')]: v.amount_delta,
       [i18next.t('异常金额')]: price(v.money_delta),
+      [i18next.t('售后类型')]: i18next.t('退货'),
       ...kIdMap[v.detail_id], // 异常商品的商品信息
       _origin: v
     }
   })
+
+  // 异常表单 = 退货商品 + 异常商品 + 非商品异常
+  return [...abnormals, ...refunds]
 }
 
 // 商品分类统计

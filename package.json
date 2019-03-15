@@ -1,12 +1,13 @@
 {
   "name": "gm-printer",
-  "version": "0.2.26",
+  "version": "1.0.0-beta",
   "description": "",
   "main": "src/index.js",
   "scripts": {
     "precommit": "lint-staged",
     "start": "webpack-dev-server --hot",
-    "build": "webpack -p"
+    "build": "webpack -p",
+    "locale": "i18n-m sync src/"
   },
   "lint-staged": {
     "./src/**/*.js": [

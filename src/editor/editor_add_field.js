@@ -18,7 +18,8 @@ const commonFields = {
     { key: i18next.t('销售经理'), value: i18next.t('{{销售经理}}') },
     { key: i18next.t('销售经理电话'), value: i18next.t('{{销售经理电话}}') },
     { key: i18next.t('下单总数(销售单位)'), value: i18next.t('{{下单总数_销售单位}}') },
-    { key: i18next.t('出库总数(销售单位)'), value: i18next.t('{{出库总数_销售单位}}') }
+    { key: i18next.t('出库总数(销售单位)'), value: i18next.t('{{出库总数_销售单位}}') },
+    { key: i18next.t('支付状态'), value: i18next.t('{{支付状态}}') }
   ],
   [i18next.t('配送')]: [
     { key: i18next.t('线路'), value: i18next.t('{{线路}}') },
@@ -86,8 +87,8 @@ const tableFields = {
     { key: i18next.t('异常原因'), value: i18next.t('{{列.异常原因}}') },
     { key: i18next.t('异常描述'), value: i18next.t('{{列.异常描述}}') },
     { key: i18next.t('异常数量'), value: i18next.t('{{列.异常数量}}') },
-    { key: i18next.t('异常金额'), value: i18next.t('{{列.异常金额}}') }
-
+    { key: i18next.t('异常金额'), value: i18next.t('{{列.异常金额}}') },
+    { key: i18next.t('售后类型'), value: i18next.t('{{列.售后类型}}') }
   ]
 }
 
