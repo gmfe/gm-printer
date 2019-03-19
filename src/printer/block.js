@@ -98,7 +98,7 @@ class Block extends React.Component {
   render () {
     const {
       name,
-      config: { type, text, link, style },
+      config: { type, text, link, style, subText },
       pageIndex,
       className,
       printerStore,
@@ -118,6 +118,9 @@ class Block extends React.Component {
       // 🌡特殊处理: counter层级(9) 比 普通block层级(10)低. 为了让普通block被选中
       specialStyle = { zIndex: 9 }
       content = <Counter name={name}/>
+    } else if (type === 'split_order_title') {
+      // ⛑‍分单打印时,特殊的标题(由station的order_print的splitOrder函数修改config)
+      content = <div>{printerStore.template(text, pageIndex)}<span style={{ fontWeight: 'normal' }}>{subText}</span></div>
     }
 
     const active = name === printerStore.selected
