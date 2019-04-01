@@ -5,6 +5,7 @@ import { blockTypeList, tableClassNameList } from '../config'
 import editStore from './store'
 import _ from 'lodash'
 import { Hr, ImageUploader } from './component'
+import { observer } from 'mobx-react'
 
 /**
  * 是否存在每页合计按钮,非异常明细才有按钮
@@ -22,6 +23,7 @@ function hasSubtotalBtn (name) {
   }
 }
 
+@observer
 class ContextMenu extends React.Component {
   constructor (props) {
     super(props)
@@ -263,6 +265,36 @@ class ContextMenu extends React.Component {
     }
   }
 
+  handleChangeCounterDataKey = (field) => {
+    const { name } = this.state
+    const { setCounter } = editStore
+    setCounter(field, name)
+  }
+
+  renderCounterMenu = () => {
+    const { name } = this.state
+    const arr = (name && name.split('.')) || []
+    let { value } = editStore.config.contents[arr[2]].blocks[arr[4]]
+
+    // 兼容之前版本
+    if (value === undefined) value = [ 'len' ]
+
+    const isProductLengthActive = _.includes(value, 'len')
+    const isSubtotalActive = _.includes(value, 'subtotal')
+    return (
+      <React.Fragment>
+        <div onClick={this.handleChangeCounterDataKey.bind(this, 'len')}
+          className={isProductLengthActive ? 'active' : ''}>{i18next.t('商品数')}
+        </div>
+        <div onClick={this.handleChangeCounterDataKey.bind(this, 'subtotal')}
+          className={isSubtotalActive ? 'active' : ''}>{i18next.t('小计')}
+        </div>
+        <Hr/>
+        <div onClick={this.handleRemoveContent}>{i18next.t('移除区域')}</div>
+      </React.Fragment>
+    )
+  }
+
   render () {
     const { children, ...rest } = this.props
     const { name, popup } = this.state
@@ -285,6 +317,7 @@ class ContextMenu extends React.Component {
                 {arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
                 {arr.length === 5 && arr[3] === 'block' && this.renderBlock()}
                 {arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
+                {arr.length === 6 && arr[5] === 'counter' && this.renderCounterMenu()}
               </div>
             }
           </Menu>

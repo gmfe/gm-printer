@@ -10,6 +10,7 @@ export default {
   'sort_id': 'xxx-8888',
   'receive_end_time': '2018-11-15 12:00',
   'cname': '测试公司',
+  'printer_operator': i18next.t('李四'),
   'source_origin_id': 'xxx-888',
   'freight': 12.00,
   'receiver_phone': '13888888888',

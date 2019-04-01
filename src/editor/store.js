@@ -561,6 +561,30 @@ class EditStore {
       }
     }
   }
+
+  @action.bound
+  setCounter (field, name) {
+    const arr = (name && name.split('.')) || []
+    const counter = this.config.contents[arr[2]].blocks[arr[4]]
+    let { value } = counter
+
+    // 兼容之前版本
+    if (value === undefined) { value = [ 'len' ] }
+
+    if (_.includes(value, field)) {
+      const index = value.indexOf(field)
+      value.splice(index, 1)
+    } else {
+      value.push(field)
+    }
+    const height = `${25 * (value.length + 1) + 5}px`
+    // 设置counter value
+    this.config.contents[arr[2]].blocks[arr[4]] = {
+      ...counter,
+      value
+    }
+    this.config.contents[arr[2]].style = { height }
+  }
 }
 
 export default new EditStore()

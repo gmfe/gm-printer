@@ -97,14 +97,15 @@ class Block extends React.Component {
   }
 
   render () {
-    const {
+    let {
       name,
-      config: { type, text, link, style, subText },
+      config: { type, text, link, style, subText, value },
       pageIndex,
       className,
       printerStore,
       ...rest
     } = this.props
+    
     const { isEdit } = this.state
     let content = null
     let specialStyle = null
@@ -117,7 +118,8 @@ class Block extends React.Component {
     } else if (type === 'counter') {
       // 🌡特殊处理: counter层级(9) 比 普通block层级(10)低. 为了让普通block被选中
       specialStyle = { zIndex: 9 }
-      content = <Counter name={name}/>
+      content = <Counter value={value}/>
+      name = `${name}.counter`
     } else if (type === 'split_order_title') {
       // ⛑‍分单打印时,特殊的标题(由station的order_print的splitOrder函数修改config)
       content = <div>{printerStore.template(text, pageIndex)}<span style={{ fontWeight: 'normal' }}>{subText}</span></div>
