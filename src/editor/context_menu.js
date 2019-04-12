@@ -59,8 +59,6 @@ class ContextMenu extends React.Component {
 
   handleContextMenu = (e) => {
     const { target: { dataset: { name } }, clientX, clientY } = e
-    console.log(name)
-
     if (!name) {
       return
     }
@@ -253,7 +251,6 @@ class ContextMenu extends React.Component {
     const { children, ...rest } = this.props
     const { name, popup } = this.state
     const arr = (name && name.split('.')) || []
-
     return (
       <div {...rest} onContextMenu={this.handleContextMenu}>
         {children}

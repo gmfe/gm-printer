@@ -130,7 +130,8 @@ export const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
   { value: 'line', text: i18next.t('插入线条') },
   { value: 'image', text: i18next.t('插入图片') },
-  { value: 'counter', text: i18next.t('插入分类汇总') }
+  { value: 'counter', text: i18next.t('插入分类汇总') },
+  { value: 'barcode', text: i18next.t('插入订单条形码') }
 ]
 
 export const MULTI_SUFFIX = '_MULTI_SUFFIX'

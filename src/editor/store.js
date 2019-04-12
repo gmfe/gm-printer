@@ -303,6 +303,17 @@ class EditStore {
           }
         })
         break
+      case 'barcode':
+        blocks.push({
+          type: 'barcode',
+          style: {
+            left: '0px',
+            top: '5px',
+            width: '230px'
+          },
+          text: `{{barcode}}`
+        })
+        break
       default:
         window.alert(i18next.t('出错啦，未识别类型，此信息不应该出现'))
     }

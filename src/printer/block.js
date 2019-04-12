@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import Counter from './counter'
 import { inject, observer } from 'mobx-react'
 import { dispatchMsg, getStyleWithDiff } from '../util'
+import BarCode from './barcode'
 
 @inject('printerStore')
 @observer
@@ -105,7 +106,6 @@ class Block extends React.Component {
       ...rest
     } = this.props
     const { isEdit } = this.state
-
     let content = null
     let specialStyle = null
     if (!type || type === 'text') {
@@ -121,33 +121,39 @@ class Block extends React.Component {
     } else if (type === 'split_order_title') {
       // ⛑‍分单打印时,特殊的标题(由station的order_print的splitOrder函数修改config)
       content = <div>{printerStore.template(text, pageIndex)}<span style={{ fontWeight: 'normal' }}>{subText}</span></div>
+    } else if (type === 'barcode') {
+      content = <BarCode value={printerStore.template(text)} textMargin={0} margin={0} height={35} width={2} displayValue={false} dataName={name}/>
     }
 
     const active = name === printerStore.selected
 
     return (
       <div
-        {...rest}
         style={{ ...style, ...specialStyle }}
         className={classNames('gm-printer-block', className, {
           active
         })}
-        data-name={name}
         draggable
         onDragStart={this.handleDragStart}
         onDragEnd={this.handleDragEnd}
         onClick={this.handleClick}
         onDoubleClick={this.handleDoubleClick}
+        {...rest}
       >
+        <div
+          style={{ position: 'absolute', zIndex: 1, left: '0', top: '0', width: '100%', height: '100%' }}
+          data-name={name}
+        >
+          {(!type || type === 'text') && active && isEdit && (
+            <textarea
+              ref={ref => (this.refEdit = ref)}
+              className='gm-printer-block-text-edit' value={text}
+              onChange={this.handleText}
+              onBlur={this.handleEditBlur}
+            />
+          )}
+        </div>
         {content}
-        {(!type || type === 'text') && active && isEdit && (
-          <textarea
-            ref={ref => (this.refEdit = ref)}
-            className='gm-printer-block-text-edit' value={text}
-            onChange={this.handleText}
-            onBlur={this.handleEditBlur}
-          />
-        )}
       </div>
     )
   }
