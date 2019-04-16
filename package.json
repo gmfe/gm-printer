@@ -38,7 +38,7 @@
     "precss": "^3.1.2",
     "prop-types": "^15.6.2",
     "react": "^16.8.5",
-    "react-dom": "^16.6.0",
+    "react-dom": "^16.8.6",
     "jsbarcode": "^3.11.0"
   },
   "devDependencies": {
@@ -83,12 +83,12 @@
     "url-loader": "^1.1.1",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.7"
+    "webpack-dev-server": "^3.1.7",
+    "gm-webpack": "^2.0.0"
   },
   "dependencies": {
     "gm-i18n": "^1.2.2",
     "gm-util": "^5.6.7",
-    "gm-webpack": "^1.0.7",
     "gm-xfont": " ^1.0.42",
     "jsbarcode": "^3.11.0",
     "query-string": "^6.1.0",

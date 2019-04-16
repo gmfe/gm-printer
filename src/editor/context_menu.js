@@ -1,5 +1,5 @@
 import i18next from '../../locales'
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { blockTypeList, tableClassNameList } from '../config'
 import editStore from './store'
@@ -36,6 +36,8 @@ class ContextMenu extends React.Component {
         top: 0
       }
     }
+
+    this.menuRef = React.createRef()
   }
 
   componentDidMount () {
@@ -135,7 +137,7 @@ class ContextMenu extends React.Component {
     this.handleInsertBlock('image', imgURL)
   }
 
-  renderPanel () {
+  renderPanel = () => {
     const { name } = this.state
     const arr = name.split('.')
 
@@ -173,7 +175,7 @@ class ContextMenu extends React.Component {
     })
   }
 
-  renderBlock () {
+  renderBlock = () => {
     return (
       <div onClick={this.handleRemove}>
         {i18next.t('移除')}
@@ -217,7 +219,7 @@ class ContextMenu extends React.Component {
     editStore.setConfigTableBy(this.state.name, 'className', value)
   }
 
-  renderColumn () {
+  renderColumn = () => {
     const arr = this.state.name.split('.')
     const { className } = editStore.config.contents[arr[2]]
     const isActive = c => className === c
@@ -247,28 +249,67 @@ class ContextMenu extends React.Component {
     )
   }
 
+  detectContextMenuTop = () => {
+    const { popup: { top } } = this.state
+    const clientHeight = window.document.body.clientHeight
+    const contextMenuHeight = this.menuRef.current.clientHeight
+    if ((clientHeight - top) < contextMenuHeight) {
+      this.setState({
+        popup: {
+          ...this.state.popup,
+          top: clientHeight - contextMenuHeight
+        }
+      })
+    }
+  }
+
   render () {
     const { children, ...rest } = this.props
     const { name, popup } = this.state
     const arr = (name && name.split('.')) || []
+
     return (
       <div {...rest} onContextMenu={this.handleContextMenu}>
         {children}
         {name && (
-          <div className='gm-printer-edit-contextmenu' style={{
-            position: 'fixed',
-            ...popup
-          }}>
-            {arr.length === 1 && this.renderPanel()}
-            {arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
-            {arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
-            {arr.length === 5 && arr[3] === 'block' && this.renderBlock()}
-            {arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
-          </div>
+          <Menu
+            detectContextMenuTop={this.detectContextMenuTop}
+          >
+            {
+              <div ref={this.menuRef} className='gm-printer-edit-contextmenu' style={{
+                position: 'fixed',
+                ...popup
+              }}>
+                {arr.length === 1 && this.renderPanel()}
+                {arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
+                {arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
+                {arr.length === 5 && arr[3] === 'block' && this.renderBlock()}
+                {arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
+              </div>
+            }
+          </Menu>
         )}
       </div>
     )
   }
+}
+
+function Menu (props) {
+  const { detectContextMenuTop, children } = props
+  useEffect(() => {
+    detectContextMenuTop()
+  })
+
+  return (
+    <React.Fragment>
+      { children }
+    </React.Fragment>
+  )
+}
+
+Menu.propTypes = {
+  children: PropTypes.element.isRequired,
+  detectContextMenuTop: PropTypes.func.isRequired
 }
 
 ContextMenu.propTypes = {
