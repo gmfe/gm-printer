@@ -169,6 +169,10 @@ function generateOrderData (list) {
       [i18next.t('商品税额')]: price(v.tax),
       [i18next.t('出库金额')]: price(v.real_item_price),
       [i18next.t('出库金额_不含税')]: price(v.real_item_price_without_tax),
+
+      [i18next.t('生产日期')]: v.production_time || '-',
+      [i18next.t('保质期')]: v.life_time || '-',
+
       _origin: v
     }
   })

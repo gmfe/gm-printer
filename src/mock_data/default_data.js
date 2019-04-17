@@ -57,7 +57,9 @@ export default {
     'category_title_2': i18next.t('甘蓝类'),
     'org_std_sale_price': 10,
     'org_item_price': 20,
-    'org_sale_price': 15
+    'org_sale_price': 15,
+    'production_time': '2019-4-17',
+    'life_time': '2019-4-19'
   }, {
     'outer_id': '',
     'total_item_price': 0.0,
@@ -88,7 +90,9 @@ export default {
     'category_title_2': i18next.t('甘蓝类'),
     'org_std_sale_price': 10,
     'org_item_price': 20,
-    'org_sale_price': 15
+    'org_sale_price': 15,
+    'production_time': '2019-4-17',
+    'life_time': '2019-4-19'
   }, {
     'outer_id': '',
     'total_item_price': 143.0,
@@ -119,7 +123,9 @@ export default {
     'category_title_2': i18next.t('甘蓝类'),
     'org_std_sale_price': 10,
     'org_item_price': 20,
-    'org_sale_price': 15
+    'org_sale_price': 15,
+    'production_time': '2019-4-17',
+    'life_time': '2019-4-19'
   }, {
     'outer_id': '',
     'total_item_price': 0.0,
@@ -150,7 +156,9 @@ export default {
     'category_title_2': i18next.t('甘蓝类'),
     'org_std_sale_price': 10,
     'org_item_price': 20,
-    'org_sale_price': 15
+    'org_sale_price': 15,
+    'production_time': '2019-4-17',
+    'life_time': '2019-4-19'
   }],
   'tax_number': 1,
   'abnormals': [{
