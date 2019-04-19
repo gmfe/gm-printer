@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import { Flex } from 'react-gm'
+import { Flex } from '../components'
 import { toJS } from 'mobx'
 import editStore from './store'
-import { getCSS, Printer } from '../printer'
-import { getStyleWithDiff, insertCSS } from '../util'
+import { Printer } from '../printer'
+import { getStyleWithDiff } from '../util'
 import { observer } from 'mobx-react'
 import EditorTitle from './editor_title'
 import EditorSelect from './editor_select'
@@ -15,9 +15,6 @@ import ContextMenu from './context_menu'
 import { Gap, Title } from './component'
 
 import i18next from '../../locales'
-
-import './style.less'
-insertCSS(getCSS())
 
 @observer
 class Editor extends React.Component {
@@ -168,6 +165,9 @@ class Editor extends React.Component {
             />
           </ContextMenu>
         </div>
+
+        <div id='gm-printer-tip'/>
+
       </div>
     )
   }

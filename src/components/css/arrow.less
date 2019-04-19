@@ -1,0 +1,48 @@
+.gm-arrow-down {
+  position: absolute;
+  content: " ";
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid @gm-color-third;
+  display: block;
+  width: 0;
+  height: 0;
+  top: 0;
+  right: 5px;
+  bottom: 0;
+  margin: auto 0;
+}
+
+.gm-arrow-up {
+  position: absolute;
+  content: " ";
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid @gm-color-third;
+  display: block;
+  width: 0;
+  height: 0;
+  top: 0;
+  right: 5px;
+  bottom: 0;
+  margin: auto 0;
+}
+
+.gm-arrow-right {
+  position: absolute;
+  content: " ";
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid @gm-color-third;
+  display: block;
+  width: 0;
+  height: 0;
+  top: 0;
+  right: 5px;
+  bottom: 0;
+  margin: auto 0;
+
+  &.active {
+    border-left: 5px solid white;
+  }
+}

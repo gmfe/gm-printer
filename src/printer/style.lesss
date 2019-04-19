@@ -36,11 +36,9 @@ body {
 .gm-printer-block {
   position: relative;
   cursor: move;
-
   .gm-printer-block-text-edit {
     display: none;
   }
-
   img {
     display: inline-block;
     width: 100%;

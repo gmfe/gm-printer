@@ -1,6 +1,6 @@
 import i18next from '../../locales'
 import React from 'react'
-import { Flex, Option, Select } from 'react-gm'
+import { Flex, Option, Select } from '../components'
 import { observer } from 'mobx-react'
 import editStore from './store'
 import { tableDataKeyList } from '../config'

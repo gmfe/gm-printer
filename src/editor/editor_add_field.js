@@ -1,6 +1,6 @@
 import i18next from '../../locales'
 import React, { Fragment } from 'react'
-import { Flex } from 'react-gm'
+import { Flex } from '../components'
 import { Gap, SubTitle, Title } from './component'
 import _ from 'lodash'
 import editStore from './store'
