@@ -60,7 +60,6 @@ class Panel extends React.Component {
   render () {
     const { name, config, placeholder, pageIndex, style, printerStore } = this.props
     const active = name === printerStore.selectedRegion
-
     return (
       <div
         ref={this.ref}

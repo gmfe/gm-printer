@@ -93,7 +93,10 @@ function generateCommon (data) {
     [i18next.t('商户ID')]: convertNumber2Sid(data.sid),
     [i18next.t('收货人')]: data.receiver_name,
     [i18next.t('收货人电话')]: data.receiver_phone,
-    [i18next.t('收货地址')]: data.address
+    [i18next.t('收货地址')]: data.address,
+
+    // 打印人
+    [i18next.t('打印人')]: data.printer_operator
   }
 }
 
@@ -221,7 +224,14 @@ function generateAbnormalData (data, kOrders) {
 
 // 商品分类统计
 function generateCounter (groupByCategory1) {
-  return _.map(groupByCategory1, (o, k) => ({ text: k, len: o.length }))
+  return _.map(groupByCategory1, (o, k) => {
+    // 小计（出库金额）
+    const subtotal = Big(_.reduce(o, (a, b) => {
+      return a + parseFloat(b[i18next.t('出库金额')])
+    }, 0)).toFixed(2)
+
+    return { text: k, len: o.length, subtotal }
+  })
 }
 
 function order (data) {

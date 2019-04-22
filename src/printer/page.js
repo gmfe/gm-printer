@@ -25,7 +25,6 @@ class Page extends React.Component {
 
     // 统一减2毫米,防止计算误差溢出
     const x = '- 2mm'
-
     return (
       <div ref={this.ref} className='gm-printer-page' style={{
         boxSizing: 'content-box',

@@ -69,13 +69,12 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   overflow: hidden;
-
   .gm-printer-counter-item {
     border: 1px solid black;
     margin: 2px 0;
 
     .gm-printer-counter-item-1 {
-      border-bottom: 1px solid black;
+      border-top: 1px solid black;
     }
 
     div {
