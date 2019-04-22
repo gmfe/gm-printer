@@ -61,6 +61,8 @@ const tableFields = {
     { key: i18next.t('税率'), value: i18next.t('{{列.税率}}') },
     { key: i18next.t('自定义编码'), value: i18next.t('{{列.自定义编码}}') },
     { key: i18next.t('商品描述'), value: i18next.t('{{列.商品描述}}') },
+    { key: i18next.t('生产日期'), value: i18next.t('{{列.生产日期}}') },
+    { key: i18next.t('保质期'), value: i18next.t('{{列.保质期}}') },
     { key: i18next.t('备注'), value: i18next.t('{{列.备注}}') },
     { key: i18next.t('自定义'), value: '' }
   ],
