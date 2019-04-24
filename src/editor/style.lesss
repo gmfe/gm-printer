@@ -17,11 +17,14 @@
   background: whitesmoke;
   font-size: 12px;
   margin: 0;
-  line-height: 1.15; /* 1 */
+  line-height: 1.5; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
-  
   position: relative;
   overflow: hidden;
+  color: #333;
+  font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontAwesome, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
 
   #gm-printer-tip {
     position: fixed;
@@ -218,9 +221,9 @@
       &.active {
         outline: 1px solid rgb(82, 146, 247);
         z-index: 11;
-      }      
+      }
     }
-    
+
     .gm-printer-table {
       outline: 1px dotted #daebf4;
 
