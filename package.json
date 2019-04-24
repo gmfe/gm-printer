@@ -88,8 +88,8 @@
   },
   "dependencies": {
     "gm-i18n": "^1.2.2",
+    "gm-svg": "^0.3.0",
     "gm-util": "^5.6.7",
-    "gm-xfont": " ^1.0.42",
     "jsbarcode": "^3.11.0",
     "query-string": "^6.1.0",
     "react-gm": "^7.9.2",

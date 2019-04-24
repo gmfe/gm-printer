@@ -43,11 +43,11 @@ class ContextMenu extends React.Component {
   }
 
   componentDidMount () {
-    window.document.addEventListener('click', this.handleClick)
+    window.shadowRoot.addEventListener('click', this.handleClick)
   }
 
   componentWillUnmount () {
-    window.document.removeEventListener('click', this.handleClick)
+    window.shadowRoot.removeEventListener('click', this.handleClick)
   }
 
   handleClick = (e) => {
@@ -145,11 +145,15 @@ class ContextMenu extends React.Component {
 
     return (
       <React.Fragment>
-        {_.map(blockTypeList, v => (
-          v.value === 'image'
-            ? <ImageUploader onSuccess={this.handleInsertImage} key={v.value} text={v.text}/>
-            : <div key={v.value} onClick={this.handleInsertBlock.bind(this, v.value)}>{v.text}</div>
-        ))}
+        {_.map(blockTypeList, v => {
+          return (
+            v.value === 'image'
+              ? <ImageUploader onSuccess={this.handleInsertImage} key={v.value} text={v.text}/>
+              : <div key={v.value} onClick={this.handleInsertBlock.bind(this, v.value)}>{v.text}</div>
+          )
+        }
+
+        )}
 
         {arr[0] === 'contents' && (
           <React.Fragment>

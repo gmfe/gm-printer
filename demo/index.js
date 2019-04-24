@@ -6,7 +6,6 @@ import config from '../src/template_config/default_config'
 // 模拟数据
 import mockData from '../src/mock_data/default_data'
 
-import 'gm-xfont/iconfont.css'
 import '../node_modules/react-gm/src/index.less'
 
 class App extends React.Component {

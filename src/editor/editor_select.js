@@ -2,7 +2,7 @@ import i18next from '../../locales'
 import React from 'react'
 import editStore from './store'
 import { observer } from 'mobx-react'
-import { Flex, Option, Select } from 'react-gm'
+import { Flex, Option, Select } from '../components'
 import { InputWithUnit } from './component'
 import { pageTypeMap, printDirectionList } from '../config'
 import _ from 'lodash'
@@ -33,7 +33,7 @@ class EditorSelector extends React.Component {
   render () {
     const { config: { name, page }, computedRegionList, computedSelectedRegionTip } = editStore
     const isDIY = page.type === 'DIY'
-    console.log(editStore.selectedRegion)
+
     return (
       <div>
         <Flex alignCenter>

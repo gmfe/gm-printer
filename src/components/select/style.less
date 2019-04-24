@@ -1,0 +1,79 @@
+.gm-select {
+  vertical-align: middle;
+  display: inline-block;
+  position: relative;
+  min-width: 80px;
+  background-color: #fff;
+  user-select: none;
+  cursor: pointer;
+
+  &.disabled {
+    cursor: not-allowed;
+    background-color: #eee;
+    opacity: 1;
+    color: #848586;
+  }
+
+  .gm-select-selection {
+    position: relative;
+    border: 1px solid #eee;
+    height: 30px;
+    padding: 5px 18px 5px 10px;
+
+    .gm-select-selected {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .gm-select-list {
+    display: none;
+    position: absolute;
+    z-index: 3000;
+    min-width: 80px;
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    margin-top: 2px;
+    background: white;
+  }
+
+  .gm-select-option {
+    cursor: pointer;
+    padding: 5px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: #edf3f9;
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+      color: #848586;
+    }
+
+    &.selected {
+      color: #36ad3a;
+    }
+  }
+
+  &.gm-select-open {
+    .gm-select-selection {
+      border-color: #36ad3a;
+    }
+
+    .gm-select-list {
+      display: block;
+    }
+  }
+
+  &.gm-select-clean {
+    .gm-select-selection {
+      border: none;
+      padding: 6px 18px 6px 10px;
+    }
+  }
+}

@@ -4,10 +4,31 @@
 @zone: 20;
 @title: 20;
 @block: 10;
+@tip: 199;
+
+@import "../components/index.less";
+
+* {
+  box-sizing: border-box;
+}
 
 .gm-printer-edit {
+  // 因为 shadow dom 没有 html body，所以把这些css迁移过来
+  background: whitesmoke;
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.15; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  
   position: relative;
   overflow: hidden;
+
+  #gm-printer-tip {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    z-index: @tip;
+  }
 
   .gm-printer-edit-zone {
     position: absolute;
@@ -183,12 +204,6 @@
 
     .gm-printer-block {
       z-index: @block;
-
-      &:hover,
-      &.active {
-        outline: 1px solid rgb(82, 146, 247);
-      }
-
       .gm-printer-block-text-edit {
         display: inline-block;
         position: absolute;
@@ -196,12 +211,16 @@
         background: whitesmoke;
         top: calc(100% + 5px);
         left: 0;
-        min-width: 100%;
-        width: 300px;
+        min-width: 300px;
         font-size: initial;
       }
+      &:hover,
+      &.active {
+        outline: 1px solid rgb(82, 146, 247);
+        z-index: 11;
+      }      
     }
-
+    
     .gm-printer-table {
       outline: 1px dotted #daebf4;
 

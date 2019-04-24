@@ -145,16 +145,15 @@ class Block extends React.Component {
         <div
           style={{ position: 'absolute', zIndex: 1, left: '0', top: '0', width: '100%', height: '100%' }}
           data-name={name}
-        >
-          {(!type || type === 'text') && active && isEdit && (
-            <textarea
-              ref={ref => (this.refEdit = ref)}
-              className='gm-printer-block-text-edit' value={text}
-              onChange={this.handleText}
-              onBlur={this.handleEditBlur}
-            />
-          )}
-        </div>
+        />
+        {(!type || type === 'text') && active && isEdit && (
+          <textarea
+            ref={ref => (this.refEdit = ref)}
+            className='gm-printer-block-text-edit' value={text}
+            onChange={this.handleText}
+            onBlur={this.handleEditBlur}
+          />
+        )}
         {content}
       </div>
     )

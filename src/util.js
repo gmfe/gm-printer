@@ -50,11 +50,16 @@ function getTableColumnName (name, index) {
   return `${name}.column.${index}`
 }
 
-function insertCSS (cssString) {
+function insertCSS (cssString, target) {
   const style = window.document.createElement('style')
   style.type = 'text/css'
   style.appendChild(document.createTextNode(cssString))
-  window.document.head.appendChild(style)
+
+  if (target) {
+    target.appendChild(style)
+  } else {
+    window.document.head.appendChild(style)
+  }
 }
 
 function dispatchMsg (event, data) {
