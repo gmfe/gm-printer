@@ -27,6 +27,9 @@ class EditStore {
   @observable
   config = null
 
+  // 初始模板
+  originConfig = null
+
   // 一个能唯一标识某个东西的字符串
   // header
   // header.block.1
@@ -60,6 +63,7 @@ class EditStore {
   @action
   init (config) {
     this.config = config
+    this.originConfig = config
     this.selected = null
     this.selectedRegion = null
     this.insertPanel = 'header'

@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 function getHeight (el) {
   const styles = window.getComputedStyle(el)
   const height = el.offsetHeight
@@ -73,6 +75,22 @@ function exchange (arr, target, source) {
   return arr
 }
 
+let timer
+
+function afterImgAndSvgLoaded (callback, $printer) {
+  const $imgList = $printer.querySelectorAll('img')
+  const $svgList = $printer.querySelectorAll('svg')
+
+  clearTimeout(timer)
+
+  const everyThingIsOk = _.every($imgList, img => img.complete) && _.every($svgList, svg => svg.children.length)
+  if (everyThingIsOk) {
+    callback()
+  } else {
+    timer = setTimeout(afterImgAndSvgLoaded.bind(this, callback), 300)
+  }
+}
+
 export {
   getHeight,
   getWidth,
@@ -82,5 +100,6 @@ export {
   getTableColumnName,
   insertCSS,
   dispatchMsg,
-  exchange
+  exchange,
+  afterImgAndSvgLoaded
 }

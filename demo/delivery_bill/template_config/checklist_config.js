@@ -1,4 +1,4 @@
-import i18next from '../../locales'
+import i18next from '../../../locales'
 
 export default {
   'name': i18next.t('分拣核查单'),

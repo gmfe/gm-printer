@@ -1,17 +1,19 @@
 import React from 'react'
 import jsBarcode from 'jsbarcode'
 
-const BarCode = props => {
-  const barcode = React.createRef()
-  const { value, dataName, ...rest } = props
-
-  React.useEffect(() => {
-    jsBarcode(barcode.current, value, {
+class BarCode extends React.Component {
+  barcode = React.createRef()
+  componentDidMount () {
+    const { value, ...rest } = this.props
+    jsBarcode(this.barcode.current, value, {
       ...rest
     })
-  })
+  }
 
-  return <svg data-name={dataName} ref={barcode}/>
+  render () {
+    const { dataName } = this.props
+    return <svg data-name={dataName} ref={this.barcode}/>
+  }
 }
 
 export default BarCode

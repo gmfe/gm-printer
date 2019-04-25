@@ -1,4 +1,4 @@
-import i18next from '../../locales'
+import i18next from '../../../locales'
 import _ from 'lodash'
 import moment from 'moment'
 

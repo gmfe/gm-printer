@@ -6,7 +6,6 @@ import { observer } from 'mobx-react'
 import { Flex } from '../components'
 import { doPrint } from '../printer'
 import { toJS } from 'mobx'
-import defaultConfig from '../template_config/default_config'
 import { Title } from './component'
 
 @observer
@@ -14,7 +13,7 @@ class EditorTitle extends React.Component {
   handleReset = () => {
     // 重置模板配置,但是保留原来模板名字
     const config = {
-      ...defaultConfig,
+      ...editStore.originConfig,
       name: editStore.config.name
     }
     editStore.init(config)
@@ -25,7 +24,7 @@ class EditorTitle extends React.Component {
     doPrint({
       config: toJS(editStore.config),
       data
-    })
+    }, true)
   }
 
   render () {

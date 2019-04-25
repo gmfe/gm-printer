@@ -1,8 +1,8 @@
-import i18next from '../../locales'
+import i18next from '../../../locales'
 import moment from 'moment'
 import _ from 'lodash'
 import Big from 'big.js'
-import { MULTI_SUFFIX } from '../config'
+import { MULTI_SUFFIX } from '../../../src'
 import { coverDigit2Uppercase, price, convertNumber2Sid } from './util'
 
 const SETTLE_WAY = {

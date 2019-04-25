@@ -1,7 +1,6 @@
 import i18next from '../../locales'
 import { action, observable } from 'mobx'
 import _ from 'lodash'
-import toKey from '../data_to_key'
 import Big from 'big.js'
 
 const price = n => Big(n || 0).toFixed(2)
@@ -45,7 +44,7 @@ class PrinterStore {
     this.contents = []
     this.tablesInfo = {}
     this.pages = []
-    this.data = toKey(data)
+    this.data = data
     this.selected = null
   }
 
