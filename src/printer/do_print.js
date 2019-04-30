@@ -3,19 +3,24 @@ import ReactDOM from 'react-dom'
 import Printer from './printer'
 import getCSS from './get_css'
 import BatchPrinter from './batch_printer'
+import { afterImgAndSvgLoaded } from '../util'
 
 const printerId = '_gm-printer_' + Math.random()
 let $printer = window.document.getElementById(printerId)
 
-function init () {
+function init (isTest) {
   if (!$printer) {
     $printer = window.document.createElement('iframe')
     $printer.id = printerId
     $printer.style.position = 'fixed'
     $printer.style.top = '0'
-    $printer.style.left = '-2000px'
     $printer.style.width = '1000px'
-
+    if (isTest) {
+      $printer.style.left = '-2000px'
+    } else {
+      $printer.style.left = '0px'
+      $printer.style.height = '100vh'
+    }
     window.document.body.appendChild($printer)
 
     const idocument = $printer.contentDocument
@@ -46,8 +51,10 @@ function toDoPrint ({ data, config }) {
         config={config}
         data={data}
         onReady={() => {
-          $printer.contentWindow.print()
-          resolve()
+          afterImgAndSvgLoaded(() => {
+            $printer.contentWindow.print()
+            resolve()
+          }, $app)
         }}
       />
     ), $app)
@@ -57,29 +64,32 @@ function toDoPrint ({ data, config }) {
 function toDoPrintBatch (list) {
   return new window.Promise(resolve => {
     const $app = $printer.contentWindow.document.getElementById('appContainer')
+
     ReactDOM.unmountComponentAtNode($app)
     ReactDOM.render((
       <BatchPrinter
         list={list}
         onReady={() => {
-          $printer.contentWindow.print()
-          resolve()
+          afterImgAndSvgLoaded(() => {
+            $printer.contentWindow.print()
+            resolve()
+          }, $app)
         }}
       />
     ), $app)
   })
 }
 
-function doPrint ({ data, config }) {
-  init()
+function doPrint ({ data, config }, isTest) {
+  init(isTest)
 
   return toDoPrint({ data, config })
 }
 
-function doBatchPrint (list) {
-  init()
+function doBatchPrint (list, isTest) {
+  init(isTest)
 
-  toDoPrintBatch(list)
+  return toDoPrintBatch(list)
 }
 
 export {

@@ -1,4 +1,4 @@
-import i18next from '../../locales'
+import i18next from '../../../locales'
 export default {
   '__gm_printer_data_type': 'order',
   'real_price': 143.00,

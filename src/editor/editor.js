@@ -132,7 +132,7 @@ class Editor extends React.Component {
   }
 
   render () {
-    const { mockData, showEditor } = this.props
+    const { mockData, showEditor, addFields } = this.props
 
     return (
       <div className='gm-printer-edit'>
@@ -151,7 +151,7 @@ class Editor extends React.Component {
           <Gap height='5px'/>
           <EditorField/>
           <Gap height='5px'/>
-          <EditorAddField/>
+          <EditorAddField addFields={addFields}/>
         </div>}
 
         <div className='gm-printer-edit-wrap'>

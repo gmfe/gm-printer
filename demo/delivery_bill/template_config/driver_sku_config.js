@@ -1,7 +1,7 @@
-import i18next from '../../locales'
+import i18next from '../../../locales'
 
 export default {
-  'name': i18next.t('配送任务清单'),
+  'name': i18next.t('配送装车清单'),
   'page': {
     'type': 'A4',
     'name': 'A4',
@@ -20,7 +20,7 @@ export default {
   'header': {
     'blocks': [
       {
-        'text': i18next.t('配送任务清单'),
+        'text': i18next.t('配送装车清单'),
         'style': {
           'position': 'absolute',
           'left': '0px',
@@ -67,96 +67,69 @@ export default {
       }
     ],
     'style': {
-      'height': '57px'
+      'height': '62px'
     }
   },
   'contents': [
     {
+      'style': {
+        'height': '60px'
+      },
+      'blocks': [
+        {
+          'style': {},
+          'type': 'counter'
+        }
+      ]
+    },
+    {
       'type': 'table',
-      'dataKey': 'driver_task',
+      'dataKey': 'driver_sku',
       'subtotal': {
         'show': false
       },
+      'specialStyle': {
+        'fontSize': '16px'
+      },
       'columns': [
         {
-          'head': i18next.t('序号'),
+          'head': i18next.t('商品名称'),
           'headStyle': {
             'textAlign': 'center'
           },
-          'text': i18next.t('{{列.序号}}'),
+          'text': i18next.t('{{列.商品名称}}'),
           'style': {
             'textAlign': 'center'
           }
         },
         {
-          'head': i18next.t('订单号'),
+          'head': i18next.t('总计'),
           'headStyle': {
             'textAlign': 'center'
           },
-          'text': i18next.t('{{列.订单号}}'),
+          'text': i18next.t('{{列.总计}}'),
           'style': {
             'textAlign': 'center'
           }
         },
         {
-          'head': i18next.t('商户名'),
+          'head': i18next.t('分类'),
           'headStyle': {
             'textAlign': 'center'
           },
-          'text': i18next.t('{{列.商户名}}'),
+          'text': i18next.t('{{列.分类}}'),
           'style': {
             'textAlign': 'center'
           }
         },
         {
-          'head': i18next.t('收货地址'),
+          'head': i18next.t('明细'),
           'headStyle': {
-            'textAlign': 'center'
+            'textAlign': 'left'
           },
-          'text': i18next.t('{{列.收货地址}}'),
+          'text': i18next.t('{{列.明细}}'),
           'style': {
-            'textAlign': 'center'
-          }
-        },
-        {
-          'head': i18next.t('收货时间'),
-          'headStyle': {
-            'width': '92px',
-            'textAlign': 'center'
-          },
-          'text': i18next.t('{{列.收货时间}}'),
-          'style': {
-            'textAlign': 'center'
-          }
-        },
-        {
-          'head': i18next.t('配送框数'),
-          'headStyle': {
-            'textAlign': 'center'
-          },
-          'text': i18next.t('{{列.配送框数}}'),
-          'style': {
-            'textAlign': 'center'
-          }
-        },
-        {
-          'head': i18next.t('回收框数'),
-          'headStyle': {
-            'textAlign': 'center'
-          },
-          'text': i18next.t('{{列.回收框数}}'),
-          'style': {
-            'textAlign': 'center'
-          }
-        },
-        {
-          'head': i18next.t('订单备注'),
-          'headStyle': {
-            'textAlign': 'center'
-          },
-          'text': i18next.t('{{列.订单备注}}'),
-          'style': {
-            'textAlign': 'center'
+            'textAlign': 'left'
           }
         }
       ],

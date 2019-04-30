@@ -1,4 +1,4 @@
-import i18next from '../../locales'
+import i18next from '../../../locales'
 export default {
   'order_detail': [
     {
