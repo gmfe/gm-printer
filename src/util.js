@@ -87,7 +87,7 @@ function afterImgAndSvgLoaded (callback, $printer) {
   if (everyThingIsOk) {
     callback()
   } else {
-    timer = setTimeout(afterImgAndSvgLoaded.bind(this, callback), 300)
+    timer = setTimeout(afterImgAndSvgLoaded.bind(this, callback, $printer), 300)
   }
 }
 
