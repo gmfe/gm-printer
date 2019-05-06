@@ -7,10 +7,11 @@ import editStore from './store'
 import { observer } from 'mobx-react'
 
 const detailFields = [
-  { key: i18next.t('分拣序号'), value: i18next.t('{{分拣序号}}') },
   { key: i18next.t('商户名'), value: i18next.t('{{商户名}}') },
+  { key: i18next.t('商户ID'), value: i18next.t('{{商户ID}}') },
   { key: i18next.t('采购数量(销售单位)'), value: i18next.t('{{采购数量_销售单位}}') },
   { key: i18next.t('采购数量(基本单位)'), value: i18next.t('{{采购数量_基本单位}}') },
+  { key: i18next.t('分拣序号'), value: i18next.t('{{分拣序号}}') },
   { key: i18next.t('商品备注'), value: i18next.t('{{商品备注}}') }
 ]
 
@@ -61,7 +62,7 @@ class TableDetailEditor extends React.Component {
             <div>{i18next.t('字段设置')}：</div>
             <Textarea onChange={this.handleSpecialTextChange} value={specialConfig.template_text} placeholder={i18next.t('请输入明细字段')}/>
           </div>
-          <TipInfo text={i18next.t('说明:在字段之间自行设置间隔符号,但请勿修改{}中的内容,避免出现数据异常')}/>
+          <TipInfo text={i18next.t('说明：在字段之间自行设置间隔符号,但请勿修改{}中的内容,避免出现数据异常')}/>
         </React.Fragment>}
       </div>
     )

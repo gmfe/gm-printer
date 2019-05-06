@@ -1,27 +1,17 @@
 import i18next from '../../locales'
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { blockTypeList, tableClassNameList } from '../config'
+import { tableClassNameList } from '../config'
 import editStore from './store'
 import _ from 'lodash'
 import { Hr, ImageUploader } from './component'
 import { observer } from 'mobx-react'
 
-/**
- * 是否存在每页合计按钮,非异常明细才有按钮
- * @param name => ContextMenu 的 this.state.name
- * @return {boolean}
- */
-function hasSubtotalBtn (name) {
-  if (!name) return false
-
-  const arr = name.split('.')
-  if (_.includes(arr, 'table')) {
-    const dataKey = editStore.config.contents[arr[2]].dataKey
-    // 异常明细没有每页小计
-    return dataKey !== 'abnormal'
-  }
-}
+const blockTypeList = [
+  { value: '', text: i18next.t('插入文本') },
+  { value: 'line', text: i18next.t('插入线条') },
+  { value: 'image', text: i18next.t('插入图片') }
+]
 
 @observer
 class ContextMenu extends React.Component {
@@ -188,38 +178,6 @@ class ContextMenu extends React.Component {
     )
   }
 
-  handleChangeTableDataKey = (key) => {
-    const { name } = this.state
-    editStore.changeTableDataKey(name, key)
-  }
-
-  renderOrderActionBtn = () => {
-    const { name } = this.state
-    if (!hasSubtotalBtn(name)) {
-      return null
-    }
-
-    const arr = name.split('.')
-    const { dataKey, subtotal } = editStore.config.contents[arr[2]]
-    const keyArr = dataKey.split('_')
-
-    const isMultiActive = keyArr.includes('multi')
-    const isCategoryActive = keyArr.includes('category')
-    const isSubtotalActive = subtotal.show
-
-    return (
-      <React.Fragment>
-        <div onClick={this.handleChangeTableDataKey.bind(this, 'multi')}
-          className={isMultiActive ? 'active' : ''}>{i18next.t('双栏商品')}
-        </div>
-        <div onClick={this.handleChangeTableDataKey.bind(this, 'category')}
-          className={isCategoryActive ? 'active' : ''}>{i18next.t('商品分类')}
-        </div>
-        <div onClick={this.handleSubtotal} className={isSubtotalActive ? 'active' : ''}>{i18next.t('每页合计')}</div>
-      </React.Fragment>
-    )
-  }
-
   handleSetTableConfig (value) {
     editStore.setConfigTableBy(this.state.name, 'className', value)
   }
@@ -231,9 +189,6 @@ class ContextMenu extends React.Component {
 
     return (
       <React.Fragment>
-        {this.renderOrderActionBtn()}
-
-        <Hr/>
         <div onClick={this.handleRemove}>{i18next.t('移除列')}</div>
 
         <Hr/>

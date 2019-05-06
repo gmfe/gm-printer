@@ -1,9 +1,8 @@
 import i18next from '../../locales'
 import React from 'react'
-import { Flex, Option, Select } from '../components'
+import { Flex } from '../components'
 import { observer } from 'mobx-react'
 import editStore from './store'
-import { tableDataKeyList } from '../config'
 import { Fonter, Gap, Line, Position, Separator, Size, TextAlign, ColumnWidth, Textarea, Title, TipInfo } from './component'
 
 @observer
@@ -97,15 +96,6 @@ class EditorField extends React.Component {
       <div>
         <Title title={i18next.t('编辑字段')}/>
         <Gap/>
-        <Flex>
-          <Flex alignCenter>{i18next.t('数据类型')}：</Flex>
-          <Select className='gm-printer-edit-select' value={editStore.computedTableDataKeyOfSelectedRegion}
-            onChange={this.handleSetTableDataKey}>
-            {tableDataKeyList.map(v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
-          </Select>
-        </Flex>
-
-        <Gap height='5px'/>
 
         <Flex alignCenter>
           <Flex alignCenter>{i18next.t('设置列宽')}：</Flex>
