@@ -115,6 +115,20 @@
   }
 }
 
+.gm-printer-special-container {
+  display: flex;
+  justify-content: space-between;
+
+  .gm-printer-special-container-box {
+    flex: 1;
+    padding: 2px;
+  }
+
+  .gm-printer-special-container-box + .gm-printer-special-container-box {
+    border-left: 1px solid #000;
+  }
+}
+
 @page {
   margin: 0;
 }

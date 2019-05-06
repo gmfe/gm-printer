@@ -218,7 +218,20 @@ class PrinterStore {
         price: price // 提供一个价格处理函数
       })
     } catch (err) {
-      // console.warn(err)
+      return text
+    }
+  }
+
+  templateSpecialDetails (col, dataKey, index) {
+    // 做好保护，出错就返回 text
+    const { specialDetailsKey, text } = col
+    try {
+      const row = this.data._table[dataKey][index]
+      const compiled = _.template(text, { interpolate: /{{([\s\S]+?)}}/g })
+      const detailsList = row[specialDetailsKey]
+
+      return detailsList.map(d => `<div>${compiled(d)}</div>`).join('')
+    } catch (err) {
       return text
     }
   }

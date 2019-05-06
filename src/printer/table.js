@@ -7,6 +7,7 @@ import { inject, observer } from 'mobx-react'
 import classNames from 'classnames'
 import Big from 'big.js'
 import { MULTI_SUFFIX } from '../config'
+import SpecialTr from './table_special_tr'
 
 @inject('printerStore')
 @observer
@@ -107,7 +108,7 @@ class Table extends React.Component {
   }
 
   renderDefault () {
-    const { config: { dataKey, subtotal, specialStyle }, name, range, pageIndex, printerStore } = this.props
+    const { config: { dataKey, subtotal, specialConfig = {} }, name, range, pageIndex, printerStore } = this.props
     const tableData = printerStore.data._table[dataKey] || []
 
     // 每页小计
@@ -156,14 +157,8 @@ class Table extends React.Component {
         </thead>
         <tbody>
           {_.map(_.range(range.begin, range.end), i => {
-            const special = tableData[i] && tableData[i]._special
-            if (special) {
-              return (
-                <tr key={i}>
-                  <td colSpan={99} style={Object.assign({ fontWeight: 'bold' }, specialStyle)}>{special.text}</td>
-                </tr>
-              )
-            }
+            const _special = tableData[i] && tableData[i]._special
+            if (_special) return <SpecialTr key={i} specialConfig={specialConfig} data={_special}/>
 
             return (
               <tr key={i}>
@@ -175,7 +170,11 @@ class Table extends React.Component {
                     className={classNames({
                       active: getTableColumnName(name, col.index) === printerStore.selected
                     })}
-                    dangerouslySetInnerHTML={{ __html: printerStore.templateTable(col.text, dataKey, i, pageIndex) }}
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        col.isSpecialColumn ? printerStore.templateSpecialDetails(col, dataKey, i)
+                          : printerStore.templateTable(col.text, dataKey, i, pageIndex)
+                    }}
                   />
                 ))}
               </tr>
