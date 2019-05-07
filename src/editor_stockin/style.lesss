@@ -1,0 +1,324 @@
+// 层级
+@textEdit: 99;
+@contextMenu: 80;
+@zone: 20;
+@title: 20;
+@block: 10;
+@tip: 199;
+
+@import "../components/index.less";
+
+* {
+  box-sizing: border-box;
+}
+
+.gm-printer-edit {
+  // 因为 shadow dom 没有 html body，所以把这些css迁移过来
+  background: whitesmoke;
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.5; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  position: relative;
+  overflow: hidden;
+  color: #333;
+  font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontAwesome, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+
+  #gm-printer-tip {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    z-index: @tip;
+  }
+
+  .gm-printer-edit-zone {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 330px;
+    height: 100vh;
+    overflow-y: auto;
+    background: white;
+    z-index: @zone;
+    padding: 10px 20px;
+    box-shadow: -2px 0 3px 0 hsla(0, 0%, 39%, 0.1);
+
+    span.gm-printer-edit-btn {
+      cursor: pointer;
+      padding: 0 5px;
+      border: 1px solid transparent;
+
+      &:hover {
+        border: 1px solid rgba(51, 51, 51, 0.1);
+      }
+
+      &.active {
+        border: 1px solid rgba(51, 51, 51, 0.1);
+        background: rgba(51, 51, 51, 0.1);
+      }
+    }
+
+    .gm-printer-edit-plus-btn {
+      color: #fff;
+      background-color: #36ad3a;
+      border-color: #309a33;
+      border-radius: 4px;
+      width: 14px;
+      height: 14px;
+      line-height: 14px;
+      font-size: 12px;
+      display: inline-block;
+      text-align: center;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    select {
+      outline: none;
+      border: none;
+    }
+
+    input.gm-printer-edit-input {
+      outline: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-bottom: 1px solid black;
+      background: transparent;
+    }
+
+    .gm-printer-edit-select {
+      width: 190px;
+    }
+
+    .gm-printer-edit-input-custom {
+      width: 190px;
+      height: 28px;
+      padding: 5px 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      border: 1px solid #eee;
+    }
+  }
+
+  .gm-printer-edit-title-fixed {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 10px 20px;
+    z-index: @title;
+    background-color: #fff;
+  }
+
+  .gm-printer-edit-wrap {
+    padding: 50px 320px 0 20px;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .gm-printer-edit-content {
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+
+  .gm-printer-edit-contextmenu {
+    z-index: @contextMenu;
+    padding: 5px 0;
+    width: auto;
+    min-width: 100px;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+
+    > div {
+      padding: 5px;
+      cursor: pointer;
+
+      &.active {
+        color: #36ad3a;
+      }
+
+      &:hover {
+        color: white;
+        background: rgb(82, 146, 247);
+      }
+    }
+  }
+
+  // cover mark
+  .gm-printer {
+    img {
+      outline: 1px solid red;
+    }
+
+    .gm-printer-page {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      overflow: visible;
+
+      + .gm-printer-page {
+        margin-top: 10px;
+      }
+
+      &-inner {
+        outline: 1px dotted #daebf4;
+        background-image: linear-gradient(whitesmoke 1px, transparent 0), linear-gradient(90deg, whitesmoke 1px, transparent 0);
+        background-size: 10px 10px, 10px 10px;
+      }
+    }
+
+    .gm-printer-panel {
+      outline: 1px dotted #daebf4;
+
+      &.active {
+        background-color: rgb(235, 247, 237);
+      }
+
+      &::before {
+        content: attr(data-placeholder);
+        position: absolute;
+        font-style: italic;
+        font-size: 2em;
+        color: rgba(0, 0, 0, 0.1);
+        left: calc(50% - 1.5em);
+        top: calc(50% - 0.5em);
+      }
+
+      .gm-printer-panel-drag {
+        display: block;
+        cursor: ns-resize;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        border: 4px solid rgb(82, 146, 247);
+        width: 0;
+        height: 0;
+      }
+
+      &.gm-printer-sign,
+      &.gm-printer-footer {
+        .gm-printer-panel-drag {
+          top: 0;
+          bottom: initial;
+        }
+      }
+    }
+
+    .gm-printer-block {
+      z-index: @block;
+      .gm-printer-block-text-edit {
+        display: inline-block;
+        position: absolute;
+        z-index: @textEdit;
+        background: whitesmoke;
+        top: calc(100% + 5px);
+        left: 0;
+        min-width: 300px;
+        font-size: initial;
+      }
+      &:hover,
+      &.active {
+        outline: 1px solid rgb(82, 146, 247);
+        z-index: 11;
+      }
+    }
+
+    .gm-printer-table {
+      outline: 1px dotted #daebf4;
+
+      &.active {
+        background-color: rgb(235, 247, 237);
+      }
+
+      &::before {
+        content: attr(data-placeholder);
+        position: absolute;
+        font-style: italic;
+        font-size: 2em;
+        color: rgba(0, 0, 0, 0.1);
+        left: calc(50% - 1.5em);
+        top: calc(50% - 0.5em);
+      }
+
+      table {
+        // 不被 before 遮挡
+        position: relative;
+
+        td,
+        th {
+          &.active {
+            outline: 1px solid rgb(82, 146, 247);
+          }
+        }
+
+        th {
+          cursor: move;
+
+          &:hover {
+            outline: 1px solid rgb(82, 146, 247);
+          }
+        }
+      }
+    }
+  }
+}
+
+@media print {
+  * {
+    outline: none !important;
+  }
+
+  .gm-printer-edit {
+    .gm-printer-edit-content {
+      padding-right: 0;
+    }
+
+    .gm-printer-edit-zone {
+      display: none;
+    }
+
+    .gm-printer-edit-contextmenu {
+      display: none;
+    }
+
+    // cover mark
+    .gm-printer {
+      margin: 0;
+
+      img {
+        outline: none;
+      }
+
+      .gm-printer-page {
+        box-shadow: none;
+        overflow: hidden;
+
+        + .gm-printer-page {
+          margin-top: 0;
+        }
+
+        &-inner {
+          background: none;
+        }
+      }
+
+      .gm-printer-panel {
+        &::before {
+          display: none;
+        }
+
+        .gm-printer-panel-drag {
+          display: none;
+        }
+      }
+
+      .gm-printer-table {
+        &::before {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
