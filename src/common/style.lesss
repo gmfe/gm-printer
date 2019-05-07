@@ -5,11 +5,17 @@
 @title: 20;
 @block: 10;
 @tip: 199;
+@mask: 1040;
+@modal: 1050;
 
 @import "../components/index.less";
 
 * {
   box-sizing: border-box;
+}
+
+:focus {
+    outline: none;
 }
 
 .gm-printer-edit {
@@ -207,7 +213,6 @@
 
     .gm-printer-block {
       z-index: @block;
-
       .gm-printer-block-text-edit {
         display: inline-block;
         position: absolute;
@@ -218,7 +223,6 @@
         min-width: 300px;
         font-size: initial;
       }
-
       &:hover,
       &.active {
         outline: 1px solid rgb(82, 146, 247);

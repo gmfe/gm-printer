@@ -1,19 +1,10 @@
 import i18next from '../../locales'
 import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
 import { Flex } from '../components'
-import { Gap, SubTitle, Title } from './component'
+import { Gap, SubTitle, Title, FieldBtn } from '../common/component'
 import _ from 'lodash'
-import editStore from './store'
-import { observer } from 'mobx-react'
-
-const FieldBtn = ({ name, onClick }) => (
-  <Flex alignCenter style={{ width: '50%', margin: '3px 0' }}>
-    <span className='gm-printer-edit-plus-btn' onClick={onClick}>
-      +
-    </span>
-    <span className='gm-padding-left-5'>{name}</span>
-  </Flex>
-)
+import { observer, inject } from 'mobx-react'
 
 class FieldList extends React.Component {
   render () {
@@ -37,10 +28,11 @@ class FieldList extends React.Component {
   }
 }
 
+@inject('editStore')
 @observer
 class EditorAddField extends React.Component {
   render () {
-    const { addFields: { tableFields, commonFields } } = this.props
+    const { addFields: { tableFields, commonFields }, editStore } = this.props
 
     let content = null
     if (editStore.selectedRegion === null) {
@@ -53,6 +45,10 @@ class EditorAddField extends React.Component {
 
     return <div className='gm-overflow-y'>{content}</div>
   }
+}
+
+EditorAddField.propTypes = {
+  addFields: PropTypes.object.isRequired
 }
 
 export default EditorAddField

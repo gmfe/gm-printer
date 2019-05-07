@@ -1,13 +1,15 @@
 import i18next from '../../locales'
 import React from 'react'
-import { Flex } from '../components'
-import { observer } from 'mobx-react'
-import editStore from './store'
-import { Fonter, Gap, Line, Position, Separator, Size, TextAlign, ColumnWidth, Textarea, Title, TipInfo } from './component'
+import { Flex, Option, Select } from '../components'
+import { observer, inject } from 'mobx-react'
+import { Fonter, Gap, Line, Position, Separator, Size, TextAlign, ColumnWidth, Textarea, Title, TipInfo } from '../common/component'
+import PropTypes from 'prop-types'
 
+@inject('editStore')
 @observer
 class EditorField extends React.Component {
   handleChangeBlock = (who, value) => {
+    const { editStore } = this.props
     if (!editStore.computedIsSelectBlock) {
       return
     }
@@ -16,6 +18,7 @@ class EditorField extends React.Component {
   }
 
   handleChangeTable = (who, value) => {
+    const { editStore } = this.props
     if (!editStore.computedIsSelectTable) {
       return
     }
@@ -23,6 +26,7 @@ class EditorField extends React.Component {
   }
 
   handleChangeTableColumn = (headStyle) => {
+    const { editStore } = this.props
     if (!editStore.computedIsSelectTable) {
       return
     }
@@ -42,10 +46,22 @@ class EditorField extends React.Component {
   }
 
   handleSetTableDataKey = (dataKey) => {
+    const { editStore } = this.props
     editStore.setTableDataKey(dataKey)
   }
 
+  handleSpecialStyleChange = (value) => {
+    const { editStore } = this.props
+    editStore.setSpecialStyle(value)
+  }
+
+  handleSubtotalStyleChange = value => {
+    const { editStore } = this.props
+    editStore.setSubtotalStyle(value)
+  }
+
   renderBlocks () {
+    const { editStore } = this.props
     const { type, text, style, link } = editStore.computedSelectedInfo
 
     return (
@@ -90,12 +106,30 @@ class EditorField extends React.Component {
   }
 
   renderTable () {
+    const { tableDataKeyList, editStore } = this.props
     const { head, headStyle, text, style } = editStore.computedSelectedInfo
+
+    const { specialConfig, subtotal } = editStore.computedTableSpecialConfig
+    // 小计样式
+    const specialStyle = (specialConfig && specialConfig.style) || {} // 老的配置specialConfig是undefined
+    // 每页合计样式
+    const subtotalStyle = (subtotal && subtotal.style) || {}
 
     return (
       <div>
         <Title title={i18next.t('编辑字段')}/>
         <Gap/>
+
+        {tableDataKeyList && <React.Fragment>
+          <Flex>
+            <Flex alignCenter>{i18next.t('数据类型')}：</Flex>
+            <Select className='gm-printer-edit-select' value={editStore.computedTableDataKeyOfSelectedRegion}
+              onChange={this.handleSetTableDataKey}>
+              {tableDataKeyList.map(v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
+            </Select>
+          </Flex>
+          <Gap height='5px'/>
+        </React.Fragment>}
 
         <Flex alignCenter>
           <Flex alignCenter>{i18next.t('设置列宽')}：</Flex>
@@ -133,12 +167,30 @@ class EditorField extends React.Component {
             </div>
           </div>
         </Flex>
+
         <TipInfo text={i18next.t('说明：请勿修改{}中的内容,避免出现数据异常')}/>
+        <Gap/>
+
+        <Flex>
+          <Flex>{i18next.t('小计设置')}：</Flex>
+          <Fonter style={specialStyle} onChange={this.handleSpecialStyleChange}/>
+          <Separator/>
+          <TextAlign style={specialStyle} onChange={this.handleSpecialStyleChange}/>
+        </Flex>
+
+        <Flex>
+          <Flex>{i18next.t('合计设置')}：</Flex>
+          <Fonter style={subtotalStyle} onChange={this.handleSubtotalStyleChange}/>
+          <Separator/>
+          <TextAlign style={subtotalStyle} onChange={this.handleSubtotalStyleChange}/>
+        </Flex>
       </div>
     )
   }
 
   render () {
+    const { editStore } = this.props
+
     let content = null
     if (editStore.computedIsSelectBlock) {
       content = this.renderBlocks()
@@ -147,6 +199,10 @@ class EditorField extends React.Component {
     }
     return content
   }
+}
+
+EditorField.propTypes = {
+  tableDataKeyList: PropTypes.array
 }
 
 export default EditorField

@@ -2,10 +2,9 @@ import i18next from '../../locales'
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Flex, Option, Select } from '../components/index'
-import { Gap, Title, FieldBtn, Textarea, TipInfo, Fonter, Separator, TextAlign } from './component'
+import { Gap, Title, FieldBtn, Textarea, TipInfo, Fonter, Separator, TextAlign } from '../common/component'
 import _ from 'lodash'
-import editStore from './store'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 
 const dataKeyList = [
   { value: 'purchase_no_detail', text: i18next.t('不打印明细') },
@@ -15,21 +14,26 @@ const dataKeyList = [
   { value: 'purchase_flex_4', text: i18next.t('四栏-总表下方一行四栏') }
 ]
 
+@inject('editStore')
 @observer
 class TableDetailEditor extends React.Component {
   handleDataKeyChange = dataKey => {
+    const { editStore } = this.props
     editStore.setPurchaseTableKey(dataKey)
   }
 
   handleDetailAddField = (value) => {
+    const { editStore } = this.props
     editStore.specialTextAddField('*' + value)
   }
 
   handleSpecialTextChange = value => {
+    const { editStore } = this.props
     editStore.setSpecialText(value)
   }
 
   handleSpecialStyleChange = (value) => {
+    const { editStore } = this.props
     editStore.setSpecialStyle(value)
   }
 
@@ -71,9 +75,11 @@ class TableDetailEditor extends React.Component {
   }
 }
 
+@inject('editStore')
 @observer
 class EditorSpecialTable extends React.Component {
   render () {
+    const { editStore } = this.props
     if (editStore.computedRegionIsTable) {
       const arr = editStore.selectedRegion.split('.')
       const tableConfig = editStore.config.contents[arr[2]]

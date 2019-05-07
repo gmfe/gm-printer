@@ -1,9 +1,13 @@
 import Flex from './flex'
 import { Select, Option } from './select'
 import Tip from './tip'
+import { DropDown, DropDownItem, DropDownItems } from './dropdown'
+import Dialog from './dialog'
 
 export {
   Flex,
   Select, Option,
-  Tip
+  Tip,
+  DropDown, DropDownItem, DropDownItems,
+  Dialog
 }
