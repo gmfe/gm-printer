@@ -22,6 +22,10 @@ class EditorShadow extends React.Component {
     insertCSS(getPrinterCSS() + getEditorCSS(), shadowRoot)
   }
 
+  componentWillUnmount () {
+    ReactDOM.unmountComponentAtNode(window.shadowRoot)
+  }
+
   render () {
     return <div id='shadowroot' ref={this.ref}/>
   }
