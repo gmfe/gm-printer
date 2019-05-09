@@ -1,6 +1,6 @@
 {
   "name": "gm-printer",
-  "version": "5.0.0-beta9",
+  "version": "5.0.0-beta10",
   "description": "",
   "main": "src/index.js",
   "scripts": {
