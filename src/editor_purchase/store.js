@@ -620,7 +620,6 @@ class EditStore {
 
   @action.bound
   setSpecialStyle (value) {
-    console.log(value)
     const arr = this.selectedRegion.split('.')
     const tableConfig = this.config.contents[arr[2]]
 
