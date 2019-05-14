@@ -45,7 +45,7 @@ const SpecialTr = ({ data, specialConfig }) => {
     case 'separator':
       return (
         <tr>
-          <td colSpan={99} style={{ padding: 0 }}>
+          <td colSpan={99} style={{ padding: 0, ...style }}>
             {list.map(d => {
               let text = ''
               try {

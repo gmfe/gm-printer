@@ -50,6 +50,10 @@ class EditorField extends React.Component {
     editStore.setTableDataKey(dataKey)
   }
 
+  handleSpecialStyleChange = (value) => {
+    editStore.setSpecialStyle(value)
+  }
+
   renderBlocks () {
     const { type, text, style, link } = editStore.computedSelectedInfo
 
@@ -96,6 +100,8 @@ class EditorField extends React.Component {
 
   renderTable () {
     const { head, headStyle, text, style } = editStore.computedSelectedInfo
+    const { specialConfig } = editStore.computedTableSpecialConfig
+    const specialStyle = specialConfig ? specialConfig.style : {} // 老的配置specialConfig是undefined
 
     return (
       <div>
@@ -148,6 +154,13 @@ class EditorField extends React.Component {
           </div>
         </Flex>
         <TipInfo/>
+
+        <Flex>
+          <Flex>{i18next.t('小计设置')}：</Flex>
+          <Fonter style={specialStyle} onChange={this.handleSpecialStyleChange}/>
+          <Separator/>
+          <TextAlign style={specialStyle} onChange={this.handleSpecialStyleChange}/>
+        </Flex>
       </div>
     )
   }

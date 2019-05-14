@@ -1,5 +1,5 @@
 import i18next from '../../locales'
-import { action, computed, observable } from 'mobx'
+import { action, computed, observable, set } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName, exchange } from '../util'
@@ -346,7 +346,6 @@ class EditStore {
     if (!this.computedIsSelectTable) {
       return
     }
-
     const column = this.computedSelectedInfo
     column[who] = value
   }
@@ -573,7 +572,7 @@ class EditStore {
     let { value } = counter
 
     // 兼容之前版本
-    if (value === undefined) { value = [ 'len' ] }
+    if (value === undefined) { value = ['len'] }
 
     if (_.includes(value, field)) {
       const index = value.indexOf(field)
@@ -588,6 +587,30 @@ class EditStore {
       value
     }
     this.config.contents[arr[2]].style = { height }
+  }
+
+  @computed
+  get computedTableSpecialConfig () {
+    const arr = this.selectedRegion.split('.')
+    const tableConfig = this.config.contents[arr[2]]
+    return tableConfig
+  }
+
+  @action.bound
+  setSpecialStyle (value) {
+    const arr = this.selectedRegion.split('.')
+    const tableConfig = this.config.contents[arr[2]]
+
+    const oldStyle = tableConfig.specialConfig ? tableConfig.specialConfig.style : {}
+    set(tableConfig, {
+      specialConfig: {
+        ...tableConfig.specialConfig,
+        style: {
+          ...oldStyle,
+          ...value
+        }
+      }
+    })
   }
 }
 
