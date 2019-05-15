@@ -91,6 +91,14 @@ function afterImgAndSvgLoaded (callback, $printer) {
   }
 }
 
+function getSubtotalHeight (subtotal) {
+  const { style = {} } = subtotal
+  const fontSize = style.fontSize || '12px'
+
+  // 12px => 26, 14px => 29, 16px => 33, ...
+  return (parseInt(fontSize) - 12) * 1.5 + 26
+}
+
 export {
   getHeight,
   getWidth,
@@ -101,5 +109,6 @@ export {
   insertCSS,
   dispatchMsg,
   exchange,
-  afterImgAndSvgLoaded
+  afterImgAndSvgLoaded,
+  getSubtotalHeight
 }

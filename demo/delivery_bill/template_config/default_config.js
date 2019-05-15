@@ -144,7 +144,7 @@ export default {
       'type': 'table',
       'dataKey': 'orders_category',
       'subtotal': {
-        'show': false
+        'show': true
       },
       'columns': [
         {

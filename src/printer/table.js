@@ -114,6 +114,7 @@ class Table extends React.Component {
     // 每页小计
     let subtotalForEachPage = null
     if (subtotal.show && printerStore.ready) {
+      const { style } = subtotal
       const list = tableData.slice(range.begin, range.end)
       let sum = Big(0)
       _.each(list, item => {
@@ -127,7 +128,7 @@ class Table extends React.Component {
       })
 
       subtotalForEachPage = <tr>
-        <td colSpan={99} style={{ fontWeight: 'bold' }}>{i18next.t('每页合计')}：{sum.toFixed(2)}</td>
+        <td colSpan={99} style={{ fontWeight: 'bold', ...style }}>{i18next.t('每页合计')}：{sum.toFixed(2)}</td>
       </tr>
     }
 

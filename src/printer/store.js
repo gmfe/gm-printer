@@ -1,5 +1,6 @@
 import i18next from '../../locales'
 import { action, observable } from 'mobx'
+import { getSubtotalHeight } from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
 
@@ -98,8 +99,11 @@ class PrinterStore {
     while (index < this.config.contents.length) {
       if (this.config.contents[index].type === 'table') {
         const info = this.tablesInfo[`contents.table.${index}`]
-        // 如果显示每页小计,那么table高度多预留一行, 一行的高度默认26
-        const subtotalTrHeight = this.config.contents[index].subtotal.show ? 26 : 0
+
+        const { subtotal } = this.config.contents[index]
+        // 如果显示每页小计,那么table高度多预留一行高度
+        const subtotalTrHeight = subtotal.show ? getSubtotalHeight(subtotal) : 0
+
         let allTableHaveThisHeight = info.head.height + subtotalTrHeight
         let begin = 0
         let end = 0

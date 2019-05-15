@@ -54,6 +54,10 @@ class EditorField extends React.Component {
     editStore.setSpecialStyle(value)
   }
 
+  handleSubtotalStyleChange = value => {
+    editStore.setSubtotalStyle(value)
+  }
+
   renderBlocks () {
     const { type, text, style, link } = editStore.computedSelectedInfo
 
@@ -100,8 +104,12 @@ class EditorField extends React.Component {
 
   renderTable () {
     const { head, headStyle, text, style } = editStore.computedSelectedInfo
-    const { specialConfig } = editStore.computedTableSpecialConfig
+
+    const { specialConfig, subtotal } = editStore.computedTableSpecialConfig
+    // 小计样式
     const specialStyle = specialConfig ? specialConfig.style : {} // 老的配置specialConfig是undefined
+    // 每页合计样式
+    const subtotalStyle = subtotal.style || {}
 
     return (
       <div>
@@ -153,13 +161,22 @@ class EditorField extends React.Component {
             </div>
           </div>
         </Flex>
+
         <TipInfo/>
+        <Gap/>
 
         <Flex>
           <Flex>{i18next.t('小计设置')}：</Flex>
           <Fonter style={specialStyle} onChange={this.handleSpecialStyleChange}/>
           <Separator/>
           <TextAlign style={specialStyle} onChange={this.handleSpecialStyleChange}/>
+        </Flex>
+
+        <Flex>
+          <Flex>{i18next.t('合计设置')}：</Flex>
+          <Fonter style={subtotalStyle} onChange={this.handleSubtotalStyleChange}/>
+          <Separator/>
+          <TextAlign style={subtotalStyle} onChange={this.handleSubtotalStyleChange}/>
         </Flex>
       </div>
     )

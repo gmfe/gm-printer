@@ -612,6 +612,20 @@ class EditStore {
       }
     })
   }
+
+  @action.bound
+  setSubtotalStyle (value) {
+    const arr = this.selectedRegion.split('.')
+    const subtotalConfig = this.config.contents[arr[2]].subtotal
+
+    const oldStyle = subtotalConfig.style || {}
+    set(subtotalConfig, {
+      style: {
+        ...oldStyle,
+        ...value
+      }
+    })
+  }
 }
 
 export default new EditStore()
