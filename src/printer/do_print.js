@@ -14,8 +14,8 @@ function init (isTest) {
     $printer.id = printerId
     $printer.style.position = 'fixed'
     $printer.style.top = '0'
-    $printer.style.width = '1000px'
-    if (isTest) {
+    $printer.style.width = '100%' // 使移动端可滚动
+    if (isTest) { // 模板编辑[测试打印],隐藏起来
       $printer.style.left = '-2000px'
     } else {
       $printer.style.left = '0px'
