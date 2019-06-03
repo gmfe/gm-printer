@@ -9,24 +9,29 @@ import EditorTitle from '../common/editor_title'
 import EditorSelect from '../common/editor_select'
 import EditorField from '../common/editor_edit_field'
 import EditorAddField from '../common/editor_add_field'
-import EditorSpecialTable from './editor_special_table'
 import ContextMenu from './context_menu'
 import i18next from '../../locales'
 import withStore from '../common/hoc_with_store'
+
+const tableDataKeyList = [
+  { value: 'orders', text: i18next.t('全部商品') },
+  { value: 'abnormal', text: i18next.t('异常商品') }
+]
 
 @withStore(editStore)
 @inject('editStore')
 @observer
 class Editor extends React.Component {
   render () {
+    console.log(this.props)
     const { onSave, showEditor, addFields } = this.props
 
     return (
       <div className='gm-printer-edit'>
 
         <Flex className='gm-printer-edit-title-fixed'>
-          <Title title={i18next.t('模板预览')} text={<span className='gm-text-red gm-padding-left-5'>
-            {i18next.t('说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能')}
+          <Title title={i18next.t('模板预览')} text={<span
+            className='gm-text-red gm-padding-left-5'>{i18next.t('说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击')}
           </span>}/>
         </Flex>
 
@@ -35,11 +40,9 @@ class Editor extends React.Component {
           <Gap height='10px'/>
           <EditorSelect/>
           <Gap height='5px'/>
-          <EditorField/>
+          <EditorField tableDataKeyList={tableDataKeyList}/>
           <Gap height='5px'/>
           <EditorAddField addFields={addFields}/>
-          <Gap height='5px'/>
-          <EditorSpecialTable addFields={addFields}/>
 
           <div id='gm-printer-tip'/>
 

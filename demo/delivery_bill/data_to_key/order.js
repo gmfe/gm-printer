@@ -3,7 +3,7 @@ import moment from 'moment'
 import _ from 'lodash'
 import Big from 'big.js'
 import { MULTI_SUFFIX } from '../../../src'
-import { coverDigit2Uppercase, price, convertNumber2Sid } from './util'
+import { coverDigit2Uppercase, price, convertNumber2Sid } from '../../util'
 
 const SETTLE_WAY = {
   0: i18next.t('先款后货'),

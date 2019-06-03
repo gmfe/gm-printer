@@ -1,29 +1,29 @@
 import i18next from '../../locales'
 import React from 'react'
-import editStore from './store'
-import { observer } from 'mobx-react'
+import { observer, inject } from 'mobx-react'
 import { Flex, Option, Select } from '../components'
-import { InputWithUnit } from './component'
+import { InputWithUnit } from '../common/component'
 import { pageTypeMap, printDirectionList } from '../config'
 import _ from 'lodash'
 import { dispatchMsg } from '../util'
 
+@inject('editStore')
 @observer
 class EditorSelector extends React.Component {
   handleConfigName = (e) => {
-    editStore.setConfigName(e.target.value)
+    this.props.editStore.setConfigName(e.target.value)
   }
 
   handlePageType = (value) => {
-    editStore.setSizePageType(value)
+    this.props.editStore.setSizePageType(value)
   }
 
   handlePageSize (field, value) {
-    editStore.setPageSize(field, value)
+    this.props.editStore.setPageSize(field, value)
   }
 
   handlePrintDirection = (value) => {
-    editStore.setPagePrintDirection(value)
+    this.props.editStore.setPagePrintDirection(value)
   }
 
   handleSelectedRegion = (selected) => {
@@ -31,7 +31,7 @@ class EditorSelector extends React.Component {
   }
 
   render () {
-    const { config: { name, page }, computedRegionList, computedSelectedRegionTip } = editStore
+    const { config: { name, page }, computedRegionList, computedSelectedRegionTip, selectedRegion } = this.props.editStore
     const isDIY = page.type === 'DIY'
 
     return (
@@ -69,7 +69,7 @@ class EditorSelector extends React.Component {
 
         <Flex alignCenter className='gm-padding-top-5'>
           <div>{i18next.t('选择区域')}：</div>
-          <Select className='gm-printer-edit-select' value={editStore.selectedRegion || 'all'}
+          <Select className='gm-printer-edit-select' value={selectedRegion || 'all'}
             onChange={this.handleSelectedRegion}>
             {_.map(computedRegionList, v => <Option key={v.value} value={v.value}>{v.text}</Option>)}
           </Select>
