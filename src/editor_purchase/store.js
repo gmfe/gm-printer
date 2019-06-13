@@ -3,6 +3,11 @@ import { action } from 'mobx'
 import i18next from '../../locales'
 
 class Store extends EditorStore {
+  constructor ({ defaultTableDataKey }) {
+    super()
+    this.defaultTableDataKey = defaultTableDataKey // 修改默认dataKey
+  }
+
   /* start---------设置采购明细相关--------- */
   @action.bound
   setPurchaseTableKey (dataKey) {
@@ -72,4 +77,4 @@ class Store extends EditorStore {
   /* end---------设置采购明细相关--------- */
 }
 
-export default new Store()
+export default new Store({ defaultTableDataKey: 'purchase_no_detail' })

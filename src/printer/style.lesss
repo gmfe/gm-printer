@@ -101,6 +101,16 @@
   }
 }
 
+.gm-printer-table.gm-printer-table-classname-className0 {
+  table {
+    td,
+    th {
+      border: 1px solid #ddd;
+      padding: 2px;
+    }
+  }
+}
+
 .gm-printer-table.gm-printer-table-classname-className1 {
   table {
     td,

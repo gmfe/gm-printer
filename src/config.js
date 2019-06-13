@@ -118,6 +118,7 @@ export const borderStyleList = [
 
 export const tableClassNameList = [
   { value: '', text: i18next.t('默认样式') },
+  { value: 'className0', text: i18next.t('浅实线样式') },
   { value: 'className1', text: i18next.t('无实线样式') }
 ]
 

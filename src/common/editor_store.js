@@ -51,6 +51,8 @@ class EditorStore {
   @observable
   insertPanel = 'header'
 
+  defaultTableDataKey = 'orders' // 默认table的dataKey
+
   @action
   init (config) {
     this.config = config
@@ -487,8 +489,9 @@ class EditorStore {
     }
   }
 
-  @action
+  @action.bound
   addContent (name, index, type) {
+    const defaultTableDataKey = this.defaultTableDataKey
     const arr = name.split('.')
     // 添加之前清除selected,否则content改变之后,computedSelectedSource会计算错误
     this.selected = null
@@ -497,7 +500,7 @@ class EditorStore {
         if (type === 'table') {
           this.config.contents.splice(index, 0, {
             type: 'table',
-            dataKey: 'orders',
+            dataKey: defaultTableDataKey, // 默认
             subtotal: {
               show: false
             },
