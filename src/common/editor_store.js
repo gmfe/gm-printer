@@ -52,6 +52,7 @@ class EditorStore {
   insertPanel = 'header'
 
   defaultTableDataKey = 'orders' // 默认table的dataKey
+  setTableDataKeyEffect () {} // 改变dataKey后,做的副作用操作
 
   defaultTableSubtotal = { show: false }
 
@@ -534,11 +535,16 @@ class EditorStore {
     }
   }
 
-  @action
+  @action.bound
   setTableDataKey (dataKey) {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
-      this.config.contents[arr[2]].dataKey = dataKey
+      const table = this.config.contents[arr[2]]
+
+      this.selected = null // 清空点中项
+      table.dataKey = dataKey
+      // 改变dataKey后做副作用action
+      this.setTableDataKeyEffect(table, dataKey)
     }
   }
 

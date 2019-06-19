@@ -28,6 +28,14 @@ export default {
   'refund_money': 0.0,
   'receive_begin_time': '2018-11-15 06:00',
   'refunds': [],
+  "reward_sku_list":[
+    {
+      "sku_name":"商品名",
+      "sale_unit":"规格",
+      "quantity":111,     //兑换数量
+      "total_cost_point":222333
+    }
+  ],
   'details': [{
     'outer_id': '',
     'total_item_price': 0.0,
