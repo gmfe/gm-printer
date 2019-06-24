@@ -53,6 +53,8 @@ class EditorStore {
 
   defaultTableDataKey = 'orders' // 默认table的dataKey
 
+  defaultTableSubtotal = { show: false }
+
   @action
   init (config) {
     this.config = config
@@ -85,6 +87,11 @@ class EditorStore {
   @action.bound
   setPageSize (field, value) {
     this.config.page.size[field] = value
+  }
+
+  @computed
+  get computedIsTime () {
+    return _.includes(this.computedSelectedInfo.text, i18next.t('时间')) || _.includes(this.computedSelectedInfo.text, i18next.t('日期'))
   }
 
   // 可选区域
@@ -423,7 +430,7 @@ class EditorStore {
     }
 
     blocks.push({
-      text: `${key}: ${value}`,
+      text: `${key}：${value}`,
       style: {
         position: 'absolute',
         left: '0px',
@@ -492,6 +499,8 @@ class EditorStore {
   @action.bound
   addContent (name, index, type) {
     const defaultTableDataKey = this.defaultTableDataKey
+    const defaultTableSubtotal = this.defaultTableSubtotal
+
     const arr = name.split('.')
     // 添加之前清除selected,否则content改变之后,computedSelectedSource会计算错误
     this.selected = null
@@ -501,9 +510,7 @@ class EditorStore {
           this.config.contents.splice(index, 0, {
             type: 'table',
             dataKey: defaultTableDataKey, // 默认
-            subtotal: {
-              show: false
-            },
+            subtotal: defaultTableSubtotal, // 默认的每页合计配置
             columns: [{
               head: i18next.t('表头'),
               headStyle: {
@@ -588,7 +595,7 @@ class EditorStore {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       const tableConfig = this.config.contents[arr[2]]
-      return tableConfig
+      return tableConfig || {}
     } else {
       return {}
     }

@@ -107,30 +107,56 @@ class Table extends React.Component {
     }
   }
 
-  renderDefault () {
-    const { config: { dataKey, subtotal, specialConfig = {} }, name, range, pageIndex, printerStore } = this.props
+  renderSubtotal = () => {
+    const { config: { dataKey, subtotal: { show, style, fields = [{
+      name: i18next.t('出库金额'),
+      valueField: 'real_item_price'
+    }], displayName = false } }, range, printerStore } = this.props
     const tableData = printerStore.data._table[dataKey] || []
+    // 计算合计
+    const sumData = (list, field) => {
+      return _.reduce(list, (a, b) => {
+        let result = a
+
+        const _origin = b._origin || {}
+        const _origin2 = b['_origin' + MULTI_SUFFIX] || {}
+
+        result = a.plus(_origin[field] || 0)
+        if (_origin2[field]) {
+          result = result.plus(_origin2[field])
+        }
+        return result
+      }, Big(0)).toFixed(2)
+    }
 
     // 每页小计
-    let subtotalForEachPage = null
-    if (subtotal.show && printerStore.ready) {
-      const { style } = subtotal
+    // show 是否展示小计，fileds<Array> 合计的字段和展现的name，displayName 是否显示名字
+    if (show && printerStore.ready) {
       const list = tableData.slice(range.begin, range.end)
-      let sum = Big(0)
-      _.each(list, item => {
-        const _origin = item._origin || {}
-        const _origin2 = item['_origin' + MULTI_SUFFIX] || {}
-        sum = sum.plus(_origin.real_item_price || 0)
-        // 如果是双栏商品
-        if (_origin2.real_item_price) {
-          sum = sum.plus(_origin2.real_item_price)
-        }
+      const sum = {}
+      let subtotalStr = ''
+
+      _.each(fields, v => {
+        sum[v.name] = sumData(list, v.valueField)
       })
 
-      subtotalForEachPage = <tr>
-        <td colSpan={99} style={{ fontWeight: 'bold', ...style }}>{i18next.t('每页合计')}：{sum.toFixed(2)}</td>
+      for (let key in sum) {
+        if (displayName) {
+          subtotalStr += `${key}&nbsp;${sum[key]}&nbsp;&nbsp;&nbsp;`
+        } else {
+          subtotalStr += `${sum[key]}&nbsp;&nbsp;&nbsp;`
+        }
+      }
+
+      return <tr>
+        <td colSpan={99} style={{ fontWeight: 'bold', ...style }} dangerouslySetInnerHTML={{ __html: `${i18next.t('每页合计')}：${subtotalStr}` }}/>
       </tr>
     }
+  }
+
+  renderDefault () {
+    const { config: { dataKey, specialConfig = {} }, name, range, pageIndex, printerStore } = this.props
+    const tableData = printerStore.data._table[dataKey] || []
 
     const columns = this.getColumns()
 
@@ -181,7 +207,7 @@ class Table extends React.Component {
               </tr>
             )
           })}
-          {subtotalForEachPage}
+          {this.renderSubtotal()}
         </tbody>
       </table>
     )
