@@ -40,6 +40,8 @@
   }
 
   .gm-printer-edit-zone {
+    &::-webkit-scrollbar { display: none; }
+
     position: absolute;
     right: 0;
     top: 0;
