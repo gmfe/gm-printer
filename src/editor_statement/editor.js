@@ -14,8 +14,8 @@ import i18next from '../../locales'
 import withStore from '../common/hoc_with_store'
 
 const tableDataKeyList = [
-  { value: 'ordinary', text: i18next.t('单据明细') },
-  { value: 'delta', text: i18next.t('折让明细') }
+  { value: 'orders', text: i18next.t('账单明细') },
+  { value: 'skus', text: i18next.t('订单明细') }
 ]
 
 @withStore(editStore)
