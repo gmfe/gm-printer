@@ -131,6 +131,16 @@ function generateSummary (list) {
   }
 }
 
+// 积分表格
+function generateRewardData(list) {
+  return _.map(list, o => ({
+    [i18next.t('积分商品名')]: o.sku_name,
+    [i18next.t('规格')]: o.sale_unit,
+    [i18next.t('兑换数')]: o.quantity,
+    [i18next.t('消耗积分')]: o.total_cost_point,
+  }))
+}
+
 // 普通订单数据
 function generateOrderData (list) {
   return _.map(list, (v, index) => {
@@ -287,7 +297,8 @@ function order (data) {
       orders_multi: kOrdersMulti, // 双栏
       orders_category: kCategory, // 分类
       orders_category_multi: kCategoryMulti, // 分类 + 双栏
-      abnormal: generateAbnormalData(data, kOrders) // 异常明细
+      abnormal: generateAbnormalData(data, kOrders), // 异常明细
+      reward: generateRewardData(data.reward_sku_list)
     },
     _origin: data
   }
