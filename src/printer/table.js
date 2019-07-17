@@ -187,23 +187,28 @@ class Table extends React.Component {
             const _special = tableData[i] && tableData[i]._special
             if (_special) return <SpecialTr key={i} specialConfig={specialConfig} data={_special}/>
 
+            // 如果项为空对象展现一个占满一行的td
+            const isItemNone = !_.keys(tableData[i]).length
+
             return (
-              <tr key={i}>
-                {_.map(columns, (col, j) => (
-                  <td
-                    key={j}
-                    data-name={getTableColumnName(name, col.index)}
-                    style={col.style}
-                    className={classNames({
-                      active: getTableColumnName(name, col.index) === printerStore.selected
-                    })}
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        col.isSpecialColumn ? printerStore.templateSpecialDetails(col, dataKey, i)
-                          : printerStore.templateTable(col.text, dataKey, i, pageIndex)
-                    }}
-                  />
-                ))}
+              <tr style={{ height: '23px' }} key={i}>
+                {isItemNone
+                  ? <td colSpan='99'/>
+                  : _.map(columns, (col, j) => {
+                    return <td
+                      key={j}
+                      data-name={getTableColumnName(name, col.index)}
+                      style={col.style}
+                      className={classNames({
+                        active: getTableColumnName(name, col.index) === printerStore.selected
+                      })}
+                      dangerouslySetInnerHTML={{
+                        __html:
+                      col.isSpecialColumn ? printerStore.templateSpecialDetails(col, dataKey, i)
+                        : printerStore.templateTable(col.text, dataKey, i, pageIndex)
+                      }}
+                    />
+                  })}
               </tr>
             )
           })}
