@@ -22,7 +22,7 @@ const PAY_STATUS = {
  * @param categoryTotal
  * @return {Array}
  */
-function generateMultiData (list, categoryTotal) {
+function generateMultiData(list, categoryTotal) {
   let multiList = []
   // 假设skuGroup = [{a: 1}, {a:2}, {a: 3}, {a: 4}], 转化为 [{a:1, a#2:3}, {a:2, a#2: 4}]
   const skuGroup = list
@@ -48,20 +48,54 @@ function generateMultiData (list, categoryTotal) {
   if (categoryTotal) {
     multiList.push(categoryTotal)
   }
+  return multiList
+}
 
+function generateMultiData2 (list, categoryTotal) {
+  let multiList = []
+  // 假设skuGroup = [{a: 1}, {a:2}, {a: 3}, {a: 4}], 转化为 [{a:1, a#2:3}, {a:2, a#2: 4}]
+  const skuGroup = list
+
+  let index = 0
+  const len = skuGroup.length
+  const middle = Math.ceil(len / 2)
+
+  while (index < middle) {
+    const sku1 = skuGroup[index]
+    const sku2 = {}
+    _.each(skuGroup[middle + index], (val, key) => {
+      sku2[key + MULTI_SUFFIX] = val
+    })
+
+    multiList.push({
+      ...sku1,
+      ...sku2
+    })
+
+    index += 1
+  }
+
+  if (categoryTotal) {
+    multiList.push(categoryTotal)
+  }
+  console.log(multiList)
   return multiList
 }
 
 // 非表格数据
-function generateCommon (data) {
+function generateCommon(data) {
   return {
     barcode: data.id,
     [i18next.t('订单号')]: data.id,
     [i18next.t('分拣序号')]: `${data.sort_id} ${data.child_sort_id}`,
     [i18next.t('支付状态')]: PAY_STATUS[data.pay_status],
 
-    [i18next.t('下单时间')]: moment(data.date_time).format('YYYY-MM-DD HH:mm:ss'),
-    [i18next.t('配送时间')]: `${moment(data.receive_begin_time).format('MM-DD HH:mm:ss')} ~ ${moment(data.receive_end_time).format('MM-DD HH:mm:ss')}`,
+    [i18next.t('下单时间')]: moment(data.date_time).format(
+      'YYYY-MM-DD HH:mm:ss'
+    ),
+    [i18next.t('配送时间')]: `${moment(data.receive_begin_time).format(
+      'MM-DD HH:mm:ss'
+    )} ~ ${moment(data.receive_end_time).format('MM-DD HH:mm:ss')}`,
     [i18next.t('当前时间')]: moment().format('YYYY-MM-DD HH:mm:ss'),
     [i18next.t('订单备注')]: data.remark,
 
@@ -69,7 +103,9 @@ function generateCommon (data) {
     [i18next.t('优惠金额')]: price(data.coupon_amount),
     [i18next.t('出库金额')]: price(data.real_price),
     [i18next.t('运费')]: price(data.freight),
-    [i18next.t('异常金额')]: price(Big(data.abnormal_money).plus(data.refund_money)),
+    [i18next.t('异常金额')]: price(
+      Big(data.abnormal_money).plus(data.refund_money)
+    ),
     [i18next.t('销售额_含运税')]: price(data.total_pay),
 
     [i18next.t('税额')]: price(data.total_tax), // 商品税额加总
@@ -101,7 +137,7 @@ function generateCommon (data) {
 }
 
 // 大写金额数据
-function generateUpperPrice (data) {
+function generateUpperPrice(data) {
   return {
     [i18next.t('下单金额_大写')]: coverDigit2Uppercase(data.total_price),
     [i18next.t('优惠金额_大写')]: coverDigit2Uppercase(data.coupon_amount),
@@ -115,7 +151,7 @@ function generateUpperPrice (data) {
 }
 
 // 商品统计数据(一些汇总之类的数据)
-function generateSummary (list) {
+function generateSummary(list) {
   let quantityTotal = Big(0)
   let realWeightSaleUnitTotal = Big(0)
   _.each(list, v => {
@@ -127,36 +163,41 @@ function generateSummary (list) {
   // 😂前方高能.  汇总是什么鬼.每个商品的单位很可能不一样! 😇👍但是客户想要!因为他只卖猪肉!单位都一致🤢
   return {
     [i18next.t('下单总数_销售单位')]: parseFloat(quantityTotal.toFixed(2)),
-    [i18next.t('出库总数_销售单位')]: parseFloat(realWeightSaleUnitTotal.toFixed(2))
+    [i18next.t('出库总数_销售单位')]: parseFloat(
+      realWeightSaleUnitTotal.toFixed(2)
+    )
   }
 }
 
 // 积分表格
-function generateRewardData(list) {
+function generateRewardData (list) {
   return _.map(list, o => ({
     [i18next.t('积分商品名')]: o.sku_name,
     [i18next.t('规格')]: o.sale_unit,
     [i18next.t('兑换数')]: o.quantity,
-    [i18next.t('消耗积分')]: o.total_cost_point,
+    [i18next.t('消耗积分')]: o.total_cost_point
   }))
 }
 
 // 普通订单数据
-function generateOrderData (list) {
+function generateOrderData(list) {
   return _.map(list, (v, index) => {
     return {
       [i18next.t('序号')]: index + 1,
       [i18next.t('商品ID')]: v.id,
       [i18next.t('商品名')]: v.real_is_weight && !v.is_weigh ? `*${v.name}` : v.name,
+      [i18next.t('商品名_无星号')]: v.name,
       [i18next.t('类别')]: v.category_title_1,
       [i18next.t('商品二级分类')]: v.category_title_2,
       [i18next.t('商品品类')]: v.pinlei_title,
       [i18next.t('SPU名称')]: v.spu_name,
-      [i18next.t('规格')]: v.std_unit_name === v.sale_unit_name && v.sale_ratio === 1 ? i18next.t(
-        /* src:`按${v.sale_unit_name}` => tpl:按${VAR1} */'KEY9',
-        { VAR1: v.sale_unit_name }
-      )
-        : `${v.sale_ratio}${v.std_unit_name}/${v.sale_unit_name}`,
+      [i18next.t('规格')]:
+        v.std_unit_name === v.sale_unit_name && v.sale_ratio === 1
+          ? i18next.t(
+              /* src:`按${v.sale_unit_name}` => tpl:按${VAR1} */ 'KEY9',
+              { VAR1: v.sale_unit_name }
+            )
+          : `${v.sale_ratio}${v.std_unit_name}/${v.sale_unit_name}`,
       [i18next.t('自定义编码')]: v.outer_id,
       [i18next.t('商品描述')]: v.desc,
       [i18next.t('备注')]: v.remark, // 商品备注
@@ -166,11 +207,23 @@ function generateOrderData (list) {
 
       [i18next.t('下单数')]: v.quantity,
       [i18next.t('出库数_基本单位')]: v.real_weight,
-      [i18next.t('出库数_销售单位')]: v.sale_ratio === 1 ? v.real_weight
-        : parseFloat(Big(v.real_weight).div(v.sale_ratio).toFixed(2)),
+      [i18next.t('出库数_销售单位')]:
+        v.sale_ratio === 1
+          ? v.real_weight
+          : parseFloat(
+              Big(v.real_weight)
+                .div(v.sale_ratio)
+                .toFixed(2)
+            ),
 
-      [i18next.t('税率')]: v.tax_rate ? Big(v.tax_rate).div(100).toFixed(2) + '%' : 0,
-      [i18next.t('不含税单价_基本单位')]: price(Big(v.sale_price_without_tax || 0).div(v.sale_ratio)),
+      [i18next.t('税率')]: v.tax_rate
+        ? Big(v.tax_rate)
+            .div(100)
+            .toFixed(2) + '%'
+        : 0,
+      [i18next.t('不含税单价_基本单位')]: price(
+        Big(v.sale_price_without_tax || 0).div(v.sale_ratio)
+      ),
       [i18next.t('不含税单价_销售单位')]: price(v.sale_price_without_tax),
       [i18next.t('单价_基本单位')]: price(v.std_sale_price),
       [i18next.t('单价_销售单位')]: price(v.sale_price),
@@ -192,12 +245,16 @@ function generateOrderData (list) {
 }
 
 // 异常商品表单
-function generateAbnormalData (data, kOrders) {
+function generateAbnormalData(data, kOrders) {
   // 商品map
-  const kIdMap = _.reduce(kOrders, (res, cur) => {
-    res[cur._origin.id] = cur
-    return res
-  }, {})
+  const kIdMap = _.reduce(
+    kOrders,
+    (res, cur) => {
+      res[cur._origin.id] = cur
+      return res
+    },
+    {}
+  )
 
   // 异常商品 + 非商品异常
   const abnormals = _.map(data.abnormals, v => {
@@ -209,7 +266,9 @@ function generateAbnormalData (data, kOrders) {
       [i18next.t('异常描述')]: v.text,
       [i18next.t('异常数量')]: isSku ? v.amount_delta : '-',
       [i18next.t('异常金额')]: price(v.money_delta),
-      [i18next.t('售后类型')]: isSku ? i18next.t('商品异常') : i18next.t('非商品异常'),
+      [i18next.t('售后类型')]: isSku
+        ? i18next.t('商品异常')
+        : i18next.t('非商品异常'),
       ...sku, // 异常商品的商品信息
       _origin: v
     }
@@ -233,18 +292,24 @@ function generateAbnormalData (data, kOrders) {
 }
 
 // 商品分类统计
-function generateCounter (groupByCategory1) {
+function generateCounter(groupByCategory1) {
   return _.map(groupByCategory1, (o, k) => {
     // 小计（出库金额）
-    const subtotal = Big(_.reduce(o, (a, b) => {
-      return a + parseFloat(b[i18next.t('出库金额')])
-    }, 0)).toFixed(2)
+    const subtotal = Big(
+      _.reduce(
+        o,
+        (a, b) => {
+          return a + parseFloat(b[i18next.t('出库金额')])
+        },
+        0
+      )
+    ).toFixed(2)
 
     return { text: k, len: o.length, subtotal }
   })
 }
 
-function order (data) {
+function order(data) {
   // 商品列表
   const skuList = data.details
 
@@ -252,6 +317,8 @@ function order (data) {
   const kOrders = generateOrderData(skuList)
   /* ----------- 双栏 -------------- */
   const kOrdersMulti = generateMultiData(kOrders)
+  /* ----------- 双栏 (纵向)-------------- */
+  const kOrdersMultiVertical = generateMultiData2(kOrders)
 
   // 按一级分类分组
   const groupByCategory1 = _.groupBy(kOrders, v => v._origin.category_title_1)
@@ -259,6 +326,7 @@ function order (data) {
   /* -------- 分类 和 双栏 + 分类 ------- */
   let kCategory = []
   let kCategoryMulti = []
+  let kCategoryMultiVertical = []
   let index = 1
   _.forEach(groupByCategory1, (value, key) => {
     // 分类小计
@@ -270,12 +338,16 @@ function order (data) {
         [i18next.t('序号')]: index++
       }
     })
+    total = total.toFixed(2)
     const categoryTotal = {
       _special: {
         text: i18next.t(
-          /* src:`${key}小计：${total.valueOf()}` => tpl:${VAR1}小计：${VAR2} */'KEY10',
-          { VAR1: key, VAR2: total.toFixed(2) }
-        )
+          /* src:`${key}小计：${total.valueOf()}` => tpl:${VAR1}小计：${VAR2} */ 'KEY10',
+          { VAR1: key, VAR2: total }
+        ),
+        upperCaseText: `${key}小计：${total}&nbsp;&nbsp;&nbsp;大写：${coverDigit2Uppercase(
+          total
+        )}`
       }
     }
 
@@ -283,6 +355,8 @@ function order (data) {
     kCategory = kCategory.concat(list, categoryTotal)
     /* -------- 双栏 + 分类 ------- */
     kCategoryMulti = kCategoryMulti.concat(generateMultiData(list, categoryTotal))
+    /* -------- 双栏 + 分类（纵向） ------- */
+    kCategoryMultiVertical = kCategoryMultiVertical.concat(generateMultiData2(list, categoryTotal))
   })
 
   return {
@@ -295,8 +369,10 @@ function order (data) {
     _table: {
       orders: kOrders, // 普通
       orders_multi: kOrdersMulti, // 双栏
+      orders_multi_vertical: kOrdersMultiVertical, // 双栏（纵向）
       orders_category: kCategory, // 分类
       orders_category_multi: kCategoryMulti, // 分类 + 双栏
+      orders_category_multi_vertical: kCategoryMultiVertical, // 分类+双栏（纵向）,
       abnormal: generateAbnormalData(data, kOrders), // 异常明细
       reward: generateRewardData(data.reward_sku_list)
     },

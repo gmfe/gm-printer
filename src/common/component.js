@@ -459,7 +459,7 @@ const FieldBtn = ({ name, onClick }) => (
   </Flex>
 )
 
-const TipInfo = ({ text }) => <Flex alignCenter className='gm-padding-top-5 gm-text-red'>{text}</Flex>
+const TipInfo = ({ text, color }) => <Flex style={{ color }} alignCenter className='gm-padding-top-5 gm-text-red'>{text}</Flex>
 
 export {
   Text,
