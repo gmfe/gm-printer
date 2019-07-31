@@ -9,6 +9,7 @@ import { BatchPrinter, doBatchPrint, doPrint, Printer, getCSS } from './printer'
 import { MULTI_SUFFIX } from './config'
 
 export * from './util'
+export { setLocale } from '../locales'
 
 export {
   Editor, EditorStockIn, EditorPurchase, EditorSettle, EditorStatement,

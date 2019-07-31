@@ -10,9 +10,9 @@ const commonFields = {
     { key: i18next.t('打单人'), value: i18next.t('{{打单人}}') }
   ],
   [i18next.t('金额')]: [
-    { key: i18next.t('整单金额'), value: i18next.t(`¥{{整单金额}}`) },
-    { key: i18next.t('商品金额'), value: i18next.t(`¥{{商品金额}}`) },
-    { key: i18next.t('折让金额'), value: i18next.t(`¥{{折让金额}}`) }
+    { key: i18next.t('整单金额'), value: i18next.t('¥{{整单金额}}') },
+    { key: i18next.t('商品金额'), value: i18next.t('¥{{商品金额}}') },
+    { key: i18next.t('折让金额'), value: i18next.t('¥{{折让金额}}') }
   ],
   [i18next.t('其他')]: [
     { key: i18next.t('页码'), value: i18next.t('{{当前页码}}/{{页码总数}}') }
