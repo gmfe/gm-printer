@@ -12,19 +12,19 @@ const commonFields = {
     { key: i18next.t('自定义'), value: '' }
   ],
   [i18next.t('供应商')]: [
-    { key: i18next.t('往来单位'), value: i18next.t(`{{往来单位}}`) },
-    { key: i18next.t('供应商编号'), value: i18next.t(`{{供应商编号}}`) },
+    { key: i18next.t('往来单位'), value: i18next.t('{{往来单位}}') },
+    { key: i18next.t('供应商编号'), value: i18next.t('{{供应商编号}}') },
     { key: i18next.t('供应商营业执照号'), value: '' },
-    { key: i18next.t('联系电话'), value: i18next.t(`{{联系电话}}`) },
-    { key: i18next.t('开户银行'), value: i18next.t(`{{开户银行}}`) },
-    { key: i18next.t('银行账号'), value: i18next.t(`{{银行账号}}`) },
-    { key: i18next.t('结款方式'), value: i18next.t(`{{结款方式}}`) },
-    { key: i18next.t('开户名'), value: i18next.t(`{{开户名}}`) }
+    { key: i18next.t('联系电话'), value: i18next.t('{{联系电话}}') },
+    { key: i18next.t('开户银行'), value: i18next.t('{{开户银行}}') },
+    { key: i18next.t('银行账号'), value: i18next.t('{{银行账号}}') },
+    { key: i18next.t('结款方式'), value: i18next.t('{{结款方式}}') },
+    { key: i18next.t('开户名'), value: i18next.t('{{开户名}}') }
   ],
   [i18next.t('金额')]: [
-    { key: i18next.t('单据金额'), value: i18next.t(`￥{{单据金额}}`) },
-    { key: i18next.t('折让金额'), value: i18next.t(`￥{{折让金额}}`) },
-    { key: i18next.t('结算金额'), value: i18next.t(`￥{{结算金额}}`) }
+    { key: i18next.t('单据金额'), value: i18next.t('￥{{单据金额}}') },
+    { key: i18next.t('折让金额'), value: i18next.t('￥{{折让金额}}') },
+    { key: i18next.t('结算金额'), value: i18next.t('￥{{结算金额}}') }
   ],
   [i18next.t('其他')]: [
     { key: i18next.t('页码'), value: i18next.t('{{当前页码}}/{{页码总数}}') }

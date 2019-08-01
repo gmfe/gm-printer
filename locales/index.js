@@ -1,42 +1,32 @@
-import { i18next, getDefaultLng } from 'gm-i18n'
-import en from './en/default.json'
-import zh from './zh/default.json'
+import lng1 from './zh.json'
+import lng2 from './zh-HK.json'
+import lng3 from './en.json'
+import lng4 from './th.json'
+const moduleMap = {
+  'zh': lng1,
+  'zh-HK': lng2,
+  'en': lng3,
+  'th': lng4
+}
+let _language = 'zh'
 
-// 创建一个全新i18next示例,避免覆盖station中的实例
-const i18n = i18next.createInstance()
-i18n.init({
-  lng: getDefaultLng(),
-  // 当前语言包没提供翻译文件的时候,使用的默认语言
-  fallbackLng: 'zh',
-  // 没找到key的时候,做以下处理
-  parseMissingKeyHandler: function (key) {
-    const arr = key.split('#')
-    return arr[arr.length - 1]
-  },
+const setLocale = lng => {
+  _language = lng
+}
 
-  // 初始化是,加载的命名空间json文件
-  ns: ['default'],
-  // 默认命名空间
-  defaultNS: 'default',
+const getLocale = key => {
+  const languageMap = moduleMap[_language] || moduleMap['zh']
+  let result = languageMap[key]
 
-  // key分隔符
-  keySeparator: '#',
-  // 命名空间分割符
-  nsSeparator: '@',
-
-  interpolation: {
-    escapeValue: false,
-    prefix: '${',
-    suffix: '}'
-  },
-  resources: {
-    'zh': {
-      default: zh
-    },
-    'en': {
-      default: en
-    }
+  if (!result) {
+    result = key.split('__').pop()
   }
-})
 
-export default i18n
+  return result
+}
+// 兼容旧的
+const i18next = {
+  t: getLocale
+}
+export { getLocale, setLocale }
+export default i18next
