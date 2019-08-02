@@ -48,6 +48,7 @@ const tableFields = {
     { key: i18next.t('序号'), value: i18next.t('{{列.序号}}') },
     { key: i18next.t('商品ID'), value: i18next.t('{{列.商品ID}}') },
     { key: i18next.t('商品名'), value: i18next.t('{{列.商品名}}') },
+    { key: i18next.t('商品名（不带*号）'), value: i18next.t('{{列.商品名_无星号}}') },
     { key: i18next.t('类别'), value: i18next.t('{{列.类别}}') },
     { key: i18next.t('商品二级分类'), value: i18next.t('{{列.商品二级分类}}') },
     { key: i18next.t('商品品类'), value: i18next.t('{{列.商品品类}}') },

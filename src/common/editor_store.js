@@ -6,14 +6,24 @@ import { dispatchMsg, getBlockName, exchange } from '../util'
 
 class EditorStore {
   @computed
-  get computedPrinterKey () {
+  get computedPrinterKey() {
     return _.map(this.config, (v, k) => {
       if (k === 'page') {
         return v.type + '_' + v.printDirection + v.size.width + v.size.height
       } else if (k === 'contents') {
         return _.map(v, vv => {
           if (vv.type === 'table') {
-            return vv.columns.length + '_' + vv.className + '_' + vv.dataKey + '_' + vv.subtotal.show
+            return (
+              vv.columns.length +
+              '_' +
+              vv.className +
+              '_' +
+              vv.dataKey +
+              '_' +
+              vv.subtotal.show +
+              '_' +
+              vv.customerRowHeight
+            )
           } else {
             return vv.style ? vv.style.height : ''
           }
@@ -51,13 +61,15 @@ class EditorStore {
   @observable
   insertPanel = 'header'
 
-  defaultTableDataKey = 'orders' // 默认table的dataKey
-  setTableDataKeyEffect () {} // 改变dataKey后,做的副作用操作
+  defaultTableDataKey = 'orders'
+
+  // 默认table的dataKey
+  setTableDataKeyEffect() {} // 改变dataKey后,做的副作用操作
 
   defaultTableSubtotal = { show: false }
 
   @action
-  init (config) {
+  init(config) {
     this.config = config
     this.originConfig = config
     this.selected = null
@@ -66,38 +78,41 @@ class EditorStore {
   }
 
   @action
-  setInsertPanel (panel) {
+  setInsertPanel(panel) {
     this.insertPanel = panel
   }
 
   @computed
-  get computedPanelHeight () {
+  get computedPanelHeight() {
     return this.config[this.insertPanel].style.height
   }
 
   @action
-  setPanelHeight (height) {
+  setPanelHeight(height) {
     this.config[this.insertPanel].style.height = height
   }
 
   @action
-  setConfigName (name) {
+  setConfigName(name) {
     this.config.name = name
   }
 
   @action.bound
-  setPageSize (field, value) {
+  setPageSize(field, value) {
     this.config.page.size[field] = value
   }
 
   @computed
-  get computedIsTime () {
-    return _.includes(this.computedSelectedInfo.text, i18next.t('时间')) || _.includes(this.computedSelectedInfo.text, i18next.t('日期'))
+  get computedIsTime() {
+    return (
+      _.includes(this.computedSelectedInfo.text, i18next.t('时间')) ||
+      _.includes(this.computedSelectedInfo.text, i18next.t('日期'))
+    )
   }
 
   // 可选区域
   @computed
-  get computedRegionList () {
+  get computedRegionList() {
     if (!this.config) return []
 
     const contentRegions = this.config.contents.map((v, i) => {
@@ -118,13 +133,13 @@ class EditorStore {
   }
 
   @action
-  setConfig (config) {
+  setConfig(config) {
     this.config = config
   }
 
   @action
-  setPagePrintDirection (value) {
-    let { size, printDirection } = this.config.page
+  setPagePrintDirection(value) {
+    const { size, printDirection } = this.config.page
 
     // 打印方向切换了, 宽高互换
     if (value !== printDirection) {
@@ -140,18 +155,18 @@ class EditorStore {
   }
 
   @action
-  setSelected (selected = null) {
+  setSelected(selected = null) {
     this.selected = selected
   }
 
   // 选择区域
   @action
-  setSelectedRegion (selected) {
+  setSelectedRegion(selected) {
     this.selectedRegion = selected
   }
 
   @action
-  setSizePageType (type) {
+  setSizePageType(type) {
     const { size, gap, name } = pageTypeMap[type]
 
     this.config.page = {
@@ -165,13 +180,15 @@ class EditorStore {
 
   // 可选区域做相应的提示
   @computed
-  get computedSelectedRegionTip () {
+  get computedSelectedRegionTip() {
     if (!this.selectedRegion) return ''
-    return /(contents)|(sign)/g.test(this.selectedRegion) ? i18next.t('说明：所选区域的内容仅打印一次') : i18next.t('说明：所选区域的内容每页均打印')
+    return /(contents)|(sign)/g.test(this.selectedRegion)
+      ? i18next.t('说明：所选区域的内容仅打印一次')
+      : i18next.t('说明：所选区域的内容每页均打印')
   }
 
   @computed
-  get computedRegionIsTable () {
+  get computedRegionIsTable() {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       return arr.includes('table')
@@ -179,7 +196,7 @@ class EditorStore {
   }
 
   @computed
-  get computedIsSelectBlock () {
+  get computedIsSelectBlock() {
     if (this.selected) {
       const arr = this.selected.split('.')
       return arr.length === 3 || (arr.length === 5 && arr[3] === 'block')
@@ -187,7 +204,7 @@ class EditorStore {
   }
 
   @computed
-  get computedIsSelectTable () {
+  get computedIsSelectTable() {
     if (this.selected) {
       const arr = this.selected.split('.')
       return arr.length === 5 && arr[3] === 'column'
@@ -195,7 +212,7 @@ class EditorStore {
   }
 
   @computed
-  get computedSelectedSource () {
+  get computedSelectedSource() {
     if (!this.selected) {
       return null
     }
@@ -211,7 +228,7 @@ class EditorStore {
   }
 
   @computed
-  get computedSelectedInfo () {
+  get computedSelectedInfo() {
     if (!this.selected) {
       return null
     }
@@ -229,7 +246,7 @@ class EditorStore {
   }
 
   @action
-  setConfigPanelStyle (name, style) {
+  setConfigPanelStyle(name, style) {
     const arr = name.split('.')
 
     if (arr.length === 1) {
@@ -240,7 +257,7 @@ class EditorStore {
   }
 
   @action
-  setConfigBlockBy (who, value) {
+  setConfigBlockBy(who, value) {
     if (this.computedIsSelectBlock) {
       const block = this.computedSelectedInfo
       block[who] = value
@@ -248,7 +265,7 @@ class EditorStore {
   }
 
   @action
-  addConfigBlock (name, type, pos = {}, link = '') {
+  addConfigBlock(name, type, pos = {}, link = '') {
     let blocks
     const arr = name.split('.')
 
@@ -336,14 +353,14 @@ class EditorStore {
   }
 
   @action
-  setSubtotalShow (name) {
+  setSubtotalShow(name) {
     const arr = name.split('.')
     const table = this.config.contents[arr[2]]
     table.subtotal.show = !table.subtotal.show
   }
 
   @action
-  setConfigTable (who, value) {
+  setConfigTable(who, value) {
     if (!this.computedIsSelectTable) {
       return
     }
@@ -352,7 +369,7 @@ class EditorStore {
   }
 
   @action
-  changeTableDataKey (name, key) {
+  changeTableDataKey(name, key) {
     const arr = name.split('.')
     const { dataKey } = this.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
@@ -364,19 +381,23 @@ class EditorStore {
       newDataKey = _.concat(keyArr, key)
     }
 
-    newDataKey = _.sortBy(newDataKey, [o => o === 'multi', o => o === 'category', o => o === 'orders'])
+    newDataKey = _.sortBy(newDataKey, [
+      o => o === 'multi',
+      o => o === 'category',
+      o => o === 'orders'
+    ])
 
     this.config.contents[arr[2]].dataKey = newDataKey.join('_')
   }
 
   @action
-  setConfigTableBy (name, who, className) {
+  setConfigTableBy(name, who, className) {
     const arr = name.split('.')
     this.config.contents[arr[2]][who] = className
   }
 
   @action
-  exchangeTableColumn (target, source) {
+  exchangeTableColumn(target, source) {
     console.log(target, source)
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
@@ -395,7 +416,7 @@ class EditorStore {
   }
 
   @action
-  exchangeTableColumnByDiff (diff) {
+  exchangeTableColumnByDiff(diff) {
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
       const { columns } = this.config.contents[arr[2]]
@@ -418,7 +439,7 @@ class EditorStore {
    * @param value
    */
   @action.bound
-  addFieldToPanel ({ key, value }) {
+  addFieldToPanel({ key, value }) {
     if (!this.selectedRegion) return
     const arr = this.selectedRegion.split('.')
     let blocks
@@ -446,7 +467,7 @@ class EditorStore {
    * @param value
    */
   @action.bound
-  addFieldToTable ({ key, value }) {
+  addFieldToTable({ key, value }) {
     if (this.computedRegionIsTable) {
       const arr = this.selectedRegion.split('.')
       const { columns } = this.config.contents[arr[2]]
@@ -465,7 +486,7 @@ class EditorStore {
   }
 
   @action
-  removeField () {
+  removeField() {
     if (!this.selected) {
       return
     }
@@ -488,7 +509,7 @@ class EditorStore {
   }
 
   @action
-  addContentByDiff (name, diff, type) {
+  addContentByDiff(name, diff, type) {
     const arr = name.split('.')
     if (arr.length === 3 && arr[0] === 'contents') {
       this.addContent(name, ~~arr[2] + diff, type)
@@ -498,7 +519,7 @@ class EditorStore {
   }
 
   @action.bound
-  addContent (name, index, type) {
+  addContent(name, index, type) {
     const defaultTableDataKey = this.defaultTableDataKey
     const defaultTableSubtotal = this.defaultTableSubtotal
 
@@ -512,16 +533,18 @@ class EditorStore {
             type: 'table',
             dataKey: defaultTableDataKey, // 默认
             subtotal: defaultTableSubtotal, // 默认的每页合计配置
-            columns: [{
-              head: i18next.t('表头'),
-              headStyle: {
-                textAlign: 'center'
-              },
-              text: i18next.t('内容'),
-              style: {
-                textAlign: 'center'
+            columns: [
+              {
+                head: i18next.t('表头'),
+                headStyle: {
+                  textAlign: 'center'
+                },
+                text: i18next.t('内容'),
+                style: {
+                  textAlign: 'center'
+                }
               }
-            }]
+            ]
           })
         } else {
           this.config.contents.splice(index, 0, {
@@ -536,7 +559,7 @@ class EditorStore {
   }
 
   @action.bound
-  setTableDataKey (dataKey) {
+  setTableDataKey(dataKey) {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       const table = this.config.contents[arr[2]]
@@ -549,7 +572,7 @@ class EditorStore {
   }
 
   @computed
-  get computedTableDataKeyOfSelectedRegion () {
+  get computedTableDataKeyOfSelectedRegion() {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       if (arr.includes('table')) {
@@ -559,8 +582,57 @@ class EditorStore {
     }
   }
 
+  // 获得表格自定义行高
+  @computed
+  get computedTableCustomerRowHeight() {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      if (arr.includes('table')) {
+        const height = this.config.contents[arr[2]].customerRowHeight
+        return height === undefined ? 23 : height
+      }
+    }
+  }
+
+  @action.bound
+  setTableCustomerRowHeight(val) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      if (arr.includes('table')) {
+        this.config.contents[arr[2]] = {
+          ...this.config.contents[arr[2]],
+          customerRowHeight: val
+        }
+      }
+    }
+  }
+
+  // 获得双栏表格排列类型
+  @computed
+  get computedTableArrange() {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      if (arr.includes('table')) {
+        return this.config.contents[arr[2]].arrange || 'lateral'
+      }
+    }
+  }
+
+  @action.bound
+  setTableArrange(val) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      if (arr.includes('table')) {
+        this.config.contents[arr[2]] = {
+          ...this.config.contents[arr[2]],
+          arrange: val
+        }
+      }
+    }
+  }
+
   @action
-  removeContent (name) {
+  removeContent(name) {
     const arr = name.split('.')
     if (arr[0] === 'contents') {
       // 保留一个
@@ -573,13 +645,15 @@ class EditorStore {
   }
 
   @action.bound
-  setCounter (field, name) {
+  setCounter(field, name) {
     const arr = (name && name.split('.')) || []
     const counter = this.config.contents[arr[2]].blocks[arr[4]]
     let { value } = counter
 
     // 兼容之前版本
-    if (value === undefined) { value = ['len'] }
+    if (value === undefined) {
+      value = ['len']
+    }
 
     if (_.includes(value, field)) {
       const index = value.indexOf(field)
@@ -597,7 +671,7 @@ class EditorStore {
   }
 
   @computed
-  get computedTableSpecialConfig () {
+  get computedTableSpecialConfig() {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       const tableConfig = this.config.contents[arr[2]]
@@ -608,12 +682,14 @@ class EditorStore {
   }
 
   @action.bound
-  setSpecialStyle (value) {
+  setSpecialStyle(value) {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       const tableConfig = this.config.contents[arr[2]]
 
-      const oldStyle = tableConfig.specialConfig ? tableConfig.specialConfig.style : {}
+      const oldStyle = tableConfig.specialConfig
+        ? tableConfig.specialConfig.style
+        : {}
       set(tableConfig, {
         specialConfig: {
           ...tableConfig.specialConfig,
@@ -627,7 +703,25 @@ class EditorStore {
   }
 
   @action.bound
-  setSubtotalStyle (value) {
+  setSpecialUpperCase() {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const tableConfig = this.config.contents[arr[2]]
+
+      const oldNeedUpperCase = tableConfig.specialConfig
+        ? tableConfig.specialConfig.needUpperCase
+        : false
+      set(tableConfig, {
+        specialConfig: {
+          ...tableConfig.specialConfig,
+          needUpperCase: !oldNeedUpperCase
+        }
+      })
+    }
+  }
+
+  @action.bound
+  setSubtotalStyle(value) {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       const subtotalConfig = this.config.contents[arr[2]].subtotal
@@ -639,6 +733,17 @@ class EditorStore {
           ...value
         }
       })
+    }
+  }
+
+  @action.bound
+  setSubtotalUpperCase() {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const subtotalConfig = this.config.contents[arr[2]].subtotal
+
+      const oldNeedUpperCase = subtotalConfig.needUpperCase
+      set(subtotalConfig, { needUpperCase: !oldNeedUpperCase })
     }
   }
 }

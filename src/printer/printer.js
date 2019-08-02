@@ -10,39 +10,51 @@ import Panel from './panel'
 import Table from './table'
 
 // Header Sign Footer 相对特殊，要单独处理
-const Header = (props) => <Panel
-  {...props}
-  name='header'
-  placeholder={i18next.t('页眉')}
-/>
-const Sign = (props) => <Panel
-  {...props}
-  style={{
-    ...props.style,
-    position: 'absolute',
-    left: 0,
-    right: 0
-  }}
-  name='sign'
-  placeholder={i18next.t('签名')}
-/>
-const Footer = (props) => <Panel
-  {...props}
-  style={{
-    ...props.style,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0
-  }}
-  name='footer'
-  placeholder={i18next.t('页脚')}
-/>
+const Header = props => (
+  <Panel {...props} name='header' placeholder={i18next.t('页眉')} />
+)
+
+const Sign = props => (
+  <Panel
+    {...props}
+    style={{
+      ...props.style,
+      position: 'absolute',
+      left: 0,
+      right: 0
+    }}
+    name='sign'
+    placeholder={i18next.t('签名')}
+  />
+)
+
+Sign.propTypes = {
+  style: PropTypes.object
+}
+
+const Footer = props => (
+  <Panel
+    {...props}
+    style={{
+      ...props.style,
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0
+    }}
+    name='footer'
+    placeholder={i18next.t('页脚')}
+  />
+)
+
+Footer.propTypes = {
+  style: PropTypes.object
+}
 
 @inject('printerStore')
 @observer
 class Printer extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     // 无实际意义，辅助 onReady，见 didMount
@@ -53,7 +65,7 @@ class Printer extends React.Component {
     props.printerStore.setSelectedRegion(props.selectedRegion)
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.selected !== this.props.selected) {
       this.props.printerStore.setSelected(nextProps.selected)
     }
@@ -62,7 +74,7 @@ class Printer extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { printerStore } = this.props
 
     // didMount 代表第一次渲染完成
@@ -77,12 +89,13 @@ class Printer extends React.Component {
     })
   }
 
-  renderBefore () {
-    const { config, printerStore } = this.props
+  renderBefore() {
+    const { printerStore } = this.props
+    const { config } = printerStore
 
     return (
       <Page pageIndex={0}>
-        <Header config={config.header} pageIndex={0}/>
+        <Header config={config.header} pageIndex={0} />
         {_.map(config.contents, (content, index) => {
           switch (content.type) {
             case 'table':
@@ -110,17 +123,15 @@ class Printer extends React.Component {
               )
           }
         })}
-        <Sign config={config.sign} pageIndex={0}/>
-        <Footer config={config.footer} pageIndex={0}/>
+        <Sign config={config.sign} pageIndex={0} />
+        <Footer config={config.footer} pageIndex={0} />
       </Page>
     )
   }
 
-  renderPage () {
-    const {
-      config,
-      printerStore
-    } = this.props
+  renderPage() {
+    const { printerStore } = this.props
+    const { config } = printerStore
 
     return (
       <React.Fragment>
@@ -129,7 +140,7 @@ class Printer extends React.Component {
 
           return (
             <Page key={i} pageIndex={i}>
-              <Header config={config.header} pageIndex={i}/>
+              <Header config={config.header} pageIndex={i} />
 
               {_.map(page, (panel, ii) => {
                 switch (panel.type) {
@@ -161,9 +172,13 @@ class Printer extends React.Component {
                 }
               })}
               {isLastPage && (
-                <Sign config={config.sign} pageIndex={i} style={{ bottom: config.footer.style.height }}/>
+                <Sign
+                  config={config.sign}
+                  pageIndex={i}
+                  style={{ bottom: config.footer.style.height }}
+                />
               )}
-              <Footer config={config.footer} pageIndex={i}/>
+              <Footer config={config.footer} pageIndex={i} />
             </Page>
           )
         })}
@@ -171,9 +186,13 @@ class Printer extends React.Component {
     )
   }
 
-  render () {
+  render() {
     const {
-      selected, data, config, onReady, selectedRegion, //eslint-disable-line
+      selected,
+      data,
+      config,
+      onReady,
+      selectedRegion,
       className,
       style,
       printerStore,
@@ -197,6 +216,9 @@ class Printer extends React.Component {
 }
 
 Printer.propTypes = {
+  className: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  style: PropTypes.object,
+  printerStore: PropTypes.object,
   selected: PropTypes.string,
   selectedRegion: PropTypes.string,
   data: PropTypes.object.isRequired,
@@ -209,15 +231,15 @@ Printer.defaultProps = {
 }
 
 class WithStorePrinter extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.printerStore = new PrinterStore()
   }
 
-  render () {
+  render() {
     return (
       <Provider printerStore={this.printerStore}>
-        <Printer {...this.props}/>
+        <Printer {...this.props} />
       </Provider>
     )
   }
