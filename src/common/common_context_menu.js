@@ -5,12 +5,11 @@ import { tableClassNameList } from '../config'
 import _ from 'lodash'
 import { Hr, ImageUploader } from '../common/component'
 import { observer, inject } from 'mobx-react'
-import editStore from '../editor/store'
 
 @inject('editStore')
 @observer
 class CommonContextMenu extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       name: null,
@@ -27,17 +26,20 @@ class CommonContextMenu extends React.Component {
     this.menuRef = React.createRef()
   }
 
-  componentDidMount () {
+  componentDidMount() {
     window.shadowRoot.addEventListener('click', this.handleClick)
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     window.shadowRoot.removeEventListener('click', this.handleClick)
   }
 
-  handleClick = (e) => {
+  handleClick = e => {
     // 简单处理,点击空白收起context_menu
-    if (e.target.parentNode && e.target.parentNode.className === 'gm-printer-edit-contextmenu') {
+    if (
+      e.target.parentNode &&
+      e.target.parentNode.className === 'gm-printer-edit-contextmenu'
+    ) {
       return
     }
 
@@ -46,7 +48,8 @@ class CommonContextMenu extends React.Component {
     })
   }
 
-  handleCancel = (e) => {
+  handleCancel = e => {
+    const { editStore } = this.props
     const { selected, selectedRegion } = editStore
     // 点击区域不包含selected的时候
     if (!_.includes(selected, selectedRegion)) {
@@ -58,15 +61,21 @@ class CommonContextMenu extends React.Component {
     }
   }
 
-  handleChangeCounterDataKey = (field) => {
+  handleChangeCounterDataKey = field => {
     const { editStore } = this.props
     const { name } = this.state
     const { setCounter } = editStore
     setCounter(field, name)
   }
 
-  handleContextMenu = (e) => {
-    const { target: { dataset: { name } }, clientX, clientY } = e
+  handleContextMenu = e => {
+    const {
+      target: {
+        dataset: { name }
+      },
+      clientX,
+      clientY
+    } = e
     if (!name) {
       return
     }
@@ -136,7 +145,7 @@ class CommonContextMenu extends React.Component {
     })
   }
 
-  handleInsertImage = (imgURL) => {
+  handleInsertImage = imgURL => {
     this.handleInsertBlock('image', imgURL)
   }
 
@@ -152,16 +161,18 @@ class CommonContextMenu extends React.Component {
     })
   }
 
-  handleSetTableConfig (value) {
+  handleSetTableConfig(value) {
     const { editStore } = this.props
     editStore.setConfigTableBy(this.state.name, 'className', value)
   }
 
   detectContextMenuTop = () => {
-    const { popup: { top } } = this.state
+    const {
+      popup: { top }
+    } = this.state
     const clientHeight = window.document.body.clientHeight
     const contextMenuHeight = this.menuRef.current.clientHeight
-    if ((clientHeight - top) < contextMenuHeight) {
+    if (clientHeight - top < contextMenuHeight) {
       this.setState({
         popup: {
           ...this.state.popup,
@@ -180,29 +191,42 @@ class CommonContextMenu extends React.Component {
 
     return (
       <React.Fragment>
-        { renderTableAction &&
+        {renderTableAction && (
           <React.Fragment>
             {renderTableAction && renderTableAction(name)}
-            <Hr/>
+            <Hr />
           </React.Fragment>
-        }
+        )}
 
         <div onClick={this.handleRemove}>{i18next.t('移除列')}</div>
-        <Hr/>
+        <Hr />
 
         {_.map(tableClassNameList, o => (
-          <div onClick={this.handleSetTableConfig.bind(this, o.value)} key={o.value}
-            className={isActive(o.value) ? 'active' : ''}>{o.text}</div>
+          <div
+            onClick={this.handleSetTableConfig.bind(this, o.value)}
+            key={o.value}
+            className={isActive(o.value) ? 'active' : ''}
+          >
+            {o.text}
+          </div>
         ))}
 
-        <Hr/>
-        <div onClick={this.handleAddContent.bind(this, 0, '')}>{i18next.t('向上插入区域块')}</div>
-        <div onClick={this.handleAddContent.bind(this, 1, '')}>{i18next.t('向下插入区域块')}</div>
+        <Hr />
+        <div onClick={this.handleAddContent.bind(this, 0, '')}>
+          {i18next.t('向上插入区域块')}
+        </div>
+        <div onClick={this.handleAddContent.bind(this, 1, '')}>
+          {i18next.t('向下插入区域块')}
+        </div>
         <div onClick={this.handleRemoveContent}>{i18next.t('移除区域')}</div>
 
-        <Hr/>
-        <div onClick={this.handleAddContent.bind(this, 0, 'table')}>{i18next.t('向上插入表格')}</div>
-        <div onClick={this.handleAddContent.bind(this, 1, 'table')}>{i18next.t('向下插入表格')}</div>
+        <Hr />
+        <div onClick={this.handleAddContent.bind(this, 0, 'table')}>
+          {i18next.t('向上插入表格')}
+        </div>
+        <div onClick={this.handleAddContent.bind(this, 1, 'table')}>
+          {i18next.t('向下插入表格')}
+        </div>
       </React.Fragment>
     )
   }
@@ -220,24 +244,26 @@ class CommonContextMenu extends React.Component {
     const isSubtotalActive = _.includes(value, 'subtotal')
     return (
       <React.Fragment>
-        <div onClick={this.handleChangeCounterDataKey.bind(this, 'len')}
-          className={isProductLengthActive ? 'active' : ''}>{i18next.t('商品数')}
+        <div
+          onClick={this.handleChangeCounterDataKey.bind(this, 'len')}
+          className={isProductLengthActive ? 'active' : ''}
+        >
+          {i18next.t('商品数')}
         </div>
-        <div onClick={this.handleChangeCounterDataKey.bind(this, 'subtotal')}
-          className={isSubtotalActive ? 'active' : ''}>{i18next.t('小计')}
+        <div
+          onClick={this.handleChangeCounterDataKey.bind(this, 'subtotal')}
+          className={isSubtotalActive ? 'active' : ''}
+        >
+          {i18next.t('小计')}
         </div>
-        <Hr/>
+        <Hr />
         <div onClick={this.handleRemoveContent}>{i18next.t('移除区域')}</div>
       </React.Fragment>
     )
   }
 
   renderBlock = () => {
-    return (
-      <div onClick={this.handleRemove}>
-        {i18next.t('移除')}
-      </div>
-    )
+    return <div onClick={this.handleRemove}>{i18next.t('移除')}</div>
   }
 
   renderPanel = () => {
@@ -248,58 +274,87 @@ class CommonContextMenu extends React.Component {
 
     // 页眉 页脚 签名 不添加分类汇总
     if (type === 'header' || type === 'sign' || type === 'footer') {
-      insertBlockList = _.filter(insertBlockList, item => item.value !== 'counter')
+      insertBlockList = _.filter(
+        insertBlockList,
+        item => item.value !== 'counter'
+      )
     }
 
     return (
       <React.Fragment>
         {_.map(insertBlockList, v => {
-          return (
-            v.value === 'image'
-              ? <ImageUploader onSuccess={this.handleInsertImage} key={v.value} text={v.text}/>
-              : <div key={v.value} onClick={this.handleInsertBlock.bind(this, v.value)}>{v.text}</div>
+          return v.value === 'image' ? (
+            <ImageUploader
+              onSuccess={this.handleInsertImage}
+              key={v.value}
+              text={v.text}
+            />
+          ) : (
+            <div
+              key={v.value}
+              onClick={this.handleInsertBlock.bind(this, v.value)}
+            >
+              {v.text}
+            </div>
           )
-        }
-        )}
+        })}
 
         {arr[0] === 'contents' && (
           <React.Fragment>
-            <Hr/>
-            <div onClick={this.handleAddContent.bind(this, 0, '')}>{i18next.t('向上插入区域块')}</div>
-            <div onClick={this.handleAddContent.bind(this, 1, '')}>{i18next.t('向下插入区域块')}</div>
-            <div onClick={this.handleRemoveContent}>{i18next.t('移除区域')}</div>
-            <Hr/>
-            <div onClick={this.handleAddContent.bind(this, 0, 'table')}>{i18next.t('向上插入表格')}</div>
-            <div onClick={this.handleAddContent.bind(this, 1, 'table')}>{i18next.t('向下插入表格')}</div>
+            <Hr />
+            <div onClick={this.handleAddContent.bind(this, 0, '')}>
+              {i18next.t('向上插入区域块')}
+            </div>
+            <div onClick={this.handleAddContent.bind(this, 1, '')}>
+              {i18next.t('向下插入区域块')}
+            </div>
+            <div onClick={this.handleRemoveContent}>
+              {i18next.t('移除区域')}
+            </div>
+            <Hr />
+            <div onClick={this.handleAddContent.bind(this, 0, 'table')}>
+              {i18next.t('向上插入表格')}
+            </div>
+            <div onClick={this.handleAddContent.bind(this, 1, 'table')}>
+              {i18next.t('向下插入表格')}
+            </div>
           </React.Fragment>
         )}
       </React.Fragment>
     )
   }
 
-  render () {
+  render() {
     const { children } = this.props
     const { name, popup } = this.state
     const arr = (name && name.split('.')) || []
 
     return (
-      <div onClick={this.handleCancel} className='gm-printer-edit-content' onContextMenu={this.handleContextMenu}>
+      <div
+        onClick={this.handleCancel}
+        className='gm-printer-edit-content'
+        onContextMenu={this.handleContextMenu}
+      >
         {children}
         {name && (
-          <Menu
-            detectContextMenuTop={this.detectContextMenuTop}
-          >
+          <Menu detectContextMenuTop={this.detectContextMenuTop}>
             {
-              <div ref={this.menuRef} className='gm-printer-edit-contextmenu' style={{
-                position: 'fixed',
-                ...popup
-              }}>
+              <div
+                ref={this.menuRef}
+                className='gm-printer-edit-contextmenu'
+                style={{
+                  position: 'fixed',
+                  ...popup
+                }}
+              >
                 {arr.length === 1 && this.renderPanel()}
                 {arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
                 {arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
                 {arr.length === 5 && arr[3] === 'block' && this.renderBlock()}
                 {arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
-                {arr.length === 6 && arr[5] === 'counter' && this.renderCounterMenu()}
+                {arr.length === 6 &&
+                  arr[5] === 'counter' &&
+                  this.renderCounterMenu()}
               </div>
             }
           </Menu>
@@ -309,17 +364,13 @@ class CommonContextMenu extends React.Component {
   }
 }
 
-function Menu (props) {
+function Menu(props) {
   const { detectContextMenuTop, children } = props
   useEffect(() => {
     detectContextMenuTop()
   })
 
-  return (
-    <React.Fragment>
-      {children}
-    </React.Fragment>
-  )
+  return <React.Fragment>{children}</React.Fragment>
 }
 
 Menu.propTypes = {
@@ -328,6 +379,7 @@ Menu.propTypes = {
 }
 
 CommonContextMenu.propTypes = {
+  editStore: PropTypes.object.isRequired,
   insertBlockList: PropTypes.array.isRequired,
   renderTableAction: PropTypes.func,
   children: PropTypes.element.isRequired

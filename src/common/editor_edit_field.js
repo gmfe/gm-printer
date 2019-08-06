@@ -173,7 +173,10 @@ class EditorField extends React.Component {
     // 每页合计样式
     const subtotalStyle = (subtotal && subtotal.style) || {}
     //  每页合计是否大写
-    const subtotalNeedUpperCase = get(subtotal, 'needUpperCase') || false
+    const subtotalNeedUpperCase =
+      (has(editStore.computedTableSpecialConfig, 'subtotal') &&
+        get(subtotal, 'needUpperCase')) ||
+      false
 
     return (
       <div>
