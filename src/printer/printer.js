@@ -10,13 +10,6 @@ import _ from 'lodash'
 import Panel from './panel'
 import Table from './table'
 
-// 检测浏览器是不是用了缩放,用了就⚠️警告用户
-if (detectZoom() !== 100) {
-  window.alert(`检查到浏览器使用了缩放。缩放会影响打印布局。
-请点击【确定】后，按【ctrl + 0】重置缩放，刷新页面，然后重新打印。
-  `)
-}
-
 // Header Sign Footer 相对特殊，要单独处理
 const Header = props => (
   <Panel {...props} name='header' placeholder={i18next.t('页眉')} />
@@ -83,6 +76,13 @@ class Printer extends React.Component {
   }
 
   componentDidMount() {
+    // 检测浏览器是不是用了缩放,用了就⚠️警告用户
+    if (detectZoom() !== 100) {
+      window.alert(`检查到浏览器使用了缩放。缩放会影响打印布局。
+请点击【确定】后，按【ctrl + 0】重置缩放，刷新页面，然后重新打印。
+  `)
+    }
+
     const { printerStore } = this.props
 
     // didMount 代表第一次渲染完成
