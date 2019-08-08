@@ -1,7 +1,7 @@
 {
   "name": "gm-printer",
-  "version": "9.0.3",
-  "description": "",
+  "version": "9.1.0",
+  "description": "diy printer",
   "main": "src/index.js",
   "scripts": {
     "precommit": "lint-staged",
