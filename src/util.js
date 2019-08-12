@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Big from 'big.js'
+import { is } from 'gm-util'
 
 function getHeight(el) {
   const styles = window.getComputedStyle(el)
@@ -180,6 +181,11 @@ function detectZoom() {
 
   if (ratio) {
     ratio = Math.round(ratio * 100)
+  }
+
+  // 特殊逻辑: 由于移动端不需要警告,而且不需要打印,所以移动端缩放给100就好了. 移动端实在不好检测缩放比....
+  if (is.phone()) {
+    ratio = 100
   }
 
   return ratio
