@@ -1,6 +1,5 @@
 import i18next from '../../locales'
 import React from 'react'
-import { detectZoom } from '../util'
 import classNames from 'classnames'
 import { inject, observer, Provider } from 'mobx-react'
 import PropTypes from 'prop-types'
@@ -76,13 +75,6 @@ class Printer extends React.Component {
   }
 
   componentDidMount() {
-    // 检测浏览器是不是用了缩放,用了就⚠️警告用户
-    if (detectZoom() !== 100) {
-      window.alert(`检查到浏览器使用了缩放。缩放会影响打印布局。
-请点击【确定】后，按【ctrl + 0】重置缩放，刷新页面，然后重新打印。
-  `)
-    }
-
     const { printerStore } = this.props
 
     // didMount 代表第一次渲染完成

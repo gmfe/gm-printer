@@ -159,37 +159,6 @@ const coverDigit2Uppercase = n => {
   )
 }
 
-// 检测浏览器缩放比例
-function detectZoom() {
-  let ratio = 0
-  const screen = window.screen
-  const ua = navigator.userAgent.toLowerCase()
-
-  if (window.devicePixelRatio !== undefined) {
-    ratio = window.devicePixelRatio
-  } else if (~ua.indexOf('msie')) {
-    if (screen.deviceXDPI && screen.logicalXDPI) {
-      ratio = screen.deviceXDPI / screen.logicalXDPI
-    }
-  } else if (
-    window.outerWidth !== undefined &&
-    window.innerWidth !== undefined
-  ) {
-    ratio = window.outerWidth / window.innerWidth
-  }
-
-  if (ratio) {
-    ratio = Math.round(ratio * 100)
-  }
-
-  // 特殊逻辑: 由于移动端不需要警告,而且不需要打印,所以移动端缩放给100就好了. 移动端实在不好检测缩放比....
-  if (window.navigator.userAgent.includes('Mobile')) {
-    ratio = 100
-  }
-
-  return ratio
-}
-
 export {
   getHeight,
   getWidth,
@@ -202,6 +171,5 @@ export {
   exchange,
   afterImgAndSvgLoaded,
   getSubtotalHeight,
-  coverDigit2Uppercase,
-  detectZoom
+  coverDigit2Uppercase
 }
