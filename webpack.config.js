@@ -12,33 +12,32 @@ module.exports = {
     filename: '[name].js'
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      use: 'babel-loader'
-    }, {
-      test: /\.less$/,
-      use: [
-        'style-loader',
-        'css-loader',
-        'postcss-loader',
-        'less-loader'
-      ]
-    }, {
-      test: /\.css$/,
-      use: [
-        'style-loader',
-        'css-loader'
-      ]
-    }, {
-      test: /(fontawesome-webfont|glyphicons-halflings-regular|iconfont)\.(woff|woff2|ttf|eot|svg)($|\?)/,
-      use: [{
-        loader: 'url-loader',
-        options: {
-          limit: 1024,
-          name: 'font/[name].[ext]'
-        }
-      }]
-    }]
+    rules: [
+      {
+        test: /\.js$/,
+        use: 'babel-loader'
+      },
+      {
+        test: /\.less$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader']
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /(fontawesome-webfont|glyphicons-halflings-regular|iconfont)\.(woff|woff2|ttf|eot|svg)($|\?)/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 1024,
+              name: 'font/[name].[ext]'
+            }
+          }
+        ]
+      }
+    ]
   },
   plugins: [
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/)
@@ -48,6 +47,12 @@ module.exports = {
     host: '0.0.0.0',
     port: 8081,
     inline: false,
-    disableHostCheck: true
+    disableHostCheck: true,
+    proxy: {
+      '/gm_account/*': {
+        target: 'https://manage.guanmai.cn',
+        changeOrigin: true
+      }
+    }
   }
 }
