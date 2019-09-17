@@ -78,7 +78,6 @@ function generateMultiData2 (list, categoryTotal) {
   if (categoryTotal) {
     multiList.push(categoryTotal)
   }
-  console.log(multiList)
   return multiList
 }
 
