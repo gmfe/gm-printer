@@ -2,7 +2,7 @@ import i18next from '../../../locales'
 import _ from 'lodash'
 import moment from 'moment'
 
-function task (data) {
+function task(data) {
   const taskList = _.sortBy(data.order_detail, 'sort_id')
 
   const driverTask = _.map(taskList, o => {
@@ -11,7 +11,10 @@ function task (data) {
       [i18next.t('订单号')]: o.order_id || '-',
       [i18next.t('商户名')]: o.customer_name || '-',
       [i18next.t('收货地址')]: o.receive_address || '-',
-      [i18next.t('收货时间')]: moment(o.receive_begin_time).format('MM/DD-HH:mm') + '~\n' + moment(o.receive_end_time).format('MM/DD-HH:mm'),
+      [i18next.t('收货时间')]:
+        moment(o.receive_begin_time).format('MM/DD-HH:mm') +
+        '~\n' +
+        moment(o.receive_end_time).format('MM/DD-HH:mm'),
       [i18next.t('配送框数')]: '',
       [i18next.t('回收框数')]: '',
       [i18next.t('订单备注')]: ''

@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 class Store extends EditorStore {
   @action
-  changeTableDataKeyStockIn (name, key) {
+  changeTableDataKeyStockIn(name, key) {
     const arr = name.split('.')
     const { dataKey } = this.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
@@ -15,7 +15,12 @@ class Store extends EditorStore {
     } else {
       newDataKey = _.concat(keyArr, key)
     }
-    newDataKey = _.sortBy(newDataKey, [o => o === 'money', o => o === 'quantity', o => o === 'orders'])
+    newDataKey = _.sortBy(newDataKey, [
+      o => o === 'money',
+      o => o === 'quantity',
+      o => o === 'multi',
+      o => o === 'orders'
+    ])
 
     this.config.contents[arr[2]].dataKey = newDataKey.join('_')
   }

@@ -24,7 +24,7 @@ class ContextMenu extends React.Component {
    * @param name => ContextMenu 的 this.state.name
    * @return {boolean}
    */
-  hasSubtotalBtn = (name) => {
+  hasSubtotalBtn = name => {
     if (!name) return false
 
     const arr = name.split('.')
@@ -41,13 +41,13 @@ class ContextMenu extends React.Component {
     editStore.changeTableDataKey(name, key)
   }
 
-  handleSubtotal = (name) => {
+  handleSubtotal = name => {
     const { editStore } = this.props
 
     editStore.setSubtotalShow(name)
   }
 
-  renderOrderActionBtn = (name) => {
+  renderOrderActionBtn = name => {
     if (!this.hasSubtotalBtn(name)) {
       return null
     }
@@ -62,21 +62,35 @@ class ContextMenu extends React.Component {
 
     return (
       <React.Fragment>
-        <div onClick={this.handleChangeTableDataKey.bind(this, 'multi', name)}
-          className={isMultiActive ? 'active' : ''}>{i18next.t('双栏商品')}
+        <div
+          onClick={this.handleChangeTableDataKey.bind(this, 'multi', name)}
+          className={isMultiActive ? 'active' : ''}
+        >
+          {i18next.t('双栏商品')}
         </div>
-        <div onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
-          className={isCategoryActive ? 'active' : ''}>{i18next.t('商品分类')}
+        <div
+          onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
+          className={isCategoryActive ? 'active' : ''}
+        >
+          {i18next.t('商品分类')}
         </div>
-        <div onClick={this.handleSubtotal.bind(this, name)} className={isSubtotalActive ? 'active' : ''}>{i18next.t('每页合计')}</div>
+        <div
+          onClick={this.handleSubtotal.bind(this, name)}
+          className={isSubtotalActive ? 'active' : ''}
+        >
+          {i18next.t('每页合计')}
+        </div>
       </React.Fragment>
     )
   }
 
-  render () {
+  render() {
     const { editStore, mockData } = this.props
     return (
-      <CommonContextMenu renderTableAction={this.renderOrderActionBtn} insertBlockList={blockTypeList}>
+      <CommonContextMenu
+        renderTableAction={this.renderOrderActionBtn}
+        insertBlockList={blockTypeList}
+      >
         <Printer
           key={editStore.computedPrinterKey}
           selected={editStore.selected}
