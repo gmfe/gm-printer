@@ -2,9 +2,12 @@ import i18next from '../../../locales'
 import _ from 'lodash'
 import moment from 'moment'
 
-function sku (data) {
+function sku(data) {
   // 司机装车信息(分拣方式: 八卦, 统配) => 只打印统配的!
-  const skuList = _.filter(data.sku_detail, o => o.sort_name === i18next.t('统配'))
+  const skuList = _.filter(
+    data.sku_detail,
+    o => o.sort_name === i18next.t('统配')
+  )
   const skuListAfterSort = _.sortBy(skuList, ['category_1_id', 'category_2_id'])
   const skuGroup = _.groupBy(skuListAfterSort, 'category_1_name')
 
@@ -12,13 +15,17 @@ function sku (data) {
   const counter = _.map(skuGroup, (o, k) => ({ text: k, len: o.length }))
 
   /* --------- 分类商品 -------------------- */
-  function getDetail (sku) {
+  function getDetail(sku) {
     const len = sku.customer_detail.length
     return _.map(sku.customer_detail, (customer, index) =>
       [
         `[${customer.sort_id || '-'}]${customer.customer_name}*`,
         customer.sku_amount,
-        (index + 1) % 2 === 0 ? '<br>' : len !== 1 && index !== len - 1 ? '+' : ''
+        (index + 1) % 2 === 0
+          ? '<br>'
+          : len !== 1 && index !== len - 1
+          ? '+'
+          : ''
       ].join('')
     ).join('')
   }

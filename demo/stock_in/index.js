@@ -8,12 +8,14 @@ import formatData from './data_to_key'
 // 添加的字段
 import addFields from './add_fields'
 
-const StockInEditor = ({ handleSave }) => <EditorStockIn
-  config={config}
-  mockData={formatData(data)}
-  onSave={handleSave}
-  showEditor
-  addFields={addFields}
-/>
+const StockInEditor = ({ handleSave }) => (
+  <EditorStockIn
+    config={config}
+    mockData={formatData(data)}
+    onSave={handleSave}
+    showEditor
+    addFields={addFields}
+  />
+)
 
 export default StockInEditor

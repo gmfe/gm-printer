@@ -51,7 +51,7 @@ function generateMultiData(list, categoryTotal) {
   return multiList
 }
 
-function generateMultiData2 (list, categoryTotal) {
+function generateMultiData2(list, categoryTotal) {
   let multiList = []
   // 假设skuGroup = [{a: 1}, {a:2}, {a: 3}, {a: 4}], 转化为 [{a:1, a#2:3}, {a:2, a#2: 4}]
   const skuGroup = list
@@ -169,7 +169,7 @@ function generateSummary(list) {
 }
 
 // 积分表格
-function generateRewardData (list) {
+function generateRewardData(list) {
   return _.map(list, o => ({
     [i18next.t('积分商品名')]: o.sku_name,
     [i18next.t('规格')]: o.sale_unit,
@@ -184,7 +184,8 @@ function generateOrderData(list) {
     return {
       [i18next.t('序号')]: index + 1,
       [i18next.t('商品ID')]: v.id,
-      [i18next.t('商品名')]: v.real_is_weight && !v.is_weigh ? `*${v.name}` : v.name,
+      [i18next.t('商品名')]:
+        v.real_is_weight && !v.is_weigh ? `*${v.name}` : v.name,
       [i18next.t('商品名_无星号')]: v.name,
       [i18next.t('类别')]: v.category_title_1,
       [i18next.t('商品二级分类')]: v.category_title_2,
@@ -353,9 +354,13 @@ function order(data) {
     /* -------- 分类  ------------- */
     kCategory = kCategory.concat(list, categoryTotal)
     /* -------- 双栏 + 分类 ------- */
-    kCategoryMulti = kCategoryMulti.concat(generateMultiData(list, categoryTotal))
+    kCategoryMulti = kCategoryMulti.concat(
+      generateMultiData(list, categoryTotal)
+    )
     /* -------- 双栏 + 分类（纵向） ------- */
-    kCategoryMultiVertical = kCategoryMultiVertical.concat(generateMultiData2(list, categoryTotal))
+    kCategoryMultiVertical = kCategoryMultiVertical.concat(
+      generateMultiData2(list, categoryTotal)
+    )
   })
 
   return {
