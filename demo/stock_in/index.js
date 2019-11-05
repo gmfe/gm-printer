@@ -4,7 +4,7 @@ import { EditorStockIn } from '../../src'
 import config from './template_config/default_config'
 // 模拟数据
 import data from './mock_data/default_data'
-import formatData from './data_to_key/stockin'
+import formatData from './data_to_key'
 // 添加的字段
 import addFields from './add_fields'
 
