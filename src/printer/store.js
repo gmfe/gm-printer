@@ -4,7 +4,7 @@ import { getSubtotalHeight } from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
 
-const price = n => Big(n || 0).toFixed(2)
+const price = (n, f = 2) => Big(n || 0).toFixed(f)
 class PrinterStore {
   @observable
   ready = false
@@ -38,7 +38,7 @@ class PrinterStore {
   selectedRegion = null
 
   @action
-  init (config, data) {
+  init(config, data) {
     this.ready = false
     this.config = config
     this.height = {}
@@ -50,37 +50,37 @@ class PrinterStore {
   }
 
   @action
-  setPageHeight (height) {
+  setPageHeight(height) {
     this.pageHeight = height
   }
 
   @action
-  setHeight (who, height) {
+  setHeight(who, height) {
     this.height[who] = height
   }
 
   @action
-  setTable (name, table) {
+  setTable(name, table) {
     this.tablesInfo[name] = table
   }
 
   @action
-  setReady (ready) {
+  setReady(ready) {
     this.ready = ready
   }
 
   @action
-  setSelected (selected) {
+  setSelected(selected) {
     this.selected = selected || null
   }
 
   @action
-  setSelectedRegion (selected) {
+  setSelectedRegion(selected) {
     this.selectedRegion = selected || null
   }
 
   @action
-  computedPages () {
+  computedPages() {
     // 每页必有 header footer
     const allPagesHaveThisHeight = this.height.header + this.height.footer
     let height = allPagesHaveThisHeight
@@ -104,7 +104,7 @@ class PrinterStore {
         // 如果显示每页小计,那么table高度多预留一行高度
         const subtotalTrHeight = subtotal.show ? getSubtotalHeight(subtotal) : 0
 
-        let allTableHaveThisHeight = info.head.height + subtotalTrHeight
+        const allTableHaveThisHeight = info.head.height + subtotalTrHeight
         let begin = 0
         let end = 0
 
@@ -123,7 +123,12 @@ class PrinterStore {
               // end 为 0 ，即只有表头，没有必要加进去，应放下一页显示
               if (end !== 0) {
                 // ‼️‼️‼️ 极端情况: 如果一行的高度 大于 页面高度, 那么就做下一行
-                if (info.body.heights[end] + allPagesHaveThisHeight + allTableHaveThisHeight > this.pageHeight) {
+                if (
+                  info.body.heights[end] +
+                    allPagesHaveThisHeight +
+                    allTableHaveThisHeight >
+                  this.pageHeight
+                ) {
                   end++
                 }
                 page.push({
@@ -159,7 +164,8 @@ class PrinterStore {
             }
           }
         }
-      } else { // 非表格
+      } else {
+        // 非表格
         const panelHeight = this.height[`contents.panel.${index}`]
         height += panelHeight
 
@@ -190,7 +196,7 @@ class PrinterStore {
     this.pages.push(page)
   }
 
-  template (text, pageIndex) {
+  template(text, pageIndex) {
     // 做好保护，出错就返回 text
     try {
       return _.template(text, {
@@ -207,7 +213,7 @@ class PrinterStore {
     }
   }
 
-  templateTable (text, dataKey, index, pageIndex) {
+  templateTable(text, dataKey, index, pageIndex) {
     // 做好保护，出错就返回 text
     try {
       const list = this.data._table[dataKey] || this.data._table.orders
@@ -226,7 +232,7 @@ class PrinterStore {
     }
   }
 
-  templateSpecialDetails (col, dataKey, index) {
+  templateSpecialDetails(col, dataKey, index) {
     // 做好保护，出错就返回 text
     const { specialDetailsKey, text } = col
     try {
