@@ -1,7 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import { dispatchMsg, getHeight, getTableColumnName, getWidth } from '../util'
+import {
+  dispatchMsg,
+  getDataKey,
+  getHeight,
+  getTableColumnName,
+  getWidth
+} from '../util'
 import { inject, observer } from 'mobx-react'
 import classNames from 'classnames'
 import { MULTI_SUFFIX } from '../config'
@@ -223,10 +229,7 @@ class Table extends React.Component {
       placeholder,
       printerStore
     } = this.props
-    dataKey =
-      arrange === 'vertical' && dataKey.includes('multi')
-        ? `${dataKey}_vertical`
-        : dataKey
+    dataKey = getDataKey(dataKey, arrange)
     const tableData = printerStore.data._table[dataKey] || []
     const active = printerStore.selectedRegion === name
 

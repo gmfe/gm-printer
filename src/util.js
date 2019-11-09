@@ -159,6 +159,11 @@ const coverDigit2Uppercase = n => {
   )
 }
 
+const getDataKey = (dataKey, arrange) =>
+  arrange === 'vertical' && dataKey.includes('multi')
+    ? `${dataKey}_vertical`
+    : dataKey
+
 export {
   getHeight,
   getWidth,
@@ -171,5 +176,6 @@ export {
   exchange,
   afterImgAndSvgLoaded,
   getSubtotalHeight,
-  coverDigit2Uppercase
+  coverDigit2Uppercase,
+  getDataKey
 }

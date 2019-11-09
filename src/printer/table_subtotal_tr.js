@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import { MULTI_SUFFIX } from '../config'
 import Big from 'big.js'
-import { coverDigit2Uppercase } from '../util'
+import { coverDigit2Uppercase, getDataKey } from '../util'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
 
@@ -17,6 +17,7 @@ const SubtotalTr = props => {
   const {
     config: {
       dataKey,
+      arrange,
       subtotal,
       subtotal: {
         show,
@@ -34,7 +35,7 @@ const SubtotalTr = props => {
     printerStore
   } = props
 
-  const tableData = printerStore.data._table[dataKey] || []
+  const tableData = printerStore.data._table[getDataKey(dataKey, arrange)] || []
   // 计算合计
   const sumData = (list, field) => {
     return _.reduce(
@@ -59,6 +60,7 @@ const SubtotalTr = props => {
   // show 是否展示小计，fields<Array> 合计的字段和展现的name，displayName 是否显示名字
   if (show && printerStore.ready) {
     const list = tableData.slice(range.begin, range.end)
+
     const sum = {}
     let subtotalStr = ''
 
