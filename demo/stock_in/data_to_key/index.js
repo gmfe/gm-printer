@@ -6,11 +6,17 @@ import { MULTI_SUFFIX } from '../../../src'
 
 const typeEnum = {
   normal: 'normal',
+  multi: 'multi',
+  multi_quantity: 'multi_quantity',
+  multi_money: 'multi_money',
+  multi_quantity_money: 'multi_quantity_money',
+  multi_vertical: 'multi_vertical',
+  multi_vertical_quantity: 'multi_vertical_quantity',
+  multi_vertical_money: 'multi_vertical_money',
+  multi_vertical_quantity_money: 'multi_vertical_quantity_money',
   quantity: 'quantity',
   money: 'money',
-  multi: 'multi',
-  multi_vertical: 'multi_vertical',
-  all: 'all'
+  quantity_money: 'quantity_money'
 }
 
 // 非表格数据
@@ -36,7 +42,7 @@ function generateCommon(data) {
  * @param categoryTotal
  * @return {Array}
  */
-function generateMultiData(list, categoryTotal) {
+function generateMultiData(list) {
   let multiList = [] // 假设skuGroup=[{a:1},{a:2},{a:3},{a:4}],转化为[{a:1,a#2:3},{a:2,a#2:4}]
   const skuGroup = list
 
@@ -58,13 +64,10 @@ function generateMultiData(list, categoryTotal) {
     index += 2
   }
 
-  if (categoryTotal) {
-    multiList.push(categoryTotal)
-  }
   return multiList
 }
 
-function generateMultiData2(list, categoryTotal) {
+function generateMultiData2(list) {
   let multiList = [] // 假设skuGroup = [{a:1},{a:2},{a:3},{a:4}],转化为[{a:1,a#2:3},{a:2,a#2:4}]
   const skuGroup = list
 
@@ -87,9 +90,6 @@ function generateMultiData2(list, categoryTotal) {
     index += 1
   }
 
-  if (categoryTotal) {
-    multiList.push(categoryTotal)
-  }
   return multiList
 }
 
@@ -137,46 +137,83 @@ const getTableData = (data, type) => {
   const sumQuantity = _.reduce(data.details, (a, b) => a + b.quantity, 0)
   const kOrdersMulti = generateMultiData(ordinary)
   const kOrdersMultiVertical = generateMultiData2(ordinary)
+  const skuTotalObj = {
+    _special: {
+      text: `${i18next.t('入库数小计')}：${sumQuantity}`
+    }
+  }
+  const sumMoneyObj = {
+    _special: {
+      text: `${i18next.t('入库金额小计')}：${sumMoney}`,
+      upperCaseText: `${i18next.t('入库金额小计')}：${sumMoney}${i18next.t(
+        '大写'
+      )}:${coverDigit2Uppercase(sumMoney)}`
+    }
+  }
   switch (type) {
     case typeEnum.normal:
       return ordinary
+    case typeEnum.multi:
+      return kOrdersMulti
+    case typeEnum.multi_quantity:
+      kOrdersMulti.push({
+        ...sumMoneyObj
+      })
+      return kOrdersMulti
+    case typeEnum.multi_money:
+      kOrdersMulti.push({
+        ...skuTotalObj
+      })
+      return kOrdersMulti
+    case typeEnum.multi_quantity_money:
+      kOrdersMulti.push(
+        {
+          ...skuTotalObj
+        },
+        {
+          ...sumMoneyObj
+        }
+      )
+      return kOrdersMulti
+    case typeEnum.multi_vertical:
+      return kOrdersMultiVertical
+    case typeEnum.multi_vertical_quantity:
+      kOrdersMultiVertical.push({
+        ...sumMoneyObj
+      })
+      return kOrdersMultiVertical
+    case typeEnum.multi_vertical_money:
+      kOrdersMultiVertical.push({
+        ...skuTotalObj
+      })
+      return kOrdersMultiVertical
+    case typeEnum.multi_vertical_quantity_money:
+      kOrdersMultiVertical.push(
+        {
+          ...skuTotalObj
+        },
+        {
+          ...sumMoneyObj
+        }
+      )
+      return kOrdersMultiVertical
     case typeEnum.quantity:
       ordinary.push({
-        _special: {
-          text: `${i18next.t('入库数小计')}：${sumQuantity}`
-        }
+        ...skuTotalObj
       })
       return ordinary
     case typeEnum.money:
       ordinary.push({
-        _special: {
-          text: `${i18next.t('入库金额小计')}：${sumMoney}`,
-          upperCaseText: `${i18next.t('入库金额小计')}：${sumMoney}${i18next.t(
-            '大写'
-          )}:${coverDigit2Uppercase(sumMoney)}`
-        }
+        ...sumMoneyObj
       })
       return ordinary
-    case typeEnum.multi:
-      return kOrdersMulti
-    case typeEnum.multi_vertical:
-      return kOrdersMultiVertical
-    case typeEnum.all:
+    case typeEnum.quantity_money:
       ordinary.push(
         {
-          _special: {
-            text: `${i18next.t('入库数小计')}：${sumQuantity}`
-          }
+          ...skuTotalObj
         },
         {
-          _special: {
-            text: `${i18next.t('入库金额小计')}：${sumMoney}`,
-            upperCaseText: `${i18next.t(
-              '入库金额小计'
-            )}：${sumMoney}${i18next.t('大写')}:${coverDigit2Uppercase(
-              sumMoney
-            )}`
-          }
+          ...sumMoneyObj
         }
       )
       return ordinary
@@ -204,10 +241,22 @@ const formatData = data => {
     _table: {
       orders: getTableData(data, 'normal'), // 普通
       orders_multi: getTableData(data, 'multi'), // 双栏
+      orders_multi_quantity: getTableData(data, 'multi_quantity'), // 双栏 + 入库数
+      orders_multi_money: getTableData(data, 'multi_money'), // 双栏 + 入库金额
+      orders_multi_quantity_money: getTableData(data, 'multi_quantity_money'), // 双栏 + 入库金额 + 入库数
       orders_multi_vertical: getTableData(data, 'multi_vertical'), // 双栏（纵向）
+      orders_multi_quantity_vertical: getTableData(
+        data,
+        'multi_vertical_quantity'
+      ), // 双栏（纵向） + 入库数
+      orders_multi_money_vertical: getTableData(data, 'multi_vertical_money'), // 双栏（纵向） + 入库金额
+      orders_multi_quantity_money_vertical: getTableData(
+        data,
+        'multi_vertical_quantity_money'
+      ), // 双栏（纵向） + 入库金额 + 入库数
       orders_quantity: getTableData(data, 'quantity'),
       orders_money: getTableData(data, 'money'),
-      orders_quantity_money: getTableData(data, 'all')
+      orders_quantity_money: getTableData(data, 'quantity_money')
     },
     _origin: data
   }
