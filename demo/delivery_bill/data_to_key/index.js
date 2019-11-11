@@ -9,7 +9,6 @@ import checklist from './checklist'
  * @return {*}
  */
 export default function toKey(data) {
-  console.log(data)
   switch (data.__gm_printer_data_type) {
     case 'order':
       return order(data)
