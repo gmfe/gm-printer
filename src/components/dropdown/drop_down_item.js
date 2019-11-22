@@ -10,14 +10,22 @@ class DropDownItem extends React.Component {
     this.props.onClick()
   }
 
-  render () {
+  render() {
     const { children, active, className, disabled, ...rest } = this.props
 
     return (
-      <li {...rest} className={classNames(active, {
-        'disabled': disabled
-      }, className)} onClick={this.handleClick}>
-        <a href='javascript:;'>{children}</a>
+      <li
+        {...rest}
+        className={classNames(
+          active,
+          {
+            disabled: disabled
+          },
+          className
+        )}
+        onClick={this.handleClick}
+      >
+        <a>{children}</a>
       </li>
     )
   }

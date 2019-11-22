@@ -4,7 +4,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 
 class BatchPrinter extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.ready = 0
   }
@@ -16,19 +16,12 @@ class BatchPrinter extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const { list } = this.props
 
-    return (
-      _.map(list, ({ config, data }, i) => (
-        <Printer
-          key={i}
-          data={data}
-          config={config}
-          onReady={this.handleReady}
-        />
-      ))
-    )
+    return _.map(list, ({ config, data }, i) => (
+      <Printer key={i} data={data} config={config} onReady={this.handleReady} />
+    ))
   }
 }
 

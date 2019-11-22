@@ -70,7 +70,8 @@ class EditorStore {
 
   @action
   init(config) {
-    this.config = config
+    // batchPrintConfig: 1 不连续打印（一张采购单不出现多供应商）2 连续打印（一张采购单可能出现多个供应商）
+    this.config = Object.assign({ batchPrintConfig: 1 }, config)
     this.originConfig = config
     this.selected = null
     this.selectedRegion = null
@@ -176,6 +177,11 @@ class EditorStore {
       gap,
       name
     }
+  }
+
+  @action
+  setBatchPrintConfig = type => {
+    this.config.batchPrintConfig = type
   }
 
   // 可选区域做相应的提示
