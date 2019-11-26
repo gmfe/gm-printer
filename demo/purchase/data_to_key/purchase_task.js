@@ -3,7 +3,7 @@ import _ from 'lodash'
 import i18next from '../../../locales'
 import Big from 'big.js'
 import { money, toFixed2, getSpecialTable } from './util'
-import { convertNumber2Sid } from '../../util'
+import {convertNumber2Sid, coverDigit2Uppercase} from '../../util'
 
 const Price = {
   getUnit () {
@@ -63,7 +63,8 @@ function generateTable (tasks) {
           [i18next.t('采购单位')]: task.sale_unit_name,
           [i18next.t('基本单位')]: task.std_unit_name
         }
-      })
+      }),
+      _origin: task
     }
   })
 }
@@ -94,9 +95,37 @@ function purchaseTask (data) {
 
   const normalTable = generateTable(tasks)
 
+  // 按一级分类分组
+  const groupByCategory1 = _.groupBy(
+    normalTable,
+    v => v._origin.category1_name
+  )
+  let kCategory = []
+  let index = 1
+  _.forEach(groupByCategory1, (value, key) => {
+    // 分类小计
+    const list = _.map(value, sku => {
+      return {
+        ...sku,
+        [i18next.t('序号')]: index++
+      }
+    })
+
+    // 分类计数
+    const categoryTotal = {
+      _special: {
+        text: '分类总数：' + list.length
+      }
+    }
+
+    /* -------- 分类  ------------- */
+    kCategory = kCategory.concat(list, [categoryTotal])
+  })
+
   return {
     common,
     _table: {
+      purchase_no_detail_category: kCategory, // 分类
       purchase_no_detail: normalTable, // 无明细
       purchase_last_col: normalTable, // 明细:单列-总表最后一列
       purchase_one_row: normalTable.reduce((arr, task) => [...arr, task, { _special: { list: task.__details, type: 'separator' } }], []), // 明细: 当行-总表下方一行

@@ -3,19 +3,25 @@ import ReactDOM from 'react-dom'
 import Printer from './printer'
 import getCSS from './get_css'
 import BatchPrinter from './batch_printer'
+import { isZoom } from 'gm-util'
 import { afterImgAndSvgLoaded } from '../util'
 
 const printerId = '_gm-printer_' + Math.random()
 let $printer = window.document.getElementById(printerId)
 
-function init (isTest) {
+function init(isTest) {
+  isZoom() &&
+    window.alert(
+      '检测您的浏览器使用了缩放,为了避免影响打印布局,请重置缩放到100%后再进行打印'
+    )
   if (!$printer) {
     $printer = window.document.createElement('iframe')
     $printer.id = printerId
     $printer.style.position = 'fixed'
     $printer.style.top = '0'
     $printer.style.width = '100%' // 使移动端可滚动
-    if (isTest) { // 模板编辑[测试打印],隐藏起来
+    if (isTest) {
+      // 模板编辑[测试打印],隐藏起来
       $printer.style.left = '-2000px'
     } else {
       $printer.style.left = '0px'
@@ -42,11 +48,11 @@ function init (isTest) {
   }
 }
 
-function toDoPrint ({ data, config }) {
+function toDoPrint({ data, config }) {
   return new window.Promise(resolve => {
     const $app = $printer.contentWindow.document.getElementById('appContainer')
     ReactDOM.unmountComponentAtNode($app)
-    ReactDOM.render((
+    ReactDOM.render(
       <Printer
         config={config}
         data={data}
@@ -56,17 +62,18 @@ function toDoPrint ({ data, config }) {
             resolve()
           }, $app)
         }}
-      />
-    ), $app)
+      />,
+      $app
+    )
   })
 }
 
-function toDoPrintBatch (list) {
+function toDoPrintBatch(list) {
   return new window.Promise(resolve => {
     const $app = $printer.contentWindow.document.getElementById('appContainer')
 
     ReactDOM.unmountComponentAtNode($app)
-    ReactDOM.render((
+    ReactDOM.render(
       <BatchPrinter
         list={list}
         onReady={() => {
@@ -75,24 +82,22 @@ function toDoPrintBatch (list) {
             resolve()
           }, $app)
         }}
-      />
-    ), $app)
+      />,
+      $app
+    )
   })
 }
 
-function doPrint ({ data, config }, isTest) {
+function doPrint({ data, config }, isTest) {
   init(isTest)
 
   return toDoPrint({ data, config })
 }
 
-function doBatchPrint (list, isTest) {
+function doBatchPrint(list, isTest) {
   init(isTest)
 
   return toDoPrintBatch(list)
 }
 
-export {
-  doPrint,
-  doBatchPrint
-}
+export { doPrint, doBatchPrint }

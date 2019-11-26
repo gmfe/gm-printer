@@ -1,6 +1,6 @@
 {
   "name": "gm-printer",
-  "version": "9.3.2",
+  "version": "9.4.0-beta",
   "description": "diy printer",
   "main": "src/index.js",
   "scripts": {
@@ -40,7 +40,7 @@
     "react": "^16.8.5",
     "react-dom": "^16.8.6",
     "gm-svg": "^0.3.0",
-    "gm-util": "^5.6.7",
+    "gm-util": "^5.12.0",
     "jsbarcode": "^3.11.0",
     "query-string": "^6.1.0"
   },
@@ -72,7 +72,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "file-loader": "^1.1.11",
     "gm-svg": "^0.3.0",
-    "gm-util": "^5.6.7",
+    "gm-util": "^5.12.0",
     "gm-webpack": "^2.2.1",
     "happypack": "^5.0.1",
     "html-webpack-plugin": "^3.2.0",
