@@ -22,34 +22,42 @@ const tableDataKeyList = [
 @inject('editStore')
 @observer
 class Editor extends React.Component {
-  render () {
+  render() {
     const { onSave, showEditor, addFields } = this.props
 
     return (
       <div className='gm-printer-edit'>
-
         <Flex className='gm-printer-edit-title-fixed'>
-          <Title title={i18next.t('模板预览')} text={<span
-            className='gm-text-red gm-padding-left-5'>{i18next.t('说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击')}
-          </span>}/>
+          <Title
+            title={i18next.t('模板预览')}
+            text={
+              <span className='gm-text-desc gm-padding-left-5'>
+                {i18next.t(
+                  '说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能'
+                )}
+              </span>
+            }
+          />
         </Flex>
 
-        {showEditor && <div className='gm-printer-edit-zone'>
-          <EditorTitle onSave={onSave}/>
-          <Gap height='10px'/>
-          <EditorSelect/>
-          <Gap height='5px'/>
-          <EditorField tableDataKeyList={tableDataKeyList}/>
-          <Gap height='5px'/>
-          <EditorAddField addFields={addFields}/>
+        {showEditor && (
+          <div className='gm-printer-edit-zone'>
+            <EditorTitle onSave={onSave} />
+            <Gap height='10px' />
+            <EditorSelect />
+            <Gap height='5px' />
+            <EditorField tableDataKeyList={tableDataKeyList} />
+            <Gap height='5px' />
+            <EditorAddField addFields={addFields} />
 
-          <div id='gm-printer-tip'/>
+            <div id='gm-printer-tip' />
 
-          <div id='gm-printer-modal'/>
-        </div>}
+            <div id='gm-printer-modal' />
+          </div>
+        )}
 
         <div className='gm-printer-edit-wrap'>
-          <ContextMenu/>
+          <ContextMenu />
         </div>
       </div>
     )

@@ -32,13 +32,15 @@ class Editor extends React.Component {
           <Title
             title={i18next.t('模板预览')}
             text={
-              <span className='gm-text-red gm-padding-left-5'>
+              <span className='gm-text-desc gm-padding-left-5'>
                 {i18next.t(
                   '说明：选中内容进行编辑，可拖动字段移动位置，右键使用更多功能，更多详情点击'
                 )}
                 <a
                   href='https://v.qq.com/x/page/t08044292dd.html'
                   target='_blank'
+                  className='btn-link'
+                  rel='noopener noreferrer'
                 >
                   {i18next.t('查看视频教程')}
                 </a>

@@ -8,6 +8,8 @@
 @mask: 1040;
 @modal: 1050;
 
+@active-color: #56a3f2;
+
 @import "../components/index.less";
 
 * {
@@ -27,7 +29,7 @@
   -webkit-text-size-adjust: 100%; /* 2 */
   position: relative;
   overflow: hidden;
-  color: #333;
+  color: #243351;
   font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontAwesome, sans-serif;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
@@ -37,6 +39,18 @@
     right: 10px;
     top: 10px;
     z-index: @tip;
+  }
+
+  .gm-printer-edit-title {
+    font-size: 14px;
+
+    &::before {
+      content: ' ';
+      height: 13px;
+      width: 3px;
+      margin: 3px 5px 3px 0;
+      background: #56a3f2;
+    }
   }
 
   .gm-printer-edit-zone {
@@ -70,8 +84,8 @@
 
     .gm-printer-edit-plus-btn {
       color: #fff;
-      background-color: #36ad3a;
-      border-color: #309a33;
+      background-color: @active-color;
+      border-color: #3e96f0;
       border-radius: 4px;
       width: 14px;
       height: 14px;
@@ -145,7 +159,7 @@
       cursor: pointer;
 
       &.active {
-        color: #36ad3a;
+        color: @active-color;
       }
 
       &:hover {
@@ -180,7 +194,7 @@
       outline: 1px dotted #daebf4;
 
       &.active {
-        background-color: rgb(235, 247, 237);
+        background-color: rgba(86, 163, 242, 0.3);
       }
 
       &::before {
@@ -236,7 +250,7 @@
       outline: 1px dotted #daebf4;
 
       &.active {
-        background-color: rgb(235, 247, 237);
+        background-color: rgba(86, 163, 242, 0.3);
       }
 
       &::before {

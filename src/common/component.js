@@ -6,7 +6,6 @@ import { borderStyleList, fontSizeList } from '../config'
 import { Flex, Tip } from '../components'
 import { Request } from 'gm-util'
 import i18next from '../../locales'
-import { SvgBill } from 'gm-svg'
 
 class IconAlign extends React.Component {
   render() {
@@ -583,8 +582,7 @@ const SubTitle = ({ text }) => (
 )
 
 const Title = ({ title, text }) => (
-  <Flex alignCenter className='gm-font-16'>
-    <SvgBill style={{ color: 'rgb(253, 82, 113)' }} />
+  <Flex alignCenter className='gm-printer-edit-title'>
     <span>{title}</span>
     <span className='gm-font-12'>{text}</span>
   </Flex>
