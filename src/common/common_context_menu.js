@@ -190,12 +190,12 @@ class CommonContextMenu extends React.Component {
     const isActive = c => className === c
 
     return (
-      <React.Fragment>
+      <>
         {renderTableAction && (
-          <React.Fragment>
+          <>
             {renderTableAction && renderTableAction(name)}
             <Hr />
-          </React.Fragment>
+          </>
         )}
 
         <div onClick={this.handleRemove}>{i18next.t('移除列')}</div>
@@ -227,7 +227,7 @@ class CommonContextMenu extends React.Component {
         <div onClick={this.handleAddContent.bind(this, 1, 'table')}>
           {i18next.t('向下插入表格')}
         </div>
-      </React.Fragment>
+      </>
     )
   }
 
@@ -243,7 +243,7 @@ class CommonContextMenu extends React.Component {
     const isProductLengthActive = _.includes(value, 'len')
     const isSubtotalActive = _.includes(value, 'subtotal')
     return (
-      <React.Fragment>
+      <>
         <div
           onClick={this.handleChangeCounterDataKey.bind(this, 'len')}
           className={isProductLengthActive ? 'active' : ''}
@@ -258,7 +258,7 @@ class CommonContextMenu extends React.Component {
         </div>
         <Hr />
         <div onClick={this.handleRemoveContent}>{i18next.t('移除区域')}</div>
-      </React.Fragment>
+      </>
     )
   }
 
@@ -281,7 +281,7 @@ class CommonContextMenu extends React.Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         {_.map(insertBlockList, v => {
           return v.value === 'image' ? (
             <ImageUploader
@@ -300,7 +300,7 @@ class CommonContextMenu extends React.Component {
         })}
 
         {arr[0] === 'contents' && (
-          <React.Fragment>
+          <>
             <Hr />
             <div onClick={this.handleAddContent.bind(this, 0, '')}>
               {i18next.t('向上插入区域块')}
@@ -318,9 +318,9 @@ class CommonContextMenu extends React.Component {
             <div onClick={this.handleAddContent.bind(this, 1, 'table')}>
               {i18next.t('向下插入表格')}
             </div>
-          </React.Fragment>
+          </>
         )}
-      </React.Fragment>
+      </>
     )
   }
 
@@ -370,7 +370,7 @@ function Menu(props) {
     detectContextMenuTop()
   })
 
-  return <React.Fragment>{children}</React.Fragment>
+  return <>{children}</>
 }
 
 Menu.propTypes = {
@@ -379,7 +379,7 @@ Menu.propTypes = {
 }
 
 CommonContextMenu.propTypes = {
-  editStore: PropTypes.object.isRequired,
+  editStore: PropTypes.object,
   insertBlockList: PropTypes.array.isRequired,
   renderTableAction: PropTypes.func,
   children: PropTypes.element.isRequired

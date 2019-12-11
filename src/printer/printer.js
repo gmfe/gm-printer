@@ -8,6 +8,7 @@ import Page from './page'
 import _ from 'lodash'
 import Panel from './panel'
 import Table from './table'
+import MergePage from './merge_page'
 
 // Header Sign Footer 相对特殊，要单独处理
 const Header = props => (
@@ -65,7 +66,7 @@ class Printer extends React.Component {
     props.printerStore.setSelectedRegion(props.selectedRegion)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.selected !== this.props.selected) {
       this.props.printerStore.setSelected(nextProps.selected)
     }
@@ -75,14 +76,17 @@ class Printer extends React.Component {
   }
 
   componentDidMount() {
-    const { printerStore } = this.props
+    const { printerStore, config } = this.props
+    const batchPrintConfig = config.batchPrintConfig
 
-    // didMount 代表第一次渲染完成
-    printerStore.setReady(true)
+    // 连续打印不需要计算
+    if (batchPrintConfig !== 2) {
+      // didMount 代表第一次渲染完成
+      printerStore.setReady(true)
 
-    // 开始计算，获取各种数据
-    printerStore.computedPages()
-
+      // 开始计算，获取各种数据
+      printerStore.computedPages()
+    }
     // Printer 不是立马就呈现出最终样式，有个过程。这个过程需要时间，什么 ready，不太清楚，估借 setState 来获取过程结束时刻
     this.setState({}, () => {
       this.props.onReady()
@@ -94,11 +98,12 @@ class Printer extends React.Component {
     const { config } = printerStore
 
     return (
-      <Page pageIndex={0}>
+      <Page>
         <Header config={config.header} pageIndex={0} />
         {_.map(config.contents, (content, index) => {
           switch (content.type) {
             case 'table':
+              // eslint-disable-next-line no-case-declarations
               const list = printerStore.data._table[content.dataKey]
               return (
                 <Table
@@ -134,12 +139,12 @@ class Printer extends React.Component {
     const { config } = printerStore
 
     return (
-      <React.Fragment>
+      <>
         {_.map(printerStore.pages, (page, i) => {
           const isLastPage = i === printerStore.pages.length - 1
 
           return (
-            <Page key={i} pageIndex={i}>
+            <Page key={i}>
               <Header config={config.header} pageIndex={i} />
 
               {_.map(page, (panel, ii) => {
@@ -182,8 +187,62 @@ class Printer extends React.Component {
             </Page>
           )
         })}
-      </React.Fragment>
+      </>
     )
+  }
+
+  renderMerge() {
+    const { printerStore } = this.props
+    const { config } = printerStore
+
+    return (
+      <MergePage>
+        <Header config={config.header} pageIndex={0} />
+        {_.map(config.contents, (content, index) => {
+          switch (content.type) {
+            case 'table':
+              // eslint-disable-next-line no-case-declarations
+              const list = printerStore.data._table[content.dataKey]
+              return (
+                <Table
+                  key={`contents.table.${index}`}
+                  name={`contents.table.${index}`}
+                  config={content}
+                  range={{ begin: 0, end: list.length }}
+                  pageIndex={0}
+                  placeholder={`${i18next.t('区域')} ${index}`}
+                />
+              )
+
+            default:
+              return (
+                <Panel
+                  key={`contents.panel.${index}`}
+                  name={`contents.panel.${index}`}
+                  config={content}
+                  pageIndex={0}
+                  placeholder={`${i18next.t('区域')} ${index}`}
+                />
+              )
+          }
+        })}
+        <Sign config={config.sign} pageIndex={0} />
+        <Footer config={config.footer} pageIndex={0} />
+      </MergePage>
+    )
+  }
+
+  doRender() {
+    const { printerStore, config } = this.props
+    // batchPrintConfig: 1 不连续打印（纸张会间断）2 连续打印（纸张连续打，不间断）
+    const batchPrintConfig = config.batchPrintConfig
+    if (batchPrintConfig === 2) {
+      return this.renderMerge()
+    } else {
+      // renderBefore ，拿到各种数据，哪些模块哪些内容放合适位置，切割表格
+      // renderPage，最终渲染打印的页面
+      return !printerStore.ready ? this.renderBefore() : this.renderPage()
+    }
   }
 
   render() {
@@ -199,17 +258,19 @@ class Printer extends React.Component {
       ...rest
     } = this.props
     const { width } = printerStore.config.page.size
+    // batchPrintConfig: 1 不连续打印（纸张会间断）2 连续打印（纸张连续打，不间断）
+    const batchPrintConfig = config.batchPrintConfig
 
-    // 第一个 renderBefore ，拿到各种数据，以便做计算，哪些模块哪些内容放合适位置
     return (
       <div
         {...rest}
         className={classNames('gm-printer', className)}
         style={Object.assign({}, style, {
-          width
+          width,
+          breakAfter: batchPrintConfig === 2 ? 'auto' : 'always'
         })}
       >
-        {printerStore.ready ? this.renderPage() : this.renderBefore()}
+        {this.doRender()}
       </div>
     )
   }

@@ -1,22 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { inject, observer } from 'mobx-react'
-import { getHeight } from '../util'
 
 @inject('printerStore')
 @observer
-class Page extends React.Component {
-  constructor() {
-    super()
-    this.ref = React.createRef()
-  }
-
-  componentDidMount() {
-    const $dom = this.ref.current
-
-    this.props.printerStore.setPageHeight(getHeight($dom))
-  }
-
+class MergePage extends React.Component {
   render() {
     const { children, printerStore } = this.props
     const {
@@ -26,26 +14,23 @@ class Page extends React.Component {
       paddingLeft
     } = printerStore.config.page.gap
 
-    const { width, height } = printerStore.config.page.size
+    const { width } = printerStore.config.page.size
 
-    // 统一减2毫米,防止计算误差溢出
-    const x = '- 2mm'
     return (
       <div
-        ref={this.ref}
         className='gm-printer-page'
         style={{
           boxSizing: 'content-box',
           width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
-          height: `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`,
-          padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`
+          padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`,
+          breakAfter: 'auto'
         }}
       >
         <div
           className='gm-printer-page-inner'
           style={{
             width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
-            height: `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`
+            breakAfter: 'auto'
           }}
         >
           {children}
@@ -55,8 +40,8 @@ class Page extends React.Component {
   }
 }
 
-Page.propTypes = {
-  printerStore: PropTypes.number
+MergePage.propTypes = {
+  printerStore: PropTypes.object
 }
 
-export default Page
+export default MergePage

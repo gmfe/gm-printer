@@ -8,12 +8,15 @@ import { formatTask } from './data_to_key'
 // 添加的字段
 import addFields from './add_fields'
 
-const DeliveryEditor = ({ handleSave }) => <EditorPurchase
-  config={config}
-  mockData={formatTask(data)}
-  onSave={handleSave}
-  showEditor
-  addFields={addFields}
-/>
+const DeliveryEditor = ({ handleSave }) => (
+  <EditorPurchase
+    config={config}
+    mockData={formatTask(data)}
+    onSave={handleSave}
+    showEditor
+    addFields={addFields}
+    isPurchase
+  />
+)
 
 export default DeliveryEditor

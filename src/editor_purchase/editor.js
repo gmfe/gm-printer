@@ -19,7 +19,7 @@ import withStore from '../common/hoc_with_store'
 @observer
 class Editor extends React.Component {
   render() {
-    const { onSave, showEditor, addFields } = this.props
+    const { onSave, showEditor, addFields, isPurchase } = this.props
 
     return (
       <div className='gm-printer-edit'>
@@ -38,9 +38,9 @@ class Editor extends React.Component {
 
         {showEditor && (
           <div className='gm-printer-edit-zone'>
-            <EditorTitle onSave={onSave} />
+            <EditorTitle onSave={onSave} isPurchase={isPurchase} />
             <Gap height='10px' />
-            <EditorSelect />
+            <EditorSelect isPurchase={isPurchase} />
             <Gap height='5px' />
             <EditorField />
             <Gap height='5px' />
@@ -67,11 +67,13 @@ Editor.propTypes = {
   onSave: PropTypes.func,
   showEditor: PropTypes.bool,
   mockData: PropTypes.object.isRequired,
-  addFields: PropTypes.object.isRequired
+  addFields: PropTypes.object.isRequired,
+  isPurchase: PropTypes.bool
 }
 
 Editor.deaultProps = {
-  onSave: _.noop
+  onSave: _.noop,
+  isPurchase: false
 }
 
 export default Editor
