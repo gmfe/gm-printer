@@ -418,7 +418,6 @@ class EditorStore {
 
   @action
   exchangeTableColumn(target, source) {
-    console.log(target, source)
     if (this.computedIsSelectTable) {
       const arr = this.selected.split('.')
       const { columns } = this.config.contents[arr[2]]
@@ -597,7 +596,7 @@ class EditorStore {
       const arr = this.selectedRegion.split('.')
       if (arr.includes('table')) {
         const dataKey = this.config.contents[arr[2]].dataKey
-        return dataKey.split('_')[0]
+        return dataKey && dataKey.split('_')[0]
       }
     }
   }
