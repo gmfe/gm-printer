@@ -1,6 +1,6 @@
 {
   "name": "gm-printer",
-  "version": "10.0.0",
+  "version": "10.2.1-beta",
   "description": "diy printer",
   "main": "src/index.js",
   "scripts": {
@@ -43,6 +43,7 @@
     "postcss-loader": "^3.0.0",
     "precss": "^3.1.2",
     "prop-types": "^15.6.2",
+    "qrcode.react": "^1.0.0",
     "query-string": "^6.1.0",
     "react": "^16.8.5",
     "react-dom": "^16.8.6"
@@ -105,10 +106,13 @@
     "style-loader": "^0.23.0",
     "stylelint": "^9.5.0",
     "stylelint-config-standard": "^18.2.0",
+    "terser-webpack-plugin": "^2.3.0",
     "url-loader": "^1.1.1",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.7",
-    "terser-webpack-plugin": "^2.3.0"
+    "webpack-dev-server": "^3.1.7"
+  },
+  "dependencies": {
+    "qrcode.react": "^1.0.0"
   }
 }

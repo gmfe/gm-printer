@@ -5,11 +5,12 @@ import Counter from './counter'
 import { inject, observer } from 'mobx-react'
 import { dispatchMsg, getStyleWithDiff } from '../util'
 import BarCode from './barcode'
+import QrCode from './qrcode'
 
 @inject('printerStore')
 @observer
 class Block extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       clientX: null,
@@ -18,27 +19,36 @@ class Block extends React.Component {
     }
   }
 
-  componentDidMount () {
-    window.document.addEventListener('gm-printer-block-edit', this.handleBlockEdit)
+  componentDidMount() {
+    window.document.addEventListener(
+      'gm-printer-block-edit',
+      this.handleBlockEdit
+    )
   }
 
-  componentWillUnmount () {
-    window.document.removeEventListener('gm-printer-block-edit', this.handleBlockEdit)
+  componentWillUnmount() {
+    window.document.removeEventListener(
+      'gm-printer-block-edit',
+      this.handleBlockEdit
+    )
   }
 
-  handleBlockEdit = (e) => {
+  handleBlockEdit = e => {
     const { name } = this.props
 
     if (e.detail.name !== name) {
       return
     }
 
-    this.setState({
-      isEdit: true
-    }, () => {
-      this.refEdit.focus()
-      this.refEdit.select()
-    })
+    this.setState(
+      {
+        isEdit: true
+      },
+      () => {
+        this.refEdit.focus()
+        this.refEdit.select()
+      }
+    )
   }
 
   handleDragStart = ({ clientX, clientY }) => {
@@ -74,13 +84,18 @@ class Block extends React.Component {
   }
 
   handleDoubleClick = () => {
-    const { config: { type } } = this.props
+    const {
+      config: { type }
+    } = this.props
     if (!type || type === 'text') {
-      this.setState({
-        isEdit: true
-      }, () => {
-        this.refEdit && this.refEdit.focus()
-      })
+      this.setState(
+        {
+          isEdit: true
+        },
+        () => {
+          this.refEdit && this.refEdit.focus()
+        }
+      )
     }
   }
 
@@ -90,13 +105,13 @@ class Block extends React.Component {
     })
   }
 
-  handleText = (e) => {
+  handleText = e => {
     dispatchMsg('gm-printer-block-text-set', {
       text: e.target.value
     })
   }
 
-  render () {
+  render() {
     let {
       name,
       config: { type, text, link, style, subText, value },
@@ -105,7 +120,6 @@ class Block extends React.Component {
       printerStore,
       ...rest
     } = this.props
-    
     const { isEdit } = this.state
     let content = null
     let specialStyle = null
@@ -114,17 +128,41 @@ class Block extends React.Component {
     } else if (type === 'line') {
       content = null
     } else if (type === 'image') {
-      content = <img src={link} style={{ width: '100%', height: '100%' }} alt='' data-name={name}/>
+      content = (
+        <img
+          src={link}
+          style={{ width: '100%', height: '100%' }}
+          alt=''
+          data-name={name}
+        />
+      )
     } else if (type === 'counter') {
       // 🌡特殊处理: counter层级(9) 比 普通block层级(10)低. 为了让普通block被选中
       specialStyle = { zIndex: 9 }
-      content = <Counter value={value}/>
+      content = <Counter value={value} />
       name = `${name}.counter`
     } else if (type === 'split_order_title') {
       // ⛑‍分单打印时,特殊的标题(由station的order_print的splitOrder函数修改config)
-      content = <div>{printerStore.template(text, pageIndex)}<span style={{ fontWeight: 'normal' }}>{subText}</span></div>
+      content = (
+        <div>
+          {printerStore.template(text, pageIndex)}
+          <span style={{ fontWeight: 'normal' }}>{subText}</span>
+        </div>
+      )
     } else if (type === 'barcode') {
-      content = <BarCode value={printerStore.template(text)} textMargin={0} margin={0} height={35} width={2} displayValue={false} dataName={name}/>
+      content = (
+        <BarCode
+          value={printerStore.template(text)}
+          textMargin={0}
+          margin={0}
+          height={35}
+          width={2}
+          displayValue={false}
+          dataName={name}
+        />
+      )
+    } else if (type === 'qrcode') {
+      content = <QrCode value={printerStore.template(text)} />
     }
 
     const active = name === printerStore.selected
@@ -143,13 +181,21 @@ class Block extends React.Component {
         {...rest}
       >
         <div
-          style={{ position: 'absolute', zIndex: 1, left: '0', top: '0', width: '100%', height: '100%' }}
+          style={{
+            position: 'absolute',
+            zIndex: 1,
+            left: '0',
+            top: '0',
+            width: '100%',
+            height: '100%'
+          }}
           data-name={name}
         />
         {(!type || type === 'text') && active && isEdit && (
           <textarea
             ref={ref => (this.refEdit = ref)}
-            className='gm-printer-block-text-edit' value={text}
+            className='gm-printer-block-text-edit'
+            value={text}
             onChange={this.handleText}
             onBlur={this.handleEditBlur}
           />

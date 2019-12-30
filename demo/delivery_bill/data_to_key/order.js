@@ -107,6 +107,7 @@ function getOrgItemPrice(list) {
 function generateCommon(data) {
   return {
     barcode: data.id,
+    qrcode: data.food_security_code,
     订单号: data.id,
     分拣序号: `${data.sort_id} ${data.child_sort_id}`,
     支付状态: PAY_STATUS[data.pay_status],
