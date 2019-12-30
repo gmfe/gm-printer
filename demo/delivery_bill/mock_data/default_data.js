@@ -14,6 +14,7 @@ export default {
   source_origin_id: 'xxx-888',
   freight: 12.0,
   receiver_phone: '13888888888',
+  food_security_code: 'PL10753370D847717743A1',
   receiver_name: i18next.t('张三'),
   total_pay: 155.0,
   resname: i18next.t('测试店铺（深圳总店）'),
