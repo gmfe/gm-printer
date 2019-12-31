@@ -184,7 +184,7 @@ class EditorField extends React.Component {
         <Gap />
 
         {tableDataKeyList && (
-          <React.Fragment>
+          <>
             <Flex>
               <Flex alignCenter>{i18next.t('数据类型')}：</Flex>
               <Select
@@ -200,7 +200,7 @@ class EditorField extends React.Component {
               </Select>
             </Flex>
             <Gap height='5px' />
-          </React.Fragment>
+          </>
         )}
 
         <Flex alignCenter>
@@ -244,6 +244,22 @@ class EditorField extends React.Component {
 
         <Flex alignCenter className='gm-padding-top-5 gm-text-desc'>
           {i18next.t('商品排列仅适用于双栏商品设置')}
+        </Flex>
+
+        <Gap height='5px' />
+
+        <Flex alignCenter>
+          <Flex alignCenter>{i18next.t('表格样式')}：</Flex>
+          <Select
+            className='gm-printer-edit-select'
+            value={editStore.tableCustomStyle}
+            onChange={editStore.changeTableCustomStyle}
+          >
+            <Option value='default'>{i18next.t('默认样式')}</Option>
+            <Option value='className0'>{i18next.t('样式一')}</Option>
+            <Option value='className1'>{i18next.t('样式二')}</Option>
+            <Option value='className2'>{i18next.t('样式三')}</Option>
+          </Select>
         </Flex>
 
         <Gap height='5px' />

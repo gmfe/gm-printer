@@ -125,6 +125,16 @@
   }
 }
 
+.gm-printer-table.gm-printer-table-classname-className2 {
+  table {
+    td,
+    th {
+      border: none;
+      padding: 2px;
+    }
+  }
+}
+
 .gm-printer-special-container {
   display: flex;
   justify-content: space-between;

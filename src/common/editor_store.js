@@ -5,6 +5,20 @@ import _ from 'lodash'
 import { dispatchMsg, getBlockName, exchange } from '../util'
 
 class EditorStore {
+  @observable
+  tableCustomStyle = 'default'
+
+  @action
+  changeTableCustomStyle = v => {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      if (arr.includes('table')) {
+        this.config.contents[arr[2]].className = v
+        this.tableCustomStyle = v
+      }
+    }
+  }
+
   @computed
   get computedPrinterKey() {
     return _.map(this.config, (v, k) => {
