@@ -1,39 +1,64 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 import i18next from '../../locales'
-import _ from 'lodash'
+import PropTypes from 'prop-types'
+
+const configs = [
+  {
+    id: 'len',
+    name: (
+      <div className='gm-printer-counter-item-1'>{i18next.t('商品数')}</div>
+    ),
+    value: item => <div className='gm-printer-counter-item-1'>{item.len}</div>
+  },
+  {
+    id: 'subtotal',
+    name: <div className='gm-printer-counter-item-1'>{i18next.t('小计')}</div>,
+    value: item => (
+      <div className='gm-printer-counter-item-1'>{item.subtotal}</div>
+    )
+  },
+  {
+    id: 'quantity',
+    name: (
+      <div className='gm-printer-counter-item-1'>{i18next.t('下单数')}</div>
+    ),
+    value: item => (
+      <div className='gm-printer-counter-item-1'>{item.quantity}</div>
+    )
+  }
+]
 
 @inject('printerStore')
 @observer
 class Counter extends React.Component {
-  render () {
-    let { printerStore, value } = this.props
+  render() {
+    // value, _counter 需要 初始值，兼容之前版本
+    const { printerStore, value = ['len'] } = this.props
     const { _counter = [] } = printerStore.data
 
-    // 兼容之前版本
-    if (value === undefined) value = [ 'len' ]
-    const showLen = _.includes(value, 'len')
-    const showSubtotal = _.includes(value, 'subtotal')
+    const rows = configs.filter(o => value.includes(o.id))
 
     return (
       <div className='gm-printer-counter'>
         <div className='gm-printer-counter-item'>
           <div>{i18next.t('类别')}</div>
-          {showLen && <div className='gm-printer-counter-item-1'>{i18next.t('商品数')}</div>}
-          {showSubtotal && <div className='gm-printer-counter-item-1'>{i18next.t('小计')}</div>}
+          {rows.map(row => row.name)}
         </div>
-        {
-          _counter.map(item => (
-            <div key={item.text} className='gm-printer-counter-item'>
-              <div>{item.text}</div>
-              {showLen && <div className='gm-printer-counter-item-1'>{item.len}</div>}
-              {showSubtotal && <div className='gm-printer-counter-item-1'>{item.subtotal}</div>}
-            </div>
-          ))
-        }
+        {_counter.map(item => (
+          <div key={item.text} className='gm-printer-counter-item'>
+            <div>{item.text}</div>
+            {rows.map(row => row.value(item))}
+          </div>
+        ))}
       </div>
     )
   }
+}
+
+Counter.propTypes = {
+  printerStore: PropTypes.object,
+  value: PropTypes.array
 }
 
 export default Counter
