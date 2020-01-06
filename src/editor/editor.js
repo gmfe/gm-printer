@@ -24,7 +24,7 @@ const tableDataKeyList = [
 @observer
 class Editor extends React.Component {
   render() {
-    const { onSave, showEditor, addFields } = this.props
+    const { onSave, showEditor, addFields, showNewDate } = this.props
 
     return (
       <div className='gm-printer-edit'>
@@ -55,7 +55,10 @@ class Editor extends React.Component {
             <Gap height='10px' />
             <EditorSelect />
             <Gap height='5px' />
-            <EditorField tableDataKeyList={tableDataKeyList} />
+            <EditorField
+              tableDataKeyList={tableDataKeyList}
+              showNewDate={showNewDate}
+            />
             <Gap height='5px' />
             <EditorAddField addFields={addFields} />
 
@@ -78,11 +81,13 @@ Editor.propTypes = {
   onSave: PropTypes.func,
   showEditor: PropTypes.bool,
   mockData: PropTypes.object.isRequired,
-  addFields: PropTypes.object.isRequired
+  addFields: PropTypes.object.isRequired,
+  showNewDate: PropTypes.bool
 }
 
 Editor.deaultProps = {
-  onSave: _.noop
+  onSave: _.noop,
+  showNewDate: false
 }
 
 export default Editor

@@ -74,7 +74,7 @@ class EditorField extends React.Component {
   }
 
   renderBlocks() {
-    const { editStore } = this.props
+    const { editStore, showNewDate } = this.props
     const { type, text, style, link } = editStore.computedSelectedInfo
 
     return (
@@ -151,6 +151,20 @@ class EditorField extends React.Component {
                 '3. 格式“19:00:00"，输入“单据日期： {{单据日期_时间}}"；'
               )}
             />
+            {showNewDate && (
+              <>
+                <TipInfo
+                  text={i18next.t(
+                    '4. 格式“01-01 19:00:00”，输入“单据日期： {{单据日期_无年份}}”；'
+                  )}
+                />
+                <TipInfo
+                  text={i18next.t(
+                    '5. 格式“01-01”，输入“单据日期： {{单据日期_日期_无年份}}"；'
+                  )}
+                />
+              </>
+            )}
           </div>
         )}
       </div>
@@ -377,7 +391,11 @@ class EditorField extends React.Component {
 
 EditorField.propTypes = {
   editStore: PropTypes.object,
-  tableDataKeyList: PropTypes.array
+  tableDataKeyList: PropTypes.array,
+  showNewDate: PropTypes.bool
+}
+EditorField.defaultProps = {
+  showNewDate: false
 }
 
 export default EditorField
