@@ -123,7 +123,8 @@ const tableFields = {
       key: i18next.t('出库金额(不含税)'),
       value: i18next.t('{{列.出库金额_不含税}}')
     },
-    { key: i18next.t('原金额'), value: i18next.t('{{列.原金额}}') }
+    { key: i18next.t('原金额'), value: i18next.t('{{列.原金额}}') },
+    { key: i18next.t('下单金额'), value: '{{列.下单金额}}' }
   ],
   [i18next.t('异常')]: [
     { key: i18next.t('异常原因'), value: i18next.t('{{列.异常原因}}') },
@@ -134,7 +135,13 @@ const tableFields = {
   ]
 }
 
+const summaryFields = [
+  { key: i18next.t('出库金额'), value: i18next.t('{{列.出库金额}}') },
+  { key: i18next.t('下单金额'), value: i18next.t('{{列.下单金额}}') }
+]
+
 export default {
   commonFields,
-  tableFields
+  tableFields,
+  summaryFields
 }

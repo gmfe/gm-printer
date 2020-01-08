@@ -98,8 +98,8 @@ function afterImgAndSvgLoaded(callback, $printer) {
   }
 }
 
-function getSubtotalHeight(subtotal) {
-  const { style = {} } = subtotal
+function getSumTrHeight(SumTr) {
+  const { style = {} } = SumTr
   const fontSize = style.fontSize || '12px'
 
   // 12px => 26, 14px => 29, 16px => 33, ...
@@ -116,7 +116,10 @@ const coverDigit2Uppercase = n => {
 
   const digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
 
-  const unit = [['元', '万', '亿'], ['', '拾', '佰', '仟']]
+  const unit = [
+    ['元', '万', '亿'],
+    ['', '拾', '佰', '仟']
+  ]
 
   const head = n < 0 ? '欠' : ''
 
@@ -159,8 +162,12 @@ const coverDigit2Uppercase = n => {
   )
 }
 
+// 是不是双栏table
+const isMultiTable = dataKey => dataKey.includes('multi')
+
+// 由于增加了商品排列（横向排列，纵向排列），所以统一用这个获取dataKey
 const getDataKey = (dataKey, arrange) =>
-  arrange === 'vertical' && dataKey.includes('multi')
+  arrange === 'vertical' && isMultiTable(dataKey)
     ? `${dataKey}_vertical`
     : dataKey
 
@@ -175,7 +182,8 @@ export {
   dispatchMsg,
   exchange,
   afterImgAndSvgLoaded,
-  getSubtotalHeight,
+  getSumTrHeight,
   coverDigit2Uppercase,
-  getDataKey
+  getDataKey,
+  isMultiTable
 }

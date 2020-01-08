@@ -29,13 +29,10 @@ class EditorStore {
           if (vv.type === 'table') {
             return (
               vv.columns.length +
-              '_' +
               vv.className +
-              '_' +
               vv.dataKey +
-              '_' +
               vv.subtotal.show +
-              '_' +
+              vv.pageSummary?.show +
               vv.customerRowHeight
             )
           } else {
@@ -763,6 +760,26 @@ class EditorStore {
 
       const oldNeedUpperCase = subtotalConfig.needUpperCase
       set(subtotalConfig, { needUpperCase: !oldNeedUpperCase })
+    }
+  }
+
+  @action.bound
+  setSummaryConfig(modify) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const config = this.config.contents[arr[2]]
+      const summaryConfig = config.summaryConfig
+      if (summaryConfig) {
+        set(summaryConfig, modify)
+      } else {
+        const init = {
+          pageSummaryShow: false,
+          totalSummaryShow: false,
+          style: { textAlign: 'center', fontSize: '12px' },
+          summaryColumns: []
+        }
+        set(config, { summaryConfig: { ...init, ...modify } })
+      }
     }
   }
 }
