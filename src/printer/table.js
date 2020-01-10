@@ -6,13 +6,15 @@ import {
   getDataKey,
   getHeight,
   getTableColumnName,
-  getWidth
+  getWidth,
+  isMultiTable
 } from '../util'
 import { inject, observer } from 'mobx-react'
 import classNames from 'classnames'
 import { MULTI_SUFFIX } from '../config'
 import SpecialTr from './table_special_tr'
 import SubtotalTr from './table_subtotal_tr'
+import PageSummary from './page_summary'
 
 @inject('printerStore')
 @observer
@@ -95,10 +97,9 @@ class Table extends React.Component {
     const {
       config: { columns, dataKey }
     } = this.props
-    const arr = dataKey.split('_')
     const columns1 = columns.map((val, index) => ({ ...val, index }))
     // 多列表格
-    if (arr.includes('multi')) {
+    if (isMultiTable(dataKey)) {
       // 双栏商品的第二列有点特殊,都带 _MULTI_SUFFIX 后缀
       const columns2 = columns.map((val, index) => {
         return {
@@ -125,10 +126,7 @@ class Table extends React.Component {
       pageIndex,
       printerStore
     } = this.props
-    dataKey =
-      arrange === 'vertical' && dataKey.includes('multi')
-        ? `${dataKey}_vertical`
-        : dataKey
+    dataKey = getDataKey(dataKey, arrange)
     const tableData = printerStore.data._table[dataKey] || []
 
     const columns = this.getColumns()
@@ -206,6 +204,7 @@ class Table extends React.Component {
             )
           })}
           <SubtotalTr {...this.props} />
+          <PageSummary {...this.props} />
         </tbody>
       </table>
     )

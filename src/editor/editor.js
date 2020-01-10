@@ -9,6 +9,7 @@ import EditorTitle from '../common/editor_title'
 import EditorSelect from '../common/editor_select'
 import EditorField from '../common/editor_edit_field'
 import EditorAddField from '../common/editor_add_field'
+import EditorPageSummary from '../common/editor_page_summary'
 import ContextMenu from './context_menu'
 import i18next from '../../locales'
 import withStore from '../common/hoc_with_store'
@@ -61,6 +62,8 @@ class Editor extends React.Component {
             />
             <Gap height='5px' />
             <EditorAddField addFields={addFields} />
+            <Gap height='5px' />
+            <EditorPageSummary summaryFields={addFields.summaryFields} />
 
             <div id='gm-printer-tip' />
 

@@ -1,31 +1,25 @@
 import i18next from '../../locales'
 import { action, observable } from 'mobx'
-import { getSubtotalHeight } from '../util'
+import { getSumTrHeight, isMultiTable } from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
 
 const price = (n, f = 2) => Big(n || 0).toFixed(f)
 class PrinterStore {
-  @observable
-  ready = false
+  @observable ready = false
 
-  @observable
-  config = {}
+  // eslint-disable-next-line
+  @observable config = {}
+  // eslint-disable-next-line
+  @observable pageHeight = {}
+  // eslint-disable-next-line
+  @observable height = {}
 
-  @observable
-  pageHeight = {}
+  @observable contents = []
+  // eslint-disable-next-line
+  @observable tablesInfo = {}
 
-  @observable
-  height = {}
-
-  @observable
-  contents = []
-
-  @observable
-  tablesInfo = {}
-
-  @observable
-  pages = [] // [{type, index, begin, end}]
+  @observable pages = [] // [{type, index, begin, end}]
 
   data = {}
 
@@ -100,11 +94,17 @@ class PrinterStore {
       if (this.config.contents[index].type === 'table') {
         const info = this.tablesInfo[`contents.table.${index}`]
 
-        const { subtotal } = this.config.contents[index]
-        // 如果显示每页小计,那么table高度多预留一行高度
-        const subtotalTrHeight = subtotal.show ? getSubtotalHeight(subtotal) : 0
+        const { subtotal, pageSummary, dataKey } = this.config.contents[index]
+        // 如果显示每页合计,那么table高度多预留一行高度
+        const subtotalTrHeight = subtotal.show ? getSumTrHeight(subtotal) : 0
+        // 如果每页合计(新的),那么table高度多预留一行高度
+        const pageSummaryTrHeight =
+          pageSummary?.show && !isMultiTable(dataKey) // 双栏table没有每页合计
+            ? getSumTrHeight(pageSummary)
+            : 0
 
-        const allTableHaveThisHeight = info.head.height + subtotalTrHeight
+        const allTableHaveThisHeight =
+          info.head.height + subtotalTrHeight + pageSummaryTrHeight
         let begin = 0
         let end = 0
 
