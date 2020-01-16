@@ -353,6 +353,18 @@ class EditorStore {
           text: `{{barcode}}`
         })
         break
+      case 'qrcode':
+        blocks.push({
+          type: 'qrcode',
+          style: {
+            left: '0px',
+            top: '5px',
+            width: '75px',
+            height: '75px'
+          },
+          text: `{{qrcode}}`
+        })
+        break
       default:
         window.alert(i18next.t('出错啦，未识别类型，此信息不应该出现'))
     }

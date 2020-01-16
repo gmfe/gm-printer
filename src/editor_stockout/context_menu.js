@@ -1,17 +1,13 @@
 import i18next from '../../locales'
 import React from 'react'
 import CommonContextMenu from '../common/common_context_menu'
-import _ from 'lodash'
 import { inject, observer } from 'mobx-react'
 import { Printer } from '../printer'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
   { value: 'line', text: i18next.t('插入线条') },
-  { value: 'image', text: i18next.t('插入图片') },
-  { value: 'counter', text: i18next.t('插入分类汇总') },
-  { value: 'barcode', text: i18next.t('插入订单条形码') },
-  { value: 'qrcode', text: i18next.t('插入订单溯源二维码') }
+  { value: 'image', text: i18next.t('插入图片') }
 ]
 
 @inject(stores => ({
@@ -20,46 +16,20 @@ const blockTypeList = [
 }))
 @observer
 class ContextMenu extends React.Component {
-  /**
-   * 是否存在每页合计按钮,非异常明细才有按钮
-   * @param name => ContextMenu 的 this.state.name
-   * @return {boolean}
-   */
-  hasSubtotalBtn = name => {
-    if (!name) return false
-
-    const arr = name.split('.')
-    if (_.includes(arr, 'table')) {
-      const dataKey = this.props.editStore.config.contents[arr[2]].dataKey
-      // 异常明细没有每页小计
-      return dataKey !== 'abnormal'
-    }
-  }
-
   handleChangeTableDataKey = (key, name) => {
     const { editStore } = this.props
 
-    editStore.changeTableDataKey(name, key)
-  }
-
-  handleSubtotal = name => {
-    const { editStore } = this.props
-
-    editStore.setSubtotalShow(name)
+    editStore.changeTableDataKeyStockout(name, key)
   }
 
   renderOrderActionBtn = name => {
-    if (!this.hasSubtotalBtn(name)) {
-      return null
-    }
-
     const arr = name.split('.')
-    const { dataKey, subtotal } = this.props.editStore.config.contents[arr[2]]
+    const { dataKey } = this.props.editStore.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
 
+    const isQuantityActive = keyArr.includes('quantity')
+    const isMoneyActive = keyArr.includes('money')
     const isMultiActive = keyArr.includes('multi')
-    const isCategoryActive = keyArr.includes('category')
-    const isSubtotalActive = subtotal.show
 
     return (
       <>
@@ -70,16 +40,16 @@ class ContextMenu extends React.Component {
           {i18next.t('双栏商品')}
         </div>
         <div
-          onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
-          className={isCategoryActive ? 'active' : ''}
+          onClick={this.handleChangeTableDataKey.bind(this, 'quantity', name)}
+          className={isQuantityActive ? 'active' : ''}
         >
-          {i18next.t('商品分类')}
+          {i18next.t('出库数小计')}
         </div>
         <div
-          onClick={this.handleSubtotal.bind(this, name)}
-          className={isSubtotalActive ? 'active' : ''}
+          onClick={this.handleChangeTableDataKey.bind(this, 'money', name)}
+          className={isMoneyActive ? 'active' : ''}
         >
-          {i18next.t('每页合计')}
+          {i18next.t('出库金额小计')}
         </div>
       </>
     )

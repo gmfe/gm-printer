@@ -3,6 +3,7 @@ import '../locales'
 import Editor from './editor'
 import EditorPurchase from './editor_purchase'
 import EditorStockIn from './editor_stockin'
+import EditorStockOut from './editor_stockout'
 import EditorSettle from './editor_settle'
 import EditorStatement from './editor_statement'
 import EditorAccoutStatement from './editor_account_statement'
@@ -15,6 +16,7 @@ export { setLocale } from '../locales'
 export {
   Editor,
   EditorStockIn,
+  EditorStockOut,
   EditorPurchase,
   EditorSettle,
   EditorStatement,
