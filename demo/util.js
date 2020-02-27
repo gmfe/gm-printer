@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Big from 'big.js'
+import i18next from '../locales'
 
 export const coverDigit2Uppercase = n => {
   if (_.isNil(n) || _.isNaN(n)) {
@@ -80,4 +81,15 @@ const RECEIVE_WAYS = [
 export const findReceiveWayById = id => {
   const target = _.find(RECEIVE_WAYS, item => item.value === id)
   return (target && target.name) || ''
+}
+
+export const isNumber = value => {
+  return value !== null && value !== '' && !_.isNaN(Number(value))
+}
+
+// 出库状态
+export const outStockStatusMap = {
+  1: i18next.t('待出库'),
+  2: i18next.t('已出库'),
+  3: i18next.t('已删除')
 }

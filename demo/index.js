@@ -4,6 +4,7 @@ import DeliveryEditor from './delivery_bill'
 import PurchaseEditor from './purchase'
 import StockInEditor from './stock_in'
 import SettleEditor from './settle'
+import StockOutEditor from './stock_out'
 
 import './style.less'
 
@@ -30,12 +31,14 @@ class App extends React.Component {
             <button onClick={this.handleOnClick.bind(this, 'delivery')}>配送单</button>
             <button onClick={this.handleOnClick.bind(this, 'purchase')}>采购单</button>
             <button onClick={this.handleOnClick.bind(this, 'stock_in')}>入库单</button>
+            <button onClick={this.handleOnClick.bind(this, 'stock_out')}>出库单</button>
             <button onClick={this.handleOnClick.bind(this, 'settle')}>结款单</button>
           </div>
         </div>
         {selected === 'delivery' && <DeliveryEditor handleSave={this.handleSave}/>}
         {selected === 'purchase' && <PurchaseEditor handleSave={this.handleSave}/>}
         {selected === 'stock_in' && <StockInEditor handleSave={this.handleSave}/>}
+        {selected === 'stock_out' && <StockOutEditor handleSave={this.handleSave}/>}
         {selected === 'settle' && <SettleEditor handleSave={this.handleSave}/>}
       </div>
     )
