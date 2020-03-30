@@ -8,12 +8,15 @@ import i18next from '../../locales'
 
 /**
  * 每列统计
- * @param colText 例子： {{列.出库金额}}
+ * @param colText 例子： {{列.出库金额}} {{列.称重数_销售单位}}{{列.销售单位}}
  * @param dataList
  * @returns {*|string}
  */
 const sumCol = (colText, dataList) => {
-  const key = colText.split('.')[1].replace('}}', '')
+  // const key = colText.split('.')[1].replace('}}', '')
+  const match = /(?<=\.).+?(?=}})/.exec(colText)
+  if (!match) return ''
+  const key = match[0]
 
   let result
   try {
