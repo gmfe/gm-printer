@@ -11,7 +11,11 @@ const blockTypeList = [
   { value: 'image', text: i18next.t('插入图片') },
   { value: 'counter', text: i18next.t('插入分类汇总') },
   { value: 'barcode', text: i18next.t('插入订单条形码') },
-  { value: 'qrcode', text: i18next.t('插入订单溯源二维码') }
+  { value: 'qrcode', text: i18next.t('插入订单溯源二维码') },
+  {
+    value: 'uniform_social_credit_code',
+    text: i18next.t('插入统一社会信用代码')
+  }
 ]
 
 @inject(stores => ({
