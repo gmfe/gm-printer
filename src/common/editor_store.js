@@ -313,9 +313,6 @@ class EditorStore {
             position: 'absolute',
             left: '0px',
             top: pos.top || '0px',
-            borderTopColor: 'black',
-            borderTopWidth: '1px',
-            borderTopStyle: 'solid',
             width: '100%'
           }
         })

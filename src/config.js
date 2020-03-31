@@ -1,6 +1,6 @@
 import i18next from '../locales'
 export const pageTypeMap = {
-  'A4': {
+  A4: {
     name: 'A4',
     size: {
       width: '210mm',
@@ -13,7 +13,7 @@ export const pageTypeMap = {
       paddingLeft: '8mm'
     }
   },
-  'A5': {
+  A5: {
     name: 'A5',
     size: {
       width: '148mm',
@@ -78,7 +78,7 @@ export const pageTypeMap = {
       paddingLeft: '16mm'
     }
   },
-  'DIY': {
+  DIY: {
     name: i18next.t('自定义纸张'),
     size: {
       width: '210mm',
@@ -102,7 +102,10 @@ export const fontSizeList = [
   '22px',
   '24px',
   '26px',
-  '28px'
+  '28px',
+  '100px',
+  '150px',
+  '200px'
 ]
 
 export const printDirectionList = [

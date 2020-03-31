@@ -252,12 +252,14 @@ class Printer extends React.Component {
       config,
       onReady,
       selectedRegion,
-      className,
-      style,
       printerStore,
       ...rest
     } = this.props
-    const { width } = printerStore.config.page.size
+    const {
+      size: { width },
+      className,
+      style
+    } = printerStore.config.page
     // batchPrintConfig: 1 不连续打印（纸张会间断）2 连续打印（纸张连续打，不间断）
     const batchPrintConfig = config.batchPrintConfig
 

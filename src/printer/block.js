@@ -126,7 +126,11 @@ class Block extends React.Component {
     if (!type || type === 'text') {
       content = printerStore.template(text, pageIndex)
     } else if (type === 'line') {
-      content = null
+      content = (
+        <div
+          style={{ width: '100%', height: '1px', backgroundColor: 'black' }}
+        />
+      )
     } else if (type === 'image') {
       content = (
         <img
@@ -159,6 +163,7 @@ class Block extends React.Component {
           width={2}
           displayValue={false}
           dataName={name}
+          background='transparent'
         />
       )
     } else if (type === 'qrcode') {
