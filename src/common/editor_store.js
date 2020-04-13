@@ -365,18 +365,6 @@ class EditorStore {
           text: `{{qrcode}}`
         })
         break
-      case 'uniform_social_credit_code':
-        blocks.push({
-          type: 'qrcode',
-          style: {
-            left: '0px',
-            top: '5px',
-            width: '75px',
-            height: '75px'
-          },
-          text: `{{uniform_social_credit_code}}`
-        })
-        break
       default:
         window.alert(i18next.t('出错啦，未识别类型，此信息不应该出现'))
     }
