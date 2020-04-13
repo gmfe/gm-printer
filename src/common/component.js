@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import _ from 'lodash'
@@ -88,6 +88,12 @@ class Text extends React.Component {
 
 Text.propTypes = {
   value: PropTypes.string,
+  style: PropTypes.object,
+  className: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.array,
+    PropTypes.object
+  ]),
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired
 }
@@ -116,6 +122,7 @@ class Textarea extends React.Component {
 
 Textarea.propTypes = {
   value: PropTypes.string,
+  style: PropTypes.object,
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired
 }
@@ -340,12 +347,12 @@ class Line extends React.Component {
 
   render() {
     const {
-      style: { borderTopWidth, borderTopStyle, width }
+      style: { borderTopWidth, borderTopStyle, borderTopVertical, width }
     } = this.props
 
     return (
       <span>
-        {i18next.t('宽')}
+        {i18next.t('长度')}
         <TextPX
           value={width}
           onChange={this.handleChange.bind(this, 'width')}
@@ -366,6 +373,13 @@ class Line extends React.Component {
               {v.text}
             </option>
           ))}
+        </select>
+        <select
+          value={borderTopVertical}
+          onChange={e => this.handleChange('transform', e.target.value)}
+        >
+          <option value='rotate(0)'>{i18next.t('横线')}</option>
+          <option value='rotate(90deg)'>{i18next.t('竖线')}</option>
         </select>
       </span>
     )
@@ -390,7 +404,7 @@ class Size extends React.Component {
   render() {
     const { style } = this.props
     return (
-      <React.Fragment>
+      <>
         {i18next.t('高')}
         <TextPX
           value={style.height}
@@ -401,7 +415,7 @@ class Size extends React.Component {
           value={style.width}
           onChange={this.handleChange.bind(this, 'width')}
         />
-      </React.Fragment>
+      </>
     )
   }
 }
@@ -462,7 +476,7 @@ class ImageUploader extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <div onClick={this.handleClick} onDrop={this.handleUpload}>
           {this.props.text}
         </div>
@@ -473,7 +487,7 @@ class ImageUploader extends React.Component {
           accept='image/*'
           onChange={this.handleUpload}
         />
-      </React.Fragment>
+      </>
     )
   }
 }
@@ -496,7 +510,7 @@ class InputWithUnit extends React.Component {
     const val = value.replace(unit, '')
 
     return (
-      <Fragment>
+      <>
         <input
           {...rest}
           type='number'
@@ -504,7 +518,7 @@ class InputWithUnit extends React.Component {
           value={val}
         />
         {unit}
-      </Fragment>
+      </>
     )
   }
 }
@@ -580,17 +594,28 @@ const SubTitle = ({ text }) => (
     </span>
   </div>
 )
+SubTitle.propTypes = {
+  text: PropTypes.string
+}
 
 const Title = ({ title, text }) => (
   <Flex alignCenter className='gm-printer-edit-title'>
     <span>{title}</span>
-    <span className='gm-font-12'>{text}</span>
+    <span className='gm-text-12'>{text}</span>
   </Flex>
 )
+Title.propTypes = {
+  title: PropTypes.string,
+  text: PropTypes.object
+}
 
 const Gap = ({ width = '100%', height = '3px' }) => (
   <div style={{ width, height }} />
 )
+Gap.propTypes = {
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+}
 
 const FieldBtn = ({ name, onClick }) => (
   <Flex alignCenter style={{ width: '50%', margin: '3px 0' }}>
@@ -600,12 +625,20 @@ const FieldBtn = ({ name, onClick }) => (
     <span className='gm-padding-left-5'>{name}</span>
   </Flex>
 )
+FieldBtn.propTypes = {
+  name: PropTypes.string,
+  onClick: PropTypes.func
+}
 
 const TipInfo = ({ text, color }) => (
   <Flex style={{ color }} alignCenter className='gm-padding-top-5 gm-text-red'>
     {text}
   </Flex>
 )
+TipInfo.propTypes = {
+  text: PropTypes.string,
+  color: PropTypes.string
+}
 
 export {
   Text,

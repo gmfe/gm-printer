@@ -43,12 +43,16 @@ class Counter extends React.Component {
       <div className='gm-printer-counter'>
         <div className='gm-printer-counter-item'>
           <div>{i18next.t('类别')}</div>
-          {rows.map(row => row.name)}
+          {rows.map((row, i) => (
+            <span key={i}>{row.name}</span>
+          ))}
         </div>
         {_counter.map(item => (
           <div key={item.text} className='gm-printer-counter-item'>
             <div>{item.text}</div>
-            {rows.map(row => row.value(item))}
+            {rows.map((row, i) => (
+              <span key={i}>{row.value(item)}</span>
+            ))}
           </div>
         ))}
       </div>

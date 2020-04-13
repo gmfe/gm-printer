@@ -116,7 +116,7 @@ class EditorSummary extends React.Component {
 
 EditorSummary.propTypes = {
   editStore: PropTypes.object,
-  summaryFields: PropTypes.object.isRequired
+  summaryFields: PropTypes.array.isRequired
 }
 
 export default EditorSummary
