@@ -6,18 +6,17 @@ import { observer } from 'mobx-react'
 import { get } from 'mobx'
 import i18next from '../../locales'
 
+const regExp = text => {
+  const match = /(?<=\.).+?(?=}})/.exec(text)
+  return match ? match[0] : ''
+}
 /**
  * 每列统计
- * @param colText 例子： {{列.出库金额}} {{列.称重数_销售单位}}{{列.销售单位}}
+ * @param key
  * @param dataList
  * @returns {*|string}
  */
-const sumCol = (colText, dataList) => {
-  // const key = colText.split('.')[1].replace('}}', '')
-  const match = /(?<=\.).+?(?=}})/.exec(colText)
-  if (!match) return ''
-  const key = match[0]
-
+const sumCol = (key, dataList) => {
   let result
   try {
     result = dataList
@@ -61,8 +60,11 @@ const PageSummary = props => {
           if (index === 0) {
             html = i18next.t('合计')
           } else {
-            html = summaryConfig.summaryColumns.includes(col.text)
-              ? sumCol(col.text, currentPageTableData)
+            const key = regExp(col.text)
+            html = summaryConfig.summaryColumns
+              .map(text => regExp(text))
+              .includes(key)
+              ? sumCol(key, currentPageTableData)
               : ' '
           }
 
