@@ -61,11 +61,12 @@ const PageSummary = props => {
             html = i18next.t('合计')
           } else {
             const key = regExp(col.text)
-            html = summaryConfig.summaryColumns
-              .map(text => regExp(text))
-              .includes(key)
-              ? sumCol(key, currentPageTableData)
-              : ' '
+            html =
+              summaryConfig.summaryColumns
+                .map(text => regExp(text))
+                .includes(key) && key
+                ? sumCol(key, currentPageTableData)
+                : ' '
           }
 
           return (
