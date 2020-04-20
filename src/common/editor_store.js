@@ -316,6 +316,8 @@ class EditorStore {
             borderTopColor: 'black',
             borderTopWidth: '1px',
             borderTopStyle: 'solid',
+            transform: 'rotate(0)',
+            transformOrigin: 'left top',
             width: '100%'
           }
         })
