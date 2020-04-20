@@ -7,8 +7,9 @@ import { get } from 'mobx'
 import i18next from '../../locales'
 
 const regExp = text => {
-  const match = /(?<=\.).+?(?=}})/.exec(text)
-  return match ? match[0] : ''
+  const match = /{{([^{}]+)}}/.exec(text)
+  const key = match ? match[1] : ''
+  return key ? key.split('.')[1] : ''
 }
 /**
  * 每列统计
