@@ -126,11 +126,7 @@ class Block extends React.Component {
     if (!type || type === 'text') {
       content = printerStore.template(text, pageIndex)
     } else if (type === 'line') {
-      content = (
-        <div
-          style={{ width: '100%', height: '1px', backgroundColor: 'black' }}
-        />
-      )
+      content = null
     } else if (type === 'image') {
       content = (
         <img
