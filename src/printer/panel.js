@@ -9,8 +9,8 @@ import Block from './block'
 @inject('printerStore')
 @observer
 class Panel extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.ref = React.createRef()
     this.state = {
       clientY: null

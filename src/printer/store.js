@@ -120,7 +120,11 @@ class PrinterStore {
 
             // 如果没有多余空间了
             if (height > this.pageHeight) {
-              // end 为 0 ，即只有表头，没有必要加进去，应放下一页显示
+              // end 为 0 ，即header,footer 和表头那些都放不下，容易在自定义纸张大小输入数值太小的情况，直接忽略不计算了
+              if (end === 0) {
+                index++
+                break
+              }
               if (end !== 0) {
                 // ‼️‼️‼️ 极端情况: 如果一行的高度 大于 页面高度, 那么就做下一行
                 if (

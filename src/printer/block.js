@@ -159,6 +159,7 @@ class Block extends React.Component {
           width={2}
           displayValue={false}
           dataName={name}
+          background='transparent'
         />
       )
     } else if (type === 'qrcode') {

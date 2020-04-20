@@ -7,6 +7,7 @@ import EditorStockOut from './editor_stockout'
 import EditorSettle from './editor_settle'
 import EditorStatement from './editor_statement'
 import EditorAccoutStatement from './editor_account_statement'
+import EditorBoxLabel from './editor_box_label'
 import { BatchPrinter, doBatchPrint, doPrint, Printer, getCSS } from './printer'
 import { MULTI_SUFFIX } from './config'
 
@@ -23,6 +24,7 @@ export {
   EditorAccoutStatement,
   Printer,
   BatchPrinter,
+  EditorBoxLabel,
   doPrint,
   doBatchPrint,
   getCSS,

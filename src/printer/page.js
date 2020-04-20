@@ -26,7 +26,10 @@ class Page extends React.Component {
       paddingLeft
     } = printerStore.config.page.gap
 
-    const { width, height } = printerStore.config.page.size
+    const {
+      size: { width, height },
+      pageStyle
+    } = printerStore.config.page
 
     // 统一减2毫米,防止计算误差溢出
     const x = '- 2mm'
@@ -35,6 +38,7 @@ class Page extends React.Component {
         ref={this.ref}
         className='gm-printer-page'
         style={{
+          ...pageStyle,
           boxSizing: 'content-box',
           width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
           height: `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`,
