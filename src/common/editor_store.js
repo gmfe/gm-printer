@@ -1,5 +1,5 @@
 import i18next from '../../locales'
-import { action, computed, observable, set } from 'mobx'
+import { action, computed, observable, set, toJS } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName, exchange } from '../util'
@@ -32,7 +32,7 @@ class EditorStore {
               vv.className +
               vv.dataKey +
               vv.subtotal.show +
-              vv.pageSummary?.show +
+              vv.summaryConfig?.pageSummaryShow +
               vv.customerRowHeight
             )
           } else {
@@ -794,6 +794,7 @@ class EditorStore {
         }
         set(config, { summaryConfig: { ...init, ...modify } })
       }
+      this.config = toJS(this.config)
     }
   }
 }
