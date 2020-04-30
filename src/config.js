@@ -105,7 +105,8 @@ export const fontSizeList = [
   '28px',
   '100px',
   '150px',
-  '200px'
+  '200px',
+  '300px'
 ]
 
 export const printDirectionList = [
