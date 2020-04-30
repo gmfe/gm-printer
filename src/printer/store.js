@@ -94,15 +94,14 @@ class PrinterStore {
       if (this.config.contents[index].type === 'table') {
         const info = this.tablesInfo[`contents.table.${index}`]
 
-        const { subtotal, pageSummary, dataKey } = this.config.contents[index]
+        const { subtotal, dataKey, summaryConfig } = this.config.contents[index]
         // 如果显示每页合计,那么table高度多预留一行高度
         const subtotalTrHeight = subtotal.show ? getSumTrHeight(subtotal) : 0
         // 如果每页合计(新的),那么table高度多预留一行高度
         const pageSummaryTrHeight =
-          pageSummary?.show && !isMultiTable(dataKey) // 双栏table没有每页合计
-            ? getSumTrHeight(pageSummary)
+          summaryConfig?.pageSummaryShow && !isMultiTable(dataKey) // 双栏table没有每页合计
+            ? getSumTrHeight(summaryConfig)
             : 0
-
         const allTableHaveThisHeight =
           info.head.height + subtotalTrHeight + pageSummaryTrHeight
         let begin = 0
