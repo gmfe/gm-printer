@@ -93,22 +93,6 @@ export const pageTypeMap = {
   }
 }
 
-export const fontSizeList = [
-  '12px',
-  '14px',
-  '16px',
-  '18px',
-  '20px',
-  '22px',
-  '24px',
-  '26px',
-  '28px',
-  '100px',
-  '150px',
-  '200px',
-  '300px'
-]
-
 export const printDirectionList = [
   { value: 'vertical', text: i18next.t('纵向') },
   { value: 'horizontal', text: i18next.t('横向') }
