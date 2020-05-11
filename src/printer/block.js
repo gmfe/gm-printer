@@ -128,10 +128,15 @@ class Block extends React.Component {
     } else if (type === 'line') {
       content = null
     } else if (type === 'image') {
+      // link 为写死的链接, text 为动态的链接(取接口数据里边的)
+      const src = link || printerStore.template(text)
       content = (
         <img
-          src={link}
-          style={{ width: '100%', height: '100%' }}
+          src={src}
+          style={{
+            width: '100%',
+            height: '100%'
+          }}
           alt=''
           data-name={name}
         />
@@ -210,7 +215,9 @@ class Block extends React.Component {
 Block.propTypes = {
   name: PropTypes.string.isRequired,
   config: PropTypes.object.isRequired,
-  pageIndex: PropTypes.number.isRequired
+  pageIndex: PropTypes.number.isRequired,
+  className: PropTypes.string,
+  printerStore: PropTypes.object
 }
 
 export default Block

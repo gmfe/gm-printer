@@ -50,7 +50,8 @@ const commonFields = {
     { key: i18next.t('税额'), value: i18next.t('{{税额}}') }
   ],
   [i18next.t('其他')]: [
-    { key: i18next.t('页码'), value: i18next.t('{{当前页码}} / {{页码总数}}') }
+    { key: i18next.t('页码'), value: i18next.t('{{当前页码}} / {{页码总数}}') },
+    { key: i18next.t('签名'), value: '{{signature_image_url}}', type: 'image' }
   ]
 }
 
