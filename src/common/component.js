@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import _ from 'lodash'
-import { borderStyleList, fontSizeList } from '../config'
+import { borderStyleList } from '../config'
 import { Flex, Tip } from '../components'
 import { Request } from 'gm-util'
 import i18next from '../../locales'
@@ -166,7 +166,6 @@ TextPX.propTypes = {
 class Fonter extends React.Component {
   handleChange = (type, value) => {
     const { style, onChange } = this.props
-
     onChange({
       ...style,
       [type]: value
@@ -178,16 +177,10 @@ class Fonter extends React.Component {
 
     return (
       <span className='gm-printer-edit-fonter'>
-        <select
-          value={style.fontSize || '12px'}
-          onChange={e => this.handleChange('fontSize', e.target.value)}
-        >
-          {_.map(fontSizeList, v => (
-            <option key={v} value={v}>
-              {v.slice(0, -2)}
-            </option>
-          ))}
-        </select>
+        <TextPX
+          onChange={this.handleChange.bind(this, 'fontSize')}
+          value={style.fontSize}
+        />
         <Separator />
         <span
           className={classNames('gm-printer-edit-btn', {
