@@ -479,9 +479,10 @@ class EditorStore {
    * 添加字段到Panel
    * @param key
    * @param value
+   * @param type block类型
    */
   @action.bound
-  addFieldToPanel({ key, value }) {
+  addFieldToPanel({ key, value, type }) {
     if (!this.selectedRegion) return
     const arr = this.selectedRegion.split('.')
     let blocks
@@ -493,14 +494,33 @@ class EditorStore {
       blocks = this.config.contents[arr[2]].blocks
     }
 
-    blocks.push({
-      text: `${key}：${value}`,
-      style: {
-        position: 'absolute',
-        left: '0px',
-        top: '0px'
+    switch (type) {
+      case 'image': {
+        blocks.push({
+          type: 'image',
+          text: value,
+          style: {
+            position: 'absolute',
+            left: '0px',
+            top: '0px',
+            width: '100px',
+            height: '100px'
+          }
+        })
+        break
       }
-    })
+
+      default: {
+        blocks.push({
+          text: `${key}：${value}`,
+          style: {
+            position: 'absolute',
+            left: '0px',
+            top: '0px'
+          }
+        })
+      }
+    }
   }
 
   /**

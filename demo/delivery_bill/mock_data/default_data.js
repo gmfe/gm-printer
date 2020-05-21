@@ -1,6 +1,7 @@
 import i18next from '../../../locales'
 export default {
   __gm_printer_data_type: 'order',
+  signature_image_url: 'http://img.guanmai.cn/station_pic/853344184b15a48b.png',
   real_price: 143.0,
   address_sign: i18next.t('南山中心区测试地址'),
   address_route_name: i18next.t('路线A'),
