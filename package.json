@@ -1,6 +1,6 @@
 {
   "name": "gm-printer_malai",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -31,12 +31,10 @@
   "peerDependencies": {
     "classnames": "^2.2.6",
     "gm-util": "^5.12.2",
-    "less-loader": "^4.1.0",
     "lodash": "^4.17.10",
     "mobx": "^4.3.0",
     "mobx-react": "^6.0.3",
-    "postcss-loader": "^3.0.0",
-    "precss": "^3.1.2",
+    "precss": "^4.0.0",
     "prop-types": "^15.6.2",
     "query-string": "^6.1.0",
     "react": "^16.8.5",
