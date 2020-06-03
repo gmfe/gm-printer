@@ -38,7 +38,7 @@ class PrinterStore {
     this.height = {}
     this.contents = []
     this.tablesInfo = {}
-    this.pages = []
+    this.pages = [] // [page, page, ...] page 为数组
     this.data = data
     this.selected = null
   }
@@ -75,26 +75,30 @@ class PrinterStore {
 
   @action
   computedPages() {
-    // 每页必有 header footer
+    // 每页必有 页眉header, 页脚footer
     const allPagesHaveThisHeight = this.height.header + this.height.footer
-    let height = allPagesHaveThisHeight
-
-    // 当前在处理 contents 的索引
-    let index = 0
-
-    let page = []
-
-    // 如果除了contents外组件总高度  大于 页面高度, 那么退出计算(计算没意义,页眉页脚都装不下)
-    if (height > this.pageHeight) {
+    // 退出计算! 因为页眉 + 页脚 > currentPageHeight,页面装不下其他东西
+    if (allPagesHaveThisHeight > this.pageHeight) {
       return
     }
 
-    // 轮 contents
-    while (index < this.config.contents.length) {
-      if (this.config.contents[index].type === 'table') {
-        const info = this.tablesInfo[`contents.table.${index}`]
+    // 某一page的累计高度
+    let currentPageHeight = allPagesHaveThisHeight
+    // 当前在处理 contents 的索引
+    let index = 0
+    // 一页承载的内容. [object, object, ...]
+    let page = []
 
-        const { subtotal, dataKey, summaryConfig } = this.config.contents[index]
+    /* --- 遍历 contents,将内容动态分配到page --- */
+    while (index < this.config.contents.length) {
+      const content = this.config.contents[index]
+
+      /* 表格内容处理 */
+      if (content.type === 'table') {
+        // 表格原始的高度和宽度信息
+        const table = this.tablesInfo[`contents.table.${index}`]
+
+        const { subtotal, dataKey, summaryConfig } = content
         // 如果显示每页合计,那么table高度多预留一行高度
         const subtotalTrHeight = subtotal.show ? getSumTrHeight(subtotal) : 0
         // 如果每页合计(新的),那么table高度多预留一行高度
@@ -102,35 +106,37 @@ class PrinterStore {
           summaryConfig?.pageSummaryShow && !isMultiTable(dataKey) // 双栏table没有每页合计
             ? getSumTrHeight(summaryConfig)
             : 0
+        // 每个表格都具有的高度
         const allTableHaveThisHeight =
-          info.head.height + subtotalTrHeight + pageSummaryTrHeight
+          table.head.height + subtotalTrHeight + pageSummaryTrHeight
+        // 当前表格页面的最少高度
+        const currentPageMinimumHeight =
+          allPagesHaveThisHeight + allTableHaveThisHeight
+
+        // 表格行的索引,用于table.slice(begin, end), 分割到不同页面中
         let begin = 0
         let end = 0
 
         // 如果表格没有数据,那么轮一下个content
         if (
-          info.body.heights.length === 0 ||
-          info.body.heights[0] +
-            allPagesHaveThisHeight +
-            allTableHaveThisHeight >
-            this.pageHeight
+          table.body.heights.length === 0 || // 没有数据,不渲染此table
+          table.body.heights[0] + currentPageMinimumHeight > this.pageHeight // 页面无法容纳此table,不渲染这个table了
         ) {
           index++
         } else {
-          // 表格有数据,必有表头和合计(虽然表头高度可能为0)
-          height += allTableHaveThisHeight
+          // 表格有数据,添加[每个表格都具有的高度]
+          currentPageHeight += allTableHaveThisHeight
 
-          while (end < info.body.heights.length) {
-            height += info.body.heights[end]
+          /* 遍历表格每一行 */
+          while (end < table.body.heights.length) {
+            currentPageHeight += table.body.heights[end]
 
-            // 如果没有多余空间了
-            if (height > this.pageHeight) {
+            // 当前页没有对于空间
+            if (currentPageHeight > this.pageHeight) {
               if (end !== 0) {
                 // ‼️‼️‼️ 极端情况: 如果一行的高度 大于 页面高度, 那么就做下一行
                 if (
-                  info.body.heights[end] +
-                    allPagesHaveThisHeight +
-                    allTableHaveThisHeight >
+                  table.body.heights[end] + currentPageMinimumHeight >
                   this.pageHeight
                 ) {
                   end++
@@ -148,15 +154,15 @@ class PrinterStore {
               // 此页完成任务
               this.pages.push(page)
 
-              // 为下页做好准备
+              // 开启新一页,重置页面高度
               page = []
-              height = allPagesHaveThisHeight + allTableHaveThisHeight
+              currentPageHeight = currentPageMinimumHeight
             } else {
               // 有空间，继续做下行
               end++
 
               // 最后一行，把信息加入 page，并轮下一个contents
-              if (end === info.body.heights.length) {
+              if (end === table.body.heights.length) {
                 page.push({
                   type: 'table',
                   index,
@@ -168,17 +174,17 @@ class PrinterStore {
             }
           }
         }
+        /* 非表格内容处理 */
       } else {
-        // 非表格
         const panelHeight = this.height[`contents.panel.${index}`]
-        height += panelHeight
+        currentPageHeight += panelHeight
 
         // 当 panel + allPagesHaveThisHeight > 页高度, 停止. 避免死循环
         if (panelHeight + allPagesHaveThisHeight > this.pageHeight) {
           break
         }
 
-        if (height <= this.pageHeight) {
+        if (currentPageHeight <= this.pageHeight) {
           // 空间充足，把信息加入 page，并轮下一个contents
           page.push({
             type: 'panel',
@@ -192,7 +198,7 @@ class PrinterStore {
 
           // 为下一页做准备
           page = []
-          height = allPagesHaveThisHeight
+          currentPageHeight = allPagesHaveThisHeight
         }
       }
     }
