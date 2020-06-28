@@ -81,3 +81,14 @@ export const findReceiveWayById = id => {
   const target = _.find(RECEIVE_WAYS, item => item.value === id)
   return (target && target.name) || ''
 }
+
+export function combineType(type) {
+  switch (type) {
+    case 2:
+      return '二级组合商品'
+    case 3:
+      return '三级组合商品'
+    default:
+      return '暂无该组合商品类型'
+  }
+}

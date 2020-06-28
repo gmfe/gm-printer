@@ -17,7 +17,8 @@ import withStore from '../common/hoc_with_store'
 const tableDataKeyList = [
   { value: 'orders', text: i18next.t('全部商品') },
   { value: 'abnormal', text: i18next.t('异常商品') },
-  { value: 'reward', text: i18next.t('积分表格') }
+  { value: 'reward', text: i18next.t('积分表格') },
+  { value: 'combination', text: i18next.t('组合商品') }
 ]
 
 @withStore(editStore)
