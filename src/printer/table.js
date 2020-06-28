@@ -147,7 +147,10 @@ class Table extends React.Component {
                 data-index={col.index}
                 data-name={getTableColumnName(name, col.index)}
                 draggable
-                style={Object.assign({ width: thWidths[i] }, col.headStyle)}
+                style={{
+                  minWidth: thWidths[i],
+                  ...col.headStyle
+                }}
                 className={classNames({
                   active:
                     getTableColumnName(name, col.index) ===
