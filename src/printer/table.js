@@ -126,10 +126,16 @@ class Table extends React.Component {
       pageIndex,
       printerStore
     } = this.props
+
+    // 数据
     dataKey = getDataKey(dataKey, arrange)
     const tableData = printerStore.data._table[dataKey] || []
 
+    // 列
     const columns = this.getColumns()
+
+    // 列宽固定(避免跳页bug)
+    const thWidths = printerStore.tablesInfo[name]?.head.widths || []
 
     return (
       <table>
@@ -141,7 +147,10 @@ class Table extends React.Component {
                 data-index={col.index}
                 data-name={getTableColumnName(name, col.index)}
                 draggable
-                style={Object.assign({}, col.headStyle)}
+                style={{
+                  minWidth: thWidths[i],
+                  ...col.headStyle
+                }}
                 className={classNames({
                   active:
                     getTableColumnName(name, col.index) ===
