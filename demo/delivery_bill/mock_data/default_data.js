@@ -4,6 +4,32 @@ export default {
   real_price: '8101.36',
   id: 'PL16145681',
   max_load: '',
+  combine_goods: [
+    {
+      money: 1976.4779999999998,
+      name: '蔬菜拼盘',
+      quantity: 20,
+      sale_unit_name: '斤',
+      type: 2,
+      unit_price: 98.8239
+    },
+    {
+      money: 9998,
+      name: '水果拼盘',
+      quantity: 20,
+      sale_unit_name: '斤',
+      type: 2,
+      unit_price: 98
+    },
+    {
+      money: 66666,
+      name: '蔬菜拼盘2',
+      quantity: 20,
+      sale_unit_name: '斤',
+      type: 3,
+      unit_price: 66
+    }
+  ],
   details: Array(180)
     .fill(1)
     .map((o, index) => ({

@@ -7,7 +7,8 @@ import {
   coverDigit2Uppercase,
   price,
   convertNumber2Sid,
-  findReceiveWayById
+  findReceiveWayById,
+  combineType
 } from '../../util'
 
 const SETTLE_WAY = {
@@ -317,6 +318,24 @@ function generateOrderData(list, data) {
   })
 }
 
+// 组合商品表
+function combinationData(data) {
+  // 组合商品
+  const combination = _.map(data.combine_goods, (v, index) => {
+    return {
+      序号: ++index,
+      组合商品名: v.name,
+      类型: combineType(v.type),
+      下单数: v.quantity,
+      销售单位: v.sale_unit_name,
+      含税单价_销售单位: price(v.unit_price),
+      下单金额_参考金额: price(v.money),
+      _origin: v
+    }
+  })
+  return [...combination]
+}
+
 // 异常商品表单
 function generateAbnormalData(data, kOrders) {
   if (data.split_order_type === '1') return []
@@ -374,6 +393,9 @@ function generateRewardData(list) {
 function order(data) {
   // 商品列表
   const skuList = data.details
+
+  // 组合商品表
+  const combination = combinationData(data)
 
   /* ----------- 普通  ------------ */
   const kOrders = generateOrderData(skuList, data)
@@ -445,7 +467,8 @@ function order(data) {
       orders_category_multi: kCategoryMulti, // 分类 + 双栏
       orders_category_multi_vertical: kCategoryMultiVertical, // 分类+双栏（纵向）
       abnormal: generateAbnormalData(data, kOrders), // 异常明细
-      reward: generateRewardData(data.reward_sku_list)
+      reward: generateRewardData(data.reward_sku_list),
+      combination: combination // 组合商品
     },
     _origin: data
   }
