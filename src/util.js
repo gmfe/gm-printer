@@ -140,7 +140,7 @@ const coverDigit2Uppercase = n => {
       ] + fraction[i]
   }
 
-  right = right.replace(/(零.)+$/, '').replace(/(零.)/, '零') || '整'
+  right = right.replace(/(零分)/, '整').replace(/(零角整)/, '') || '整'
 
   n = Math.floor(n)
 
