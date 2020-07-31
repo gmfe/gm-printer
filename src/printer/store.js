@@ -122,6 +122,12 @@ class PrinterStore {
           table.body.heights.length === 0 || // 没有数据,不渲染此table
           table.body.heights[0] + currentPageMinimumHeight > this.pageHeight // 页面无法容纳此table,不渲染这个table了
         ) {
+          if (
+            table.body.heights[0] + currentPageMinimumHeight >
+            this.pageHeight
+          ) {
+            window.alert('表格明细内容过多，无法打印，请更换其他打印模板') // 例如: 采购明细放在单列-最后一列,造成一列高度大于页面高度
+          }
           index++
         } else {
           // 表格有数据,添加[每个表格都具有的高度]
