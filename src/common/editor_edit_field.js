@@ -129,7 +129,7 @@ class EditorField extends React.Component {
           </div>
         )}
         <TipInfo
-          text={i18next.t('说明：请勿修改{}中的内容,避免出现数据异常')}
+          text={i18next.t('说明：谨慎修改{}中的内容,避免出现数据异常')}
         />
         {editStore.computedIsTime && (
           <div>
@@ -321,7 +321,7 @@ class EditorField extends React.Component {
         </Flex>
 
         <TipInfo
-          text={i18next.t('说明：请勿修改{}中的内容,避免出现数据异常')}
+          text={i18next.t('说明：谨慎修改{}中的内容,避免出现数据异常')}
         />
         <Gap />
 
