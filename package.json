@@ -1,6 +1,6 @@
 {
   "name": "gm-printer",
-  "version": "10.8.8",
+  "version": "10.8.9",
   "description": "diy printer",
   "main": "src/index.js",
   "scripts": {
