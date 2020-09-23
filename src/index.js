@@ -8,6 +8,7 @@ import EditorSettle from './editor_settle'
 import EditorStatement from './editor_statement'
 import EditorAccoutStatement from './editor_account_statement'
 import EditorBoxLabel from './editor_box_label'
+import EditorSaleMenus from './editor_salemenus'
 import { BatchPrinter, doBatchPrint, doPrint, Printer, getCSS } from './printer'
 import { MULTI_SUFFIX } from './config'
 
@@ -22,9 +23,10 @@ export {
   EditorSettle,
   EditorStatement,
   EditorAccoutStatement,
+  EditorBoxLabel,
+  EditorSaleMenus,
   Printer,
   BatchPrinter,
-  EditorBoxLabel,
   doPrint,
   doBatchPrint,
   getCSS,
