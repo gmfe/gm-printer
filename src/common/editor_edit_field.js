@@ -15,7 +15,7 @@ import {
   Title,
   TipInfo
 } from '../common/component'
-import { get, has } from 'mobx'
+import { get } from 'mobx'
 import PropTypes from 'prop-types'
 
 @inject('editStore')
@@ -178,9 +178,7 @@ class EditorField extends React.Component {
     const { specialConfig, subtotal } = editStore.computedTableSpecialConfig
     // 小计样式,specialConfig可能是undefined
     const specialStyle =
-      (has(editStore.computedTableSpecialConfig, 'specialConfig') &&
-        specialConfig.style) ||
-      {}
+      editStore.computedTableSpecialConfig?.specialConfig?.style || {}
     // 小计是否大写
     const specialTrNeedUpperCase =
       (specialConfig && specialConfig.needUpperCase) || false
@@ -188,7 +186,7 @@ class EditorField extends React.Component {
     const subtotalStyle = (subtotal && subtotal.style) || {}
     //  每页合计是否大写
     const subtotalNeedUpperCase =
-      (has(editStore.computedTableSpecialConfig, 'subtotal') &&
+      (editStore.computedTableSpecialConfig.subtotal &&
         get(subtotal, 'needUpperCase')) ||
       false
 

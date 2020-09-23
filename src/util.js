@@ -165,6 +165,13 @@ const coverDigit2Uppercase = n => {
 // 是不是双栏table
 const isMultiTable = dataKey => dataKey.includes('multi')
 
+// 获取table有多少栏,最少是双栏
+const getMultiNumber = dataKey => {
+  const reg = /multi(\d)?/
+  const result = reg.exec(dataKey)
+  return Number(result[1]) || 2
+}
+
 // 由于增加了商品排列（横向排列，纵向排列），所以统一用这个获取dataKey
 const getDataKey = (dataKey, arrange) =>
   arrange === 'vertical' && isMultiTable(dataKey)
@@ -185,5 +192,6 @@ export {
   getSumTrHeight,
   coverDigit2Uppercase,
   getDataKey,
-  isMultiTable
+  isMultiTable,
+  getMultiNumber
 }

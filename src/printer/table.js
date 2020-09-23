@@ -5,6 +5,7 @@ import {
   dispatchMsg,
   getDataKey,
   getHeight,
+  getMultiNumber,
   getTableColumnName,
   getWidth,
   isMultiTable
@@ -98,20 +99,26 @@ class Table extends React.Component {
       config: { columns, dataKey }
     } = this.props
     const columns1 = columns.map((val, index) => ({ ...val, index }))
-    // 多列表格
+    // 如果是多列表格
     if (isMultiTable(dataKey)) {
-      // 双栏商品的第二列有点特殊,都带 _MULTI_SUFFIX 后缀
-      const columns2 = columns.map((val, index) => {
-        return {
-          ...val,
-          index,
-          text: val.text.replace(
-            /{{列\.([^{{]+)}}/g,
-            (s, s1) => `{{列.${s1}${MULTI_SUFFIX}}}`
-          ) // {{列.xx}} => {{列.xxMULTI_SUFFIX}}
-        }
-      })
-      return columns1.concat(columns2)
+      // 多栏商品的第二列有点特殊,都带 _MULTI_SUFFIX 后缀
+      let res = columns1
+      const colNumber = getMultiNumber(dataKey)
+      for (let i = 2; i <= colNumber; i++) {
+        const colNum = i > 2 ? i : '' // 栏数
+        const columnsI = columns.map((val, index) => {
+          return {
+            ...val,
+            index,
+            text: val.text.replace(
+              /{{列\.([^{{]+)}}/g,
+              (s, s1) => `{{列.${s1}${MULTI_SUFFIX}${colNum}}}`
+            ) // {{列.xx}} => {{列.xxMULTI_SUFFIXi}}
+          }
+        })
+        res = res.concat(columnsI)
+      }
+      return res
     } else {
       return columns1
     }

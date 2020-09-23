@@ -164,6 +164,9 @@ class CommonContextMenu extends React.Component {
   handleSetTableConfig(value) {
     const { editStore } = this.props
     editStore.setConfigTableBy(this.state.name, 'className', value)
+    this.setState({
+      name: null
+    })
   }
 
   detectContextMenuTop = () => {
@@ -338,25 +341,23 @@ class CommonContextMenu extends React.Component {
         {children}
         {name && (
           <Menu detectContextMenuTop={this.detectContextMenuTop}>
-            {
-              <div
-                ref={this.menuRef}
-                className='gm-printer-edit-contextmenu'
-                style={{
-                  position: 'fixed',
-                  ...popup
-                }}
-              >
-                {arr.length === 1 && this.renderPanel()}
-                {arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
-                {arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
-                {arr.length === 5 && arr[3] === 'block' && this.renderBlock()}
-                {arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
-                {arr.length === 6 &&
-                  arr[5] === 'counter' &&
-                  this.renderCounterMenu()}
-              </div>
-            }
+            <div
+              ref={this.menuRef}
+              className='gm-printer-edit-contextmenu'
+              style={{
+                position: 'fixed',
+                ...popup
+              }}
+            >
+              {arr.length === 1 && this.renderPanel()}
+              {arr.length === 3 && arr[1] === 'panel' && this.renderPanel()}
+              {arr.length === 3 && arr[1] === 'block' && this.renderBlock()}
+              {arr.length === 5 && arr[3] === 'block' && this.renderBlock()}
+              {arr.length === 5 && arr[1] === 'table' && this.renderColumn()}
+              {arr.length === 6 &&
+                arr[5] === 'counter' &&
+                this.renderCounterMenu()}
+            </div>
           </Menu>
         )}
       </div>
