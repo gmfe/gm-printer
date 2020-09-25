@@ -28,8 +28,8 @@ const tableDataKeyList = [
   { value: 'combination', text: i18next.t('组合商品'), hasSubtotalBtn: false }
 ]
 
-export const hasSubtotalBtnTableDataKeySet = new Set(
-  tableDataKeyList.filter(v => v.hasSubtotalBtn).map(o => o.value)
+export const noSubtotalBtnTableDataKeySet = new Set(
+  tableDataKeyList.filter(v => !v.hasSubtotalBtn).map(o => o.value)
 )
 
 @withStore(editStore)
