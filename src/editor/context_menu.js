@@ -2,8 +2,9 @@ import i18next from '../../locales'
 import React from 'react'
 import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
+import _ from 'lodash'
 import { Printer } from '../printer'
-import { hasSubtotalBtnTableDataKeySet } from './editor'
+import { noSubtotalBtnTableDataKeySet } from './editor'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -35,7 +36,7 @@ class ContextMenu extends React.Component {
     const arr = name.split('.')
     if (_.includes(arr, 'table')) {
       const dataKey = this.props.editStore.config.contents[arr[2]].dataKey
-      return hasSubtotalBtnTableDataKeySet.has(dataKey)
+      return !noSubtotalBtnTableDataKeySet.has(dataKey)
     }
   }
 
