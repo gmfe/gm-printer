@@ -19,6 +19,13 @@ const blockTypeList = [
 class ContextMenu extends React.Component {
   hasSubtotalBtn = name => {
     if (!name) return false
+    const noSubtotalList = ['abnormal', 'abnormalDetails']
+    const arr = name.split('.')
+    if (_.includes(arr, 'table')) {
+      const dataKey = this.props.editStore.config.contents[arr[2]].dataKey
+      console.log(!_.includes(noSubtotalList, dataKey), dataKey)
+      return !_.includes(noSubtotalList, dataKey)
+    }
   }
 
   handleChangeTableDataKey = (key, name) => {
@@ -35,6 +42,7 @@ class ContextMenu extends React.Component {
     const arr = name.split('.')
     const { dataKey } = this.props.editStore.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
+    console.log('dataKey', dataKey, name)
 
     const isMultiActive = keyArr.includes('multi')
     const isCategoryActive = keyArr.includes('category')
@@ -59,6 +67,7 @@ class ContextMenu extends React.Component {
 
   render() {
     const { editStore, mockData } = this.props
+    console.log('purchase')
     return (
       <CommonContextMenu
         renderTableAction={this.renderOrderActionBtn}
