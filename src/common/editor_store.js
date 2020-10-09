@@ -8,8 +8,8 @@ class EditorStore {
   @observable
   tableCustomStyle = 'default'
 
-  @action
-  changeTableCustomStyle = v => {
+  @action.bound
+  changeTableCustomStyle(v) {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       if (arr.includes('table')) {
@@ -22,12 +22,15 @@ class EditorStore {
   @computed
   get computedPrinterKey() {
     return _.map(this.config, (v, k) => {
-      if (k === 'page') {
-        return v.type + '_' + v.printDirection + v.size.width + v.size.height
+      if (k === '__key__' && v) {
+        return v
+      } else if (k === 'page') {
+        return v.type + 'PAGE' + v.printDirection + v.size.width + v.size.height
       } else if (k === 'contents') {
         return _.map(v, vv => {
           if (vv.type === 'table') {
             return (
+              'TABLE' +
               vv.columns.length +
               vv.className +
               vv.dataKey +
@@ -38,7 +41,7 @@ class EditorStore {
           } else {
             return vv.style ? vv.style.height : ''
           }
-        }).join('_')
+        }).join('/')
       } else {
         return v.style ? v.style.height : ''
       }
@@ -593,13 +596,16 @@ class EditorStore {
         if (type === 'table') {
           this.config.contents.splice(index, 0, {
             type: 'table',
+            className: '',
+            specialConfig: { style: {} },
             dataKey: defaultTableDataKey, // 默认
             subtotal: defaultTableSubtotal, // 默认的每页合计配置
             columns: [
               {
                 head: i18next.t('表头'),
                 headStyle: {
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  minWidth: '30px'
                 },
                 text: i18next.t('内容'),
                 style: {
