@@ -19,6 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/gmfe/gm-printer.git"
   },
+  "types": "global.d.ts",
   "author": "",
   "license": "ISC",
   "bugs": {
