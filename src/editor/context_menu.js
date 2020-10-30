@@ -9,14 +9,10 @@ import { noSubtotalBtnTableDataKeySet } from './editor'
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
   { value: 'line', text: i18next.t('插入线条') },
-  { value: 'image', text: i18next.t('插入图片') },
-  { value: 'counter', text: i18next.t('插入分类汇总') },
-  { value: 'barcode', text: i18next.t('插入订单条形码') },
-  { value: 'qrcode', text: i18next.t('插入订单溯源二维码') },
-  {
-    value: 'uniform_social_credit_code',
-    text: i18next.t('插入苏州安全监管平台二维码')
-  }
+  { value: 'image', text: i18next.t('插入图片') }
+  // { value: 'counter', text: i18next.t('插入分类汇总') },
+  // { value: 'barcode', text: i18next.t('插入订单条形码') },
+  // { value: 'qrcode', text: i18next.t('插入订单溯源二维码') }
 ]
 
 @inject(stores => ({
@@ -67,7 +63,7 @@ class ContextMenu extends React.Component {
 
     return (
       <>
-        <div
+        {/* <div
           onClick={this.handleChangeTableDataKey.bind(this, 'multi', name)}
           className={isMultiActive ? 'active' : ''}
         >
@@ -78,7 +74,7 @@ class ContextMenu extends React.Component {
           className={isCategoryActive ? 'active' : ''}
         >
           {i18next.t('商品分类')}
-        </div>
+        </div> */}
         <div
           onClick={this.handleSubtotal.bind(this, name)}
           className={isSubtotalActive ? 'active' : ''}

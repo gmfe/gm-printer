@@ -18,16 +18,6 @@ class Store extends EditorStore {
             text: i18next.t('{{列.序号}}')
           },
           {
-            head: i18next.t('组合商品名'),
-            headStyle: {
-              textAlign: 'center'
-            },
-            style: {
-              textAlign: 'center'
-            },
-            text: i18next.t('{{列.组合商品名}}')
-          },
-          {
             head: i18next.t('类型'),
             headStyle: {
               textAlign: 'center'
