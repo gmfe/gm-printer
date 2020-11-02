@@ -435,8 +435,7 @@ function order(data) {
       orders_category: kCategory, // 分类
       orders_category_multi: kCategoryMulti, // 分类 + 双栏
       orders_category_multi_vertical: kCategoryMultiVertical, // 分类+双栏（纵向）
-      abnormal: generateAbnormalData(data, kOrders), // 异常明细
-      reward: generateRewardData(data.reward_sku_list)
+      abnormal: generateAbnormalData(data, kOrders) // 异常明细
     },
     _origin: data
   }
