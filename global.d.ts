@@ -39,6 +39,7 @@ declare module 'gm-printer' {
   class BatchPrinter<T extends BatchPrinterProps> extends React.Component<T, any> {}
   const MULTI_SUFFIX: string
   function getCSS(): string
+  function insertCSS(cssString: string, target?: HTMLElement | ShadowRoot): void
   function doPrint(
     obj: { data: any; config: any },
     isTest?: boolean
@@ -56,6 +57,7 @@ declare module 'gm-printer' {
     Printer,
     BatchPrinter,
     MULTI_SUFFIX,
+    insertCSS,
     getCSS,
     doPrint,
     doBatchPrint
