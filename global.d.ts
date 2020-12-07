@@ -44,7 +44,7 @@ declare module 'gm-printer' {
     obj: { data: any; config: any },
     isTest?: boolean
   ): (obj: { data: any; config: any }) => Promise<any>
-  function doBatchPrint(list: [], isTest?: boolean): (list: []) => Promise<any>
+  function doBatchPrint(list: any [], isTest?: boolean): (list: []) => Promise<any>
   export {
     Editor,
     EditorStockIn,
