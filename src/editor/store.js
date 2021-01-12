@@ -18,14 +18,34 @@ class Store extends EditorStore {
             text: i18next.t('{{列.序号}}')
           },
           {
-            head: i18next.t('类型'),
+            head: i18next.t('商品名'),
             headStyle: {
               textAlign: 'center'
             },
             style: {
               textAlign: 'center'
             },
-            text: i18next.t('{{列.类型}}')
+            text: i18next.t('{{列.组合商品_名}}')
+          },
+          {
+            head: i18next.t('商品编码'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.组合商品_自定义编码}}')
+          },
+          {
+            head: i18next.t('包装单位'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.组合商品_包装单位}}')
           },
           {
             head: i18next.t('下单数'),
@@ -35,37 +55,37 @@ class Store extends EditorStore {
             style: {
               textAlign: 'center'
             },
-            text: i18next.t('{{列.下单数}}')
+            text: i18next.t('{{列.组合商品_下单数}}')
           },
           {
-            head: i18next.t('销售单位'),
+            head: i18next.t('单价'),
             headStyle: {
               textAlign: 'center'
             },
             style: {
               textAlign: 'center'
             },
-            text: i18next.t('{{列.销售单位}}')
+            text: i18next.t('{{列.组合商品_单价}}')
           },
           {
-            head: i18next.t('含税单价(销售单位)'),
+            head: i18next.t('下单金额'),
             headStyle: {
               textAlign: 'center'
             },
             style: {
               textAlign: 'center'
             },
-            text: i18next.t('{{列.含税单价_销售单位}}')
+            text: i18next.t('{{列.组合商品_下单金额}}')
           },
           {
-            head: i18next.t('下单金额(参考金额)'),
+            head: i18next.t('餐次备注'),
             headStyle: {
               textAlign: 'center'
             },
             style: {
               textAlign: 'center'
             },
-            text: i18next.t('{{列.下单金额_参考金额}}')
+            text: i18next.t('{{列.组合商品_餐次备注}}')
           }
         ]
         break

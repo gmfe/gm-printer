@@ -9,9 +9,9 @@ import { noSubtotalBtnTableDataKeySet } from './editor'
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
   { value: 'line', text: i18next.t('插入线条') },
-  { value: 'image', text: i18next.t('插入图片') }
-  // { value: 'counter', text: i18next.t('插入分类汇总') },
-  // { value: 'barcode', text: i18next.t('插入订单条形码') },
+  { value: 'image', text: i18next.t('插入图片') },
+  { value: 'counter', text: i18next.t('插入分类汇总') },
+  { value: 'barcode', text: i18next.t('插入订单条形码') },
   // { value: 'qrcode', text: i18next.t('插入订单溯源二维码') }
 ]
 
@@ -63,12 +63,12 @@ class ContextMenu extends React.Component {
 
     return (
       <>
-        {/* <div
+        <div
           onClick={this.handleChangeTableDataKey.bind(this, 'multi', name)}
           className={isMultiActive ? 'active' : ''}
         >
           {i18next.t('双栏商品')}
-        </div> */}
+        </div>
         <div
           onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
           className={isCategoryActive ? 'active' : ''}
