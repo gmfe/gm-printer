@@ -76,16 +76,6 @@ class Store extends EditorStore {
               textAlign: 'center'
             },
             text: i18next.t('{{列.组合商品_下单金额}}')
-          },
-          {
-            head: i18next.t('餐次备注'),
-            headStyle: {
-              textAlign: 'center'
-            },
-            style: {
-              textAlign: 'center'
-            },
-            text: i18next.t('{{列.组合商品_餐次备注}}')
           }
         ]
         break
