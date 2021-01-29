@@ -11,7 +11,7 @@ const blockTypeList = [
   { value: 'line', text: i18next.t('插入线条') },
   { value: 'image', text: i18next.t('插入图片') },
   { value: 'counter', text: i18next.t('插入分类汇总') },
-  { value: 'barcode', text: i18next.t('插入订单条形码') },
+  { value: 'barcode', text: i18next.t('插入订单条形码') }
   // { value: 'qrcode', text: i18next.t('插入订单溯源二维码') }
 ]
 
@@ -60,6 +60,7 @@ class ContextMenu extends React.Component {
     const isMultiActive = keyArr.includes('multi')
     const isCategoryActive = keyArr.includes('category')
     const isSubtotalActive = subtotal.show
+    const isCombine = keyArr.includes('combination')
 
     return (
       <>
@@ -69,12 +70,15 @@ class ContextMenu extends React.Component {
         >
           {i18next.t('双栏商品')}
         </div>
-        <div
-          onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
-          className={isCategoryActive ? 'active' : ''}
-        >
-          {i18next.t('商品分类')}
-        </div>
+        {/* 组合商品没做商品分类 */}
+        {!isCombine && (
+          <div
+            onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
+            className={isCategoryActive ? 'active' : ''}
+          >
+            {i18next.t('商品分类')}
+          </div>
+        )}
         <div
           onClick={this.handleSubtotal.bind(this, name)}
           className={isSubtotalActive ? 'active' : ''}
