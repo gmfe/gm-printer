@@ -15,7 +15,7 @@ class Block extends React.Component {
     this.state = {
       clientX: null,
       clientY: null,
-      isEdit: false
+      isEdit: false,
     }
   }
 
@@ -33,7 +33,7 @@ class Block extends React.Component {
     )
   }
 
-  handleBlockEdit = e => {
+  handleBlockEdit = (e) => {
     const { name } = this.props
 
     if (e.detail.name !== name) {
@@ -42,7 +42,7 @@ class Block extends React.Component {
 
     this.setState(
       {
-        isEdit: true
+        isEdit: true,
       },
       () => {
         this.refEdit.focus()
@@ -56,10 +56,10 @@ class Block extends React.Component {
 
     this.setState({
       clientX,
-      clientY
+      clientY,
     })
     dispatchMsg('gm-printer-select', {
-      selected: name
+      selected: name,
     })
   }
 
@@ -71,7 +71,7 @@ class Block extends React.Component {
     const style = getStyleWithDiff(config.style, diffX, diffY)
 
     dispatchMsg('gm-printer-block-style-set', {
-      style
+      style,
     })
   }
 
@@ -79,18 +79,18 @@ class Block extends React.Component {
     const { name } = this.props
 
     dispatchMsg('gm-printer-select', {
-      selected: name
+      selected: name,
     })
   }
 
   handleDoubleClick = () => {
     const {
-      config: { type }
+      config: { type },
     } = this.props
     if (!type || type === 'text') {
       this.setState(
         {
-          isEdit: true
+          isEdit: true,
         },
         () => {
           this.refEdit && this.refEdit.focus()
@@ -101,13 +101,13 @@ class Block extends React.Component {
 
   handleEditBlur = () => {
     this.setState({
-      isEdit: false
+      isEdit: false,
     })
   }
 
-  handleText = e => {
+  handleText = (e) => {
     dispatchMsg('gm-printer-block-text-set', {
-      text: e.target.value
+      text: e.target.value,
     })
   }
 
@@ -135,7 +135,7 @@ class Block extends React.Component {
           src={src}
           style={{
             width: '100%',
-            height: '100%'
+            height: '100%',
           }}
           alt=''
           data-name={name}
@@ -170,7 +170,10 @@ class Block extends React.Component {
     } else if (type === 'qrcode') {
       content = (
         <QrCode
-          value={printerStore.template(text)}
+          value={{
+            orderId: printerStore.data._origin.order_id,
+            customer_user_id: printerStore.data._origin.creator_id,
+          }}
           size={parseInt(style.height)}
         />
       )
@@ -182,7 +185,7 @@ class Block extends React.Component {
       <div
         style={{ ...style, ...specialStyle }}
         className={classNames('gm-printer-block', className, {
-          active
+          active,
         })}
         draggable
         onDragStart={this.handleDragStart}
@@ -198,13 +201,13 @@ class Block extends React.Component {
             left: '0',
             top: '0',
             width: '100%',
-            height: '100%'
+            height: '100%',
           }}
           data-name={name}
         />
         {(!type || type === 'text') && active && isEdit && (
           <textarea
-            ref={ref => (this.refEdit = ref)}
+            ref={(ref) => (this.refEdit = ref)}
             className='gm-printer-block-text-edit'
             value={text}
             onChange={this.handleText}
@@ -222,7 +225,7 @@ Block.propTypes = {
   config: PropTypes.object.isRequired,
   pageIndex: PropTypes.number.isRequired,
   className: PropTypes.string,
-  printerStore: PropTypes.object
+  printerStore: PropTypes.object,
 }
 
 export default Block
