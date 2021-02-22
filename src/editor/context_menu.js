@@ -11,13 +11,13 @@ const blockTypeList = [
   { value: 'line', text: i18next.t('插入线条') },
   { value: 'image', text: i18next.t('插入图片') },
   { value: 'counter', text: i18next.t('插入分类汇总') },
-  { value: 'barcode', text: i18next.t('插入订单条形码') }
-  // { value: 'qrcode', text: i18next.t('插入订单溯源二维码') }
+  { value: 'barcode', text: i18next.t('插入订单条形码') },
+  { value: 'qrcode', text: i18next.t('插入订单溯源二维码') },
 ]
 
-@inject(stores => ({
+@inject((stores) => ({
   editStore: stores.editStore,
-  mockData: stores.mockData
+  mockData: stores.mockData,
 }))
 @observer
 class ContextMenu extends React.Component {
@@ -26,7 +26,7 @@ class ContextMenu extends React.Component {
    * @param name => ContextMenu 的 this.state.name
    * @return {boolean}
    */
-  hasSubtotalBtn = name => {
+  hasSubtotalBtn = (name) => {
     if (!name) return false
     const noSubtotalList = ['abnormal', 'abnormalDetails']
     const arr = name.split('.')
@@ -42,13 +42,13 @@ class ContextMenu extends React.Component {
     editStore.changeTableDataKey(name, key)
   }
 
-  handleSubtotal = name => {
+  handleSubtotal = (name) => {
     const { editStore } = this.props
 
     editStore.setSubtotalShow(name)
   }
 
-  renderOrderActionBtn = name => {
+  renderOrderActionBtn = (name) => {
     if (!this.hasSubtotalBtn(name)) {
       return null
     }
