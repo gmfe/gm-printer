@@ -25,7 +25,8 @@ const tableDataKeyList = [
     hasSubtotalBtn: false
   },
   { value: 'reward', text: i18next.t('积分表格'), hasSubtotalBtn: false },
-  { value: 'combination', text: i18next.t('组合商品'), hasSubtotalBtn: false }
+  { value: 'combination', text: i18next.t('组合商品'), hasSubtotalBtn: false },
+  { value: 'turnover', text: i18next.t('周转物表格'), hasSubtotalBtn: false }
 ]
 
 export const noSubtotalBtnTableDataKeySet = new Set(
