@@ -4,6 +4,32 @@ export default {
   real_price: '8101.36',
   id: 'PL16145681',
   max_load: '',
+  turnovers: [
+    {
+      tname: '塑料瓶',
+      price: 25.333,
+      apply_amount: 200,
+      amount: 100,
+      total_price: 123.22,
+      unit_name: '框'
+    },
+    {
+      tname: '豆腐',
+      price: 25.333,
+      apply_amount: 200,
+      amount: 100,
+      total_price: 123.22,
+      unit_name: '个'
+    },
+    {
+      tname: '盒子',
+      price: 25.333,
+      apply_amount: 200,
+      amount: 100,
+      total_price: 123.22,
+      unit_name: '箱'
+    }
+  ],
   combine_goods: [
     {
       money: 1976.4779999999998,
@@ -79,7 +105,7 @@ export default {
       union_dispatch: true,
       quantity: 2.0,
       name:
-        '特级枸杞' + (120 > index && index > 40 ? Array(14).fill('fuck') : '')
+        '特级枸杞' + (index < 120 && index > 40 ? Array(14).fill('fuck') : '')
     })),
   abnormal_money: '720.00',
   city: '西安市',

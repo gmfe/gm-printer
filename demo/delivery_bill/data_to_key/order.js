@@ -336,6 +336,23 @@ function combinationData(data) {
   return [...combination]
 }
 
+// 周转物表格
+function turnoverData(data) {
+  const turnover = _.map(data.turnovers, (v, index) => {
+    return {
+      序号: ++index,
+      周转物名称: v.tname,
+      单位: v.unit_name,
+      单个货值: price(v.price),
+      预借出数: v.apply_amount,
+      借出数: v.amount,
+      货值: price(v.total_price),
+      押金: price(Big(v.amount).times(v.price))
+    }
+  })
+  return [...turnover]
+}
+
 // 异常商品表单
 function generateAbnormalData(data, kOrders) {
   if (data.split_order_type === '1') return []
@@ -396,6 +413,9 @@ function order(data) {
 
   // 组合商品表
   const combination = combinationData(data)
+
+  // 周转物表格
+  const turnover = turnoverData(data)
 
   /* ----------- 普通  ------------ */
   const kOrders = generateOrderData(skuList, data)
@@ -468,7 +488,8 @@ function order(data) {
       orders_category_multi_vertical: kCategoryMultiVertical, // 分类+双栏（纵向）
       abnormal: generateAbnormalData(data, kOrders), // 异常明细
       reward: generateRewardData(data.reward_sku_list),
-      combination: combination // 组合商品
+      combination: combination, // 组合商品
+      turnover // 周转物
     },
     _origin: data
   }

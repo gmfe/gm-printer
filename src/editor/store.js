@@ -255,6 +255,91 @@ class Store extends EditorStore {
         ]
         break
       }
+      case 'turnover': {
+        target.columns = [
+          {
+            head: i18next.t('序号'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.序号}}')
+          },
+          {
+            head: i18next.t('周转物名称'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.周转物名称}}')
+          },
+          {
+            head: i18next.t('单位'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.单位}}')
+          },
+          {
+            head: i18next.t('单个货值'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.单个货值}}')
+          },
+          {
+            head: i18next.t('预借出数'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.预借出数}}')
+          },
+          {
+            head: i18next.t('借出数'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.借出数}}')
+          },
+          {
+            head: i18next.t('货值'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.货值}}')
+          },
+          {
+            head: i18next.t('押金'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.押金}}')
+          }
+        ]
+        break
+      }
       default:
     }
   }
