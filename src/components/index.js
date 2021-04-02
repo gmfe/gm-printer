@@ -4,6 +4,7 @@ import Tip from './tip'
 import { DropDown, DropDownItem, DropDownItems } from './dropdown'
 import Dialog from './dialog'
 import Switch from './switch'
+import ToolTip from './tooltip'
 
 export {
   Flex,
@@ -14,5 +15,6 @@ export {
   DropDownItem,
   DropDownItems,
   Dialog,
-  Switch
+  Switch,
+  ToolTip
 }
