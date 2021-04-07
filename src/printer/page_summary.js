@@ -68,6 +68,7 @@ const PageSummary = props => {
                 .includes(key) && key
                 ? sumCol(key, currentPageTableData)
                 : ' '
+            console.log('summary', key, summaryConfig.summaryColumns)
           }
 
           return (

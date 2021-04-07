@@ -195,6 +195,21 @@ class EditorField extends React.Component {
       (editStore.computedTableSpecialConfig.subtotal &&
         get(subtotal, 'needUpperCase')) ||
       false
+    // 大写的金额是否在前
+    const subtotalUpperCaseBefore =
+      (editStore.computedTableSpecialConfig.subtotal &&
+        get(subtotal, 'isUpperCaseBefore')) ||
+      false
+    // 大写和小写的金额是否分开
+    const subtotalUpperLowerCaseSeparate =
+      (editStore.computedTableSpecialConfig.subtotal &&
+        get(subtotal, 'isUpperLowerCaseSeparate')) ||
+      false
+    // 位置交换
+    const subtotalCommutationPlace =
+      (editStore.computedTableSpecialConfig.subtotal &&
+        get(subtotal, 'isCommutationPlace')) ||
+      false
 
     return (
       <div>
@@ -342,16 +357,12 @@ class EditorField extends React.Component {
           />
         </Flex>
 
-        <Flex style={{ margin: '5px 0 5px 62px' }}>
-          <Flex alignCenter>
-            <input
-              type='checkbox'
-              checked={specialTrNeedUpperCase}
-              onChange={editStore.setSpecialUpperCase}
-            />
-          </Flex>
-          <Flex>&nbsp;{i18next.t('显示大写金额')}</Flex>
-        </Flex>
+        <EditorSubtotalCheck
+          subtotalCheckDisabled
+          subtotalChecked={specialTrNeedUpperCase}
+          subtotalCheckOnChange={editStore.setSpecialUpperCase}
+          subtotalCheckText='显示大写金额'
+        />
 
         <Flex>
           <Flex>{i18next.t('合计设置')}：</Flex>
@@ -365,17 +376,34 @@ class EditorField extends React.Component {
             onChange={this.handleSubtotalStyleChange}
           />
         </Flex>
-
-        <Flex style={{ margin: '5px 0 5px 62px' }}>
+        {/* <Flex style={{ margin: '5px 0 5px 62px' }}>
           <Flex alignCenter>
             <input
               type='checkbox'
-              checked={subtotalNeedUpperCase}
-              onChange={editStore.setSubtotalUpperCase}
+              checked={subtotalCommutationPlace}
+              onChange={editStore.setSubtotalCommutationPlace}
             />
           </Flex>
-          <Flex>&nbsp;{i18next.t('显示大写金额')}</Flex>
-        </Flex>
+          <Flex>&nbsp;{i18next.t('合计、每页合计交换位置')}</Flex>
+        </Flex> */}
+        <EditorSubtotalCheck
+          subtotalCheckDisabled
+          subtotalChecked={subtotalNeedUpperCase}
+          subtotalCheckOnChange={editStore.setSubtotalUpperCase}
+          subtotalCheckText='显示大写金额'
+        />
+        <EditorSubtotalCheck
+          subtotalCheckDisabled={subtotalNeedUpperCase}
+          subtotalChecked={subtotalUpperCaseBefore}
+          subtotalCheckOnChange={editStore.setSubtotalUpperCaseBefore}
+          subtotalCheckText='大写金额在前'
+        />
+        <EditorSubtotalCheck
+          subtotalCheckDisabled={subtotalNeedUpperCase}
+          subtotalChecked={subtotalUpperLowerCaseSeparate}
+          subtotalCheckOnChange={editStore.setSubtotalUpperLowerCaseSeparate}
+          subtotalCheckText='大、小写金额分左右两边展示'
+        />
       </div>
     )
   }
@@ -400,6 +428,38 @@ EditorField.propTypes = {
 }
 EditorField.defaultProps = {
   showNewDate: false
+}
+
+class EditorSubtotalCheck extends React.Component {
+  render() {
+    const {
+      subtotalCheckDisabled,
+      subtotalChecked,
+      subtotalCheckOnChange,
+      subtotalCheckText
+    } = this.props
+
+    return (
+      <Flex style={{ margin: '5px 0 5px 62px' }}>
+        <Flex alignCenter>
+          <input
+            type='checkbox'
+            disabled={!subtotalCheckDisabled}
+            checked={subtotalChecked}
+            onChange={subtotalCheckOnChange}
+          />
+        </Flex>
+        <Flex>&nbsp;{i18next.t(`${subtotalCheckText}`)}</Flex>
+      </Flex>
+    )
+  }
+}
+
+EditorSubtotalCheck.propTypes = {
+  subtotalCheckDisabled: PropTypes.bool,
+  subtotalChecked: PropTypes.bool,
+  subtotalCheckOnChange: PropTypes.func,
+  subtotalCheckText: PropTypes.string
 }
 
 export default EditorField
