@@ -346,7 +346,8 @@ function turnoverData(data) {
       单个货值: price(v.price),
       预借出数: v.apply_amount,
       借出数: v.amount,
-      货值: price(v.total_price)
+      货值: price(v.total_price),
+      关联商品: v.sku_name
     }
   })
   return [...turnover]

@@ -288,6 +288,16 @@ class Store extends EditorStore {
             text: i18next.t('{{列.单位}}')
           },
           {
+            head: i18next.t('关联商品'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.关联商品}}')
+          },
+          {
             head: i18next.t('单个货值'),
             headStyle: {
               textAlign: 'center'

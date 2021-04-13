@@ -11,15 +11,17 @@ export default {
       apply_amount: 200,
       amount: 100,
       total_price: 123.22,
-      unit_name: '框'
+      unit_name: '框',
+      sku_name: '蒜头'
     },
     {
-      tname: '豆腐',
+      tname: '框',
       price: 25.333,
       apply_amount: 200,
       amount: 100,
       total_price: 123.22,
-      unit_name: '个'
+      unit_name: '个',
+      sku_name: '南瓜'
     },
     {
       tname: '盒子',
@@ -27,7 +29,8 @@ export default {
       apply_amount: 200,
       amount: 100,
       total_price: 123.22,
-      unit_name: '箱'
+      unit_name: '箱',
+      sku_name: '方便面'
     }
   ],
   combine_goods: [
