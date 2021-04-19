@@ -26,6 +26,7 @@ declare module 'gm-printer' {
   class EditorStockOut<T extends EditorProps> extends React.Component<T, any> {}
   class EditorPurchase<T extends EditorProps> extends React.Component<T, any> {}
   class EditorSettle<T extends EditorProps> extends React.Component<T, any> {}
+  class EditorCannibalize<T extends EditorProps> extends React.Component<T, any> {}
   class EditorStatement<T extends EditorProps> extends React.Component<
     T,
     any
@@ -51,6 +52,7 @@ declare module 'gm-printer' {
     EditorStockOut,
     EditorPurchase,
     EditorSettle,
+    EditorCannibalize,
     EditorStatement,
     EditorAccoutStatement,
     EditorBoxLabel,
