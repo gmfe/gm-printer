@@ -107,7 +107,7 @@ class Table extends React.Component {
       for (let i = 2; i <= colNumber; i++) {
         const colNum = i > 2 ? i : '' // 栏数
         const columnsI = columns.map((val, index) => {
-          return {
+          const data = {
             ...val,
             index,
             text: val.text.replace(
@@ -115,6 +115,11 @@ class Table extends React.Component {
               (s, s1) => `{{列.${s1}${MULTI_SUFFIX}${colNum}}}`
             ) // {{列.xx}} => {{列.xxMULTI_SUFFIXi}}
           }
+          // 多栏商品的明细取 __details_MULTI_SUFFIX
+          if (val.specialDetailsKey)
+            data.specialDetailsKey =
+              val.specialDetailsKey + `${MULTI_SUFFIX}${colNum}`
+          return data
         })
         res = res.concat(columnsI)
       }
@@ -205,12 +210,9 @@ class Table extends React.Component {
                                 dataKey,
                                 i
                               )
-                            : printerStore.templateTable(
-                                col.text,
-                                dataKey,
-                                i,
-                                pageIndex
-                              )
+                            : printerStore
+                                .templateTable(col.text, dataKey, i, pageIndex)
+                                .replace(/\(\)/g, '')
                         }}
                       />
                     )

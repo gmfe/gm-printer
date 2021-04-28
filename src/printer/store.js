@@ -256,7 +256,10 @@ class PrinterStore {
       const compiled = _.template(text, { interpolate: /{{([\s\S]+?)}}/g })
       const detailsList = row[specialDetailsKey]
 
-      return detailsList.map(d => `<div>${compiled(d)}</div>`).join('')
+      // 多栏商品时，同一行仅有一个商品，后面空余部分显示空白
+      return detailsList
+        ? detailsList.map(d => `<div>${compiled(d)}</div>`).join('')
+        : []
     } catch (err) {
       return text
     }
