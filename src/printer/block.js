@@ -155,18 +155,21 @@ class Block extends React.Component {
         </div>
       )
     } else if (type === 'barcode') {
-      content = (
-        <BarCode
-          value={printerStore.template(text)}
-          textMargin={0}
-          margin={0}
-          height={35}
-          width={2}
-          displayValue={false}
-          dataName={name}
-          background='transparent'
-        />
-      )
+      // sid 合并打印没有订单id值，所以不渲染条形码
+      if (printerStore.template(text)) {
+        content = (
+          <BarCode
+            value={printerStore.template(text)}
+            textMargin={0}
+            margin={0}
+            height={35}
+            width={2}
+            displayValue={false}
+            dataName={name}
+            background='transparent'
+          />
+        )
+      }
     } else if (type === 'qrcode') {
       content = (
         <QrCode
