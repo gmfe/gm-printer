@@ -132,7 +132,7 @@ class Table extends React.Component {
   renderDefault() {
     let {
       config,
-      config: { dataKey, arrange, customerRowHeight = 23 },
+      config: { dataKey, arrange, customerRowHeight = 23, subtotal },
       name,
       range,
       pageIndex,
@@ -148,6 +148,33 @@ class Table extends React.Component {
 
     // 列宽固定(避免跳页bug)
     const thWidths = printerStore.tablesInfo[name]?.head.widths || []
+
+    // 每页合计在前
+    const subtotalTrPageSummary = () => {
+      return (
+        <>
+          <SubtotalTr
+            range={range}
+            config={config}
+            printerStore={printerStore}
+          />
+          <PageSummary {...this.props} />
+        </>
+      )
+    }
+    // 合计在前
+    const PageSummarySubtotalTr = () => {
+      return (
+        <>
+          <PageSummary {...this.props} />
+          <SubtotalTr
+            range={range}
+            config={config}
+            printerStore={printerStore}
+          />
+        </>
+      )
+    }
 
     return (
       <table>
@@ -221,8 +248,9 @@ class Table extends React.Component {
               </tr>
             )
           })}
-          <SubtotalTr {...this.props} />
-          <PageSummary {...this.props} />
+          {this.props.config.subtotal.isCommutationPlace
+            ? PageSummarySubtotalTr()
+            : subtotalTrPageSummary()}
         </tbody>
       </table>
     )
@@ -241,7 +269,7 @@ class Table extends React.Component {
 
   render() {
     let {
-      config: { className, dataKey, arrange },
+      config: { className, dataKey, arrange, subtotal },
       name,
       placeholder,
       printerStore

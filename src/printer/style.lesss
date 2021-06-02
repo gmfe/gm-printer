@@ -152,3 +152,12 @@
 @page {
   margin: 0;
 }
+
+.gm-printer-subtotal-UpperLowerCaseSeparate-outer{
+  display:flex;
+}
+.gm-printer-subtotal-UpperLowerCaseSeparate-inter{
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+}

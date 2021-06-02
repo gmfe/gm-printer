@@ -804,6 +804,7 @@ class EditorStore {
     }
   }
 
+  // 设置大写金额
   @action.bound
   setSubtotalUpperCase() {
     if (this.selectedRegion) {
@@ -812,6 +813,51 @@ class EditorStore {
 
       const oldNeedUpperCase = subtotalConfig.needUpperCase
       set(subtotalConfig, { needUpperCase: !oldNeedUpperCase })
+      // 没有大写金额时，将大写在前和大小写分开的多选框设置为false
+      if (subtotalConfig.needUpperCase === false) {
+        subtotalConfig.isUpperCaseBefore &&
+          set(subtotalConfig, { isUpperCaseBefore: false })
+        subtotalConfig.isUpperLowerCaseSeparate &&
+          set(subtotalConfig, { isUpperLowerCaseSeparate: false })
+      }
+    }
+  }
+
+  // 设置大写金额在前
+  @action.bound
+  setSubtotalUpperCaseBefore() {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const subtotalConfig = this.config.contents[arr[2]].subtotal
+
+      const oldUpperCaseBefore = subtotalConfig.isUpperCaseBefore
+      set(subtotalConfig, { isUpperCaseBefore: !oldUpperCaseBefore })
+    }
+  }
+
+  // 设置大小写金额分开
+  @action.bound
+  setSubtotalUpperLowerCaseSeparate() {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const subtotalConfig = this.config.contents[arr[2]].subtotal
+
+      const oldUpperLowerCaseSeparate = subtotalConfig.isUpperLowerCaseSeparate
+      set(subtotalConfig, {
+        isUpperLowerCaseSeparate: !oldUpperLowerCaseSeparate
+      })
+    }
+  }
+
+  // 设置交换位置
+  @action.bound
+  setSubtotalCommutationPlace() {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const subtotalConfig = this.config.contents[arr[2]].subtotal
+
+      const oldCommutationPlace = subtotalConfig.isCommutationPlace
+      set(subtotalConfig, { isCommutationPlace: !oldCommutationPlace })
     }
   }
 
