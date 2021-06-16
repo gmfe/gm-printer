@@ -25,6 +25,7 @@ const SpecialTr = ({ data, config }) => {
 
   switch (type) {
     case 'flex':
+      // eslint-disable-next-line no-case-declarations
       const row = list.map((d, i) => {
         let text = ''
         try {

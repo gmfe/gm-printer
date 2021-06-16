@@ -250,16 +250,18 @@ class PrinterStore {
 
   templateSpecialDetails(col, dataKey, index) {
     // 做好保护，出错就返回 text
-    const { specialDetailsKey, text } = col
+    const { specialDetailsKey, text, detailLastColType, separator } = col
     try {
       const row = this.data._table[dataKey][index]
       const compiled = _.template(text, { interpolate: /{{([\s\S]+?)}}/g })
-      const detailsList = row[specialDetailsKey]
-
+      let detailsList = row[specialDetailsKey]
+      // detailsType ---> 区分采购明细单列——最后一列是否换行
+      detailsList =
+        detailLastColType === 'purchase_last_col'
+          ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
+          : detailsList.map(d => `${compiled(d)}`).join(separator)
       // 多栏商品时，同一行仅有一个商品，后面空余部分显示空白
-      return detailsList
-        ? detailsList.map(d => `<div>${compiled(d)}</div>`).join('')
-        : []
+      return detailsList || []
     } catch (err) {
       return text
     }
