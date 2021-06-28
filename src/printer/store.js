@@ -258,18 +258,22 @@ class PrinterStore {
       // 兼容之前已经添加上最后一列的模板
       if (!detailLastColType) {
         detailsList = detailsList
-          .map(d => `<div> ${compiled(d)} </div>`)
-          .join('')
+          ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
+          : []
       } else {
-        // detailsType ---> 区分采购明细单列——最后一列是否换行
-        detailsList =
-          detailLastColType === 'purchase_last_col'
-            ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
-            : detailsList.map(d => `${compiled(d)}`).join(separator)
+        // 多栏商品时，同一行仅有一个商品，后面空余部分显示空白
+        if (detailsList) {
+          // detailLastColType ---> 区分采购明细单列——最后一列是否换行
+          detailsList =
+            detailLastColType === 'purchase_last_col'
+              ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
+              : detailsList.map(d => `${compiled(d)}`).join(separator)
+        } else {
+          detailsList = []
+        }
       }
 
-      // 多栏商品时，同一行仅有一个商品，后面空余部分显示空白
-      return detailsList || []
+      return detailsList
     } catch (err) {
       return text
     }

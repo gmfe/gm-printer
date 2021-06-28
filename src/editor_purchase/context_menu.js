@@ -42,7 +42,6 @@ class ContextMenu extends React.Component {
     const arr = name.split('.')
     const { dataKey } = this.props.editStore.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
-    console.log('dataKey', dataKey, name)
 
     const isMultiActive = keyArr.includes('multi')
     const isCategoryActive = keyArr.includes('category')
