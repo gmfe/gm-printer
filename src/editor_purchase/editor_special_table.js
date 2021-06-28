@@ -17,7 +17,11 @@ import { inject, observer } from 'mobx-react'
 
 const dataKeyList = [
   { value: 'purchase_no_detail', text: i18next.t('不打印明细') },
-  { value: 'purchase_last_col', text: i18next.t('单列-总表最后一列') },
+  { value: 'purchase_last_col', text: i18next.t('单列-总表最后一列（换行）') },
+  {
+    value: 'purchase_last_col_noLineBreak',
+    text: i18next.t('单列-总表最后一列（不换行）')
+  },
   { value: 'purchase_one_row', text: i18next.t('单列-总表下方一行') },
   { value: 'purchase_flex_2', text: i18next.t('双栏-总表下方一行两栏') },
   { value: 'purchase_flex_4', text: i18next.t('四栏-总表下方一行四栏') }
@@ -59,7 +63,6 @@ class TableDetailEditor extends React.Component {
       <div>
         <Title title={i18next.t('设置采购明细')} />
         <Gap />
-
         <Flex alignCenter className='gm-padding-top-5'>
           <div>{i18next.t('采购明细')}：</div>
           <Select
