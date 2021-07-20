@@ -36,6 +36,24 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\/svg\/(\w|\W)+\.svg$/,
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: {
+              icon: true,
+              expandProps: 'start',
+              svgProps: {
+                fill: 'currentColor',
+                // className 冗余
+                className:
+                  "{'gm-svg-icon t-svg-icon m-svg-icon ' + (props.className || '')}"
+              }
+            }
+          }
+        ]
       }
     ]
   },
@@ -45,7 +63,7 @@ module.exports = {
   devServer: {
     compress: true,
     host: '0.0.0.0',
-    port: 8081,
+    port: 8080,
     inline: false,
     disableHostCheck: true,
     proxy: {
