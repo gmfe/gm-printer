@@ -132,7 +132,7 @@ class Table extends React.Component {
   renderDefault() {
     let {
       config,
-      config: { dataKey, arrange, customerRowHeight = 23, subtotal },
+      config: { dataKey, arrange, customerRowHeight = 23 },
       name,
       range,
       pageIndex,
@@ -187,7 +187,9 @@ class Table extends React.Component {
                 data-name={getTableColumnName(name, col.index)}
                 draggable
                 style={{
-                  minWidth: thWidths[i],
+                  maxWidth: thWidths[i],
+                  minWidth: '24px', // 最小两个字24px
+                  width: thWidths[i],
                   ...col.headStyle
                 }}
                 className={classNames({
@@ -269,7 +271,7 @@ class Table extends React.Component {
 
   render() {
     let {
-      config: { className, dataKey, arrange, subtotal },
+      config: { className, dataKey, arrange },
       name,
       placeholder,
       printerStore
