@@ -189,7 +189,6 @@ class Table extends React.Component {
                 style={{
                   maxWidth: thWidths[i],
                   minWidth: '24px', // 最小两个字24px
-                  width: thWidths[i],
                   ...col.headStyle
                 }}
                 className={classNames({
