@@ -7,7 +7,7 @@
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -webkit-overflow-scrolling: touch;
-  line-height: 1.5;
+  // line-height: 1.2;
 
   background: white;
   page-break-after: always;
@@ -96,6 +96,7 @@
     td,
     th {
       border: 1px solid black;
+      // padding: 2px 0;
     }
   }
 }
@@ -105,7 +106,7 @@
     td,
     th {
       border: 1px solid #ddd;
-      padding: 2px;
+      // padding: 2px 0;
     }
   }
 }
@@ -115,6 +116,7 @@
     td,
     th {
       border: 1px solid transparent;
+      // padding: 2px 0;
     }
 
     th {
@@ -129,7 +131,7 @@
     td,
     th {
       border: none;
-      padding: 2px;
+      // padding: 2px 0;
     }
   }
 }
