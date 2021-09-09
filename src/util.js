@@ -178,6 +178,46 @@ const getDataKey = (dataKey, arrange) =>
     ? `${dataKey}_vertical`
     : dataKey
 
+/**
+ * @param {*} table 当前单据的高度信息
+ * @param {*} detailsData 当前所有tablelist
+ * @param {*} currentPageMinimumHeight 当前page最小高度
+ * @param {*} pageHeight page的高度
+ * @returns {ranges, currentDetailsMiniHeight} currentDetailsMiniHeight 超出部分的高度
+ */
+const caclSingleDetailsPageHeight = (
+  table,
+  detailsData,
+  currentPageMinimumHeight,
+  pageHeight
+) => {
+  let end = 0
+  let begin = 0
+  let currentDetailsMiniHeight = 0
+  const ranges = []
+
+  while (end < detailsData.length) {
+    currentDetailsMiniHeight += table.body.children[end]
+    // 如果当前明细高度综合大于页面高度，到此为止进行分页
+    if (currentDetailsMiniHeight + currentPageMinimumHeight > pageHeight) {
+      ranges.push([begin, end])
+      end++
+      begin = end
+      currentDetailsMiniHeight = 0
+    } else {
+      end++
+      if (end === detailsData.length) {
+        ranges.push([begin, end])
+      }
+    }
+  }
+
+  return {
+    ranges,
+    currentDetailsMiniHeight
+  }
+}
+
 export {
   getHeight,
   getWidth,
@@ -193,5 +233,6 @@ export {
   coverDigit2Uppercase,
   getDataKey,
   isMultiTable,
-  getMultiNumber
+  getMultiNumber,
+  caclSingleDetailsPageHeight
 }
