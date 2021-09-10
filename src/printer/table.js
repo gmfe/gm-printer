@@ -149,7 +149,6 @@ class Table extends React.Component {
     const columns = this.getColumns()
     // 列宽固定(避免跳页bug)
     const thWidths = printerStore.tablesInfo[name]?.head.widths || []
-
     // 每页合计在前
     const subtotalTrPageSummary = () => {
       return (
@@ -188,7 +187,7 @@ class Table extends React.Component {
                 data-name={getTableColumnName(name, col.index)}
                 draggable
                 style={{
-                  minWidth: thWidths[i],
+                  maxWidth: thWidths[i],
                   ...col.headStyle
                 }}
                 className={classNames({
@@ -225,7 +224,8 @@ class Table extends React.Component {
                         key={j}
                         data-name={getTableColumnName(name, col.index)}
                         style={{
-                          minWidth: thWidths[j],
+                          minWidth: '24px',
+                          maxWidth: thWidths[j],
                           ...col.style
                         }}
                         className={classNames({

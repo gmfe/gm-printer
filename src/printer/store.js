@@ -88,6 +88,8 @@ class PrinterStore {
 
     // 某一page的累计高度
     let currentPageHeight = allPagesHaveThisHeight
+    /** 区域1的高度 */
+    let firstPagePanel0Height = 0
     // 当前在处理 contents 的索引
     let index = 0
     // 一页承载的内容. [object, object, ...]
@@ -129,8 +131,6 @@ class PrinterStore {
         } else {
           // 表格有数据,添加[每个表格都具有的高度]
           currentPageHeight += allTableHaveThisHeight
-          /** 明细超出一页后的高度 */
-          let detailsOverHeight = 0
 
           /* 遍历表格每一行 */
           while (end < table.body.heights.length) {
@@ -138,16 +138,20 @@ class PrinterStore {
 
             // 当前页没有多余空间
             if (currentPageHeight > this.pageHeight) {
-              page.push({
-                type: 'table',
-                index,
-                begin,
-                end
-              })
-              // 此页完成任务
-              this.pages.push(page)
-              page = []
-              detailsOverHeight = 0
+              // 第一条数据计算时，不能加上header的高度
+              const calcHeight = this.pageHeight - firstPagePanel0Height
+              // 第一条就极端会有问题
+              if (end !== 0) {
+                page.push({
+                  type: 'table',
+                  index,
+                  begin,
+                  end
+                })
+                // 此页完成任务
+                this.pages.push(page)
+                page = []
+              }
 
               // ‼️‼️‼️ 极端情况: 如果一行的高度 大于 页面高度, 那么就对明细进行分页
               if (
@@ -156,26 +160,34 @@ class PrinterStore {
               ) {
                 /** 明细data */
                 const detailsData = tableData[end]?.__details || []
+                const heightParams = {
+                  currentPageMinimumHeight: currentPageMinimumHeight,
+                  calcHeight: calcHeight,
+                  pageHeight: this.pageHeight
+                }
                 const {
                   ranges,
-                  currentDetailsMiniHeight
+                  detailsPageHeight
                 } = caclSingleDetailsPageHeight(
+                  end,
                   table,
                   detailsData,
-                  currentPageMinimumHeight,
-                  this.pageHeight
+                  heightParams
                 )
-                // 根据ranges 对明细进行分割
-                _.forEach(ranges.reverse(), (range, i) => {
-                  // 第一次循环删除原数据，用分割的第一部分进行替换，后面直接新增数据
-                  const isDeleteOrigin = i === 0 ? 1 : 0
+                // 分局明细拆分后的数据
+                const splitTableData = _.map(ranges, range => {
+                  // 当前行的table数据
                   const _tableData = Object.assign({}, tableData[end])
-                  // 更新明细
                   _tableData.__details = detailsData.slice(...range)
-                  // 重复添加该商品(明细不一样)
-                  tableData.splice(end, isDeleteOrigin, _tableData)
+                  return _tableData
                 })
+                // 插入原table数据中
+                tableData.splice(end, 1, ...splitTableData)
+                // 更新
                 this.data._table[dataKey] = tableData
+
+                // 同时也要更新body.heights 不能影响后续计算
+                table.body.heights.splice(end, 1, ...detailsPageHeight)
 
                 page.push({
                   type: 'table',
@@ -183,16 +195,14 @@ class PrinterStore {
                   begin: end,
                   end: ++end
                 })
-                // 同时也要更新body.heights 不能影响后续计算
-                table.body.heights.splice(end, 0, currentDetailsMiniHeight)
                 // 此页完成任务
                 this.pages.push(page)
+                page = []
               }
 
               begin = end
               // 开启新一页,重置页面高度
-              page = []
-              currentPageHeight = currentPageMinimumHeight + detailsOverHeight
+              currentPageHeight = currentPageMinimumHeight
             } else {
               // 有空间，继续做下行
               end++
@@ -219,6 +229,11 @@ class PrinterStore {
           break
         }
 
+        if (index === 0) {
+          // 针对极端情况下，保存区域1的高度
+          firstPagePanel0Height = panelHeight
+        }
+
         if (currentPageHeight <= this.pageHeight) {
           // 空间充足，把信息加入 page，并轮下一个contents
           page.push({
@@ -237,7 +252,6 @@ class PrinterStore {
         }
       }
     }
-
     this.pages.push(page)
   }
 
