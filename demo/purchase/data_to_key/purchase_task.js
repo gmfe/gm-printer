@@ -81,7 +81,7 @@ function purchaseTask (data) {
   const common = {
     [i18next.t('当前时间')]: moment().format('YYYY-MM-DD HH:mm:ss'),
 
-    [i18next.t('采购员')]: purchaser.length ? purchaser.map(o => o.purchaser_name).join(',') : '-',
+    [i18next.t('采购员')]: purchaser?.length ? purchaser.map(o => o.purchaser_name).join(',') : '-',
     [i18next.t('采购单位')]: station_name,
 
     [i18next.t('供应商')]: settle_supplier_name,

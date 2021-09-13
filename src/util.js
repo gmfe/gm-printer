@@ -15,7 +15,7 @@ function getHeight(el) {
 
 function getWidth(el) {
   const styles = window.getComputedStyle(el)
-  const width = el.offsetWidth
+  const width = Math.ceil(el.offsetWidth)
   const borderLeftWidth = parseFloat(styles.borderLeftWidth)
   const borderRightWidth = parseFloat(styles.borderRightWidth)
   const paddingLeft = parseFloat(styles.paddingLeft)
@@ -178,6 +178,56 @@ const getDataKey = (dataKey, arrange) =>
     ? `${dataKey}_vertical`
     : dataKey
 
+/**
+ * @param {*} table 当前单据的高度信息
+ * @param {*} detailsData 当前所有tablelist
+ * @param {*} currentPageMinimumHeight 当前page最小高度
+ * @param {*} pageHeight page的高度
+ * @returns {ranges, detailsPageHeight} detailsPageHeight 每页高度合集
+ */
+const caclSingleDetailsPageHeight = (
+  indexEnd,
+  table,
+  detailsData,
+  heightParams
+) => {
+  let end = 0
+  let begin = 0
+  let index = 0
+  let currentDetailsMiniHeight = 0
+  const ranges = []
+  const detailsPageHeight = []
+  const { calcHeight, pageHeight, currentPageMinimumHeight } = heightParams
+
+  while (end < detailsData.length) {
+    currentDetailsMiniHeight += table.body.children[end]
+
+    const _calcHeight = !index && indexEnd === 0 ? calcHeight : pageHeight
+    // 如果当前明细高度综合大于页面高度，到此为止进行分页
+    if (currentDetailsMiniHeight + currentPageMinimumHeight > _calcHeight) {
+      detailsPageHeight.push(
+        currentDetailsMiniHeight - table.body.children[end]
+      )
+      ranges.push([begin, end])
+      end++
+      index++
+      begin = end
+      currentDetailsMiniHeight = 0
+    } else {
+      end++
+      if (end === detailsData.length) {
+        ranges.push([begin, end])
+        detailsPageHeight.push(currentDetailsMiniHeight)
+      }
+    }
+  }
+
+  return {
+    ranges,
+    detailsPageHeight
+  }
+}
+
 export {
   getHeight,
   getWidth,
@@ -193,5 +243,6 @@ export {
   coverDigit2Uppercase,
   getDataKey,
   isMultiTable,
-  getMultiNumber
+  getMultiNumber,
+  caclSingleDetailsPageHeight
 }

@@ -36,6 +36,7 @@ class Table extends React.Component {
       const tHead = $table.querySelector('thead')
       const ths = tHead.querySelectorAll('th') || []
       const trs = $table.querySelectorAll('tbody tr') || []
+      const detailsDiv = $table.querySelectorAll('tr td .b-table-details')
 
       printerStore.setHeight(name, getHeight($table))
 
@@ -45,7 +46,8 @@ class Table extends React.Component {
           widths: _.map(ths, th => getWidth(th))
         },
         body: {
-          heights: _.map(trs, tr => getHeight(tr))
+          heights: _.map(trs, tr => getHeight(tr)),
+          children: _.map(detailsDiv, div => getHeight(div))
         }
       })
     }
@@ -145,10 +147,8 @@ class Table extends React.Component {
 
     // 列
     const columns = this.getColumns()
-
     // 列宽固定(避免跳页bug)
     const thWidths = printerStore.tablesInfo[name]?.head.widths || []
-
     // 每页合计在前
     const subtotalTrPageSummary = () => {
       return (
@@ -188,8 +188,6 @@ class Table extends React.Component {
                 draggable
                 style={{
                   maxWidth: thWidths[i],
-                  minWidth: '24px', // 最小两个字24px
-                  width: thWidths[i],
                   ...col.headStyle
                 }}
                 className={classNames({
@@ -212,7 +210,6 @@ class Table extends React.Component {
             const _special = tableData[i] && tableData[i]._special
             if (_special)
               return <SpecialTr key={i} config={config} data={_special} />
-
             // 如果项为空对象展现一个占满一行的td
             const isItemNone = !_.keys(tableData[i]).length
 
@@ -226,7 +223,11 @@ class Table extends React.Component {
                       <td
                         key={j}
                         data-name={getTableColumnName(name, col.index)}
-                        style={col.style}
+                        style={{
+                          minWidth: '24px',
+                          maxWidth: thWidths[j],
+                          ...col.style
+                        }}
                         className={classNames({
                           active:
                             getTableColumnName(name, col.index) ===

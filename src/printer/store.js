@@ -1,6 +1,10 @@
 import i18next from '../../locales'
 import { action, observable } from 'mobx'
-import { getSumTrHeight, isMultiTable } from '../util'
+import {
+  getSumTrHeight,
+  isMultiTable,
+  caclSingleDetailsPageHeight
+} from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
 
@@ -84,11 +88,12 @@ class PrinterStore {
 
     // 某一page的累计高度
     let currentPageHeight = allPagesHaveThisHeight
+    /** 区域1的高度 */
+    let firstPagePanel0Height = 0
     // 当前在处理 contents 的索引
     let index = 0
     // 一页承载的内容. [object, object, ...]
     let page = []
-
     /* --- 遍历 contents,将内容动态分配到page --- */
     while (index < this.config.contents.length) {
       const content = this.config.contents[index]
@@ -113,21 +118,15 @@ class PrinterStore {
         const currentPageMinimumHeight =
           allPagesHaveThisHeight + allTableHaveThisHeight
 
+        // 当前数据
+        const tableData = this.data._table[dataKey] || []
+
         // 表格行的索引,用于table.slice(begin, end), 分割到不同页面中
         let begin = 0
         let end = 0
 
         // 如果表格没有数据,那么轮一下个content
-        if (
-          table.body.heights.length === 0 || // 没有数据,不渲染此table
-          table.body.heights[0] + currentPageMinimumHeight > this.pageHeight // 页面无法容纳此table,不渲染这个table了
-        ) {
-          if (
-            table.body.heights[0] + currentPageMinimumHeight >
-            this.pageHeight
-          ) {
-            window.alert('表格明细内容过多，无法打印，请更换其他打印模板') // 例如: 采购明细放在单列-最后一列,造成一列高度大于页面高度
-          }
+        if (table.body.heights.length === 0) {
           index++
         } else {
           // 表格有数据,添加[每个表格都具有的高度]
@@ -137,36 +136,76 @@ class PrinterStore {
           while (end < table.body.heights.length) {
             currentPageHeight += table.body.heights[end]
 
-            // 当前页没有对于空间
+            // 当前页没有多余空间
             if (currentPageHeight > this.pageHeight) {
+              // 第一条数据计算时，不能加上header的高度
+              const calcHeight = this.pageHeight - firstPagePanel0Height
+              // 第一条就极端会有问题
               if (end !== 0) {
-                // ‼️‼️‼️ 极端情况: 如果一行的高度 大于 页面高度, 那么就做下一行
-                if (
-                  table.body.heights[end] + currentPageMinimumHeight >
-                  this.pageHeight
-                ) {
-                  end++
-                }
                 page.push({
                   type: 'table',
                   index,
                   begin,
                   end
                 })
+                // 此页完成任务
+                this.pages.push(page)
+                page = []
+              }
+
+              // ‼️‼️‼️ 极端情况: 如果一行的高度 大于 页面高度, 那么就对明细进行分页
+              if (
+                table.body.heights[end] + currentPageMinimumHeight >
+                this.pageHeight
+              ) {
+                /** 明细data */
+                const detailsData = tableData[end]?.__details || []
+                const heightParams = {
+                  currentPageMinimumHeight: currentPageMinimumHeight,
+                  calcHeight: calcHeight,
+                  pageHeight: this.pageHeight
+                }
+                const {
+                  ranges,
+                  detailsPageHeight
+                } = caclSingleDetailsPageHeight(
+                  end,
+                  table,
+                  detailsData,
+                  heightParams
+                )
+                // 分局明细拆分后的数据
+                const splitTableData = _.map(ranges, range => {
+                  // 当前行的table数据
+                  const _tableData = Object.assign({}, tableData[end])
+                  _tableData.__details = detailsData.slice(...range)
+                  return _tableData
+                })
+                // 插入原table数据中
+                tableData.splice(end, 1, ...splitTableData)
+                // 更新
+                this.data._table[dataKey] = tableData
+
+                // 同时也要更新body.heights 不能影响后续计算
+                table.body.heights.splice(end, 1, ...detailsPageHeight)
+
+                page.push({
+                  type: 'table',
+                  index,
+                  begin: end,
+                  end: ++end
+                })
+                // 此页完成任务
+                this.pages.push(page)
+                page = []
               }
 
               begin = end
-
-              // 此页完成任务
-              this.pages.push(page)
-
               // 开启新一页,重置页面高度
-              page = []
               currentPageHeight = currentPageMinimumHeight
             } else {
               // 有空间，继续做下行
               end++
-
               // 最后一行，把信息加入 page，并轮下一个contents
               if (end === table.body.heights.length) {
                 page.push({
@@ -190,6 +229,11 @@ class PrinterStore {
           break
         }
 
+        if (index === 0) {
+          // 针对极端情况下，保存区域1的高度
+          firstPagePanel0Height = panelHeight
+        }
+
         if (currentPageHeight <= this.pageHeight) {
           // 空间充足，把信息加入 page，并轮下一个contents
           page.push({
@@ -208,7 +252,6 @@ class PrinterStore {
         }
       }
     }
-
     this.pages.push(page)
   }
 
@@ -224,7 +267,6 @@ class PrinterStore {
         price: price
       })
     } catch (err) {
-      // console.warn(err)
       return text
     }
   }
@@ -254,24 +296,41 @@ class PrinterStore {
     try {
       const row = this.data._table[dataKey][index]
       const compiled = _.template(text, { interpolate: /{{([\s\S]+?)}}/g })
-      let detailsList = row[specialDetailsKey]
-      // 兼容之前已经添加上最后一列的模板
-      if (!detailLastColType) {
-        detailsList = detailsList
-          ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
-          : []
-      } else {
-        // 多栏商品时，同一行仅有一个商品，后面空余部分显示空白
-        if (detailsList) {
-          // detailLastColType ---> 区分采购明细单列——最后一列是否换行
-          detailsList =
-            detailLastColType === 'purchase_last_col'
-              ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
-              : detailsList.map(d => `${compiled(d)}`).join(separator)
-        } else {
-          detailsList = []
+      let detailsList = row[specialDetailsKey] || []
+
+      /** 简单处理下数据 */
+      const filterList = (list, type = '') => {
+        if (type === 'noLineBreak') {
+          return list.map(d => `${compiled(d)}`).join(separator)
         }
+        return list
+          .map(d => `<div class='b-table-details'> ${compiled(d)} </div>`)
+          .join('')
       }
+
+      /** 明细换行和不换行处理 */
+      detailsList =
+        !detailLastColType || detailLastColType === 'purchase_last_col'
+          ? filterList(detailsList)
+          : filterList(detailsList, 'noLineBreak')
+
+      // 兼容之前已经添加上最后一列的模板
+      // if (!detailLastColType) {
+      //   detailsList = detailsList
+      //     ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
+      //     : []
+      // } else {
+      //   // 多栏商品时，同一行仅有一个商品，后面空余部分显示空白
+      //   if (detailsList) {
+      //     // detailLastColType ---> 区分采购明细单列——最后一列是否换行
+      //     detailsList =
+      //       detailLastColType === 'purchase_last_col'
+      //         ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
+      //         : detailsList.map(d => `${compiled(d)}`).join(separator)
+      //   } else {
+      //     detailsList = []
+      //   }
+      // }
 
       return detailsList
     } catch (err) {
