@@ -62,8 +62,8 @@ module.exports = {
   ],
   devServer: {
     compress: true,
-    host: '0.0.0.0',
-    port: 8080,
+    host: 'localhost',
+    port: 5678,
     inline: false,
     disableHostCheck: true,
     proxy: {
