@@ -94,12 +94,16 @@ class PrinterStore {
     let index = 0
     // 一页承载的内容. [object, object, ...]
     let page = []
+    // 处理配送单有多个表格的情况
+    let tableCount = 0
     /* --- 遍历 contents,将内容动态分配到page --- */
     while (index < this.config.contents.length) {
       const content = this.config.contents[index]
 
       /* 表格内容处理 */
       if (content.type === 'table') {
+        // 是表格就++
+        tableCount++
         // 表格原始的高度和宽度信息
         const table = this.tablesInfo[`contents.table.${index}`]
 
@@ -149,6 +153,12 @@ class PrinterStore {
                   end
                 })
                 // 此页完成任务
+                this.pages.push(page)
+                page = []
+              }
+              // 页面有多个表格时，当同一页的第二个表格的第一行高度加上第一个表格的高度大于页面的高度，需要生成新的一页
+              // 因为是第二个表格，重新走了遍历，end重置0，没有进入到上面的判断（end !== 0），不会生成新的一页
+              if (tableCount > 1 && end === 0) {
                 this.pages.push(page)
                 page = []
               }
