@@ -550,6 +550,11 @@ class EditorStore {
     }
   }
 
+  @action.bound
+  radioChecked(fields) {
+    this.config.specialConfig = fields.id
+  }
+
   @action
   removeField() {
     if (!this.selected) {
