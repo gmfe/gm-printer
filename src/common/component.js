@@ -602,6 +602,37 @@ Title.propTypes = {
   text: PropTypes.object
 }
 
+const Radio = ({ id, value, radioChecked, checked }) => (
+  <div>
+    <input
+      type='radio'
+      value={value}
+      id={id}
+      name='radio'
+      onChange={radioChecked}
+      checked={checked}
+      style={{ margin: '5px 10px 0 0' }}
+    />
+    <label htmlFor={id}>{value}</label>
+    <Gap />
+  </div>
+)
+
+Radio.propTypes = {
+  id: PropTypes.string,
+  value: PropTypes.string,
+  radioChecked: PropTypes.func,
+  checked: PropTypes.string
+}
+
+const RadioGap = ({ width = '100%', height = '15px' }) => (
+  <div style={{ width, height }} />
+)
+RadioGap.propTypes = {
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+}
+
 const Gap = ({ width = '100%', height = '3px' }) => (
   <div style={{ width, height }} />
 )
@@ -649,7 +680,9 @@ export {
   Hr,
   SubTitle,
   Title,
+  Radio,
   Gap,
+  RadioGap,
   FieldBtn,
   TipInfo
 }
