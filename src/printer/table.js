@@ -113,8 +113,16 @@ class Table extends React.Component {
             ...val,
             index,
             text: val.text.replace(
-              /{{列\.([^{{]+)}}/g,
-              (s, s1) => `{{列.${s1}${MULTI_SUFFIX}${colNum}}}`
+              /{{(price\()?列\.([^{{]+)}}/g,
+              (s, s1, s2) => {
+                if (s1) {
+                  // 有price函数插进来
+                  const mix_suffix = s2.replace(/\*/, () => `${MULTI_SUFFIX}*`)
+                  return `{{${s1}列.${mix_suffix}${colNum}}}`
+                } else {
+                  return `{{列.${s2}${MULTI_SUFFIX}${colNum}}}`
+                }
+              }
             ) // {{列.xx}} => {{列.xxMULTI_SUFFIXi}}
           }
           // 多栏商品的明细取 __details_MULTI_SUFFIX
