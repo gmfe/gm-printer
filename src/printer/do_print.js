@@ -8,9 +8,13 @@ import { afterImgAndSvgLoaded } from '../util'
 
 const printerId = '_gm-printer_' + Math.random()
 let $printer = window.document.getElementById(printerId)
-
-function init(isTest) {
-  isZoom() &&
+/**
+ * @param {boolean} isTest 是否test
+ * @param {boolean} isTipZoom zoom的时候是否提示
+ */
+function init({ isTest, isTipZoom = true } = {}) {
+  isTipZoom &&
+    isZoom() &&
     window.alert(
       '检测您的浏览器使用了缩放,为了避免影响打印布局,请重置缩放到100%后再进行打印'
     )
@@ -68,7 +72,7 @@ function toDoPrint({ data, config }) {
   })
 }
 
-function toDoPrintBatch(list) {
+function toDoPrintBatch(list, isPrint = true) {
   return new window.Promise(resolve => {
     const $app = $printer.contentWindow.document.getElementById('appContainer')
 
@@ -78,7 +82,7 @@ function toDoPrintBatch(list) {
         list={list}
         onReady={() => {
           afterImgAndSvgLoaded(() => {
-            $printer.contentWindow.print()
+            isPrint && $printer.contentWindow.print()
             resolve()
           }, $app)
         }}
@@ -89,15 +93,21 @@ function toDoPrintBatch(list) {
 }
 
 function doPrint({ data, config }, isTest) {
-  init(isTest)
+  init({ isTest })
 
   return toDoPrint({ data, config })
 }
 
-function doBatchPrint(list, isTest) {
-  init(isTest)
+function doBatchPrint(list, isTest, { isPrint, isTipZoom }) {
+  init({ isTest, isTipZoom })
 
-  return toDoPrintBatch(list)
+  return toDoPrintBatch(list, isPrint)
 }
-
-export { doPrint, doBatchPrint }
+/**
+ * @description: 获取打印的html
+ */
+function getPrintContainerHTML() {
+  return $printer.contentWindow.document.getElementsByTagName('html')[0]
+    .innerHTML
+}
+export { doPrint, doBatchPrint, getPrintContainerHTML }
