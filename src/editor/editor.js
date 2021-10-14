@@ -7,6 +7,7 @@ import editStore from './store'
 import { observer, inject } from 'mobx-react'
 import EditorTitle from '../common/editor_title'
 import EditorSelect from '../common/editor_select'
+import SpecialField from '../common/editor_special_field'
 import EditorField from '../common/editor_edit_field'
 import EditorAddField from '../common/editor_add_field'
 import EditorPageSummary from '../common/editor_page_summary'
@@ -38,7 +39,7 @@ export const noSubtotalBtnTableDataKeySet = new Set(
 @observer
 class Editor extends React.Component {
   render() {
-    const { onSave, showEditor, addFields, showNewDate } = this.props
+    const { onSave, showEditor, addFields, showNewDate, mockData } = this.props
 
     return (
       <div className='gm-printer-edit'>
@@ -75,12 +76,14 @@ class Editor extends React.Component {
             <Gap height='10px' />
             <EditorSelect />
             <Gap height='5px' />
+            <SpecialField addFields={addFields} mockData={mockData} />
+            <Gap height='5px' />
             <EditorField
               tableDataKeyList={tableDataKeyList}
               showNewDate={showNewDate}
             />
             <Gap height='5px' />
-            <EditorAddField addFields={addFields} />
+            <EditorAddField addFields={addFields} mockData={mockData} />
             <Gap height='5px' />
             <EditorPageSummary summaryFields={addFields.summaryFields} />
 
