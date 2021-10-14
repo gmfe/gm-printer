@@ -78,6 +78,32 @@ class PrinterStore {
   }
 
   @action
+  computedData(dataKey, table, end, currentRemainTableHeight) {
+    /** 当前数据 */
+    const tableData = this.data._table[dataKey] || []
+    /** 明细data */
+    const detailsData = tableData[end]?.__details || []
+    const { ranges, detailsPageHeight } = caclSingleDetailsPageHeight(
+      table,
+      detailsData,
+      currentRemainTableHeight
+    )
+
+    // 分局明细拆分后的数据
+    const splitTableData = _.map(ranges, range => {
+      const _tableData = Object.assign({}, tableData[end])
+      _tableData.__details = detailsData.slice(...range)
+      return _tableData
+    })
+
+    // 插入原table数据中
+    tableData.splice(end, 1, ...splitTableData)
+    this.data._table[dataKey] = tableData
+
+    return detailsPageHeight
+  }
+
+  @action
   computedPages() {
     // 每页必有 页眉header, 页脚footer
     const allPagesHaveThisHeight = this.height.header + this.height.footer
@@ -86,15 +112,13 @@ class PrinterStore {
       return
     }
 
-    // 某一page的累计高度
+    /** 某一page的累积已填充的高度 */
     let currentPageHeight = allPagesHaveThisHeight
-    /** 区域1的高度 */
-    let firstPagePanel0Height = 0
     // 当前在处理 contents 的索引
     let index = 0
-    // 一页承载的内容. [object, object, ...]
+    /** 一页承载的内容. [object, object, ...] */
     let page = []
-    // 处理配送单有多个表格的情况
+    /** 处理配送单有多个表格的情况 */
     let tableCount = 0
     /* --- 遍历 contents,将内容动态分配到page --- */
     while (index < this.config.contents.length) {
@@ -118,12 +142,13 @@ class PrinterStore {
         // 每个表格都具有的高度
         const allTableHaveThisHeight =
           table.head.height + subtotalTrHeight + pageSummaryTrHeight
-        // 当前表格页面的最少高度
+        /** 当前page页面的最小高度 */
         const currentPageMinimumHeight =
           allPagesHaveThisHeight + allTableHaveThisHeight
-
-        // 当前数据
-        const tableData = this.data._table[dataKey] || []
+        /** 当前page可容纳的table高度 */
+        let pageAccomodateTableHeight = +new Big(this.pageHeight)
+          .minus(currentPageHeight)
+          .toFixed(2)
 
         // 表格行的索引,用于table.slice(begin, end), 分割到不同页面中
         let begin = 0
@@ -133,18 +158,46 @@ class PrinterStore {
         if (table.body.heights.length === 0) {
           index++
         } else {
+          /** 仅计算当前页table的累积高度 */
+          let currentTableHeight = allTableHaveThisHeight
           // 表格有数据,添加[每个表格都具有的高度]
           currentPageHeight += allTableHaveThisHeight
+          /** 当前table剩余的高度 */
+          let currentRemainTableHeight = 0
 
-          /* 遍历表格每一行 */
+          /* 遍历表格每一行，填充表格内容 */
           while (end < table.body.heights.length) {
+            currentTableHeight += table.body.heights[end]
+            // 用于计算最后一页有footer情况的高度
             currentPageHeight += table.body.heights[end]
-
             // 当前页没有多余空间
-            if (currentPageHeight > this.pageHeight) {
-              // 第一条数据计算时，不能加上header的高度
-              const calcHeight = this.pageHeight - firstPagePanel0Height
-              // 第一条就极端会有问题
+            if (currentTableHeight > pageAccomodateTableHeight) {
+              const minHeight = Math.min(...table.body.heights)
+              currentRemainTableHeight = +Big(pageAccomodateTableHeight)
+                .minus(currentTableHeight)
+                .plus(table.body.heights[end])
+
+              /**
+               * 说明： 1. currentRemainTableHeight > minHeight 要比最小度高高，不然每次到这都进入if
+               * 2. table.body.heights[end]至少要是currentRemainTableHeight的 2倍，怕出现打印时最后一行文字显示一半的情况
+               * 3. table.body.heights[end] 高度超过了 pageAccomodateTableHeight
+               */
+              if (
+                (currentRemainTableHeight > minHeight &&
+                  table.body.heights[end] / minHeight > 2) ||
+                table.body.heights[end] > pageAccomodateTableHeight
+              ) {
+                const detailsPageHeight = this.computedData(
+                  dataKey,
+                  table,
+                  end,
+                  currentRemainTableHeight
+                )
+                // 拆分明细后，同时也要更新body.heights 不能影响后续计算
+                table.body.heights.splice(end, 1, ...detailsPageHeight)
+                end++
+              }
+              // 第一条极端会有问题
               if (end !== 0) {
                 page.push({
                   type: 'table',
@@ -163,55 +216,12 @@ class PrinterStore {
                 page = []
               }
 
-              // ‼️‼️‼️ 极端情况: 如果一行的高度 大于 页面高度, 那么就对明细进行分页
-              if (
-                table.body.heights[end] + currentPageMinimumHeight >
-                this.pageHeight
-              ) {
-                /** 明细data */
-                const detailsData = tableData[end]?.__details || []
-                const heightParams = {
-                  currentPageMinimumHeight: currentPageMinimumHeight,
-                  calcHeight: calcHeight,
-                  pageHeight: this.pageHeight
-                }
-                const {
-                  ranges,
-                  detailsPageHeight
-                } = caclSingleDetailsPageHeight(
-                  end,
-                  table,
-                  detailsData,
-                  heightParams
-                )
-                // 分局明细拆分后的数据
-                const splitTableData = _.map(ranges, range => {
-                  // 当前行的table数据
-                  const _tableData = Object.assign({}, tableData[end])
-                  _tableData.__details = detailsData.slice(...range)
-                  return _tableData
-                })
-                // 插入原table数据中
-                tableData.splice(end, 1, ...splitTableData)
-                // 更新
-                this.data._table[dataKey] = tableData
-
-                // 同时也要更新body.heights 不能影响后续计算
-                table.body.heights.splice(end, 1, ...detailsPageHeight)
-
-                page.push({
-                  type: 'table',
-                  index,
-                  begin: end,
-                  end: ++end
-                })
-                // 此页完成任务
-                this.pages.push(page)
-                page = []
-              }
-
               begin = end
               // 开启新一页,重置页面高度
+              pageAccomodateTableHeight = +new Big(this.pageHeight).minus(
+                currentPageMinimumHeight
+              )
+              currentTableHeight = allTableHaveThisHeight
               currentPageHeight = currentPageMinimumHeight
             } else {
               // 有空间，继续做下行
@@ -237,11 +247,6 @@ class PrinterStore {
         // 当 panel + allPagesHaveThisHeight > 页高度, 停止. 避免死循环
         if (panelHeight + allPagesHaveThisHeight > this.pageHeight) {
           break
-        }
-
-        if (index === 0) {
-          // 针对极端情况下，保存区域1的高度
-          firstPagePanel0Height = panelHeight
         }
 
         if (currentPageHeight <= this.pageHeight) {

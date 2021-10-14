@@ -181,45 +181,36 @@ const getDataKey = (dataKey, arrange) =>
 /**
  * @param {*} table 当前单据的高度信息
  * @param {*} detailsData 当前所有tablelist
- * @param {*} currentPageMinimumHeight 当前page最小高度
- * @param {*} pageHeight page的高度
+ * @param {*} curRemainPageHeight 可容纳table的总高度
  * @returns {ranges, detailsPageHeight} detailsPageHeight 每页高度合集
  */
 const caclSingleDetailsPageHeight = (
-  indexEnd,
   table,
   detailsData,
-  heightParams
+  curRemainPageHeight
 ) => {
-  let end = 0
-  let begin = 0
-  let index = 0
-  let currentDetailsMiniHeight = 0
+  let [end, deadline] = [0, 0]
+  const begin = 0
+  /** 当前明细高度，默认为tr的border+padding的height */
+  let currentDetailsMiniHeight = 5
   const ranges = []
   const detailsPageHeight = []
-  const { calcHeight, pageHeight, currentPageMinimumHeight } = heightParams
+  /** 未进行计算的高度，留到下一次, 默认为tr的border+padding的height */
+  let remainDetailsHeight = 5
 
+  // 如果当前累计高度高于当前剩余高度，则跳出返回
   while (end < detailsData.length) {
-    currentDetailsMiniHeight += table.body.children[end]
-
-    const _calcHeight = !index && indexEnd === 0 ? calcHeight : pageHeight
-    // 如果当前明细高度综合大于页面高度，到此为止进行分页
-    if (currentDetailsMiniHeight + currentPageMinimumHeight > _calcHeight) {
-      detailsPageHeight.push(
-        currentDetailsMiniHeight - table.body.children[end]
-      )
-      ranges.push([begin, end])
-      index++
-      begin = end
-      currentDetailsMiniHeight = 0
+    if (currentDetailsMiniHeight < curRemainPageHeight) {
+      currentDetailsMiniHeight += table.body.children[end]
+      deadline = end
     } else {
-      end++
-      if (end === detailsData.length) {
-        ranges.push([begin, end])
-        detailsPageHeight.push(currentDetailsMiniHeight)
-      }
+      remainDetailsHeight += table.body.children[end]
     }
+    end++
   }
+
+  ranges.push([begin, deadline], [deadline, end])
+  detailsPageHeight.push(currentDetailsMiniHeight, remainDetailsHeight)
 
   return {
     ranges,
