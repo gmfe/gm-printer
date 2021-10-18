@@ -98,11 +98,16 @@ function doPrint({ data, config }, isTest) {
   return toDoPrint({ data, config })
 }
 
-function doBatchPrint(list, isTest, { isPrint, isTipZoom }) {
-  init({ isTest, isTipZoom })
+function doBatchPrint(
+  list,
+  isTest,
+  extraCofnig = { isPrint: true, isTipZoom: true }
+) {
+  init({ isTest, isTipZoom: extraCofnig.isTipZoom })
 
-  return toDoPrintBatch(list, isPrint)
+  return toDoPrintBatch(list, extraCofnig.isPrint)
 }
+
 /**
  * @description: 获取打印的html
  */

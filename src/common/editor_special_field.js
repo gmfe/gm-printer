@@ -16,15 +16,16 @@ class SpecialField extends React.Component {
       <div>
         <Title title={i18next.t('配送单特殊控制')} />
         <RadioGap />
-        {specialFields.map(fields => (
-          <Radio
-            id={fields.id}
-            value={fields.value}
-            key={fields.id}
-            checked={editStore.config.specialConfig === fields.id}
-            radioChecked={() => editStore.radioChecked(fields, tableData)}
-          />
-        ))}
+        {specialFields &&
+          specialFields.map(fields => (
+            <Radio
+              id={fields.id}
+              value={fields.value}
+              key={fields.id}
+              checked={editStore.config.specialConfig === fields.id}
+              radioChecked={() => editStore.radioChecked(fields, tableData)}
+            />
+          ))}
         <Gap />
       </div>
     )
