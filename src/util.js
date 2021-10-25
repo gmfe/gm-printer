@@ -209,7 +209,6 @@ const caclSingleDetailsPageHeight = (
         currentDetailsMiniHeight - table.body.children[end]
       )
       ranges.push([begin, end])
-      end++
       index++
       begin = end
       currentDetailsMiniHeight = 0
