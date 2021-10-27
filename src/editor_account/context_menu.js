@@ -1,5 +1,6 @@
 import i18next from '../../locales'
 import React from 'react'
+import PropTypes from 'prop-types'
 import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
@@ -44,18 +45,28 @@ class ContextMenu extends React.Component {
     editStore.setSubtotalShow(name)
   }
 
+  handleChangeTableData = isAutoFilling => {
+    const { editStore } = this.props
+    editStore.handleChangeTableData(isAutoFilling)
+  }
+
   renderOrderActionBtn = name => {
     if (!this.hasSubtotalBtn(name)) {
       return null
     }
 
     const arr = name.split('.')
-    const { dataKey, subtotal } = this.props.editStore.config.contents[arr[2]]
+    const {
+      dataKey,
+      subtotal,
+      extraSpecialConfig
+    } = this.props.editStore.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
 
     // const isMultiActive = keyArr.includes('multi')
     // const isCategoryActive = keyArr.includes('category')
     const isSubtotalActive = subtotal.show
+    const isAutoFilling = extraSpecialConfig?.isAutoFilling
 
     return (
       <>
@@ -77,6 +88,12 @@ class ContextMenu extends React.Component {
         >
           {i18next.t('每页合计')}
         </div>
+        <div
+          onClick={this.handleChangeTableData.bind(this, !isAutoFilling)}
+          className={isAutoFilling ? 'active' : ''}
+        >
+          {i18next.t('行数填充')}
+        </div>
       </>
     )
   }
@@ -93,11 +110,17 @@ class ContextMenu extends React.Component {
           selected={editStore.selected}
           selectedRegion={editStore.selectedRegion}
           config={editStore.config}
-          data={mockData}
+          data={editStore.mockData}
+          getremainpageheight={editStore.setRemainPageHeight}
         />
       </CommonContextMenu>
     )
   }
+}
+
+ContextMenu.propTypes = {
+  editStore: PropTypes.object,
+  mockData: PropTypes.object
 }
 
 export default ContextMenu

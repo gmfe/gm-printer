@@ -9,6 +9,7 @@ import {
 import _ from 'lodash'
 import Big from 'big.js'
 
+export const TR_BASE_HEIGHT = 23
 const price = (n, f = 2) => Big(n || 0).toFixed(f)
 class PrinterStore {
   @observable ready = false
@@ -25,6 +26,9 @@ class PrinterStore {
   @observable tablesInfo = {}
 
   @observable pages = [] // [{type, index, begin, end}]
+
+  /** 当前页剩余空白高度 */
+  @observable remainPageHeight = 0
 
   data = {}
 
@@ -270,6 +274,44 @@ class PrinterStore {
       }
     }
     this.pages.push(page)
+    this.remainPageHeight = +Big(this.pageHeight - currentPageHeight).toFixed(0)
+  }
+
+  // 计算初始化是否填充tableData
+  @action.bound
+  fillEmptyPage() {
+    const { contents } = this.config
+    // 或许存在多个table
+    const tableConfigs = _.find(contents, item => {
+      if (item.extraSpecialConfig) return item
+    })
+    // 兼容没有extraSpecialConfig配置的
+    if (!tableConfigs) return
+
+    const { extraSpecialConfig, dataKey } = tableConfigs
+    let table = this.data._table[dataKey]
+
+    if (tableConfigs?.extraSpecialConfig?.isAutoFilling) {
+      if (extraSpecialConfig.isAutoFilling) {
+        table.push(...this.getFilledTableData(table))
+      } else {
+        const len = this.getFilledTableData(table).length
+        const newTable = this.data._table[dataKey].slice(0, -len)
+        table = newTable
+      }
+    }
+    this.data._table[dataKey] = table
+    this.data = Object.assign({}, this.data)
+  }
+
+  @action.bound
+  getFilledTableData(tableData) {
+    const tr_count = Math.floor(this.remainPageHeight / TR_BASE_HEIGHT)
+    const filledData = {}
+    _.map(tableData[0], (val, key) => {
+      filledData[key] = ''
+    })
+    return Array(tr_count).fill(filledData)
   }
 
   template(text, pageIndex) {
@@ -330,24 +372,6 @@ class PrinterStore {
         !detailLastColType || detailLastColType === 'purchase_last_col'
           ? filterList(detailsList)
           : filterList(detailsList, 'noLineBreak')
-
-      // 兼容之前已经添加上最后一列的模板
-      // if (!detailLastColType) {
-      //   detailsList = detailsList
-      //     ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
-      //     : []
-      // } else {
-      //   // 多栏商品时，同一行仅有一个商品，后面空余部分显示空白
-      //   if (detailsList) {
-      //     // detailLastColType ---> 区分采购明细单列——最后一列是否换行
-      //     detailsList =
-      //       detailLastColType === 'purchase_last_col'
-      //         ? detailsList.map(d => `<div> ${compiled(d)} </div>`).join('')
-      //         : detailsList.map(d => `${compiled(d)}`).join(separator)
-      //   } else {
-      //     detailsList = []
-      //   }
-      // }
 
       return detailsList
     } catch (err) {

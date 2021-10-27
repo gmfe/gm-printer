@@ -25,7 +25,7 @@ class SummarySetting extends React.Component {
   handlePageSummaryColumns = e => {
     const { editStore } = this.props
     const { summaryConfig } = editStore.computedTableSpecialConfig
-    // 由于初始末班没有summary 这个object，为了UI响应数据，只能这么写了
+    // 由于初始模板没有summary 这个object，为了UI响应数据，只能这么写了
     const hasSummaryConfig = has(
       editStore.computedTableSpecialConfig,
       'summaryConfig'
