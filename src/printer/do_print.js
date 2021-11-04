@@ -97,7 +97,6 @@ function doPrint({ data, config }, isTest) {
 
   return toDoPrint({ data, config })
 }
-
 function doBatchPrint(
   list,
   isTest,
