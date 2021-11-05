@@ -164,8 +164,8 @@ class PrinterStore {
           currentPageHeight += allTableHaveThisHeight
           /** 当前table剩余的高度 */
           let currentRemainTableHeight = 0
-          /** 去最小的tr高度，用于下面的计算compare */
-          const minHeight = Math.min(...table.body.heights)
+          /** 去最小的tr高度，用于下面的计算compare,(避免特殊情况：一般来说最小tr——height = 23, 比23还小的不考虑计算) */
+          const minHeight = Math.max(Math.min(...table.body.heights), 23)
 
           /* 遍历表格每一行，填充表格内容 */
           while (end < table.body.heights.length) {
