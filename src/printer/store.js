@@ -220,7 +220,7 @@ class PrinterStore {
               begin = end
               // 开启新一页,重置页面高度
               pageAccomodateTableHeight = +new Big(this.pageHeight).minus(
-                currentPageMinimumHeight
+                allPagesHaveThisHeight
               )
               currentTableHeight = allTableHaveThisHeight
               currentPageHeight = currentPageMinimumHeight
