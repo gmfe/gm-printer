@@ -3,7 +3,8 @@ import { action, observable } from 'mobx'
 import {
   getSumTrHeight,
   isMultiTable,
-  caclSingleDetailsPageHeight
+  caclSingleDetailsPageHeight,
+  getArrayMid
 } from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
@@ -165,7 +166,7 @@ class PrinterStore {
           /** 当前table剩余的高度 */
           let currentRemainTableHeight = 0
           /** 去最小的tr高度，用于下面的计算compare,(避免特殊情况：一般来说最小tr——height = 23, 比23还小的不考虑计算) */
-          const minHeight = Math.max(Math.min(...table.body.heights), 23)
+          const minHeight = Math.max(getArrayMid(table.body.heights), 23)
 
           /* 遍历表格每一行，填充表格内容 */
           while (end < table.body.heights.length) {
@@ -185,7 +186,7 @@ class PrinterStore {
                */
               if (
                 (currentRemainTableHeight > minHeight &&
-                  table.body.heights[end] / minHeight > 2) ||
+                  table.body.heights[end] / currentRemainTableHeight > 2) ||
                 table.body.heights[end] > pageAccomodateTableHeight
               ) {
                 const detailsPageHeight = this.computedData(

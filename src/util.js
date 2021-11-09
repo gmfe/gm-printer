@@ -218,6 +218,37 @@ const caclSingleDetailsPageHeight = (
   }
 }
 
+/**
+ * 取数组中位数
+ * @param {*} arr
+ */
+const getArrayMid = arr => {
+  const mapArr = []
+  let majority = 23
+  const map = new Map()
+
+  _.forEach(arr, (val, key) => {
+    if (map.has(val)) {
+      map.set(val, map.get(val) + 1)
+    } else {
+      map.set(val, 1)
+    }
+  })
+
+  for (const val of map.values()) {
+    mapArr.push(val)
+  }
+
+  const maxCount = Math.max(...mapArr)
+  for (const val of map.keys()) {
+    if (map.get(val) === maxCount) {
+      majority = val
+    }
+  }
+
+  return majority
+}
+
 export {
   getHeight,
   getWidth,
@@ -234,5 +265,6 @@ export {
   getDataKey,
   isMultiTable,
   getMultiNumber,
-  caclSingleDetailsPageHeight
+  caclSingleDetailsPageHeight,
+  getArrayMid
 }
