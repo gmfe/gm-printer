@@ -179,16 +179,12 @@ const getDataKey = (dataKey, arrange) =>
     : dataKey
 
 /**
- * @param {*} table 当前单据的高度信息
+ * @param {*} detailsHeights 当钱明细高度集
  * @param {*} detailsData 当前所有tablelist
  * @param {*} curRemainPageHeight 可容纳table的总高度
  * @returns {ranges, detailsPageHeight} detailsPageHeight 每页高度合集
  */
-const caclSingleDetailsPageHeight = (
-  table,
-  detailsData,
-  curRemainPageHeight
-) => {
+const caclSingleDetailsPageHeight = (detailsHeights, curRemainPageHeight) => {
   let [end, deadline] = [0, 0]
   const begin = 0
   /** 当前明细高度，默认为tr的border+padding的height */
@@ -199,12 +195,13 @@ const caclSingleDetailsPageHeight = (
   let remainDetailsHeight = 5
 
   // 如果当前累计高度高于当前剩余高度，则跳出返回
-  while (end < detailsData.length) {
-    if (currentDetailsMiniHeight < curRemainPageHeight) {
-      currentDetailsMiniHeight += table.body.children[end]
-      deadline = end
+  while (end < detailsHeights.length) {
+    const height = currentDetailsMiniHeight + detailsHeights[end]
+    if (height < curRemainPageHeight) {
+      currentDetailsMiniHeight = height
+      deadline++
     } else {
-      remainDetailsHeight += table.body.children[end]
+      remainDetailsHeight += detailsHeights[end]
     }
     end++
   }
@@ -216,6 +213,60 @@ const caclSingleDetailsPageHeight = (
     ranges,
     detailsPageHeight
   }
+}
+
+/**
+ * 取数组中位数, 有数量相同的则取最小的那个
+ * @param {*} arr
+ */
+const getArrayMid = arr => {
+  /** 数组元素出现次数的集合 */
+  const mapArr = []
+  const map = new Map()
+  let majority = 23
+  /** 次数相同的元素集合 */
+  const majorityArr = []
+  const min = Math.min(...arr)
+
+  if (arr.length === 0) return majority
+
+  _.forEach(arr, (val, key) => {
+    if (map.has(val)) {
+      map.set(val, map.get(val) + 1)
+    } else {
+      map.set(val, 1)
+    }
+  })
+
+  for (const val of map.values()) {
+    mapArr.push(val)
+  }
+  // 如果没有众数，就取最小值
+  if (Array.from(new Set(mapArr)).length === 1) {
+    // 如果说min也远远大于23， 就返回23吧
+    if (min / 23 > 10) {
+      return 23
+    }
+    return min
+  }
+
+  const maxCount = Math.max(...mapArr)
+  for (const val of map.keys()) {
+    if (map.get(val) === maxCount) {
+      majorityArr.push(val)
+    }
+  }
+  majority = Math.min(...majorityArr)
+  // 如果说取的众数也远远大于min，
+  if (majority / min > 3) {
+    // 如果说min也远远大于23， 就返回23吧
+    if (min / 23 > 10) {
+      return 23
+    }
+    return min
+  }
+
+  return majority
 }
 
 export {
@@ -234,5 +285,6 @@ export {
   getDataKey,
   isMultiTable,
   getMultiNumber,
-  caclSingleDetailsPageHeight
+  caclSingleDetailsPageHeight,
+  getArrayMid
 }
