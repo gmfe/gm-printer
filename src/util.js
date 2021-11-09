@@ -200,8 +200,9 @@ const caclSingleDetailsPageHeight = (
 
   // 如果当前累计高度高于当前剩余高度，则跳出返回
   while (end < detailsData.length) {
-    if (currentDetailsMiniHeight < curRemainPageHeight) {
-      currentDetailsMiniHeight += table.body.children[end]
+    const height = currentDetailsMiniHeight + table.body.children[end]
+    if (height < curRemainPageHeight) {
+      currentDetailsMiniHeight = height
       deadline = end
     } else {
       remainDetailsHeight += table.body.children[end]
@@ -219,13 +220,16 @@ const caclSingleDetailsPageHeight = (
 }
 
 /**
- * 取数组中位数
+ * 取数组中位数, 有数量相同的则取最小的那个
  * @param {*} arr
  */
 const getArrayMid = arr => {
   const mapArr = []
-  let majority = 23
   const map = new Map()
+  const majority = 23
+  const majorityArr = []
+
+  if (arr.length === 0) return majority
 
   _.forEach(arr, (val, key) => {
     if (map.has(val)) {
@@ -238,15 +242,19 @@ const getArrayMid = arr => {
   for (const val of map.values()) {
     mapArr.push(val)
   }
+  // 如果没有众数，就取最小值
+  if (Array.from(new Set(mapArr)).length === 1) {
+    return Math.min(...arr)
+  }
 
   const maxCount = Math.max(...mapArr)
   for (const val of map.keys()) {
     if (map.get(val) === maxCount) {
-      majority = val
+      majorityArr.push(val)
     }
   }
 
-  return majority
+  return Math.min(...majorityArr)
 }
 
 export {

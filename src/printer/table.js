@@ -184,6 +184,23 @@ class Table extends React.Component {
       )
     }
 
+    const getTdStyle = index => {
+      const width = thWidths[index]
+      if (width >= 150) {
+        return {
+          minWidth: 150,
+          maxWidth: width,
+          wordBreak: 'break-all'
+        }
+      } else {
+        return {
+          minWidth: '24px',
+          maxWidth: 150,
+          whiteSpace: 'nowarp'
+        }
+      }
+    }
+
     return (
       <table>
         <thead>
@@ -195,7 +212,7 @@ class Table extends React.Component {
                 data-name={getTableColumnName(name, col.index)}
                 draggable
                 style={{
-                  maxWidth: thWidths[i],
+                  ...getTdStyle(i),
                   ...col.headStyle
                 }}
                 className={classNames({
@@ -232,8 +249,7 @@ class Table extends React.Component {
                         key={j}
                         data-name={getTableColumnName(name, col.index)}
                         style={{
-                          minWidth: '24px',
-                          maxWidth: thWidths[j],
+                          ...getTdStyle(j),
                           ...col.style
                         }}
                         className={classNames({

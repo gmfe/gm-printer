@@ -87,7 +87,12 @@ class PrinterStore {
     /** 当前数据 */
     const tableData = this.data._table[dataKey] || []
     /** 明细data */
-    const detailsData = tableData[end]?.__details || []
+    const detailsData = tableData[end]?.__details
+    // 如果没有details, 就不用计算了
+    if (!detailsData) {
+      return []
+    }
+
     const { ranges, detailsPageHeight } = caclSingleDetailsPageHeight(
       table,
       detailsData,
@@ -185,7 +190,7 @@ class PrinterStore {
 
               /**
                * 说明： 1. currentRemainTableHeight > minHeight 要比最小度高高，不然每次到这都进入if
-               * 2. table.body.heights[end]至少要是currentRemainTableHeight的 2倍，怕出现打印时最后一行文字显示一半的情况
+               * 2. table.body.heights[end]至少要是minHeight的 2倍，怕出现打印时最后一行文字显示一半的情况
                * 3. table.body.heights[end] 高度超过了 pageAccomodateTableHeight
                */
               if (
@@ -199,9 +204,12 @@ class PrinterStore {
                   end,
                   currentRemainTableHeight
                 )
-                // 拆分明细后，同时也要更新body.heights 不能影响后续计算
-                table.body.heights.splice(end, 1, ...detailsPageHeight)
-                end++
+
+                if (detailsPageHeight.length > 0) {
+                  // 拆分明细后，同时也要更新body.heights 不能影响后续计算
+                  table.body.heights.splice(end, 1, ...detailsPageHeight)
+                  end++
+                }
               }
               // 第一条极端会有问题
               if (end !== 0) {
