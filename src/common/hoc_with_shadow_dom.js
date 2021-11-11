@@ -8,21 +8,21 @@ const withShadowDom = WrapCom => {
   return class extends React.Component {
     ref = React.createRef()
 
-    componentDidMount () {
+    componentDidMount() {
       const shadowRoot = this.ref.current.attachShadow({ mode: 'open' })
       // 在window下挂 shadow root
       window.shadowRoot = shadowRoot
-      ReactDOM.render(<WrapCom {...this.props}/>, shadowRoot)
+      ReactDOM.render(<WrapCom {...this.props} />, shadowRoot)
       insertCSS(getPrinterCSS() + getEditorCSS(), shadowRoot)
     }
 
-    componentWillUnmount () {
+    componentWillUnmount() {
       // 移除示例,不然很多意想不到的事情发生
       ReactDOM.unmountComponentAtNode(window.shadowRoot)
     }
 
-    render () {
-      return <div id='shadowroot' ref={this.ref}/>
+    render() {
+      return <div id='shadowroot' ref={this.ref} />
     }
   }
 }
