@@ -4,65 +4,29 @@ import { getStyleWithDiff } from '../util'
 
 const withStore = store => WrapComponent =>
   class extends React.Component {
-    constructor(props) {
+    constructor (props) {
       super(props)
       this.store = store
-      this.store.init(props.config, props.mockData)
+      this.store.init(props.config)
     }
 
-    componentDidMount() {
-      window.document.addEventListener(
-        'gm-printer-select',
-        this.handlePrinterSelect
-      )
-      window.document.addEventListener(
-        'gm-printer-select-region',
-        this.handleSelectedRegion
-      )
-      window.document.addEventListener(
-        'gm-printer-panel-style-set',
-        this.handlePrinterPanelStyleSet
-      )
-      window.document.addEventListener(
-        'gm-printer-block-style-set',
-        this.handlePrinterBlockStyleSet
-      )
-      window.document.addEventListener(
-        'gm-printer-block-text-set',
-        this.handlePrinterBlockTextSet
-      )
-      window.document.addEventListener(
-        'gm-printer-table-drag',
-        this.handlePrinterTableDrag
-      )
+    componentDidMount () {
+      window.document.addEventListener('gm-printer-select', this.handlePrinterSelect)
+      window.document.addEventListener('gm-printer-select-region', this.handleSelectedRegion)
+      window.document.addEventListener('gm-printer-panel-style-set', this.handlePrinterPanelStyleSet)
+      window.document.addEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
+      window.document.addEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
+      window.document.addEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
       window.document.addEventListener('keydown', this.handleKeyDown)
     }
 
-    componentWillUnmount() {
-      window.document.removeEventListener(
-        'gm-printer-select',
-        this.handlePrinterSelect
-      )
-      window.document.removeEventListener(
-        'gm-printer-select-region',
-        this.handleSelectedRegion
-      )
-      window.document.removeEventListener(
-        'gm-printer-panel-style-set',
-        this.handlePrinterPanelStyleSet
-      )
-      window.document.removeEventListener(
-        'gm-printer-block-style-set',
-        this.handlePrinterBlockStyleSet
-      )
-      window.document.removeEventListener(
-        'gm-printer-block-text-set',
-        this.handlePrinterBlockTextSet
-      )
-      window.document.removeEventListener(
-        'gm-printer-table-drag',
-        this.handlePrinterTableDrag
-      )
+    componentWillUnmount () {
+      window.document.removeEventListener('gm-printer-select', this.handlePrinterSelect)
+      window.document.removeEventListener('gm-printer-select-region', this.handleSelectedRegion)
+      window.document.removeEventListener('gm-printer-panel-style-set', this.handlePrinterPanelStyleSet)
+      window.document.removeEventListener('gm-printer-block-style-set', this.handlePrinterBlockStyleSet)
+      window.document.removeEventListener('gm-printer-block-text-set', this.handlePrinterBlockTextSet)
+      window.document.removeEventListener('gm-printer-table-drag', this.handlePrinterTableDrag)
       window.document.removeEventListener('keydown', this.handleKeyDown)
     }
 
@@ -71,31 +35,31 @@ const withStore = store => WrapComponent =>
       this.store.setSelectedRegion(selected)
     }
 
-    handlePrinterSelect = e => {
+    handlePrinterSelect = (e) => {
       const { selected } = e.detail
       this.store.setSelected(selected)
     }
 
-    handlePrinterPanelStyleSet = e => {
+    handlePrinterPanelStyleSet = (e) => {
       const { name, style } = e.detail
       this.store.setConfigPanelStyle(name, style)
     }
 
-    handlePrinterBlockStyleSet = e => {
+    handlePrinterBlockStyleSet = (e) => {
       const { style } = e.detail
       this.store.setConfigBlockBy('style', style)
     }
 
-    handlePrinterBlockTextSet = e => {
+    handlePrinterBlockTextSet = (e) => {
       const { text } = e.detail
       this.store.setConfigBlockBy('text', text)
     }
 
-    handlePrinterTableDrag = e => {
+    handlePrinterTableDrag = (e) => {
       this.store.exchangeTableColumn(e.detail.target, e.detail.source)
     }
 
-    handleKeyDown = e => {
+    handleKeyDown = (e) => {
       if (e.target !== window.document.body) {
         return
       }
@@ -117,11 +81,7 @@ const withStore = store => WrapComponent =>
             diffY += 1
           }
 
-          const newStyle = getStyleWithDiff(
-            this.store.computedSelectedInfo.style,
-            diffX,
-            diffY
-          )
+          const newStyle = getStyleWithDiff(this.store.computedSelectedInfo.style, diffX, diffY)
 
           this.store.setConfigBlockBy('style', newStyle)
         } else if (this.store.computedIsSelectTable) {
@@ -140,10 +100,10 @@ const withStore = store => WrapComponent =>
       }
     }
 
-    render() {
+    render () {
       return (
         <Provider editStore={this.store} mockData={this.props.mockData}>
-          <WrapComponent {...this.props} />
+          <WrapComponent {...this.props}/>
         </Provider>
       )
     }
