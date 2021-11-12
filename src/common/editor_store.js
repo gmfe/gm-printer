@@ -4,23 +4,52 @@ import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName, exchange } from '../util'
 
-/** 默认填充的tr高度为23px */
-const TR_HEIGHT = 23
 class EditorStore {
   @observable
   tableCustomStyle = 'default'
 
-  @observable
-  emptyTableData = []
+  @action.bound
+  changeTableCustomStyle(v) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      if (arr.includes('table')) {
+        this.config.contents[arr[2]].className = v
+        this.tableCustomStyle = v
+      }
+    }
+  }
+
+  @computed
+  get computedPrinterKey() {
+    return _.map(this.config, (v, k) => {
+      if (k === '__key__' && v) {
+        return v
+      } else if (k === 'page') {
+        return v.type + 'PAGE' + v.printDirection + v.size.width + v.size.height
+      } else if (k === 'contents') {
+        return _.map(v, vv => {
+          if (vv.type === 'table') {
+            return (
+              'TABLE' +
+              vv.columns.length +
+              vv.className +
+              vv.dataKey +
+              vv.subtotal.show +
+              vv.summaryConfig?.pageSummaryShow +
+              vv.customerRowHeight
+            )
+          } else {
+            return vv.style ? vv.style.height : ''
+          }
+        }).join('/')
+      } else {
+        return v.style ? v.style.height : ''
+      }
+    }).join('_')
+  }
 
   @observable
   config = null
-
-  @observable
-  mockData = []
-
-  @observable
-  remainPageHeihgt = 0
 
   // 初始模板
   originConfig = null
@@ -53,100 +82,14 @@ class EditorStore {
 
   defaultTableSubtotal = { show: false }
 
-  @computed
-  get computedPrinterKey() {
-    return _.map(this.config, (v, k) => {
-      if (k === '__key__' && v) {
-        return v
-      } else if (k === 'page') {
-        return v.type + 'PAGE' + v.printDirection + v.size.width + v.size.height
-      } else if (k === 'contents') {
-        return _.map(v, vv => {
-          if (vv.type === 'table') {
-            return (
-              'TABLE' +
-              vv.columns.length +
-              vv.className +
-              vv.dataKey +
-              vv.subtotal.show +
-              vv.summaryConfig?.pageSummaryShow +
-              vv.customerRowHeight
-            )
-          } else {
-            return vv.style ? vv.style.height : ''
-          }
-        }).join('/')
-      } else {
-        return v.style ? v.style.height : ''
-      }
-    }).join('_')
-  }
-
-  @action.bound
-  changeTableCustomStyle(v) {
-    if (this.selectedRegion) {
-      const arr = this.selectedRegion.split('.')
-      if (arr.includes('table')) {
-        this.config.contents[arr[2]].className = v
-        this.tableCustomStyle = v
-      }
-    }
-  }
-
-  @action.bound
-  setRemainPageHeight(remainHeight) {
-    this.remainPageHeihgt = remainHeight
-  }
-
   @action
-  getFilledTableData(tableData) {
-    if (!this.selectedRegion) return []
-    const tr_count = Math.floor(this.remainPageHeihgt / TR_HEIGHT)
-    const filledData = {}
-    _.map(tableData[0], (val, key) => {
-      filledData[key] = ''
-    })
-    return Array(tr_count).fill(filledData)
-  }
-
-  @action.bound
-  handleChangeTableData(isAutoFilling = false) {
-    if (!this.selectedRegion) return
-    const { dataKey } = this.computedTableSpecialConfig
-    const table = this.mockData._table[dataKey]
-    // debugger
-    if (isAutoFilling) {
-      table.push(...this.getFilledTableData(table))
-    } else {
-      this.clearExtraTableData(dataKey)
-      this.setAutoFillRemainPage({ isAutoFilling: isAutoFilling })
-      return
-    }
-    this.setAutoFillRemainPage({ isAutoFilling: isAutoFilling })
-    this.mockData._table[dataKey] = table
-    // this.mockData = Object.assign({}, this.mockData)
-  }
-
-  @action
-  clearExtraTableData(dataKey) {
-    const { extraSpecialConfig } = this.computedTableSpecialConfig
-    if (extraSpecialConfig && !extraSpecialConfig?.isAutoFilling) return
-    const table = this.mockData._table[dataKey]
-    const len = this.getFilledTableData(table).length
-    if (len === 0) return
-    const newTable = this.mockData._table[dataKey].slice(0, -len)
-    this.mockData._table[dataKey] = newTable
-  }
-
-  @action
-  init(config, data) {
+  init(config) {
     // batchPrintConfig: 1 不连续打印（一张采购单不出现多供应商）2 连续打印（一张采购单可能出现多个供应商）
     this.config = Object.assign({ batchPrintConfig: 1 }, config)
     this.originConfig = config
     this.selected = null
     this.selectedRegion = null
     this.insertPanel = 'header'
-    this.mockData = data
   }
 
   @action
@@ -459,9 +402,6 @@ class EditorStore {
   setSubtotalShow(name) {
     const arr = name.split('.')
     const table = this.config.contents[arr[2]]
-
-    // 切换的时候，要把对应table的多余空数据清掉
-    this.clearExtraTableData(table.dataKey)
     table.subtotal.show = !table.subtotal.show
   }
 
@@ -492,8 +432,6 @@ class EditorStore {
       o => o === 'category',
       o => o === 'orders'
     ])
-    // 切换的时候，要把对应table的多余空数据清掉
-    this.clearExtraTableData(dataKey)
 
     this.config.contents[arr[2]].dataKey = newDataKey.join('_')
   }
@@ -928,22 +866,6 @@ class EditorStore {
     }
   }
 
-  // 设置是否自动填充空白
-  @action.bound
-  setAutoFillRemainPage(modify) {
-    if (this.computedRegionIsTable) {
-      const tableConfig = this.computedTableSpecialConfig
-      const extraSpecialConfig = tableConfig.extraSpecialConfig
-      if (extraSpecialConfig) {
-        set(extraSpecialConfig, modify)
-      } else {
-        set(tableConfig, { extraSpecialConfig: { ...modify } })
-      }
-    }
-    // 这么写才会触发子组件的更新
-    this.config = Object.assign({}, this.config)
-  }
-
   @action.bound
   setSummaryConfig(modify) {
     if (this.selectedRegion) {
@@ -961,12 +883,6 @@ class EditorStore {
         }
         set(config, { summaryConfig: { ...init, ...modify } })
       }
-
-      if ('pageSummaryShow' in modify || 'totalSummaryShow' in modify) {
-        // 切换的时候，要把对应table的多余空数据清掉
-        this.clearExtraTableData(config.dataKey)
-      }
-
       this.config = toJS(this.config)
     }
   }
