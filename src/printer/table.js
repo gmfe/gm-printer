@@ -288,7 +288,6 @@ class Table extends React.Component {
     dataKey = getDataKey(dataKey, arrange)
     const tableData = printerStore.data._table[dataKey] || []
     const active = printerStore.selectedRegion === name
-
     return (
       <div
         ref={this.ref}
