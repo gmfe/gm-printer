@@ -3,7 +3,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { inject, observer, Provider } from 'mobx-react'
 import PropTypes from 'prop-types'
-import PrinterStore, { TR_BASE_HEIGHT } from './store'
+import PrinterStore from './store'
 import Page from './page'
 import _ from 'lodash'
 import Panel from './panel'
@@ -60,6 +60,7 @@ class Printer extends React.Component {
 
     // 无实际意义，辅助 onReady，见 didMount
     this.state = {}
+
     props.printerStore.init(props.config, props.data)
     props.printerStore.setSelected(props.selected)
     props.printerStore.setSelectedRegion(props.selectedRegion)
@@ -75,8 +76,9 @@ class Printer extends React.Component {
   }
 
   componentDidMount() {
-    const { printerStore, config, getremainpageheight } = this.props
+    const { printerStore, config } = this.props
     const batchPrintConfig = config.batchPrintConfig
+
     // 连续打印不需要计算
     if (batchPrintConfig !== 2) {
       // didMount 代表第一次渲染完成
@@ -84,12 +86,6 @@ class Printer extends React.Component {
 
       // 开始计算，获取各种数据
       printerStore.computedPages()
-
-      // 计算是否填充空白数据
-      printerStore.fillEmptyPage()
-
-      // 获取剩余空白高度，传到editor
-      getremainpageheight && getremainpageheight(printerStore.remainPageHeight)
     }
     // Printer 不是立马就呈现出最终样式，有个过程。这个过程需要时间，什么 ready，不太清楚，估借 setState 来获取过程结束时刻
     this.setState({}, () => {
@@ -140,7 +136,8 @@ class Printer extends React.Component {
 
   renderPage() {
     const { printerStore } = this.props
-    const { config, remainPageHeight } = printerStore
+    const { config } = printerStore
+
     return (
       <>
         {_.map(printerStore.pages, (page, i) => {
@@ -151,12 +148,6 @@ class Printer extends React.Component {
               <Header config={config.header} pageIndex={i} />
 
               {_.map(page, (panel, ii) => {
-                const { extraSpecialConfig } = config.contents[panel.index]
-                const end =
-                  isLastPage && extraSpecialConfig?.isAutoFilling
-                    ? panel.end + Math.floor(remainPageHeight / TR_BASE_HEIGHT)
-                    : panel.end
-
                 switch (panel.type) {
                   case 'table':
                     return (
@@ -166,7 +157,7 @@ class Printer extends React.Component {
                         config={config.contents[panel.index]}
                         range={{
                           begin: panel.begin,
-                          end: end
+                          end: panel.end
                         }}
                         placeholder={`${i18next.t('区域')} ${panel.index}`}
                         pageIndex={i}
@@ -257,6 +248,7 @@ class Printer extends React.Component {
   render() {
     const {
       selected,
+      data,
       config,
       onReady,
       selectedRegion,
@@ -294,8 +286,7 @@ Printer.propTypes = {
   selectedRegion: PropTypes.string,
   data: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
-  onReady: PropTypes.func,
-  getremainpageheight: PropTypes.func
+  onReady: PropTypes.func
 }
 
 Printer.defaultProps = {
