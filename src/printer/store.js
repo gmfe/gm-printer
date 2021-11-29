@@ -3,7 +3,8 @@ import { action, observable } from 'mobx'
 import {
   getSumTrHeight,
   isMultiTable,
-  caclSingleDetailsPageHeight
+  caclSingleDetailsPageHeight,
+  getArrayMid
 } from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
@@ -81,11 +82,27 @@ class PrinterStore {
   computedData(dataKey, table, end, currentRemainTableHeight) {
     /** 当前数据 */
     const tableData = this.data._table[dataKey] || []
+
+    let count = 0
+    _.forEach(Array(end).fill(1), (val, i) => {
+      const details = tableData[i]?.__details || []
+      count += details.length
+    })
+
     /** 明细data */
-    const detailsData = tableData[end]?.__details || []
+    const detailsData = tableData[end]?.__details
+    // 如果没有details 和 明细不换行, 就不用计算了
+    if (!detailsData || dataKey.includes('noLineBreak')) {
+      return []
+    }
+
+    const detailsHeights = table.body.children.slice(
+      count,
+      count + detailsData.length
+    )
+
     const { ranges, detailsPageHeight } = caclSingleDetailsPageHeight(
-      table,
-      detailsData,
+      detailsHeights,
       currentRemainTableHeight
     )
 
@@ -105,7 +122,7 @@ class PrinterStore {
 
   @action
   computedPages() {
-    // 每页必有 页眉header, 页脚footer
+    // 每页必有 页眉header, 页脚footer , 签名
     const allPagesHaveThisHeight = this.height.header + this.height.footer
     // 退出计算! 因为页眉 + 页脚 > currentPageHeight,页面装不下其他东西
     if (allPagesHaveThisHeight > this.pageHeight) {
@@ -130,7 +147,6 @@ class PrinterStore {
         tableCount++
         // 表格原始的高度和宽度信息
         const table = this.tablesInfo[`contents.table.${index}`]
-
         const { subtotal, dataKey, summaryConfig } = content
         // 如果显示每页合计,那么table高度多预留一行高度
         const subtotalTrHeight = subtotal.show ? getSumTrHeight(subtotal) : 0
@@ -165,7 +181,7 @@ class PrinterStore {
           /** 当前table剩余的高度 */
           let currentRemainTableHeight = 0
           /** 去最小的tr高度，用于下面的计算compare,(避免特殊情况：一般来说最小tr——height = 23, 比23还小的不考虑计算) */
-          const minHeight = Math.max(Math.min(...table.body.heights), 23)
+          const minHeight = Math.max(getArrayMid(table.body.heights), 23)
 
           /* 遍历表格每一行，填充表格内容 */
           while (end < table.body.heights.length) {
@@ -179,13 +195,13 @@ class PrinterStore {
                 .plus(table.body.heights[end])
 
               /**
-               * 说明： 1. currentRemainTableHeight > minHeight 要比最小度高高，不然每次到这都进入if
-               * 2. table.body.heights[end]至少要是currentRemainTableHeight的 2倍，怕出现打印时最后一行文字显示一半的情况
+               * 说明： 1. currentRemainTableHeight至少要是minHeight的 2倍，不然每次到这都进入if，同时留下一点空白距离
+               * 2. table.body.heights[end]至少要是currentRemainTableHeight的 1倍，怕出现打印时最后一行文字显示一半的情况
                * 3. table.body.heights[end] 高度超过了 pageAccomodateTableHeight
                */
               if (
-                (currentRemainTableHeight > minHeight &&
-                  table.body.heights[end] / minHeight > 2) ||
+                (currentRemainTableHeight / minHeight > 1.5 &&
+                  table.body.heights[end] / currentRemainTableHeight > 1) ||
                 table.body.heights[end] > pageAccomodateTableHeight
               ) {
                 const detailsPageHeight = this.computedData(
@@ -194,9 +210,17 @@ class PrinterStore {
                   end,
                   currentRemainTableHeight
                 )
+
                 // 拆分明细后，同时也要更新body.heights 不能影响后续计算
-                table.body.heights.splice(end, 1, ...detailsPageHeight)
-                end++
+                if (detailsPageHeight.length > 0) {
+                  // 比较剩余高度和minHeight的大小，取最大（防止剩余一条明细时，第二页撑开的高度远大于一条明细的高度）
+                  detailsPageHeight[1] = Math.max(
+                    minHeight,
+                    detailsPageHeight[1]
+                  )
+                  table.body.heights.splice(end, 1, ...detailsPageHeight)
+                  end++
+                }
               }
               // 第一条极端会有问题
               if (end !== 0) {
@@ -250,6 +274,10 @@ class PrinterStore {
           break
         }
 
+        // 如果是最后一页，必须要加上sign的高度，否则会重叠
+        if (index === this.config.contents.length - 1) {
+          currentPageHeight += this.height?.sign
+        }
         if (currentPageHeight <= this.pageHeight) {
           // 空间充足，把信息加入 page，并轮下一个contents
           page.push({
@@ -317,7 +345,9 @@ class PrinterStore {
       /** 简单处理下数据 */
       const filterList = (list, type = '') => {
         if (type === 'noLineBreak') {
-          return list.map(d => `${compiled(d)}`).join(separator)
+          const details = list.map(d => `${compiled(d)}`).join(separator)
+
+          return `<div class='b-table-details'>${details}</div>`
         }
         return list
           .map(d => `<div class='b-table-details'> ${compiled(d)} </div>`)
