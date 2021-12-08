@@ -3,6 +3,7 @@ import React from 'react'
 import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import { Printer } from '../printer'
+import PropTypes from 'prop-types'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -32,7 +33,7 @@ class ContextMenu extends React.Component {
     const isMultiActive = keyArr.includes('multi')
 
     return (
-      <React.Fragment>
+      <>
         <div
           onClick={this.handleChangeTableDataKey.bind(this, 'multi', name)}
           className={isMultiActive ? 'active' : ''}
@@ -51,7 +52,7 @@ class ContextMenu extends React.Component {
         >
           {i18next.t('入库金额小计')}
         </div>
-      </React.Fragment>
+      </>
     )
   }
 
@@ -73,5 +74,8 @@ class ContextMenu extends React.Component {
     )
   }
 }
-
+ContextMenu.propTypes = {
+  editStore: PropTypes.object,
+  mockData: PropTypes.object
+}
 export default ContextMenu

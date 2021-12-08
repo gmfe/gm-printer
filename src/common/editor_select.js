@@ -126,7 +126,7 @@ class EditorSelector extends React.Component {
         </Flex>
 
         {this.props.isPurchase && (
-          <React.Fragment>
+          <>
             <Flex alignCenter className='gm-padding-top-5'>
               <div>{i18next.t('批量打印设置')}：</div>
               <Select
@@ -146,10 +146,10 @@ class EditorSelector extends React.Component {
                 连续打印（一张采购单可能出现多个供应商）
               </p>
             </div>
-          </React.Fragment>
+          </>
         )}
 
-        <Flex alignCenter className='gm-padding-top-5 gm-text-red'>
+        <Flex className='gm-padding-top-5 gm-text-red' column>
           {computedSelectedRegionTip}
         </Flex>
       </div>
@@ -158,9 +158,10 @@ class EditorSelector extends React.Component {
 }
 
 EditorSelector.propTypes = {
-  isPurchase: PropTypes.bool
+  isPurchase: PropTypes.bool,
+  editStore: PropTypes.object
 }
-EditorSelector.deaultProps = {
+EditorSelector.defaultProps = {
   isPurchase: false
 }
 

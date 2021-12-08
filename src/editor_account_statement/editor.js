@@ -105,7 +105,7 @@ Editor.propTypes = {
   addFields: PropTypes.object.isRequired
 }
 
-Editor.deaultProps = {
+Editor.defaultProps = {
   onSave: _.noop
 }
 

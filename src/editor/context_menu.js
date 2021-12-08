@@ -4,7 +4,7 @@ import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
 import { Printer } from '../printer'
-import { noSubtotalBtnTableDataKeySet } from './editor'
+import PropTypes from 'prop-types'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -57,11 +57,19 @@ class ContextMenu extends React.Component {
       return null
     }
 
+    const {
+      editStore: {
+        config: {
+          page: { type }
+        }
+      }
+    } = this.props
     const arr = name.split('.')
     const { dataKey, subtotal } = this.props.editStore.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
 
     const isMultiActive = keyArr.includes('multi')
+    const isThreeActive = keyArr.includes('multi3')
     const isCategoryActive = keyArr.includes('category')
     const isSubtotalActive = subtotal.show
 
@@ -73,6 +81,15 @@ class ContextMenu extends React.Component {
         >
           {i18next.t('双栏商品')}
         </div>
+        {/* 三分纸高度太小，做不了三栏，会死循环 */}
+        {type !== 'A4/3' && (
+          <div
+            onClick={this.handleChangeTableDataKey.bind(this, 'multi3', name)}
+            className={isThreeActive ? 'active' : ''}
+          >
+            {i18next.t('三栏商品')}
+          </div>
+        )}
         <div
           onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
           className={isCategoryActive ? 'active' : ''}
@@ -107,5 +124,8 @@ class ContextMenu extends React.Component {
     )
   }
 }
-
+ContextMenu.propTypes = {
+  editStore: PropTypes.object,
+  mockData: PropTypes.object
+}
 export default ContextMenu

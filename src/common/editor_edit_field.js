@@ -205,12 +205,6 @@ class EditorField extends React.Component {
       (editStore.computedTableSpecialConfig.subtotal &&
         get(subtotal, 'isUpperLowerCaseSeparate')) ||
       false
-    // 位置交换
-    const subtotalCommutationPlace =
-      (editStore.computedTableSpecialConfig.subtotal &&
-        get(subtotal, 'isCommutationPlace')) ||
-      false
-
     return (
       <div>
         <Title title={i18next.t('编辑字段')} />
@@ -276,7 +270,7 @@ class EditorField extends React.Component {
         </Flex>
 
         <Flex alignCenter className='gm-padding-top-5 gm-text-desc'>
-          {i18next.t('商品排列仅适用于双栏商品设置')}
+          {i18next.t('商品排列仅适用于双栏、三栏商品设置')}
         </Flex>
 
         <Gap height='5px' />
@@ -376,16 +370,6 @@ class EditorField extends React.Component {
             onChange={this.handleSubtotalStyleChange}
           />
         </Flex>
-        {/* <Flex style={{ margin: '5px 0 5px 62px' }}>
-          <Flex alignCenter>
-            <input
-              type='checkbox'
-              checked={subtotalCommutationPlace}
-              onChange={editStore.setSubtotalCommutationPlace}
-            />
-          </Flex>
-          <Flex>&nbsp;{i18next.t('合计、每页合计交换位置')}</Flex>
-        </Flex> */}
         <EditorSubtotalCheck
           subtotalCheckDisabled
           subtotalChecked={subtotalNeedUpperCase}

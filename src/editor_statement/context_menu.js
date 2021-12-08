@@ -3,6 +3,7 @@ import React from 'react'
 import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import { Printer } from '../printer'
+import PropTypes from 'prop-types'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -16,7 +17,7 @@ const blockTypeList = [
 }))
 @observer
 class ContextMenu extends React.Component {
-  render () {
+  render() {
     const { editStore, mockData } = this.props
     return (
       <CommonContextMenu insertBlockList={blockTypeList}>
@@ -31,5 +32,8 @@ class ContextMenu extends React.Component {
     )
   }
 }
-
+ContextMenu.propTypes = {
+  editStore: PropTypes.object,
+  mockData: PropTypes.object
+}
 export default ContextMenu

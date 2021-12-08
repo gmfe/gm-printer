@@ -33,7 +33,7 @@ class SpecialField extends React.Component {
 }
 
 SpecialField.propTypes = {
-  fields: PropTypes.object.isRequired,
+  fields: PropTypes.object,
   handleAddField: PropTypes.func,
   addFields: PropTypes.object.isRequired,
   editStore: PropTypes.object,

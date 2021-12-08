@@ -164,7 +164,7 @@ const coverDigit2Uppercase = n => {
   )
 }
 
-// 是不是双栏table
+// 是不是多栏table
 const isMultiTable = dataKey => dataKey.includes('multi')
 
 // 获取table有多少栏,最少是双栏

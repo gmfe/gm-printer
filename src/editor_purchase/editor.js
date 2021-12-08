@@ -71,7 +71,7 @@ Editor.propTypes = {
   isPurchase: PropTypes.bool
 }
 
-Editor.deaultProps = {
+Editor.defaultProps = {
   onSave: _.noop,
   isPurchase: false
 }

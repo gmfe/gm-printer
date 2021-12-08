@@ -3,6 +3,7 @@ import { action, computed, observable, set, toJS } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName, exchange } from '../util'
+import React from 'react'
 
 class EditorStore {
   @observable
@@ -183,6 +184,21 @@ class EditorStore {
   @action
   setSizePageType(type) {
     const { size, gap, name } = pageTypeMap[type]
+    const { contents } = this.config
+    // 判断表格是否是三栏表格
+    const tableIsMulti3 = _.find(
+      contents,
+      item => item?.dataKey && item?.dataKey.includes('multi3')
+    )
+    // 原本是三栏表格，切换到三分纸时，修改dataKey的值
+    if (tableIsMulti3 && type === 'A4/3') {
+      this.config.contents = _.map(contents, item => {
+        if (item?.dataKey && item?.dataKey.includes('multi3')) {
+          return { ...item, dataKey: 'orders' }
+        }
+        return item
+      })
+    }
 
     this.config.page = {
       ...this.config.page,
@@ -202,9 +218,17 @@ class EditorStore {
   @computed
   get computedSelectedRegionTip() {
     if (!this.selectedRegion) return ''
-    return /(contents)|(sign)/g.test(this.selectedRegion)
-      ? i18next.t('说明：所选区域的内容仅打印一次')
-      : i18next.t('说明：所选区域的内容每页均打印')
+    return /(contents)|(sign)/g.test(this.selectedRegion) ? (
+      <>
+        <div>{i18next.t('说明：所选区域的内容仅打印一次')}</div>
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {i18next.t('开启[三栏商品]打印选项，打印内容可能超出纸张')}
+        </div>
+      </>
+    ) : (
+      i18next.t('说明：所选区域的内容每页均打印')
+    )
   }
 
   @computed
@@ -427,7 +451,14 @@ class EditorStore {
       newDataKey = _.concat(keyArr, key)
     }
 
+    if (newDataKey.includes('multi') && key === 'multi3') {
+      newDataKey = _.without(newDataKey, 'multi')
+    } else if (newDataKey.includes('multi3') && key === 'multi') {
+      newDataKey = _.without(newDataKey, 'multi3')
+    }
+
     newDataKey = _.sortBy(newDataKey, [
+      o => o === 'multi3',
       o => o === 'multi',
       o => o === 'category',
       o => o === 'orders'

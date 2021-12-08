@@ -4,6 +4,7 @@ import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
 import { Printer } from '../printer'
+import PropTypes from 'prop-types'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -50,8 +51,8 @@ class ContextMenu extends React.Component {
     }
 
     const arr = name.split('.')
-    const { dataKey, subtotal } = this.props.editStore.config.contents[arr[2]]
-    const keyArr = dataKey.split('_')
+    const { subtotal } = this.props.editStore.config.contents[arr[2]]
+    // const keyArr = dataKey.split('_')
 
     // const isMultiActive = keyArr.includes('multi')
     // const isCategoryActive = keyArr.includes('category')
@@ -99,5 +100,8 @@ class ContextMenu extends React.Component {
     )
   }
 }
-
+ContextMenu.propTypes = {
+  editStore: PropTypes.object,
+  mockData: PropTypes.object
+}
 export default ContextMenu

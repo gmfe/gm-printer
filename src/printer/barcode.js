@@ -1,5 +1,6 @@
 import React from 'react'
 import jsBarcode from 'jsbarcode'
+import PropTypes from 'prop-types'
 
 class BarCode extends React.Component {
   barcode = React.createRef()
@@ -15,6 +16,11 @@ class BarCode extends React.Component {
     const { dataName } = this.props
     return <svg data-name={dataName} ref={this.barcode} />
   }
+}
+
+BarCode.propTypes = {
+  value: PropTypes.string,
+  dataName: PropTypes.string
 }
 
 export default BarCode
