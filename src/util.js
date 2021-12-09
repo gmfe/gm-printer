@@ -15,13 +15,14 @@ function getHeight(el) {
 
 function getWidth(el) {
   const styles = window.getComputedStyle(el)
-  // clientWidth 仅包含 padding + content, 不用涉及border计算
-  const width = el.clientWidth
-  // const borderLeftWidth = parseFloat(styles.borderLeftWidth)
+  // 取width保留小数点用 getBoundClientRect
+  const style = el.getBoundingClientRect()
+  const width = Math.round(style.width * 100) / 100 // 保留两位小数并四舍五入
+  const borderLeftWidth = parseFloat(styles.borderLeftWidth)
   // const borderRightWidth = parseFloat(styles.borderRightWidth)
   const paddingLeft = parseFloat(styles.paddingLeft)
   const paddingRight = parseFloat(styles.paddingRight)
-  return width - paddingLeft - paddingRight
+  return width - borderLeftWidth - paddingLeft - paddingRight
 }
 
 function pxAdd(origin = '0px', add) {
