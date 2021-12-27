@@ -119,6 +119,12 @@ class TableDetailEditor extends React.Component {
   }
 }
 
+TableDetailEditor.propTypes = {
+  addFields: PropTypes.object.isRequired,
+  editStore: PropTypes.object,
+  config: PropTypes.object
+}
+
 @inject('editStore')
 @observer
 class EditorSpecialTable extends React.Component {
@@ -144,7 +150,8 @@ class EditorSpecialTable extends React.Component {
 }
 
 EditorSpecialTable.propTypes = {
-  addFields: PropTypes.object.isRequired
+  addFields: PropTypes.object.isRequired,
+  editStore: PropTypes.object
 }
 
 export default EditorSpecialTable

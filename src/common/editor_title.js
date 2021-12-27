@@ -126,9 +126,10 @@ class EditorTitle extends React.Component {
 
 EditorTitle.propTypes = {
   onSave: PropTypes.func.isRequired,
-  isPurchase: PropTypes.bool
+  isPurchase: PropTypes.bool,
+  editStore: PropTypes.object
 }
-EditorTitle.deaultProps = {
+EditorTitle.defaultProps = {
   isPurchase: false
 }
 

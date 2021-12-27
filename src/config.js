@@ -125,3 +125,5 @@ export const blockTypeList = [
 ]
 
 export const MULTI_SUFFIX = '_MULTI_SUFFIX'
+
+export const MULTI_SUFFIX3 = '_MULTI_SUFFIX3'

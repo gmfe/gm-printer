@@ -19,7 +19,7 @@ const ToolTip = ({ text }) => {
     </span>
   )
 }
-ToolTip.PropTypes = {
+ToolTip.propTypes = {
   text: PropTypes.string.isRequired
 }
 

@@ -4,6 +4,7 @@ import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import { Printer } from '../printer'
 import _ from 'lodash'
+import PropTypes from 'prop-types'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -17,13 +18,13 @@ const blockTypeList = [
 }))
 @observer
 class ContextMenu extends React.Component {
-  handleSubtotal = (name) => {
+  handleSubtotal = name => {
     const { editStore } = this.props
 
     editStore.setSubtotalShow(name)
   }
 
-  hasSubtotalBtn = (name) => {
+  hasSubtotalBtn = name => {
     if (!name) return false
 
     const arr = name.split('.')
@@ -34,7 +35,7 @@ class ContextMenu extends React.Component {
     }
   }
 
-  renderOrderActionBtn = (name) => {
+  renderOrderActionBtn = name => {
     if (!this.hasSubtotalBtn(name)) {
       return null
     }
@@ -45,18 +46,24 @@ class ContextMenu extends React.Component {
     const isSubtotalActive = subtotal.show
 
     return (
-      <React.Fragment>
-        <div onClick={this.handleSubtotal.bind(this, name)}
-          className={isSubtotalActive ? 'active' : ''}>{i18next.t('每页合计')}
+      <>
+        <div
+          onClick={this.handleSubtotal.bind(this, name)}
+          className={isSubtotalActive ? 'active' : ''}
+        >
+          {i18next.t('每页合计')}
         </div>
-      </React.Fragment>
+      </>
     )
   }
 
-  render () {
+  render() {
     const { editStore, mockData } = this.props
     return (
-      <CommonContextMenu renderTableAction={this.renderOrderActionBtn} insertBlockList={blockTypeList}>
+      <CommonContextMenu
+        renderTableAction={this.renderOrderActionBtn}
+        insertBlockList={blockTypeList}
+      >
         <Printer
           key={editStore.computedPrinterKey}
           selected={editStore.selected}
@@ -69,4 +76,8 @@ class ContextMenu extends React.Component {
   }
 }
 
+ContextMenu.propTypes = {
+  editStore: PropTypes.object,
+  mockData: PropTypes.object
+}
 export default ContextMenu

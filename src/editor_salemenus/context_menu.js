@@ -4,6 +4,7 @@ import _ from 'lodash'
 import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import { Printer } from '../printer'
+import PropTypes from 'prop-types'
 import { hasSubtotalBtnTableDataKeySet } from './editor'
 
 const blockTypeList = [
@@ -101,5 +102,8 @@ class ContextMenu extends React.Component {
     )
   }
 }
-
+ContextMenu.propTypes = {
+  editStore: PropTypes.object,
+  mockData: PropTypes.object
+}
 export default ContextMenu

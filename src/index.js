@@ -18,7 +18,7 @@ import {
   getCSS,
   getPrintContainerHTML
 } from './printer'
-import { MULTI_SUFFIX } from './config'
+import { MULTI_SUFFIX, MULTI_SUFFIX3 } from './config'
 
 export * from './util'
 export { setLocale } from '../locales'
@@ -40,5 +40,6 @@ export {
   doBatchPrint,
   getCSS,
   MULTI_SUFFIX,
+  MULTI_SUFFIX3,
   getPrintContainerHTML
 }

@@ -110,7 +110,7 @@ Editor.propTypes = {
   showNewDate: PropTypes.bool
 }
 
-Editor.deaultProps = {
+Editor.defaultProps = {
   onSave: _.noop,
   showNewDate: false
 }

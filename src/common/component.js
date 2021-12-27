@@ -622,7 +622,7 @@ Radio.propTypes = {
   id: PropTypes.string,
   value: PropTypes.string,
   radioChecked: PropTypes.func,
-  checked: PropTypes.string
+  checked: PropTypes.bool
 }
 
 const RadioGap = ({ width = '100%', height = '15px' }) => (
