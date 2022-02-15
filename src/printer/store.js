@@ -299,6 +299,46 @@ class PrinterStore {
     this.pages.push(page)
   }
 
+  @action
+  financeComputedPages() {
+    // 当前在处理 contents 的索引
+    let index = 0
+    /** 一页承载的内容. [object, object, ...] */
+    let page = []
+    const pageFixLineNum = this.config.financeSpecialConfig.pageFixLineNum
+    while (index < this.config.contents.length) {
+      const content = this.config.contents[index]
+      // debugger
+      const table = this.tablesInfo[`contents.table.${index}`]
+      // 表格行的索引,用于table.slice(begin, end), 分割到不同页面中
+      let begin = 0
+      let end = 0
+
+      if (content.type === 'table') {
+        while (end < table.body.heights.length) {
+          end += pageFixLineNum
+          page.push({
+            type: 'table',
+            index,
+            begin,
+            end
+          })
+          this.pages.push(page)
+          page = []
+          begin = end
+        }
+        index++
+      } else {
+        page.push({
+          type: 'panel',
+          index
+        })
+        index++
+      }
+    }
+    // this.pages.push(page)
+  }
+
   template(text, pageIndex) {
     // 做好保护，出错就返回 text
     try {
@@ -329,6 +369,33 @@ class PrinterStore {
         [i18next.t('页码总数')]: this.pages.length,
         price: price // 提供一个价格处理函数
       })
+    } catch (err) {
+      return text
+    }
+  }
+
+  /**
+   * 配送单的定制化需求:限制表格里的字的个数,超出显示'...'
+   */
+  templateFinance(text, dataKey, index, pageIndex) {
+    // 做好保护，出错就返回 text
+    try {
+      const list = this.data._table[dataKey] || this.data._table.orders
+
+      let res = _.template(text, {
+        interpolate: /{{([\s\S]+?)}}/g
+      })({
+        ...this.data.common,
+        [i18next.t('列')]: list[index],
+        [i18next.t('当前页码')]: pageIndex + 1,
+        [i18next.t('页码总数')]: this.pages.length,
+        price: price // 提供一个价格处理函数
+      })
+      res =
+        text === '{{列.商品名}}' && res.length > 5
+          ? `${res.slice(0, 5)}...`
+          : res
+      return res
     } catch (err) {
       return text
     }

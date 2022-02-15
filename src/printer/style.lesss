@@ -28,6 +28,10 @@
   }
 }
 
+.gm-printer-page-fontFamily {
+  font-family:STSong
+}
+
 // panel
 .gm-printer-panel {
   position: relative;

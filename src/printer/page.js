@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { inject, observer } from 'mobx-react'
 import { getHeight } from '../util'
+import classNames from 'classnames'
 
 @inject('printerStore')
 @observer
@@ -18,13 +19,14 @@ class Page extends React.Component {
   }
 
   render() {
-    const { children, printerStore } = this.props
+    const { children, printerStore, isFontFamily } = this.props
     const {
       paddingTop,
       paddingRight,
       paddingBottom,
       paddingLeft
     } = printerStore.config.page.gap
+    console.log('isFontFamily', isFontFamily)
 
     const {
       size: { width, height },
@@ -36,7 +38,9 @@ class Page extends React.Component {
     return (
       <div
         ref={this.ref}
-        className='gm-printer-page'
+        className={classNames('gm-printer-page', {
+          'gm-printer-page-fontFamily': isFontFamily
+        })}
         style={{
           ...pageStyle,
           boxSizing: 'content-box',
@@ -60,7 +64,8 @@ class Page extends React.Component {
 }
 
 Page.propTypes = {
-  printerStore: PropTypes.number
+  printerStore: PropTypes.number,
+  isFontFamily: PropTypes.bool
 }
 
 export default Page

@@ -16,7 +16,8 @@ import {
   doPrint,
   Printer,
   getCSS,
-  getPrintContainerHTML
+  getPrintContainerHTML,
+  doBatchFinancePrint
 } from './printer'
 import { MULTI_SUFFIX, MULTI_SUFFIX3 } from './config'
 
@@ -41,5 +42,6 @@ export {
   getCSS,
   MULTI_SUFFIX,
   MULTI_SUFFIX3,
-  getPrintContainerHTML
+  getPrintContainerHTML,
+  doBatchFinancePrint
 }
