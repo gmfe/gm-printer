@@ -205,7 +205,13 @@ class Table extends React.Component {
     }
 
     return (
-      <table>
+      <table
+        style={{
+          // td会撑开table的宽度
+          tableLayout: 'inherit',
+          wordBreak: 'break-all'
+        }}
+      >
         <thead>
           <tr style={{ height: `${customerRowHeight}px` }}>
             {_.map(columns, (col, i) => (
