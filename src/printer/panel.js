@@ -28,6 +28,12 @@ class Panel extends React.Component {
   }
 
   handleDragStart = ({ clientY }) => {
+    // 这里在拖拽也要选择区域，不然选中A的区域，拉的B的区域，就导致错误
+    const { name } = this.props
+    dispatchMsg('gm-printer-select-region', {
+      selected: name
+    })
+
     this.setState({
       clientY
     })

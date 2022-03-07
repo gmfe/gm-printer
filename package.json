@@ -1,6 +1,6 @@
 {
   "name": "gm-printer",
-  "version": "10.13.19",
+  "version": "10.14.1",
   "description": "diy printer",
   "main": "src/index.js",
   "scripts": {
@@ -79,7 +79,7 @@
     "gm-util": "^5.12.2",
     "gm-webpack": "^2.2.1",
     "happypack": "^5.0.1",
-    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-plugin": "4.0.0",
     "husky": "^0.14.3",
     "jsbarcode": "^3.11.0",
     "less": "^3.8.1",

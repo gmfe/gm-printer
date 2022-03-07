@@ -136,6 +136,13 @@ const tableFields = {
   ]
 }
 
+const specialFields = [
+  {
+    id: 'noSpecail',
+    value: i18next.t('无特殊控制')
+  }
+]
+
 const summaryFields = [
   { key: i18next.t('出库金额'), value: i18next.t('{{列.出库金额}}') },
   { key: i18next.t('下单金额'), value: i18next.t('{{列.下单金额}}') }
@@ -144,5 +151,6 @@ const summaryFields = [
 export default {
   commonFields,
   tableFields,
-  summaryFields
+  summaryFields,
+  specialFields
 }

@@ -1,8 +1,8 @@
 import i18next from '../../locales'
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { Flex } from '../components'
 import { Gap, SubTitle, Title, FieldBtn } from '../common/component'
+import { Flex } from '../components'
 import _ from 'lodash'
 import { observer, inject } from 'mobx-react'
 

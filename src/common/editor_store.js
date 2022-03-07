@@ -9,15 +9,56 @@ class EditorStore {
   @observable
   tableCustomStyle = 'default'
 
-  @action.bound
-  changeTableCustomStyle(v) {
-    if (this.selectedRegion) {
-      const arr = this.selectedRegion.split('.')
-      if (arr.includes('table')) {
-        this.config.contents[arr[2]].className = v
-        this.tableCustomStyle = v
-      }
-    }
+  @observable
+  emptyTableData = []
+
+  @observable
+  config = null
+
+  @observable
+  mockData = []
+
+  @observable
+  remainPageHeihgt = 0
+
+  // 初始模板
+  originConfig = null
+
+  // 一个能唯一标识某个东西的字符串
+  // header
+  // header.block.1
+  // contents.panel.1.block.1
+  // contents.table.2.column.1
+  @observable
+  selected = null
+
+  /* 选择中区域, 区域唯一标识字符串
+     header
+     footer
+     sign
+     contents.panel.n
+     contents.table.n
+   */
+  @observable
+  selectedRegion = null
+
+  @observable
+  insertPanel = 'header'
+
+  // 是否自动行数填充
+  @observable
+  isAutoFilling = false
+
+  defaultTableDataKey = 'orders'
+
+  // 默认table的dataKey
+  setTableDataKeyEffect() {} // 改变dataKey后,做的副作用操作
+
+  defaultTableSubtotal = { show: false }
+
+  @action
+  setAutoFillingConfig(bol) {
+    this.isAutoFilling = bol
   }
 
   @computed
@@ -49,48 +90,80 @@ class EditorStore {
     }).join('_')
   }
 
-  @observable
-  config = null
+  @action.bound
+  changeTableCustomStyle(v) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      if (arr.includes('table')) {
+        this.config.contents[arr[2]].className = v
+        this.tableCustomStyle = v
+      }
+    }
+  }
 
-  // 初始模板
-  originConfig = null
-
-  // 一个能唯一标识某个东西的字符串
-  // header
-  // header.block.1
-  // contents.panel.1.block.1
-  // contents.table.2.column.1
-  @observable
-  selected = null
-
-  /* 选择中区域, 区域唯一标识字符串
-     header
-     footer
-     sign
-     contents.panel.n
-     contents.table.n
-   */
-  @observable
-  selectedRegion = null
-
-  @observable
-  insertPanel = 'header'
-
-  defaultTableDataKey = 'orders'
-
-  // 默认table的dataKey
-  setTableDataKeyEffect() {} // 改变dataKey后,做的副作用操作
-
-  defaultTableSubtotal = { show: false }
+  @action.bound
+  setRemainPageHeight(remainHeight) {
+    this.remainPageHeihgt = remainHeight
+  }
 
   @action
-  init(config) {
+  getFilledTableData(tableData) {
+    const { autoFillConfig } = this.config
+    if (!this.selectedRegion && !autoFillConfig?.checked) return []
+    const tr_count = Math.floor(
+      this.remainPageHeihgt / this.computedTableCustomerRowHeight
+    )
+
+    const filledData = {
+      _isEmptyData: true // 表示是填充的空白数据
+    }
+    _.map(tableData[0], (val, key) => {
+      filledData[key] = ''
+    })
+    return Array(tr_count).fill(filledData)
+  }
+
+  @action.bound
+  handleChangeTableData(isAutoFilling = false) {
+    const { autoFillConfig } = this.config
+    if (!this.selectedRegion && !autoFillConfig?.checked) return
+    const dataKey =
+      this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
+    const table = this.mockData._table[dataKey]
+    this.setAutoFillingConfig(isAutoFilling)
+
+    set(this.config, {
+      autoFillConfig: {
+        region: this.selectedRegion,
+        dataKey,
+        checked: isAutoFilling
+      }
+    })
+    if (isAutoFilling) {
+      table.push(...this.getFilledTableData(table))
+    } else {
+      this.clearExtraTableData(dataKey)
+      return
+    }
+    this.mockData._table[dataKey] = table
+  }
+
+  @action
+  clearExtraTableData(dataKey) {
+    const newTable = this.mockData._table[dataKey].filter(x => !x._isEmptyData)
+    this.mockData._table[dataKey] = newTable
+  }
+
+  @action
+  init(config, data) {
     // batchPrintConfig: 1 不连续打印（一张采购单不出现多供应商）2 连续打印（一张采购单可能出现多个供应商）
     this.config = Object.assign({ batchPrintConfig: 1 }, config)
     this.originConfig = config
     this.selected = null
     this.selectedRegion = null
     this.insertPanel = 'header'
+    this.mockData = data
+    this.isAutoFilling = false
   }
 
   @action
@@ -309,6 +382,18 @@ class EditorStore {
   }
 
   @action
+  clearAllTableEmptyData() {
+    const tableData = this.mockData._table
+    for (const [key, table] of Object.entries(tableData)) {
+      tableData[key] = table.filter(x => !x._isEmptyData)
+    }
+    // this.setAutoFillingConfig(false)
+    set(this.mockData, {
+      _table: tableData
+    })
+  }
+
+  @action
   addConfigBlock(name, type, pos = {}, link = '') {
     let blocks
     const arr = name.split('.')
@@ -426,7 +511,11 @@ class EditorStore {
   setSubtotalShow(name) {
     const arr = name.split('.')
     const table = this.config.contents[arr[2]]
+
+    // 切换的时候，要把对应table的多余空数据清掉
+    this.clearExtraTableData(table.dataKey)
     table.subtotal.show = !table.subtotal.show
+    this.setAutoFillingConfig(!this.isAutoFilling)
   }
 
   @action
@@ -566,7 +655,7 @@ class EditorStore {
   addFieldToTable({ key, value }) {
     if (this.computedRegionIsTable) {
       const arr = this.selectedRegion.split('.')
-      const { columns } = this.config.contents[arr[2]]
+      const { columns, dataKey } = this.config.contents[arr[2]]
 
       columns.push({
         head: key,
@@ -578,6 +667,9 @@ class EditorStore {
           textAlign: 'center'
         }
       })
+
+      this.clearExtraTableData(dataKey)
+      this.setAutoFillingConfig(false)
     }
   }
 
@@ -672,6 +764,7 @@ class EditorStore {
       table.dataKey = dataKey
       // 改变dataKey后做副作用action
       this.setTableDataKeyEffect(table, dataKey)
+      this.clearAllTableEmptyData()
     }
   }
 
@@ -696,6 +789,7 @@ class EditorStore {
         return height === undefined ? 23 : height
       }
     }
+    return 23
   }
 
   @action.bound
@@ -707,6 +801,9 @@ class EditorStore {
           ...this.config.contents[arr[2]],
           customerRowHeight: val
         }
+        // // 用于触发printer更新最新的剩余高度
+        // this.setLineHeight(val)
+        this.setAutoFillingConfig(false)
       }
     }
   }
@@ -897,6 +994,22 @@ class EditorStore {
     }
   }
 
+  // 设置是否自动填充空白
+  // @action.bound
+  // setAutoFillRemainPage(modify) {
+  //   if (this.computedRegionIsTable) {
+  //     const tableConfig = this.computedTableSpecialConfig
+  //     const extraSpecialConfig = tableConfig.extraSpecialConfig
+  //     if (extraSpecialConfig) {
+  //       set(extraSpecialConfig, modify)
+  //     } else {
+  //       set(tableConfig, { extraSpecialConfig: { ...modify } })
+  //     }
+  //   }
+  //   // 这么写才会触发子组件的更新
+  //   this.config = Object.assign({}, this.config)
+  // }
+
   @action.bound
   setSummaryConfig(modify) {
     if (this.selectedRegion) {
@@ -914,7 +1027,16 @@ class EditorStore {
         }
         set(config, { summaryConfig: { ...init, ...modify } })
       }
+      if ('pageSummaryShow' in modify || 'totalSummaryShow' in modify) {
+        // 切换的时候，要把对应table的多余空数据清掉
+        this.clearExtraTableData(config.dataKey)
+      }
       this.config = toJS(this.config)
+    }
+
+    // 如果只是勾选要展示的合计类目的选项，则不需要执行以下操作， 否则会重复清空数据
+    if (!('summaryColumns' in modify && 'style' in modify)) {
+      this.setAutoFillingConfig(false)
     }
   }
 }

@@ -151,7 +151,7 @@ class TextPX extends React.Component {
     return (
       <Text
         value={nValue}
-        onChange={this.handleChange}
+        onChange={_.throttle(this.handleChange, 500)}
         style={{ width: '35px' }}
       />
     )
