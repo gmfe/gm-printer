@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import Printer from './printer'
 import getCSS from './get_css'
 import BatchPrinter from './batch_printer'
+import BatchFinancePrinter from '../finance_voucher/components/finance_batch_printer'
 import { isZoom } from 'gm-util'
 import { afterImgAndSvgLoaded } from '../util'
 
@@ -92,6 +93,25 @@ function toDoPrintBatch(list, isPrint = true) {
   })
 }
 
+function toDoPrintFinanceBatch(list, isPrint = true) {
+  return new window.Promise(resolve => {
+    const $app = $printer.contentWindow.document.getElementById('appContainer')
+    ReactDOM.unmountComponentAtNode($app)
+    ReactDOM.render(
+      <BatchFinancePrinter
+        list={list}
+        onReady={() => {
+          afterImgAndSvgLoaded(() => {
+            isPrint && $printer.contentWindow.print()
+            resolve()
+          }, $app)
+        }}
+      />,
+      $app
+    )
+  })
+}
+
 function doPrint({ data, config }, isTest) {
   init({ isTest })
 
@@ -107,6 +127,16 @@ function doBatchPrint(
   return toDoPrintBatch(list, extraCofnig.isPrint)
 }
 
+function doBatchFinancePrint(
+  list,
+  isTest,
+  extraCofnig = { isPrint: true, isTipZoom: true }
+) {
+  init({ isTest, isTipZoom: extraCofnig.isTipZoom })
+
+  return toDoPrintFinanceBatch(list, extraCofnig.isPrint)
+}
+
 /**
  * @description: 获取打印的html
  */
@@ -114,4 +144,4 @@ function getPrintContainerHTML() {
   return $printer.contentWindow.document.getElementsByTagName('html')[0]
     .innerHTML
 }
-export { doPrint, doBatchPrint, getPrintContainerHTML }
+export { doPrint, doBatchPrint, getPrintContainerHTML, doBatchFinancePrint }
