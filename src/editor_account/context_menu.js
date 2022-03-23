@@ -59,27 +59,29 @@ class ContextMenu extends React.Component {
       editStore: { isAutoFilling }
     } = this.props
     const arr = name.split('.')
-    const { subtotal } = this.props.editStore.config.contents[arr[2]]
-    // const keyArr = dataKey.split('_')
 
-    // const isMultiActive = keyArr.includes('multi')
+    const { dataKey, subtotal } = this.props.editStore.config.contents[arr[2]]
+    const keyArr = dataKey.split('_')
+
+    const isMultiActive = keyArr.includes('multi')
     // const isCategoryActive = keyArr.includes('category')
     const isSubtotalActive = subtotal.show
 
     return (
       <>
-        {/* <div
-          onClick={this.handleChangeTableDataKey.bind(this, 'multi', name)}
-          className={isMultiActive ? 'active' : ''}
-        >
-          {i18next.t('双栏商品')}
-        </div>
+        {/*
         <div
           onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
           className={isCategoryActive ? 'active' : ''}
         >
           {i18next.t('商品分类')}
         </div> */}
+        <div
+          onClick={this.handleChangeTableDataKey.bind(this, 'multi', name)}
+          className={isMultiActive ? 'active' : ''}
+        >
+          {i18next.t('双栏商品')}
+        </div>
         <div
           onClick={this.handleSubtotal.bind(this, name)}
           className={isSubtotalActive ? 'active' : ''}
