@@ -135,7 +135,7 @@ class Printer extends React.Component {
   }
 
   renderPage() {
-    const { printerStore } = this.props
+    const { printerStore, isSomeSubtotalTr } = this.props
     const { config } = printerStore
 
     return (
@@ -161,6 +161,7 @@ class Printer extends React.Component {
                         }}
                         placeholder={`${i18next.t('区域')} ${panel.index}`}
                         pageIndex={i}
+                        isSomeSubtotalTr={isSomeSubtotalTr}
                       />
                     )
 
@@ -286,7 +287,8 @@ Printer.propTypes = {
   selectedRegion: PropTypes.string,
   data: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
-  onReady: PropTypes.func
+  onReady: PropTypes.func,
+  isSomeSubtotalTr: PropTypes.bool
 }
 
 Printer.defaultProps = {
