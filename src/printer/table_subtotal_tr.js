@@ -7,8 +7,6 @@ import Big from 'big.js'
 import { coverDigit2Uppercase, getDataKey } from '../util'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
-import { Flex } from '../components'
-
 /**
  * 每页合计组件,分页计算后,根据range来统计每页合计数据
  * @param props
@@ -35,7 +33,8 @@ const SubtotalTr = props => {
       }
     },
     range,
-    printerStore
+    printerStore,
+    isSomeSubtotalTr
   } = props
 
   const tableData = printerStore.data._table[getDataKey(dataKey, arrange)] || []
@@ -73,64 +72,91 @@ const SubtotalTr = props => {
     // 定义每页小记的左右两侧内容
     let subtotalLeftContent
     let subtotalRightContent
-
-    for (const name in sum) {
-      const price = sum[name]
-      const priceUpperCase = get(subtotal, 'needUpperCase') // needUpperCase在初始模板中undefined,所以必须用这个方法
-        ? '大写：' + coverDigit2Uppercase(price)
-        : ''
-      if (displayName) {
-        // 大写金额是否在前
-        if (isUpperCaseBefore) {
-          subtotalLeftContent = `${name}${priceUpperCase}`
-          subtotalRightContent = `${price}`
+    let subtotalStr = ''
+    // 结款单
+    if (isSomeSubtotalTr) {
+      for (const name in sum) {
+        const price = sum[name]
+        const priceUpperCase = get(subtotal, 'needUpperCase') // needUpperCase在初始模板中undefined,所以必须用这个方法
+          ? '大写：' + coverDigit2Uppercase(price)
+          : ''
+        if (displayName) {
+          subtotalStr += `${name}&nbsp;${price}&nbsp;&nbsp;&nbsp;${priceUpperCase}&nbsp;&nbsp;&nbsp;&nbsp;`
         } else {
-          subtotalLeftContent = `${price}`
-          subtotalRightContent = `${name} ${priceUpperCase}`
-        }
-      } else {
-        if (isUpperCaseBefore) {
-          subtotalLeftContent = `${priceUpperCase}`
-          subtotalRightContent = `${price}`
-        } else {
-          subtotalLeftContent = `${price}`
-          subtotalRightContent = `${priceUpperCase}`
+          subtotalStr += `${price}&nbsp;&nbsp;&nbsp;${priceUpperCase}&nbsp;&nbsp;&nbsp;&nbsp;`
         }
       }
-    }
 
-    return (
-      <tr>
-        <td
-          colSpan={99}
-          style={{ fontWeight: 'bold', ...style }}
-          // dangerouslySetInnerHTML={{
-          //   __html: `${i18next.t('每页合计')}：${subtotalStr}`
-          // }}flex-grow: 1
-        >
-          {/* 大写金额和小写金额分开在表格的两侧，通过控制类名实现，添加类名后，覆盖原来的居中、靠右靠左 */}
-          <div
-            className={
-              isUpperLowerCaseSeparate
-                ? 'gm-printer-subtotal-UpperLowerCaseSeparate-outer'
-                : ''
-            }
+      return (
+        <tr>
+          <td
+            colSpan={99}
+            style={{ fontWeight: 'bold', ...style }}
+            dangerouslySetInnerHTML={{
+              __html: `${i18next.t('每页合计')}：${subtotalStr}`
+            }}
+          />
+        </tr>
+      )
+    } else {
+      for (const name in sum) {
+        const price = sum[name]
+        const priceUpperCase = get(subtotal, 'needUpperCase') // needUpperCase在初始模板中undefined,所以必须用这个方法
+          ? '大写：' + coverDigit2Uppercase(price)
+          : ''
+        if (displayName) {
+          // 大写金额是否在前
+          if (isUpperCaseBefore) {
+            subtotalLeftContent = `${name}${priceUpperCase}`
+            subtotalRightContent = `${price}`
+          } else {
+            subtotalLeftContent = `${price}`
+            subtotalRightContent = `${name} ${priceUpperCase}`
+          }
+        } else {
+          if (isUpperCaseBefore) {
+            subtotalLeftContent = `${priceUpperCase}`
+            subtotalRightContent = `${price}`
+          } else {
+            subtotalLeftContent = `${price}`
+            subtotalRightContent = `${priceUpperCase}`
+          }
+        }
+      }
+
+      return (
+        <tr>
+          <td
+            colSpan={99}
+            style={{ fontWeight: 'bold', ...style }}
+            // dangerouslySetInnerHTML={{
+            //   __html: `${i18next.t('每页合计')}：${subtotalStr}`
+            // }}flex-grow: 1
           >
-            {i18next.t('每页合计')}：
-            <span
+            {/* 大写金额和小写金额分开在表格的两侧，通过控制类名实现，添加类名后，覆盖原来的居中、靠右靠左 */}
+            <div
               className={
                 isUpperLowerCaseSeparate
-                  ? 'gm-printer-subtotal-UpperLowerCaseSeparate-inter'
+                  ? 'gm-printer-subtotal-UpperLowerCaseSeparate-outer'
                   : ''
               }
             >
-              <span>&nbsp;&nbsp;{subtotalLeftContent}&nbsp;&nbsp;</span>
-              <span>&nbsp;&nbsp;{subtotalRightContent}&nbsp;&nbsp;</span>
-            </span>
-          </div>
-        </td>
-      </tr>
-    )
+              {i18next.t('每页合计')}：
+              <span
+                className={
+                  isUpperLowerCaseSeparate
+                    ? 'gm-printer-subtotal-UpperLowerCaseSeparate-inter'
+                    : ''
+                }
+              >
+                <span>&nbsp;&nbsp;{subtotalLeftContent}&nbsp;&nbsp;</span>
+                <span>&nbsp;&nbsp;{subtotalRightContent}&nbsp;&nbsp;</span>
+              </span>
+            </div>
+          </td>
+        </tr>
+      )
+    }
   } else {
     return null
   }

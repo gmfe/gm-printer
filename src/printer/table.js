@@ -146,7 +146,8 @@ class Table extends React.Component {
       name,
       range,
       pageIndex,
-      printerStore
+      printerStore,
+      isSomeSubtotalTr
     } = this.props
 
     // 数据
@@ -165,6 +166,7 @@ class Table extends React.Component {
             range={range}
             config={config}
             printerStore={printerStore}
+            isSomeSubtotalTr={isSomeSubtotalTr}
           />
           <PageSummary {...this.props} />
         </>
@@ -179,6 +181,7 @@ class Table extends React.Component {
             range={range}
             config={config}
             printerStore={printerStore}
+            isSomeSubtotalTr={isSomeSubtotalTr}
           />
         </>
       )
@@ -338,7 +341,8 @@ Table.propTypes = {
   range: PropTypes.object.isRequired,
   pageIndex: PropTypes.number.isRequired,
   placeholder: PropTypes.string,
-  printerStore: PropTypes.object
+  printerStore: PropTypes.object,
+  isSomeSubtotalTr: PropTypes.bool
 }
 
 export default Table

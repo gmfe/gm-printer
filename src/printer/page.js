@@ -26,7 +26,6 @@ class Page extends React.Component {
       paddingBottom,
       paddingLeft
     } = printerStore.config.page.gap
-    console.log('isFontFamily', isFontFamily)
 
     const {
       size: { width, height },

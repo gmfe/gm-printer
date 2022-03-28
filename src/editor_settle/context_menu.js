@@ -70,6 +70,7 @@ class ContextMenu extends React.Component {
           selectedRegion={editStore.selectedRegion}
           config={editStore.config}
           data={mockData}
+          isSomeSubtotalTr
         />
       </CommonContextMenu>
     )
