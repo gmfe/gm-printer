@@ -53,12 +53,13 @@ function init({ isTest, isTipZoom = true } = {}) {
   }
 }
 
-function toDoPrint({ data, config }) {
+function toDoPrint({ data, config }, isSomeSubtotalTr) {
   return new window.Promise(resolve => {
     const $app = $printer.contentWindow.document.getElementById('appContainer')
     ReactDOM.unmountComponentAtNode($app)
     ReactDOM.render(
       <Printer
+        isSomeSubtotalTr={isSomeSubtotalTr} // 每页合计是否需要展示多个字段
         config={config}
         data={data}
         onReady={() => {
@@ -112,10 +113,10 @@ function toDoPrintFinanceBatch(list, isPrint = true) {
   })
 }
 
-function doPrint({ data, config }, isTest) {
+function doPrint({ data, config }, isTest, isSomeSubtotalTr) {
   init({ isTest })
 
-  return toDoPrint({ data, config })
+  return toDoPrint({ data, config }, isSomeSubtotalTr)
 }
 function doBatchPrint(
   list,
