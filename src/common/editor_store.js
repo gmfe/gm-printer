@@ -2,7 +2,7 @@ import i18next from '../../locales'
 import { action, computed, observable, set, toJS } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
-import { dispatchMsg, getBlockName, exchange } from '../util'
+import { dispatchMsg, getBlockName, exchange, getColSpanLength } from '../util'
 import React from 'react'
 
 class EditorStore {
@@ -59,6 +59,28 @@ class EditorStore {
   @action
   setAutoFillingConfig(bol) {
     this.isAutoFilling = bol
+  }
+
+  @observable
+  overallOrderShow = false
+
+  // 整单合计自定义合并单元格
+  @observable
+  overallOrderConfigFields = {
+    name: '',
+    valueField: '',
+    colSpan: 3, // 产品说3个
+    style: {
+      fontWeight: 'bold'
+    }
+  }
+
+  // 每页合计自定义合并单元格
+  @observable
+  subtotalConfigFields = {
+    name: '',
+    valueField: '',
+    colSpan: 3 // 产品说3个,开启自定义单元格
   }
 
   @computed
@@ -511,11 +533,64 @@ class EditorStore {
   setSubtotalShow(name) {
     const arr = name.split('.')
     const table = this.config.contents[arr[2]]
-
+    this.overallOrderShow = !this.overallOrderShow
     // 切换的时候，要把对应table的多余空数据清掉
     this.clearExtraTableData(table.dataKey)
-    table.subtotal.show = !table.subtotal.show
+
     this.setAutoFillingConfig(!this.isAutoFilling)
+    // 获取td的colSpan
+    const colSpanLength = getColSpanLength(table)
+    set(table.subtotal, {
+      show: !table.subtotal.show
+    })
+    // 兼容存在后端的模板，subtotal配置没有fields
+    if (!table.subtotal?.fields) {
+      set(table.subtotal, {
+        fields: [
+          {
+            name: '每页合计：',
+            valueField: 'real_item_price',
+            colSpan: colSpanLength
+          }
+        ]
+      })
+    } else {
+      table.subtotal.fields[0].colSpan =
+        colSpanLength - (table.subtotal.fields?.[1]?.colSpan ?? 0)
+    }
+  }
+
+  @action
+  setOverallOrderShow(name) {
+    const arr = name.split('.')
+    const table = this.config.contents[arr[2]]
+    this.overallOrderShow = !this.overallOrderShow
+    const colSpanLength = getColSpanLength(table)
+    if (table.overallOrder) {
+      set(table.overallOrder, {
+        show: !table.overallOrder.show
+      })
+      table.overallOrder.fields[0].colSpan =
+        colSpanLength - (table.overallOrder.fields?.[1]?.colSpan ?? 0)
+    } else {
+      // 兼容已经存在的配送单据，他们的配置存在后端的，没有overallOrder这个配置，给加上
+      set(table, {
+        overallOrder: {
+          show: true,
+          fields: [
+            {
+              name: '整单合计：',
+              valueField: '出库金额',
+              style: {
+                fontWeight: 'bold'
+              },
+              colSpan: colSpanLength
+            }
+          ]
+        }
+      })
+    }
+    this.config = toJS(this.config)
   }
 
   @action
@@ -530,7 +605,7 @@ class EditorStore {
   @action
   changeTableDataKey(name, key) {
     const arr = name.split('.')
-    const { dataKey } = this.config.contents[arr[2]]
+    const { dataKey, overallOrder, subtotal } = this.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
     let newDataKey
     // 当前有这个key则去掉
@@ -554,6 +629,10 @@ class EditorStore {
     ])
 
     this.config.contents[arr[2]].dataKey = newDataKey.join('_')
+    // 整单合计不显示
+    if (overallOrder?.show) overallOrder.show = false
+    // 每页合计不显示
+    if (subtotal?.show) subtotal.show = false
   }
 
   @action
@@ -924,6 +1003,7 @@ class EditorStore {
   @action.bound
   setSubtotalStyle(value) {
     if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
       const arr = this.selectedRegion.split('.')
       const subtotalConfig = this.config.contents[arr[2]].subtotal
 
@@ -937,10 +1017,11 @@ class EditorStore {
     }
   }
 
-  // 设置大写金额
+  // 每页合计设置大写金额
   @action.bound
   setSubtotalUpperCase() {
     if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
       const arr = this.selectedRegion.split('.')
       const subtotalConfig = this.config.contents[arr[2]].subtotal
 
@@ -956,10 +1037,11 @@ class EditorStore {
     }
   }
 
-  // 设置大写金额在前
+  // 每页合计设置大写金额在前
   @action.bound
   setSubtotalUpperCaseBefore() {
     if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
       const arr = this.selectedRegion.split('.')
       const subtotalConfig = this.config.contents[arr[2]].subtotal
 
@@ -968,10 +1050,11 @@ class EditorStore {
     }
   }
 
-  // 设置大小写金额分开
+  // 每页合计设置大小写金额分开
   @action.bound
   setSubtotalUpperLowerCaseSeparate() {
     if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
       const arr = this.selectedRegion.split('.')
       const subtotalConfig = this.config.contents[arr[2]].subtotal
 
@@ -982,7 +1065,210 @@ class EditorStore {
     }
   }
 
-  // 设置交换位置
+  // 每页合计开启自定义单元格
+  @action.bound
+  setSubtotalCustomCells() {
+    if (this.selectedRegion) {
+      // 作用：触发组件的更新
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const subtotalConfig = table?.subtotal
+      // 没有显示每页合计的时候不可以设置自定义单元格
+      if (!subtotalConfig?.show) return
+      // 多栏表格情况，计算colSpan
+      const colSpanLength = getColSpanLength(table)
+      const oldCustomCells = subtotalConfig?.isCustomCells
+
+      set(subtotalConfig, {
+        isCustomCells: !oldCustomCells
+      })
+      // 兼容已经存在后端的模板，每页合计直接是显示的，导致每页合计配置没有fields,isCustomCells，手动添加上
+      if (oldCustomCells === undefined && !subtotalConfig.fields) {
+        set(subtotalConfig, {
+          fields: [
+            {
+              name: '每页合计：',
+              valueField: 'real_item_price',
+              colSpan: colSpanLength
+            }
+          ]
+        })
+      }
+      // 开启自定义单元格
+      if (subtotalConfig?.isCustomCells) {
+        // fields添加自定义单元格
+        subtotalConfig.fields = [
+          subtotalConfig.fields[0],
+          {
+            ...this.subtotalConfigFields
+          }
+        ]
+        // 重新计算合并单元格的个数
+        subtotalConfig.fields[0].colSpan =
+          colSpanLength - subtotalConfig.fields[1].colSpan
+      } else {
+        // 关闭自定义单元格，fields只有一个
+        subtotalConfig.fields = [subtotalConfig.fields[0]]
+        // 重新计算合并单元格的个数
+        subtotalConfig.fields[0].colSpan = colSpanLength
+      }
+    }
+  }
+
+  // 每页合计自定义单元格文本输入
+  @action.bound
+  setSubtotalFields(value) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const subtotalConfig = table?.subtotal
+
+      if (subtotalConfig.isCustomCells) {
+        const subtotalConfig = table?.subtotal.fields
+        subtotalConfig[1].name = value
+      }
+    }
+  }
+
+  // 整单合计设置大写金额
+  @action.bound
+  setOverallOrderUpperCase() {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const overallOrderConfig = this.config.contents[arr[2]]?.overallOrder
+
+      const oldNeedUpperCase = overallOrderConfig?.needUpperCase
+      this.config.contents[arr[2]]?.overallOrder &&
+        set(overallOrderConfig, { needUpperCase: !oldNeedUpperCase })
+      // 没有大写金额时，将大写在前和大小写分开的多选框设置为false
+      if (
+        this.config.contents[arr[2]]?.overallOrder &&
+        overallOrderConfig.needUpperCase === false
+      ) {
+        overallOrderConfig.isUpperCaseBefore &&
+          set(overallOrderConfig, { isUpperCaseBefore: false })
+        overallOrderConfig.isUpperLowerCaseSeparate &&
+          set(overallOrderConfig, { isUpperLowerCaseSeparate: false })
+      }
+    }
+  }
+
+  // 整单合计设置大写金额在前
+  @action.bound
+  setOverallOrderUpperCaseBefore() {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const overallOrderConfig = this.config.contents[arr[2]]?.overallOrder
+
+      const oldUpperCaseBefore = overallOrderConfig?.isUpperCaseBefore
+      this.config.contents[arr[2]]?.overallOrder &&
+        set(overallOrderConfig, { isUpperCaseBefore: !oldUpperCaseBefore })
+    }
+  }
+
+  // 整单合计设置大小写金额分开
+  @action.bound
+  setOverallOrderUpperLowerCaseSeparate() {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const overallOrderConfig = this.config.contents[arr[2]]?.overallOrder
+
+      const oldUpperLowerCaseSeparate =
+        overallOrderConfig.isUpperLowerCaseSeparate
+      set(overallOrderConfig, {
+        isUpperLowerCaseSeparate: !oldUpperLowerCaseSeparate
+      })
+    }
+  }
+
+  // 整单合计开启自定义单元格
+  @action.bound
+  setOverallOrderCustomCells() {
+    if (this.selectedRegion) {
+      // 作用：触发tableoverallordertr组件的更新
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const overallOrderConfig = table?.overallOrder
+      if (!overallOrderConfig || !overallOrderConfig?.show) return
+      // 多栏表格情况
+      const colSpanLength = getColSpanLength(table)
+      const oldCustomCells = overallOrderConfig?.isCustomCells
+
+      set(overallOrderConfig, {
+        isCustomCells: !oldCustomCells
+      })
+
+      if (overallOrderConfig?.isCustomCells) {
+        // fields添加自定义单元格
+        overallOrderConfig.fields = [
+          overallOrderConfig.fields[0],
+          {
+            ...this.overallOrderConfigFields,
+            // 和之前保持一样的样式
+            style: { ...overallOrderConfig.fields[0].style }
+          }
+        ]
+        // 重新计算合并单元格的个数
+        overallOrderConfig.fields[0].colSpan =
+          colSpanLength - overallOrderConfig.fields[1].colSpan
+      } else {
+        // 关闭自定义单元格
+        overallOrderConfig.fields = [overallOrderConfig.fields[0]]
+        // 重新计算合并单元格的个数
+        overallOrderConfig.fields[0].colSpan = colSpanLength
+      }
+
+      this.config = toJS(this.config)
+    }
+  }
+
+  // 整单合计自定义单元格文本输入
+  @action.bound
+  setOverallOrderFields(value) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const overallOrderConfig = table?.overallOrder
+
+      if (overallOrderConfig.isCustomCells) {
+        const overallOrderConfigFields = table?.overallOrder.fields
+        overallOrderConfigFields[1].name = value
+      }
+    }
+  }
+
+  // 整单合计样式设置
+  @action.bound
+  setOverallOrderStyle(value) {
+    if (this.selectedRegion) {
+      const flexStyle = {
+        left: 'flex-start',
+        center: 'center',
+        right: 'flex-end'
+      }
+      const arr = this.selectedRegion.split('.')
+      const overallOrderConfigFields = this.config.contents[arr[2]]
+        ?.overallOrder.fields
+      _.forEach(overallOrderConfigFields, item => {
+        const oldStyle = item.style || {}
+        set(item, {
+          style: {
+            ...oldStyle,
+            ...value,
+            // 整单合计里使用的flex布局，textAlign不生效
+            'justify-content': flexStyle[value.textAlign]
+          }
+        })
+      })
+    }
+  }
+
+  // 合计和每页合计设置交换位置
   @action.bound
   setSubtotalCommutationPlace() {
     if (this.selectedRegion) {

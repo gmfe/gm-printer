@@ -61,13 +61,17 @@ class ContextMenu extends React.Component {
 
   handleSubtotal = name => {
     const { editStore } = this.props
-
     editStore.setSubtotalShow(name)
   }
 
   handleChangeTableData = isAutoFilling => {
     const { editStore } = this.props
     editStore.handleChangeTableData(isAutoFilling)
+  }
+
+  handleOverallOrder = name => {
+    const { editStore } = this.props
+    editStore.setOverallOrderShow(name)
   }
 
   renderOrderActionBtn = name => {
@@ -84,13 +88,18 @@ class ContextMenu extends React.Component {
       }
     } = this.props
     const arr = name.split('.')
-    const { dataKey, subtotal } = this.props.editStore.config.contents[arr[2]]
+    const {
+      dataKey,
+      subtotal,
+      overallOrder
+    } = this.props.editStore.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
 
     const isMultiActive = keyArr.includes('multi')
     const isThreeActive = keyArr.includes('multi3')
     const isCategoryActive = keyArr.includes('category')
     const isSubtotalActive = subtotal.show
+    const isOverallOrder = overallOrder?.show
 
     return (
       <>
@@ -127,6 +136,12 @@ class ContextMenu extends React.Component {
         >
           {i18next.t('行数填充')}
         </div>
+        <div
+          onClick={this.handleOverallOrder.bind(this, name)}
+          className={isOverallOrder ? 'active' : ''}
+        >
+          {i18next.t('整单合计')}
+        </div>
       </>
     )
   }
@@ -147,6 +162,7 @@ class ContextMenu extends React.Component {
           config={editStore.config}
           data={editStore.mockData}
           getremainpageHeight={editStore.setRemainPageHeight}
+          overallorder={editStore.overallOrderShow}
         />
       </CommonContextMenu>
     )

@@ -4,7 +4,8 @@ import {
   getSumTrHeight,
   isMultiTable,
   caclSingleDetailsPageHeight,
-  getArrayMid
+  getArrayMid,
+  getOverallOrderTrHeight
 } from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
@@ -173,6 +174,11 @@ class PrinterStore {
   }
 
   @action
+  setOverallOrder(config) {
+    this.config = config || {}
+  }
+
+  @action
   computedData(dataKey, table, end, currentRemainTableHeight) {
     /** 当前数据 */
     const tableData = this.data._table[dataKey] || []
@@ -243,9 +249,13 @@ class PrinterStore {
         tableCount++
         // 表格原始的高度和宽度信息
         const table = this.tablesInfo[`contents.table.${index}`]
-        const { subtotal, dataKey, summaryConfig } = content
+        const { subtotal, dataKey, summaryConfig, overallOrder } = content
         // 如果显示每页合计,那么table高度多预留一行高度
         const subtotalTrHeight = subtotal.show ? getSumTrHeight(subtotal) : 0
+        // 如果显示整单合计,那么table高度多预留一行高度
+        const overallOrderTrHeight = overallOrder?.show
+          ? getOverallOrderTrHeight(overallOrder)
+          : 0
         // 如果每页合计(新的),那么table高度多预留一行高度
         const pageSummaryTrHeight =
           summaryConfig?.pageSummaryShow && !isMultiTable(dataKey) // 双栏table没有每页合计
@@ -253,7 +263,10 @@ class PrinterStore {
             : 0
         // 每个表格都具有的高度
         const allTableHaveThisHeight =
-          table.head.height + subtotalTrHeight + pageSummaryTrHeight
+          table.head.height +
+          subtotalTrHeight +
+          pageSummaryTrHeight +
+          overallOrderTrHeight
         /** 当前page页面的最小高度 */
         const currentPageMinimumHeight =
           allPagesHaveThisHeight + allTableHaveThisHeight
