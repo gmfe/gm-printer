@@ -141,7 +141,12 @@ const coverDigit2Uppercase = n => {
         )
       ] + fraction[i]
   }
+  // 1.06 --- 壹元零陆分
   right = right.replace(/(零分)/, '').replace(/(零角)/, '零')
+  // 1.00 --- 壹元整
+  right = right === '零' ? '整' : right
+  // 1.60 --- 壹元陆角整 1.66 --- 壹元陆角陆分
+  right = /角$/.test(right) ? right + '整' : right
   n = Math.floor(n)
 
   for (i = 0; i < unit[0].length && n > 0; i++) {
@@ -155,10 +160,10 @@ const coverDigit2Uppercase = n => {
 
   return (
     head +
-    (
-      left.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零') +
-      (right === '零' ? '整' : right)
-    ).replace(/^整$/, '零元整')
+    (left.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零') + right).replace(
+      /^整$/,
+      '零元整'
+    )
   )
 }
 
