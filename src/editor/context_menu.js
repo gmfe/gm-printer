@@ -1,10 +1,10 @@
 import i18next from '../../locales'
 import React from 'react'
+import PropTypes from 'prop-types'
 import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
 import { Printer } from '../printer'
-import PropTypes from 'prop-types'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -19,12 +19,25 @@ const blockTypeList = [
   }
 ]
 
-@inject(stores => ({
-  editStore: stores.editStore,
-  mockData: stores.mockData
-}))
+@inject('editStore')
 @observer
 class ContextMenu extends React.Component {
+  componentDidMount() {
+    const {
+      editStore,
+      editStore: {
+        config: { autoFillConfig }
+      }
+    } = this.props
+
+    if (autoFillConfig?.checked) {
+      editStore.handleChangeTableData(
+        autoFillConfig?.checked,
+        autoFillConfig?.dataKey
+      )
+    }
+  }
+
   /**
    * 是否存在每页合计按钮,非异常明细才有按钮
    * @param name => ContextMenu 的 this.state.name
@@ -52,6 +65,11 @@ class ContextMenu extends React.Component {
     editStore.setSubtotalShow(name)
   }
 
+  handleChangeTableData = isAutoFilling => {
+    const { editStore } = this.props
+    editStore.handleChangeTableData(isAutoFilling)
+  }
+
   renderOrderActionBtn = name => {
     if (!this.hasSubtotalBtn(name)) {
       return null
@@ -61,7 +79,8 @@ class ContextMenu extends React.Component {
       editStore: {
         config: {
           page: { type }
-        }
+        },
+        isAutoFilling
       }
     } = this.props
     const arr = name.split('.')
@@ -102,12 +121,18 @@ class ContextMenu extends React.Component {
         >
           {i18next.t('每页合计')}
         </div>
+        <div
+          onClick={this.handleChangeTableData.bind(this, !isAutoFilling)}
+          className={isAutoFilling ? 'active' : ''}
+        >
+          {i18next.t('行数填充')}
+        </div>
       </>
     )
   }
 
   render() {
-    const { editStore, mockData } = this.props
+    const { editStore } = this.props
     return (
       <CommonContextMenu
         renderTableAction={this.renderOrderActionBtn}
@@ -117,8 +142,11 @@ class ContextMenu extends React.Component {
           key={editStore.computedPrinterKey}
           selected={editStore.selected}
           selectedRegion={editStore.selectedRegion}
+          isAutoFilling={editStore.isAutoFilling}
+          lineheight={editStore.computedTableCustomerRowHeight}
           config={editStore.config}
-          data={mockData}
+          data={editStore.mockData}
+          getremainpageHeight={editStore.setRemainPageHeight}
         />
       </CommonContextMenu>
     )

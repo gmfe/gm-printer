@@ -1,10 +1,10 @@
 import i18next from '../../locales'
 import React from 'react'
+import PropTypes from 'prop-types'
 import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
 import { Printer } from '../printer'
-import PropTypes from 'prop-types'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -45,11 +45,19 @@ class ContextMenu extends React.Component {
     editStore.setSubtotalShow(name)
   }
 
+  handleChangeTableData = isAutoFilling => {
+    const { editStore } = this.props
+    editStore.handleChangeTableData(isAutoFilling)
+  }
+
   renderOrderActionBtn = name => {
     if (!this.hasSubtotalBtn(name)) {
       return null
     }
 
+    const {
+      editStore: { isAutoFilling }
+    } = this.props
     const arr = name.split('.')
     const { subtotal } = this.props.editStore.config.contents[arr[2]]
     // const keyArr = dataKey.split('_')
@@ -78,12 +86,18 @@ class ContextMenu extends React.Component {
         >
           {i18next.t('每页合计')}
         </div>
+        <div
+          onClick={this.handleChangeTableData.bind(this, !isAutoFilling)}
+          className={isAutoFilling ? 'active' : ''}
+        >
+          {i18next.t('行数填充')}
+        </div>
       </>
     )
   }
 
   render() {
-    const { editStore, mockData } = this.props
+    const { editStore } = this.props
     return (
       <CommonContextMenu
         renderTableAction={this.renderOrderActionBtn}
@@ -93,8 +107,9 @@ class ContextMenu extends React.Component {
           key={editStore.computedPrinterKey}
           selected={editStore.selected}
           selectedRegion={editStore.selectedRegion}
+          isAutoFilling={editStore.isAutoFilling}
           config={editStore.config}
-          data={mockData}
+          data={editStore.mockData}
         />
       </CommonContextMenu>
     )

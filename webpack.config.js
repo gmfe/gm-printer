@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   mode: 'development',
@@ -58,11 +59,14 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/)
+    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/),
+    new HtmlWebpackPlugin({
+      template: 'demo/index.html'
+    })
   ],
   devServer: {
+    open: true,
     compress: true,
-    host: '0.0.0.0',
     port: 5678,
     inline: false,
     disableHostCheck: true,

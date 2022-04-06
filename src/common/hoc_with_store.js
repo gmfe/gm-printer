@@ -7,7 +7,7 @@ const withStore = store => WrapComponent =>
     constructor(props) {
       super(props)
       this.store = store
-      this.store.init(props.config)
+      this.store.init(props.config, props.mockData)
     }
 
     componentDidMount() {
@@ -78,6 +78,8 @@ const withStore = store => WrapComponent =>
 
     handlePrinterPanelStyleSet = e => {
       const { name, style } = e.detail
+      // 配送单，清空空白数据
+      !!this.store.clearAllTableEmptyData && this.store.clearAllTableEmptyData()
       this.store.setConfigPanelStyle(name, style)
     }
 

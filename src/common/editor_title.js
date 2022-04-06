@@ -53,14 +53,14 @@ class EditorTitle extends React.Component {
   }
 
   handleReset = () => {
-    const { editStore } = this.props
+    const { editStore, mockData } = this.props
     // 重置模板配置,但是保留原来模板名字
     const config = {
       ...editStore.originConfig,
       __key__: Date.now(), // 时间戳的key,直接让页面重新渲染!
       name: editStore.config.name
     }
-    editStore.init(config)
+    editStore.init(config, mockData)
   }
 
   handleTestPrint = () => {

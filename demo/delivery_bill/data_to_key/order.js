@@ -353,48 +353,179 @@ function turnoverData(data) {
   return [...turnover]
 }
 
+/**
+ * 获取售后汇总和明细数据
+ * @param {object} data 含exception,refund,no_sku_exceptions的data
+ * @return {object: {totalData,exception,refund,no_sku_exceptions,}}
+ */
+function getExceptionAndRefund(data) {
+  const totalData = {
+    exception: {},
+    refund: {},
+    no_sku_exceptions: []
+  }
+  const exception = {}
+  const refund = {}
+  const no_sku_exceptions = []
+
+  // 商品异常
+  if (data.exception_new) {
+    for (const [key, value] of Object.entries(data.exception_new)) {
+      let totalNum = 0
+      let totalMoney = 0
+      _.each(value, item => {
+        /** 处理明细 */
+        if (!exception[key]) {
+          exception[key] = []
+        }
+
+        exception[key].push({
+          异常原因: item.exception_reason_text,
+          异常描述: item.text,
+          异常数量: item.amount_delta,
+          异常金额: price(item.money_delta),
+          售后类型: '商品异常',
+          abnormalNumber: item.amount_delta,
+          _origin: item
+        })
+
+        /** 处理汇总 */
+        if (!totalData.exception[key]) {
+          totalData.exception[key] = [{ _origin: item }]
+        }
+
+        if (value.length > 1) {
+          Object.assign(totalData.exception[key][0], {
+            异常原因: '-',
+            异常描述: '-',
+            售后类型: '商品异常'
+          })
+        } else if (value.length === 1) {
+          Object.assign(totalData.exception[key][0], exception[key][0]) // 取第一条数据就好
+        }
+        totalNum = +Big(item.amount_delta).plus(totalNum)
+        totalMoney = +Big(item.money_delta).plus(totalMoney)
+      })
+
+      Object.assign(totalData.exception[key][0], {
+        异常数量: totalNum,
+        异常金额: price(totalMoney),
+        abnormalNumber: totalNum
+      })
+    }
+  }
+
+  // 非商品异常
+  if (data.no_sku_exceptions) {
+    _.each(data.no_sku_exceptions, value => {
+      no_sku_exceptions.push({
+        异常原因: value.exception_reason_text,
+        异常描述: value.text,
+        异常数量: '-',
+        异常金额: price(value.money_delta),
+        售后类型: '非商品异常',
+        _origin: value
+      })
+      totalData.no_sku_exceptions.push({
+        异常原因: value.exception_reason_text,
+        异常描述: value.text,
+        异常数量: '-',
+        异常金额: price(value.money_delta),
+        售后类型: '非商品异常',
+        _origin: value
+      })
+    })
+  }
+  // 退货
+  if (data.refund_new) {
+    for (const [key, value] of Object.entries(data.refund_new)) {
+      let totalNum = 0
+      let totalMoney = 0
+      _.each(value, item => {
+        /** 处理明细 */
+        if (!refund[key]) {
+          refund[key] = []
+        }
+
+        refund[key].push({
+          异常原因: item.exception_reason_text,
+          异常描述: item.text,
+          异常数量: item.amount_delta,
+          异常金额: price(item.money_delta),
+          售后类型: '退货',
+          refundNumber: item.amount_delta,
+          _origin: item
+        })
+
+        /** 处理汇总 */
+        if (!totalData.refund[key]) {
+          totalData.refund[key] = [{ _origin: item }]
+        }
+
+        if (value.length > 1) {
+          Object.assign(totalData.refund[key][0], {
+            异常原因: '-',
+            异常描述: '-',
+            售后类型: '退货'
+          })
+        } else if (value.length === 1) {
+          Object.assign(totalData.refund[key][0], refund[key][0]) // 取第一条数据就好
+        }
+        totalNum = +Big(item.amount_delta).plus(totalNum)
+        totalMoney = +Big(item.money_delta).plus(totalMoney)
+      })
+      Object.assign(totalData.refund[key][0], {
+        异常数量: totalNum,
+        异常金额: price(totalMoney),
+        refundNumber: totalNum
+      })
+    }
+  }
+
+  return {
+    totalData,
+    exception,
+    refund,
+    no_sku_exceptions
+  }
+}
+
 // 异常商品表单
-function generateAbnormalData(data, kOrders) {
-  if (data.split_order_type === '1') return []
-  // 商品map
-  const kIdMap = _.reduce(
-    kOrders,
-    (res, cur) => {
-      res[cur._origin.id] = cur
-      return res
-    },
-    {}
-  )
-  // 异常商品 + 非商品异常
-  const abnormals = _.map(data.abnormals, v => {
-    const isSku = v.detail_id !== '0' // 非商品异常detail_id为 '0'
-    const sku = isSku ? kIdMap[v.detail_id] : { 商品名: '-' }
-    return {
-      异常原因: v.type_text,
-      异常描述: v.text,
-      异常数量: isSku ? v.amount_delta : '-',
-      异常金额: price(v.money_delta),
-      售后类型: isSku ? '商品异常' : '非商品异常',
-      ...sku, // 异常商品的商品信息
-      _origin: v
+function generateAbnormalData(data, kOrders, isDetail) {
+  const { refund, exception, no_sku_exceptions } = isDetail
+    ? getExceptionAndRefund(data)
+    : getExceptionAndRefund(data).totalData
+  const refunds = []
+  const abnormals = []
+  const no_sku = []
+
+  _.each(kOrders, item => {
+    const _idIndex =
+      item._origin.detail_id === undefined
+        ? item._origin.id
+        : item._origin.id + '_' + item._origin.detail_id
+    if (exception[_idIndex]) {
+      _.each(exception[_idIndex], exc => {
+        abnormals.push({ ...item, ...exc })
+      })
+    }
+
+    if (refund[_idIndex]) {
+      _.each(refund[_idIndex], ref => {
+        refunds.push({ ...item, ...ref })
+      })
     }
   })
 
-  // 退货商品
-  const refunds = _.map(data.refunds, v => {
-    return {
-      异常原因: v.type_text,
-      异常描述: v.text,
-      异常数量: v.amount_delta,
-      异常金额: price(v.money_delta),
-      售后类型: '退货',
-      ...kIdMap[v.detail_id], // 异常商品的商品信息
-      _origin: v
-    }
+  _.each(no_sku_exceptions, item => {
+    no_sku.push({
+      ...item,
+      商品名: '-'
+    })
   })
 
   // 异常表单 = 退货商品 + 异常商品 + 非商品异常
-  return [...abnormals, ...refunds]
+  return [...abnormals, ...refunds, ...no_sku]
 }
 
 // 积分表格
