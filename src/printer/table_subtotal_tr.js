@@ -2,7 +2,7 @@ import React from 'react'
 import i18next from '../../locales'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import { MULTI_SUFFIX } from '../config'
+import { MULTI_SUFFIX, MULTI_SUFFIX3 } from '../config'
 import Big from 'big.js'
 import { coverDigit2Uppercase, getDataKey } from '../util'
 import { observer } from 'mobx-react'
@@ -47,10 +47,14 @@ const SubtotalTr = props => {
 
         const _origin = b._origin || {}
         const _origin2 = b['_origin' + MULTI_SUFFIX] || {}
+        const _origin3 = b['_origin' + MULTI_SUFFIX3] || {}
 
         result = a.plus(_origin[field] || 0)
         if (_origin2[field]) {
           result = result.plus(_origin2[field])
+        }
+        if (_origin3[field]) {
+          result = result.plus(_origin3[field])
         }
         return result
       },
