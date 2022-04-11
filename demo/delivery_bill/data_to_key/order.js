@@ -2,7 +2,7 @@ import i18next from '../../../locales'
 import moment from 'moment'
 import _ from 'lodash'
 import Big from 'big.js'
-import { MULTI_SUFFIX } from '../../../src'
+import { MULTI_SUFFIX, MULTI_SUFFIX3 } from '../../../src'
 import {
   coverDigit2Uppercase,
   price,
@@ -354,6 +354,110 @@ function turnoverData(data) {
 }
 
 /**
+ * 生成 三栏+纵向 三栏+分类+纵向 商品展示数据
+ * @param list
+ * @param categoryTotal
+ * @return {Array}
+ */
+function generateMulti3Data2(list, categoryTotal) {
+  const multiList = []
+  // 假设skuGroup = [{a: 1}, {a:2}, {a: 3}, {a: 4}, {a: 5}, {a: 6}], 转化为 [{a:1, a#2:3, a#3:5}, {a:2, a#2:4 a#3:6}]
+  const skuGroup = [...list]
+
+  let index = 0
+  const len = skuGroup.length
+  const middle = Math.ceil(len / 3)
+  const splitList = []
+  // 整理成 splitList   ==== [[{}...],[[{}...],[[{}...]]
+  while (index < Math.ceil(len / middle)) {
+    splitList.push(skuGroup.splice(0, middle))
+    index++
+  }
+  let sku1 = []
+  const sku2 = []
+  const sku3 = []
+
+  // splitList[0] 保持不变
+  // splitList[1]里的对象所有的key添加 MULTI_SUFFIX
+  // splitList[2]里的对象添加 MULTI_SUFFIX3
+  _.forEach(splitList, (item, index) => {
+    if (index === 0) {
+      sku1 = item
+    }
+    if (index === 1) {
+      const skuList = []
+      _.each(item, (i, ind) => {
+        _.each(i, (val, key) => {
+          skuList[key + MULTI_SUFFIX] = val
+        })
+        sku2.push({ ...skuList })
+      })
+    }
+    if (index === 2) {
+      const skuList = []
+      _.each(item, (i, ind) => {
+        _.each(i, (val, key) => {
+          skuList[key + MULTI_SUFFIX3] = val
+        })
+        sku3.push({ ...skuList })
+      })
+    }
+  })
+  // 整理成 [ { 序号:1, 序号_MULTI_SUFFIX:x, 序号_MULTI_SUFFIX3:x } ,{...}]
+  _.forEach(sku1, (item, index) => {
+    multiList.push({ ...sku1[index], ...sku2[index], ...sku3[index] })
+  })
+
+  // 添加上分类
+  if (categoryTotal) {
+    multiList.push(categoryTotal)
+  }
+
+  return multiList
+}
+
+/**
+ * 生成三栏商品展示数据
+ * @param list
+ * @param categoryTotal
+ * @return {Array}
+ */
+function generateMulti3Data(list, categoryTotal) {
+  const multiList = []
+  // 假设skuGroup = [{a: 1}, {a:2}, {a: 3}, {a: 4}, {a: 5}, {a: 6}], 转化为 [{a:1, a#2:2, a#3:3}, {a:4, a#2:5 a#3:6}]
+  const skuGroup = list
+
+  let index = 0
+  const len = skuGroup.length
+
+  while (index < len) {
+    const sku1 = skuGroup[index]
+    const sku2 = {}
+    const sku3 = {}
+
+    _.each(skuGroup[1 + index], (val, key) => {
+      sku2[key + MULTI_SUFFIX] = val
+    })
+    _.each(skuGroup[2 + index], (val, key) => {
+      sku2[key + MULTI_SUFFIX3] = val
+    })
+    multiList.push({
+      ...sku1,
+      ...sku2,
+      ...sku3,
+    })
+
+    index += 3
+  }
+
+  if (categoryTotal) {
+    multiList.push(categoryTotal)
+  }
+
+  return multiList
+}
+
+/**
  * 获取售后汇总和明细数据
  * @param {object} data 含exception,refund,no_sku_exceptions的data
  * @return {object: {totalData,exception,refund,no_sku_exceptions,}}
@@ -554,6 +658,10 @@ function order(data) {
   const kOrdersMulti = generateMultiData(kOrders)
   /* ----------- 双栏 (纵向)-------------- */
   const kOrdersMultiVertical = generateMultiData2(kOrders)
+  /* ----------- 三栏 -------------- */
+  const kOrdersMulti3 = generateMulti3Data(kOrders)
+  /* ----------- 三栏 (纵向)-------------- */
+  const kOrdersMulti3Vertical = generateMulti3Data2(kOrders)
 
   // 按一级分类分组
   const groupByCategory1 = _.groupBy(kOrders, v => v._origin.category_title_1)
@@ -562,6 +670,8 @@ function order(data) {
   let kCategory = []
   let kCategoryMulti = []
   let kCategoryMultiVertical = []
+  let kCategoryMulti3 = []
+  let kCategoryMulti3Vertical = []
   const kCounter = [] // 分类汇总
 
   let index = 1
@@ -598,6 +708,14 @@ function order(data) {
     kCategoryMultiVertical = kCategoryMultiVertical.concat(
       generateMultiData2(list, categoryTotal)
     )
+    /* -------- 三栏 + 分类 ------- */
+    kCategoryMulti3 = kCategoryMulti3.concat(
+      generateMulti3Data(list, categoryTotal)
+    )
+    /* -------- 三栏 + 分类（纵向） ------- */
+    kCategoryMulti3Vertical = kCategoryMulti3Vertical.concat(
+      generateMulti3Data2(list, categoryTotal)
+    )
   })
 
   const totalOrgItemPrice = getOrgItemPrice(skuList)
@@ -616,7 +734,9 @@ function order(data) {
       orders_multi_vertical: kOrdersMultiVertical, // 双栏（纵向）
       orders_category: kCategory, // 分类
       orders_category_multi: kCategoryMulti, // 分类 + 双栏
+      orders_category_multi3: kCategoryMulti3, // 分类 + 三栏
       orders_category_multi_vertical: kCategoryMultiVertical, // 分类+双栏（纵向）
+      orders_category_multi3_vertical: kCategoryMulti3Vertical, // 分类+三栏（纵向）
       abnormal: generateAbnormalData(data, kOrders), // 异常明细
       reward: generateRewardData(data.reward_sku_list),
       combination: combination, // 组合商品

@@ -10,7 +10,10 @@ import _ from 'lodash'
 import Big from 'big.js'
 
 export const TR_BASE_HEIGHT = 23
-const price = (n, f = 2) => Big(n || 0).toFixed(f)
+const price = (n, f = 2) => {
+  if (isNaN(n)) return null
+  return Big(n || 0).toFixed(f)
+}
 class PrinterStore {
   @observable ready = false
 

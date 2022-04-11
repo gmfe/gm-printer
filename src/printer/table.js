@@ -116,14 +116,17 @@ class Table extends React.Component {
               /{{(price\()?列\.([^{{]+)}}/g,
               (s, s1, s2) => {
                 if (s1) {
-                  // 有price函数插进来
-                  const mix_suffix = s2.replace(/\*/, () => `${MULTI_SUFFIX}*`)
-                  return `{{${s1}列.${mix_suffix}${colNum}}}`
+                  // 有price函数插进来， 匹配‘ _基本单位 ’类似的字符串并添加后缀，生成三栏或者双栏数据
+                  const _s = s.replace(
+                    /_[\u4e00-\u9fa5]*/g,
+                    match => `${match}${MULTI_SUFFIX}${colNum}`
+                  )
+                  return _s
                 } else {
                   return `{{列.${s2}${MULTI_SUFFIX}${colNum}}}`
                 }
               }
-            ) // {{列.xx}} => {{列.xxMULTI_SUFFIXi}}
+            )
           }
           // 多栏商品的明细取 __details_MULTI_SUFFIX
           if (val.specialDetailsKey)
