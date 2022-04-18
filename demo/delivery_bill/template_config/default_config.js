@@ -1,11 +1,11 @@
 export default {
   name: '',
   specialConfig: 'noSpecail',
-  autoFillConfig: {
-    region: '',
-    dataKey: 'orders_category',
-    checked: true
-  },
+  // autoFillConfig: {
+  //   region: '',
+  //   dataKey: 'orders_category',
+  //   checked: true
+  // },
   page: {
     name: 'A4',
     size: {
