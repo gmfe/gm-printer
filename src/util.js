@@ -108,6 +108,14 @@ function getSumTrHeight(SumTr) {
   return (parseInt(fontSize) - 12) * 1.5 + 26
 }
 
+function getOverallOrderTrHeight(overallOrder) {
+  const { fields = [] } = overallOrder
+  const fontSize = fields?.[0]?.style?.fontSize || '12px'
+
+  // 12px => 26, 14px => 29, 16px => 33, ...
+  return (parseInt(fontSize) - 12) * 1.5 + 26
+}
+
 // eslint-disable-next-line
 const coverDigit2Uppercase = n => {
   if (_.isNil(n) || _.isNaN(n)) {
@@ -274,6 +282,17 @@ const getArrayMid = arr => {
   return majority
 }
 
+/**
+ * 获取整单合计colSpan合并的个数
+ * @param {*} table
+ * @returns number
+ */
+const getColSpanLength = table => {
+  return /multi/.test(table.dataKey)
+    ? getMultiNumber(table.dataKey) * table.columns.length
+    : table.columns.length
+}
+
 export {
   getHeight,
   getWidth,
@@ -291,5 +310,7 @@ export {
   isMultiTable,
   getMultiNumber,
   caclSingleDetailsPageHeight,
-  getArrayMid
+  getArrayMid,
+  getColSpanLength,
+  getOverallOrderTrHeight
 }

@@ -81,6 +81,9 @@ class Printer extends React.Component {
         this.props.printerStore.remainPageHeight
       )
     }
+    if (nextProps.overallorder !== this.props.overallorder) {
+      this.props.printerStore.setOverallOrder(nextProps.config)
+    }
   }
 
   componentDidMount() {
@@ -324,7 +327,8 @@ Printer.propTypes = {
   config: PropTypes.object.isRequired,
   onReady: PropTypes.func,
   isSomeSubtotalTr: PropTypes.bool,
-  getremainpageHeight: PropTypes.func
+  getremainpageHeight: PropTypes.func,
+  overallorder: PropTypes.bool
 }
 
 Printer.defaultProps = {

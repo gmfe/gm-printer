@@ -7,11 +7,18 @@ import Big from 'big.js'
 import { coverDigit2Uppercase, getDataKey } from '../util'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
+import classNames from 'classnames'
+
 /**
  * 每页合计组件,分页计算后,根据range来统计每页合计数据
  * @param props
  * @returns {*}
  */
+const flexStyle = {
+  left: 'flex-start',
+  center: 'center',
+  right: 'flex-end'
+}
 const SubtotalTr = props => {
   const {
     config: {
@@ -25,7 +32,7 @@ const SubtotalTr = props => {
         style,
         fields = [
           {
-            name: i18next.t('出库金额'),
+            name: i18next.t('每页合计：'),
             valueField: 'real_item_price'
           }
         ],
@@ -36,7 +43,6 @@ const SubtotalTr = props => {
     printerStore,
     isSomeSubtotalTr
   } = props
-
   const tableData = printerStore.data._table[getDataKey(dataKey, arrange)] || []
   // 计算合计
   const sumData = (list, field) => {
@@ -67,18 +73,14 @@ const SubtotalTr = props => {
   if (show && printerStore.ready) {
     const list = tableData.slice(range.begin, range.end)
 
-    const sum = {}
-
-    _.each(fields, v => {
-      sum[v.name] = sumData(list, v.valueField)
-    })
-
-    // 定义每页小记的左右两侧内容
-    let subtotalLeftContent
-    let subtotalRightContent
-    let subtotalStr = ''
-    // 结款单
+    // 针对结款单的
     if (isSomeSubtotalTr) {
+      const sum = {}
+
+      _.each(fields, v => {
+        sum[v.name] = sumData(list, v.valueField)
+      })
+      let subtotalStr = ''
       for (const name in sum) {
         const price = sum[name]
         const priceUpperCase = get(subtotal, 'needUpperCase') // needUpperCase在初始模板中undefined,所以必须用这个方法
@@ -103,61 +105,49 @@ const SubtotalTr = props => {
         </tr>
       )
     } else {
-      for (const name in sum) {
-        const price = sum[name]
-        const priceUpperCase = get(subtotal, 'needUpperCase') // needUpperCase在初始模板中undefined,所以必须用这个方法
-          ? '大写：' + coverDigit2Uppercase(price)
-          : ''
-        if (displayName) {
-          // 大写金额是否在前
-          if (isUpperCaseBefore) {
-            subtotalLeftContent = `${name}${priceUpperCase}`
-            subtotalRightContent = `${price}`
-          } else {
-            subtotalLeftContent = `${price}`
-            subtotalRightContent = `${name} ${priceUpperCase}`
-          }
-        } else {
-          if (isUpperCaseBefore) {
-            subtotalLeftContent = `${priceUpperCase}`
-            subtotalRightContent = `${price}`
-          } else {
-            subtotalLeftContent = `${price}`
-            subtotalRightContent = `${priceUpperCase}`
-          }
-        }
-      }
-
       return (
         <tr>
-          <td
-            colSpan={99}
-            style={{ fontWeight: 'bold', ...style }}
-            // dangerouslySetInnerHTML={{
-            //   __html: `${i18next.t('每页合计')}：${subtotalStr}`
-            // }}flex-grow: 1
-          >
-            {/* 大写金额和小写金额分开在表格的两侧，通过控制类名实现，添加类名后，覆盖原来的居中、靠右靠左 */}
-            <div
-              className={
-                isUpperLowerCaseSeparate
-                  ? 'gm-printer-subtotal-UpperLowerCaseSeparate-outer'
-                  : ''
-              }
-            >
-              {i18next.t('每页合计')}：
-              <span
-                className={
-                  isUpperLowerCaseSeparate
-                    ? 'gm-printer-subtotal-UpperLowerCaseSeparate-inter'
-                    : ''
-                }
-              >
-                <span>&nbsp;&nbsp;{subtotalLeftContent}&nbsp;&nbsp;</span>
-                <span>&nbsp;&nbsp;{subtotalRightContent}&nbsp;&nbsp;</span>
-              </span>
-            </div>
-          </td>
+          {_.map(fields, (item, index) => {
+            return (
+              <td colSpan={item.colSpan ?? 99} key={index}>
+                <div
+                  style={{
+                    fontWeight: 'bold',
+                    'justify-content': flexStyle[subtotal.style?.textAlign], // flex布局中textAlign不生效，改使用justify-content
+                    ...subtotal.style
+                  }}
+                  className='gm-flex-page'
+                >
+                  {item.name}
+                  <div
+                    className={classNames('gm-flex-page', {
+                      'gm-flex-justify-between-page': isUpperLowerCaseSeparate, // 决定大小写金额是否分开在两端
+                      'gm-flex-grow-page': isUpperLowerCaseSeparate
+                    })}
+                  >
+                    <span
+                      className={
+                        isUpperCaseBefore // 决定小写金额是否在前
+                          ? 'gm-printer-subtotal-isUpperCaseBefore-inter'
+                          : ''
+                      }
+                    >
+                      {/* 这样写是为了支持自定义单元，index = 1时是自定义单元格 */}
+                      {index === 0 ? sumData(list, item.valueField) : ''}
+                    </span>
+                    {subtotal?.needUpperCase && ( // 是否需要大写金额
+                      <span>
+                        {index === 0
+                          ? '大写：' +
+                            coverDigit2Uppercase(sumData(list, item.valueField))
+                          : ''}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </td>
+            )
+          })}
         </tr>
       )
     }

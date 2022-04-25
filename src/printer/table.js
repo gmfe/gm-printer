@@ -16,6 +16,7 @@ import { MULTI_SUFFIX } from '../config'
 import SpecialTr from './table_special_tr'
 import SubtotalTr from './table_subtotal_tr'
 import PageSummary from './page_summary'
+import OverallOrder from './table_overallOrder_tr'
 
 @inject('printerStore')
 @observer
@@ -293,6 +294,11 @@ class Table extends React.Component {
           {this.props.config.subtotal.isCommutationPlace
             ? PageSummarySubtotalTr()
             : subtotalTrPageSummary()}
+          <OverallOrder
+            range={range}
+            config={config}
+            printerStore={printerStore}
+          />
         </tbody>
       </table>
     )

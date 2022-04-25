@@ -166,3 +166,15 @@
   flex-grow: 1;
   justify-content: space-between;
 }
+.gm-printer-subtotal-isUpperCaseBefore-inter{
+  order:2;
+}
+.gm-flex-justify-between-page{
+   justify-content: space-between;
+}
+.gm-flex-grow-page{
+    flex-grow: 1;
+}
+.gm-flex-page{
+  display:flex
+}

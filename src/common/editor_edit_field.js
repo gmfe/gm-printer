@@ -13,7 +13,8 @@ import {
   ColumnWidth,
   Textarea,
   Title,
-  TipInfo
+  TipInfo,
+  Text
 } from '../common/component'
 import { get, toJS } from 'mobx'
 import PropTypes from 'prop-types'
@@ -71,6 +72,11 @@ class EditorField extends React.Component {
   handleSubtotalStyleChange = value => {
     const { editStore } = this.props
     editStore.setSubtotalStyle(value)
+  }
+
+  handleOverallOrderStyleChange = value => {
+    const { editStore } = this.props
+    editStore.setOverallOrderStyle(value)
   }
 
   renderBlocks() {
@@ -178,10 +184,15 @@ class EditorField extends React.Component {
   }
 
   renderTable() {
-    const { tableDataKeyList, editStore } = this.props
+    const { tableDataKeyList, editStore, isSomeSubtotalTr } = this.props
     const { head, headStyle, text, style } = editStore.computedSelectedInfo
 
-    const { specialConfig, subtotal } = editStore.computedTableSpecialConfig
+    const {
+      specialConfig,
+      subtotal,
+      overallOrder
+    } = editStore.computedTableSpecialConfig
+
     // 小计样式,specialConfig可能是undefined
     const specialStyle =
       toJS(editStore.computedTableSpecialConfig)?.specialConfig?.style || {}
@@ -195,16 +206,45 @@ class EditorField extends React.Component {
       (editStore.computedTableSpecialConfig.subtotal &&
         get(subtotal, 'needUpperCase')) ||
       false
-    // 大写的金额是否在前
+    // 每页合计大写的金额是否在前
     const subtotalUpperCaseBefore =
       (editStore.computedTableSpecialConfig.subtotal &&
         get(subtotal, 'isUpperCaseBefore')) ||
       false
-    // 大写和小写的金额是否分开
+    // 每页合计大写和小写的金额是否分开
     const subtotalUpperLowerCaseSeparate =
       (editStore.computedTableSpecialConfig.subtotal &&
         get(subtotal, 'isUpperLowerCaseSeparate')) ||
       false
+    // 每页合计样式
+    const overallOrderStyle =
+      (overallOrder && overallOrder?.fields[0].style) || {}
+    // 每页合计自定义单元格
+    const subtotalUpperCustomCell =
+      (editStore.computedTableSpecialConfig?.subtotal &&
+        get(subtotal, 'isCustomCells')) ||
+      false
+    //  整单合计是否大写
+    const overallOrderNeedUpperCase =
+      (editStore.computedTableSpecialConfig?.overallOrder &&
+        get(overallOrder, 'needUpperCase')) ||
+      false
+    // 整单合计大写的金额是否在前
+    const overallOrderCaseBefore =
+      (editStore.computedTableSpecialConfig?.overallOrder &&
+        get(overallOrder, 'isUpperCaseBefore')) ||
+      false
+    // 整单合计大写和小写的金额是否分开
+    const overallOrderUpperLowerCaseSeparate =
+      (editStore.computedTableSpecialConfig?.overallOrder &&
+        get(overallOrder, 'isUpperLowerCaseSeparate')) ||
+      false
+    // 整单合计自定义单元格
+    const overallOrderUpperCustomCell =
+      (editStore.computedTableSpecialConfig?.overallOrder &&
+        get(overallOrder, 'isCustomCells')) ||
+      false
+
     return (
       <div>
         <Title title={i18next.t('编辑字段')} />
@@ -376,17 +416,84 @@ class EditorField extends React.Component {
           subtotalCheckOnChange={editStore.setSubtotalUpperCase}
           subtotalCheckText='显示大写金额'
         />
+        {/* 结款单不需要这些配置 */}
+        {!isSomeSubtotalTr && (
+          <>
+            <EditorSubtotalCheck
+              subtotalCheckDisabled={subtotalNeedUpperCase}
+              subtotalChecked={subtotalUpperCaseBefore}
+              subtotalCheckOnChange={editStore.setSubtotalUpperCaseBefore}
+              subtotalCheckText='大写金额在前'
+            />
+            <EditorSubtotalCheck
+              subtotalCheckDisabled={subtotalNeedUpperCase}
+              subtotalChecked={subtotalUpperLowerCaseSeparate}
+              subtotalCheckOnChange={
+                editStore.setSubtotalUpperLowerCaseSeparate
+              }
+              subtotalCheckText='大、小写金额分左右两边展示'
+            />
+            <EditorSubtotalCheck
+              subtotalCheckDisabled
+              subtotalChecked={subtotalUpperCustomCell}
+              subtotalCheckOnChange={editStore.setSubtotalCustomCells}
+              subtotalCheckText='开启自定义单元格'
+            />
+            <Text
+              value={
+                subtotal && subtotal?.fields?.[1] ? subtotal.fields[1].name : ''
+              }
+              onChange={editStore.setSubtotalFields}
+              style={{ width: '65px', margin: '5px 0 5px 80px' }}
+            />
+          </>
+        )}
+        <Flex>
+          <Flex>{i18next.t('整单合计')}：</Flex>
+          <Fonter
+            style={overallOrderStyle}
+            onChange={this.handleOverallOrderStyleChange}
+          />
+          <Separator />
+          <TextAlign
+            style={overallOrderStyle}
+            onChange={this.handleOverallOrderStyleChange}
+          />
+        </Flex>
         <EditorSubtotalCheck
-          subtotalCheckDisabled={subtotalNeedUpperCase}
-          subtotalChecked={subtotalUpperCaseBefore}
-          subtotalCheckOnChange={editStore.setSubtotalUpperCaseBefore}
+          subtotalCheckDisabled
+          subtotalChecked={overallOrderNeedUpperCase}
+          subtotalCheckOnChange={editStore.setOverallOrderUpperCase}
+          subtotalCheckText='显示大写金额'
+        />
+        <EditorSubtotalCheck
+          subtotalCheckDisabled={overallOrderNeedUpperCase}
+          subtotalChecked={overallOrderCaseBefore}
+          subtotalCheckOnChange={editStore.setOverallOrderUpperCaseBefore}
           subtotalCheckText='大写金额在前'
         />
         <EditorSubtotalCheck
-          subtotalCheckDisabled={subtotalNeedUpperCase}
-          subtotalChecked={subtotalUpperLowerCaseSeparate}
-          subtotalCheckOnChange={editStore.setSubtotalUpperLowerCaseSeparate}
+          subtotalCheckDisabled={overallOrderNeedUpperCase}
+          subtotalChecked={overallOrderUpperLowerCaseSeparate}
+          subtotalCheckOnChange={
+            editStore.setOverallOrderUpperLowerCaseSeparate
+          }
           subtotalCheckText='大、小写金额分左右两边展示'
+        />
+        <EditorSubtotalCheck
+          subtotalCheckDisabled
+          subtotalChecked={overallOrderUpperCustomCell}
+          subtotalCheckOnChange={editStore.setOverallOrderCustomCells}
+          subtotalCheckText='开启自定义单元格'
+        />
+        <Text
+          value={
+            overallOrder && overallOrder?.fields?.[1]
+              ? overallOrder.fields[1].name
+              : ''
+          }
+          onChange={editStore.setOverallOrderFields}
+          style={{ width: '65px', margin: '5px 0 5px 80px' }}
         />
       </div>
     )
@@ -408,7 +515,8 @@ class EditorField extends React.Component {
 EditorField.propTypes = {
   editStore: PropTypes.object,
   tableDataKeyList: PropTypes.array,
-  showNewDate: PropTypes.bool
+  showNewDate: PropTypes.bool,
+  isSomeSubtotalTr: PropTypes.bool
 }
 EditorField.defaultProps = {
   showNewDate: false
