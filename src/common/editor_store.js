@@ -80,7 +80,7 @@ class EditorStore {
   subtotalConfigFields = {
     name: '',
     valueField: '',
-    colSpan: 3 // 产品说3个,开启自定义单元格
+    colSpan: 6 // 产品说3个,开启自定义单元格,客户不满意，改成6个
   }
 
   @computed
