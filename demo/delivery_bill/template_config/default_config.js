@@ -6,6 +6,10 @@ export default {
   //   dataKey: 'orders_category',
   //   checked: true
   // },
+  specialControlConfig: {
+    /** 是否开启多位小数，默认不开启，取两位 */
+    multiDigitDecimal: true
+  },
   page: {
     name: 'A4',
     size: {
