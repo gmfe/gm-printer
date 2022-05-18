@@ -49,6 +49,10 @@ class EditorStore {
   @observable
   isAutoFilling = false
 
+  /** 是否开启多位小数，默认不开启，取两位 */
+  @observable
+  isMultiDigitDecimal = false
+
   defaultTableDataKey = 'orders'
 
   // 默认table的dataKey
@@ -59,6 +63,11 @@ class EditorStore {
   @action
   setAutoFillingConfig(bol) {
     this.isAutoFilling = bol
+  }
+
+  @action
+  setMultiDigitDecimal(bool) {
+    this.isMultiDigitDecimal = bool
   }
 
   @observable
