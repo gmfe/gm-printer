@@ -566,6 +566,15 @@ class EditorStore {
   }
 
   @action
+  subtotalRadioCheck(fields) {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      this.config.contents[arr[2]].subtotal.fields[0].valueField = fields.id
+    }
+  }
+
+  @action
   setOverallOrderShow(name) {
     const arr = name.split('.')
     const table = this.config.contents[arr[2]]
