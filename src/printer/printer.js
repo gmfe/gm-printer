@@ -183,7 +183,11 @@ class Printer extends React.Component {
                   content?.dataKey === autoFillConfig?.dataKey
 
                 const end = isAutofillConfig
-                  ? panel.end + Math.floor(remainPageHeight / TR_BASE_HEIGHT)
+                  ? panel.end +
+                    Math.floor(
+                      remainPageHeight /
+                        printerStore.computedTableCustomerRowHeight
+                    )
                   : panel.end
                 switch (panel.type) {
                   case 'table':
