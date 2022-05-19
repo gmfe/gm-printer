@@ -156,14 +156,19 @@ class EditorStore {
 
     set(this.config, {
       autoFillConfig: {
-        region: this.selectedRegion,
+        region: this.selectedRegion || autoFillConfig?.region,
         dataKey,
         checked: isAutoFilling
       }
     })
-    if (isAutoFilling) {
+
+    const hasHadEmptyData = _.some(table, data => data?._isEmptyData)
+
+    // 开关打开，且之前数组不包含空数据，再进行填充
+    if (isAutoFilling && !hasHadEmptyData) {
       table.push(...this.getFilledTableData(table))
-    } else {
+    }
+    if (!isAutoFilling) {
       this.clearExtraTableData(dataKey)
       return
     }
@@ -861,14 +866,17 @@ class EditorStore {
   // 获得表格自定义行高
   @computed
   get computedTableCustomerRowHeight() {
-    if (this.selectedRegion) {
-      const arr = this.selectedRegion.split('.')
+    const _defaultRegion = this.config?.autoFillConfig?.region
+    let resHeight = 23
+    if (this.selectedRegion || _defaultRegion) {
+      const _selectedRegion = this.selectedRegion || _defaultRegion
+      const arr = _selectedRegion.split('.')
       if (arr.includes('table')) {
         const height = this.config.contents[arr[2]].customerRowHeight
-        return height === undefined ? 23 : height
+        resHeight = height === undefined ? 23 : height
       }
     }
-    return 23
+    return resHeight
   }
 
   @action.bound
