@@ -17,12 +17,10 @@ class EditorCutomizedConfig extends React.Component {
     editStore.setMultiDigitDecimal(value)
   }
 
-
-
   render() {
     const {
       editStore,
-      editStore: { isAutoFilling,isMultiDigitDecimal }
+      editStore: { isAutoFilling, isMultiDigitDecimal }
     } = this.props
     // 是table
     if (editStore.computedRegionIsTable) {
@@ -37,7 +35,10 @@ class EditorCutomizedConfig extends React.Component {
           </Flex>
           <Flex alignCenter className='gm-padding-top-5'>
             <div>{i18next.t('是否开启多位小数')}：</div>
-            <Switch checked={isMultiDigitDecimal} onChange={this.handleMultiDigitDecimal} />
+            <Switch
+              checked={isMultiDigitDecimal}
+              onChange={this.handleMultiDigitDecimal}
+            />
           </Flex>
         </>
       )

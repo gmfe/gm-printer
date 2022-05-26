@@ -68,6 +68,11 @@ class EditorStore {
   @action
   setMultiDigitDecimal(bool) {
     this.isMultiDigitDecimal = bool
+    set(this.config, {
+      specialControlConfig: {
+        multiDigitDecimal: bool
+      }
+    })
   }
 
   @observable
@@ -200,6 +205,7 @@ class EditorStore {
     this.insertPanel = 'header'
     this.mockData = data
     this.isAutoFilling = false
+    this.isMultiDigitDecimal = false
   }
 
   @action

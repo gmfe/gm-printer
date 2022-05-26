@@ -26,7 +26,7 @@ class ContextMenu extends React.Component {
     const {
       editStore,
       editStore: {
-        config: { autoFillConfig }
+        config: { autoFillConfig, specialControlConfig }
       }
     } = this.props
 
@@ -35,6 +35,11 @@ class ContextMenu extends React.Component {
         autoFillConfig?.checked,
         autoFillConfig?.dataKey
       )
+    }
+    /** 初始化特殊控制的配置 */
+    if (specialControlConfig?.multiDigitDecimal) {
+      // 多位小数
+      editStore.setMultiDigitDecimal(specialControlConfig?.multiDigitDecimal)
     }
   }
 
@@ -100,7 +105,7 @@ class ContextMenu extends React.Component {
     const isCategoryActive = keyArr.includes('category')
     const isSubtotalActive = subtotal.show
     const isOverallOrder = overallOrder?.show
-
+    console.log('name', name)
     return (
       <>
         <div
