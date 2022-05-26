@@ -14,10 +14,12 @@ import {
   Textarea,
   Title,
   TipInfo,
-  Text
+  Text,
+  Radio
 } from '../common/component'
 import { get, toJS } from 'mobx'
 import PropTypes from 'prop-types'
+import { subtotalRadioList } from './util'
 
 @inject('editStore')
 @observer
@@ -399,7 +401,7 @@ class EditorField extends React.Component {
         />
 
         <Flex>
-          <Flex>{i18next.t('合计设置')}：</Flex>
+          <Flex>{i18next.t('每页合计设置')}：</Flex>
           <Fonter
             style={subtotalStyle}
             onChange={this.handleSubtotalStyleChange}
@@ -410,6 +412,28 @@ class EditorField extends React.Component {
             onChange={this.handleSubtotalStyleChange}
           />
         </Flex>
+        <Gap />
+        {!isSomeSubtotalTr && (
+          <div>
+            <Flex>{i18next.t('合金栏打印金额')}：</Flex>
+            <Flex style={{ marginLeft: 57 }}>
+              {subtotalRadioList.map(fields => {
+                return (
+                  <Radio
+                    style={{ marginLeft: 5 }}
+                    id={fields.id}
+                    value={fields.value}
+                    key={fields.id}
+                    inputName='subtotalRadio'
+                    checked={subtotal?.fields?.[0].valueField === fields.id}
+                    radioChecked={() => editStore.subtotalRadioCheck(fields)}
+                  />
+                )
+              })}
+            </Flex>
+          </div>
+        )}
+
         <EditorSubtotalCheck
           subtotalCheckDisabled
           subtotalChecked={subtotalNeedUpperCase}

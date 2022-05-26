@@ -602,16 +602,16 @@ Title.propTypes = {
   text: PropTypes.object
 }
 
-const Radio = ({ id, value, radioChecked, checked }) => (
-  <div>
+const Radio = ({ id, value, radioChecked, checked, style, inputName }) => (
+  <div style={style}>
     <input
       type='radio'
       value={value}
       id={id}
-      name='radio'
+      name={inputName ?? 'radio'}
       onChange={radioChecked}
       checked={checked}
-      style={{ margin: '5px 10px 0 0' }}
+      style={{ margin: '5px 5px 0 0' }}
     />
     <label htmlFor={id}>{value}</label>
     <Gap />
@@ -621,6 +621,8 @@ const Radio = ({ id, value, radioChecked, checked }) => (
 Radio.propTypes = {
   id: PropTypes.string,
   value: PropTypes.string,
+  style: PropTypes.string,
+  inputName: PropTypes.string,
   radioChecked: PropTypes.func,
   checked: PropTypes.bool
 }
