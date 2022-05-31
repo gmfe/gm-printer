@@ -415,7 +415,7 @@ class EditorField extends React.Component {
         <Gap />
         {!isSomeSubtotalTr && (
           <div>
-            <Flex>{i18next.t('合金栏打印金额')}：</Flex>
+            <Flex>{i18next.t('合计栏打印金额')}：</Flex>
             <Flex style={{ marginLeft: 57 }}>
               {subtotalRadioList.map(fields => {
                 return (
