@@ -114,12 +114,16 @@ class Table extends React.Component {
             ...val,
             index,
             text: val.text.replace(
+              // 解释下正则 可读性好差
+              // < (price\()? > ----  匹配< price( >函数  < ？>代表0-1个
+              // < [^{{]+ >     ----  除了{{ 的其他值      < + >代表 至少一个
               /{{(price\()?列\.([^{{]+)}}/g,
               (s, s1, s2) => {
                 if (s1) {
-                  // 有price函数插进来， 匹配‘ _基本单位 ’类似的字符串并添加后缀，生成三栏或者双栏数据
+                  // 有price函数插进来， 匹配字符串并添加后缀，生成三栏或者双栏数据
+                  // {{price(列.出库金额,1)}} ---》{{price(列.出库金额_MULTI_SUFFIX,1)}}
                   const _s = s.replace(
-                    /_[\u4e00-\u9fa5]*/g,
+                    /[\u4e00-\u9fa5]+\.[\u4e00-\u9fa5]*[_]?[\u4e00-\u9fa5]*/g,
                     match => `${match}${MULTI_SUFFIX}${colNum}`
                   )
                   return _s
