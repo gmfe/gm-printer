@@ -105,7 +105,7 @@ class ContextMenu extends React.Component {
     const isCategoryActive = keyArr.includes('category')
     const isSubtotalActive = subtotal.show
     const isOverallOrder = overallOrder?.show
-    console.log('name', name)
+
     return (
       <>
         <div
