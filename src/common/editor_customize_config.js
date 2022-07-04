@@ -12,10 +12,15 @@ class EditorCutomizedConfig extends React.Component {
     editStore.handleChangeTableData(value)
   }
 
+  handleMultiDigitDecimal = value => {
+    const { editStore } = this.props
+    editStore.setMultiDigitDecimal(value)
+  }
+
   render() {
     const {
       editStore,
-      editStore: { isAutoFilling }
+      editStore: { isAutoFilling, isMultiDigitDecimal }
     } = this.props
     // 是table
     if (editStore.computedRegionIsTable) {
@@ -27,6 +32,13 @@ class EditorCutomizedConfig extends React.Component {
           </Flex>
           <Flex className='gm-padding-top-5 gm-text-red' column>
             {i18next.t('注意：填充仅支持单栏数据使用')}
+          </Flex>
+          <Flex alignCenter className='gm-padding-top-5'>
+            <div>{i18next.t('是否开启多位小数')}：</div>
+            <Switch
+              checked={isMultiDigitDecimal}
+              onChange={this.handleMultiDigitDecimal}
+            />
           </Flex>
         </>
       )
