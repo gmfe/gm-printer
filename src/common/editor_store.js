@@ -3,6 +3,7 @@ import { action, computed, observable, set, toJS } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName, exchange, getColSpanLength } from '../util'
+import { accountRadioList } from './util'
 import React from 'react'
 
 class EditorStore {
@@ -81,6 +82,15 @@ class EditorStore {
     name: '',
     valueField: '',
     colSpan: 6 // 产品说3个,开启自定义单元格,客户不满意，改成6个
+  }
+
+  // 每页合计打印账户总计金额
+  @observable
+  subtotalAccountConfigFields = {
+    name: '总计金额：',
+    valueField: '下单金额',
+    colSpan: 3,
+    type: 'useSummarize'
   }
 
   @computed
@@ -560,8 +570,11 @@ class EditorStore {
         ]
       })
     } else {
+      // 重新计算下单元格的格数
       table.subtotal.fields[0].colSpan =
-        colSpanLength - (table.subtotal.fields?.[1]?.colSpan ?? 0)
+        colSpanLength -
+        (table.subtotal.fields?.[1]?.colSpan ?? 0) -
+        (table.subtotal.fields?.[2]?.colSpan ?? 0)
     }
   }
 
@@ -571,6 +584,14 @@ class EditorStore {
       this.overallOrderShow = !this.overallOrderShow
       const arr = this.selectedRegion.split('.')
       this.config.contents[arr[2]].subtotal.fields[0].valueField = fields.id
+
+      const fieldList = this.config.contents[arr[2]].subtotal.fields
+      // 打印账户总计金额的valueField也要修改
+      if (_.find(fieldList, item => item.type === 'useSummarize')) {
+        // 打印账户总计金额 固定是数组的第二个
+        this.config.contents[arr[2]].subtotal.fields[1].valueField =
+          accountRadioList[fields.id]
+      }
     }
   }
 
@@ -1082,6 +1103,86 @@ class EditorStore {
     }
   }
 
+  // 每页合计打印账户总计金额
+  // 写的很垃圾，因为每页合计这里改了4、5次，各种兼容，我人麻了
+  // 每页合计这一行单元格，要计算每个要占几列，就很烦
+  @action.bound
+  setPrintAccount() {
+    if (this.selectedRegion) {
+      // 作用：触发组件的更新
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const subtotalConfig = table?.subtotal
+      // 没有显示每页合计的时候不可以设置
+      if (!subtotalConfig?.show) return
+      // 多栏表格情况，计算colSpan总列数
+      const colSpanLength = getColSpanLength(table)
+      const oldPrintAccount = subtotalConfig?.isPrintAccount
+
+      set(subtotalConfig, {
+        isPrintAccount: !oldPrintAccount
+      })
+      // 兼容已经存在后端的模板，每页合计直接是显示的，导致每页合计配置没有fields,isCustomCells，手动添加上
+      if (oldPrintAccount === undefined && !subtotalConfig.fields) {
+        set(subtotalConfig, {
+          fields: [
+            {
+              name: '每页合计：',
+              valueField: 'real_item_price',
+              colSpan: colSpanLength
+            }
+          ]
+        })
+      }
+      // 开启打印账户总计金额
+      if (subtotalConfig?.isPrintAccount) {
+        // 同时还开启了自定义单元格选项
+        if (subtotalConfig?.fields?.length === 2) {
+          // fields添加自定义单元格
+          subtotalConfig.fields = [
+            subtotalConfig.fields[0],
+            this.subtotalAccountConfigFields,
+            subtotalConfig.fields[1]
+          ]
+          // 重新计算合并单元格的个数
+          subtotalConfig.fields[0].colSpan = Math.floor(colSpanLength / 3)
+          subtotalConfig.fields[1].colSpan = Math.floor(colSpanLength / 3)
+          subtotalConfig.fields[2].colSpan =
+            colSpanLength -
+            subtotalConfig.fields[0].colSpan -
+            subtotalConfig.fields[1].colSpan
+        } else {
+          // fields添加自定义单元格
+          subtotalConfig.fields = [
+            subtotalConfig.fields[0],
+            this.subtotalAccountConfigFields
+          ]
+          // 重新计算合并单元格的个数
+          subtotalConfig.fields[0].colSpan =
+            colSpanLength - subtotalConfig.fields[1].colSpan
+        }
+      } else {
+        // 关闭打印账户总计金额
+        // 存在自定义单元格
+        if (subtotalConfig?.fields?.length === 3) {
+          subtotalConfig.fields = [
+            subtotalConfig.fields[0],
+            this.subtotalConfigFields
+          ]
+          // 重新计算合并单元格的个数
+          subtotalConfig.fields[0].colSpan =
+            colSpanLength - subtotalConfig.fields[1].colSpan
+        } else {
+          // 关闭，fields只有一个
+          subtotalConfig.fields = [subtotalConfig.fields[0]]
+          // 重新计算合并单元格的个数
+          subtotalConfig.fields[0].colSpan = colSpanLength
+        }
+      }
+    }
+  }
+
   // 每页合计开启自定义单元格
   @action.bound
   setSubtotalCustomCells() {
@@ -1114,21 +1215,48 @@ class EditorStore {
       }
       // 开启自定义单元格
       if (subtotalConfig?.isCustomCells) {
-        // fields添加自定义单元格
-        subtotalConfig.fields = [
-          subtotalConfig.fields[0],
-          {
-            ...this.subtotalConfigFields
-          }
-        ]
-        // 重新计算合并单元格的个数
-        subtotalConfig.fields[0].colSpan =
-          colSpanLength - subtotalConfig.fields[1].colSpan
+        // 同时还开启了自定义单元格选项
+        if (subtotalConfig?.fields?.length === 2) {
+          // fields添加自定义单元格
+          subtotalConfig.fields = [
+            subtotalConfig.fields[0],
+            this.subtotalAccountConfigFields,
+            this.subtotalConfigFields
+          ]
+          // 重新计算合并单元格的个数
+          subtotalConfig.fields[0].colSpan = Math.floor(colSpanLength / 3)
+          subtotalConfig.fields[1].colSpan = Math.floor(colSpanLength / 3)
+          subtotalConfig.fields[2].colSpan =
+            colSpanLength -
+            subtotalConfig.fields[0].colSpan -
+            subtotalConfig.fields[1].colSpan
+        } else {
+          // fields添加自定义单元格
+          subtotalConfig.fields = [
+            subtotalConfig.fields[0],
+            this.subtotalConfigFields
+          ]
+          // 重新计算合并单元格的个数
+          subtotalConfig.fields[0].colSpan =
+            colSpanLength - subtotalConfig.fields[1].colSpan
+        }
       } else {
-        // 关闭自定义单元格，fields只有一个
-        subtotalConfig.fields = [subtotalConfig.fields[0]]
-        // 重新计算合并单元格的个数
-        subtotalConfig.fields[0].colSpan = colSpanLength
+        // 关闭自定义单元格
+        // 存在打印账户总计金额
+        if (subtotalConfig?.fields?.length === 3) {
+          subtotalConfig.fields = [
+            subtotalConfig.fields[0],
+            this.subtotalAccountConfigFields
+          ]
+          // 重新计算合并单元格的个数
+          subtotalConfig.fields[0].colSpan =
+            colSpanLength - subtotalConfig.fields[1].colSpan
+        } else {
+          // 关闭，fields只有一个
+          subtotalConfig.fields = [subtotalConfig.fields[0]]
+          // 重新计算合并单元格的个数
+          subtotalConfig.fields[0].colSpan = colSpanLength
+        }
       }
     }
   }
@@ -1143,7 +1271,9 @@ class EditorStore {
 
       if (subtotalConfig.isCustomCells) {
         const subtotalConfig = table?.subtotal.fields
-        subtotalConfig[1].name = value
+        subtotalConfig.length === 3
+          ? (subtotalConfig[2].name = value)
+          : (subtotalConfig[1].name = value)
       }
     }
   }
