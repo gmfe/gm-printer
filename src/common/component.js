@@ -643,16 +643,26 @@ Gap.propTypes = {
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 }
 
-const FieldBtn = ({ name, onClick }) => (
-  <Flex alignCenter style={{ width: '50%', margin: '3px 0' }}>
-    <span className='gm-printer-edit-plus-btn' onClick={onClick}>
-      +
-    </span>
-    <span className='gm-padding-left-5'>{name}</span>
-  </Flex>
+const FieldBtn = ({ name, remark, onClick }) => (
+  <>
+    <Flex alignCenter={!remark} style={{ width: '50%', margin: '3px 0' }}>
+      <span className='gm-printer-edit-plus-btn' onClick={onClick}>
+        +
+      </span>
+      <Flex column>
+        <span className='gm-padding-left-5'>{name}</span>
+        {remark && (
+          <span style={{ transform: 'scale(0.8) translateX(-20px)' }}>
+            {remark}
+          </span>
+        )}
+      </Flex>
+    </Flex>
+  </>
 )
 FieldBtn.propTypes = {
   name: PropTypes.string,
+  remark: PropTypes.string,
   onClick: PropTypes.func
 }
 

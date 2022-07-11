@@ -22,6 +22,7 @@ class FieldList extends React.Component {
                   <FieldBtn
                     key={o.key}
                     name={o.key}
+                    remark={o.remark}
                     onClick={handleAddField.bind(this, o)}
                   />
                 ))}
