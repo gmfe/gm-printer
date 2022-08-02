@@ -285,7 +285,6 @@ class Table extends React.Component {
                               .templateTable(col.text, dataKey, i, pageIndex)
                               .replace(/\(\)/g, '') ?? ''
                           }
-                          // value={12345676543212345}
                           height={`${(customerRowHeight || 40) - 18}px`} // 高度
                           fontSize={12} // 设置文本的字体
                           margin={1} // 设置条形码周围的空白边距
