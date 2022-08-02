@@ -245,6 +245,7 @@ class CommonContextMenu extends React.Component {
 
     const isProductLengthActive = _.includes(value, 'len')
     const isSubtotalActive = _.includes(value, 'subtotal')
+    const isRealWeight = _.includes(value, 'realWeight')
     return (
       <>
         <div
@@ -257,7 +258,13 @@ class CommonContextMenu extends React.Component {
           onClick={this.handleChangeCounterDataKey.bind(this, 'subtotal')}
           className={isSubtotalActive ? 'active' : ''}
         >
-          {i18next.t('小计')}
+          {i18next.t('金额小计')}
+        </div>
+        <div
+          onClick={this.handleChangeCounterDataKey.bind(this, 'realWeight')}
+          className={isRealWeight ? 'active' : ''}
+        >
+          {i18next.t('出库数小计')}
         </div>
         <Hr />
         <div onClick={this.handleRemoveContent}>{i18next.t('移除区域')}</div>

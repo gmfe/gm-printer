@@ -651,6 +651,7 @@ class EditorStore {
     }
 
     newDataKey = _.sortBy(newDataKey, [
+      o => o === 'realWeight',
       o => o === 'multi3',
       o => o === 'multi',
       o => o === 'category',
@@ -760,11 +761,10 @@ class EditorStore {
    * @param value
    */
   @action.bound
-  addFieldToTable({ key, value }) {
+  addFieldToTable({ key, value, type }) {
     if (this.computedRegionIsTable) {
       const arr = this.selectedRegion.split('.')
       const { columns, dataKey } = this.config.contents[arr[2]]
-
       columns.push({
         head: key,
         headStyle: {
@@ -773,7 +773,8 @@ class EditorStore {
         text: value,
         style: {
           textAlign: 'center'
-        }
+        },
+        type
       })
 
       this.clearExtraTableData(dataKey)

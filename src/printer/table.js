@@ -17,7 +17,7 @@ import SpecialTr from './table_special_tr'
 import SubtotalTr from './table_subtotal_tr'
 import PageSummary from './page_summary'
 import OverallOrder from './table_overallOrder_tr'
-
+import BarCodeTd from './barcodeTd'
 @inject('printerStore')
 @observer
 class Table extends React.Component {
@@ -264,7 +264,36 @@ class Table extends React.Component {
                   <td colSpan='99' />
                 ) : (
                   _.map(columns, (col, j) => {
-                    return (
+                    // 单元格里增加条形码
+                    return col.type === 'barcode' ? (
+                      <td
+                        key={j}
+                        data-name={getTableColumnName(name, col.index)}
+                        style={{
+                          ...getTdStyle(j, col.style),
+                          ...col.style
+                        }}
+                        className={classNames({
+                          active:
+                            getTableColumnName(name, col.index) ===
+                            printerStore.selected
+                        })}
+                      >
+                        <BarCodeTd
+                          value={
+                            printerStore
+                              .templateTable(col.text, dataKey, i, pageIndex)
+                              .replace(/\(\)/g, '') ?? ''
+                          }
+                          // value={12345676543212345}
+                          height={`${(customerRowHeight || 40) - 18}px`} // 高度
+                          fontSize={12} // 设置文本的字体
+                          margin={1} // 设置条形码周围的空白边距
+                          textMargin={0} // 设置条形码和文本之间的间距
+                          width={1}
+                        />
+                      </td>
+                    ) : (
                       <td
                         key={j}
                         data-name={getTableColumnName(name, col.index)}

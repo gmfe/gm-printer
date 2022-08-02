@@ -103,6 +103,7 @@ class ContextMenu extends React.Component {
     const isMultiActive = keyArr.includes('multi')
     const isThreeActive = keyArr.includes('multi3')
     const isCategoryActive = keyArr.includes('category')
+    const isRealWeight = keyArr.includes('realWeight')
     const isSubtotalActive = subtotal.show
     const isOverallOrder = overallOrder?.show
 
@@ -127,7 +128,13 @@ class ContextMenu extends React.Component {
           onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
           className={isCategoryActive ? 'active' : ''}
         >
-          {i18next.t('商品分类')}
+          {i18next.t('商品分类（金额小计）')}
+        </div>
+        <div
+          onClick={this.handleChangeTableDataKey.bind(this, 'realWeight', name)}
+          className={isRealWeight ? 'active' : ''}
+        >
+          {i18next.t('商品分类（出库数小计）')}
         </div>
         <div
           onClick={this.handleSubtotal.bind(this, name)}

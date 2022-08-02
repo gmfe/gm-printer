@@ -26,6 +26,15 @@ const configs = [
     value: item => (
       <div className='gm-printer-counter-item-1'>{item.quantity}</div>
     )
+  },
+  {
+    id: 'realWeight',
+    name: (
+      <div className='gm-printer-counter-item-1'>{i18next.t('出库数小计')}</div>
+    ),
+    value: item => (
+      <div className='gm-printer-counter-item-1'>{item.realWeight}</div>
+    )
   }
 ]
 
