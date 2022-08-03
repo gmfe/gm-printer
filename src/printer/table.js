@@ -29,6 +29,120 @@ class Table extends React.Component {
     }
   }
 
+  // 渲染不同的td
+  renderTdMap = {
+    barcode: this.renderBarCodeTd,
+    default: this.renderTd
+  }
+
+  /**
+   * 获取单元格的样式
+   * @param {*} index columns的index
+   * @param {*} style col.style
+   * @returns 处理后的样式
+   */
+  getTdStyle = (index, style = {}) => {
+    const { name, printerStore } = this.props
+    // 列宽固定(避免跳页bug)
+    const thWidths = printerStore.tablesInfo[name]?.head.widths || []
+    const width = thWidths[index]
+    const { fontSize } = style
+    let tdStyle = {}
+    let minWidth = 24
+
+    if (!width) return tdStyle
+    if (fontSize) minWidth = _.parseInt(fontSize) * 2
+    if (width >= 150) {
+      tdStyle = {
+        minWidth: width
+      }
+    } else {
+      tdStyle = {
+        minWidth,
+        width
+      }
+    }
+    return tdStyle
+  }
+
+  /**
+   * 渲染带有条形码的单元格
+   * @param {*} col 单个columns
+   * @param {*} j columns的index
+   * @param {*} i 数据的index
+   * @returns <td>
+   */
+  renderBarCodeTd(col, j, i) {
+    const {
+      config: { dataKey, customerRowHeight = 23 },
+      name,
+      pageIndex,
+      printerStore
+    } = this.props
+    return (
+      <td
+        key={j}
+        data-name={getTableColumnName(name, col.index)}
+        style={{
+          ...this.getTdStyle(j, col.style),
+          ...col.style
+        }}
+        className={classNames({
+          active: getTableColumnName(name, col.index) === printerStore.selected
+        })}
+      >
+        <BarCodeTd
+          value={
+            printerStore
+              .templateTable(col.text, dataKey, i, pageIndex)
+              .replace(/\(\)/g, '') ?? ''
+          }
+          height={`${(customerRowHeight || 40) - 18}px`} // 高度
+          fontSize={12} // 设置文本的字体
+          margin={1} // 设置条形码周围的空白边距
+          textMargin={0} // 设置条形码和文本之间的间距
+          width={1}
+        />
+      </td>
+    )
+  }
+
+  /**
+   * 渲染普通单元格
+   * @param {*} col 单个columns
+   * @param {*} j columns的index
+   * @param {*} i 数据的index
+   * @returns <td>
+   */
+  renderTd(col, j, i) {
+    const {
+      config: { dataKey },
+      name,
+      pageIndex,
+      printerStore
+    } = this.props
+    return (
+      <td
+        key={j}
+        data-name={getTableColumnName(name, col.index)}
+        style={{
+          ...this.getTdStyle(j, col.style),
+          ...col.style
+        }}
+        className={classNames({
+          active: getTableColumnName(name, col.index) === printerStore.selected
+        })}
+        dangerouslySetInnerHTML={{
+          __html: col.isSpecialColumn
+            ? printerStore.templateSpecialDetails(col, dataKey, i)
+            : printerStore
+                .templateTable(col.text, dataKey, i, pageIndex)
+                .replace(/\(\)/g, '')
+        }}
+      />
+    )
+  }
+
   componentDidMount() {
     const { name, printerStore } = this.props
 
@@ -153,7 +267,6 @@ class Table extends React.Component {
       config: { dataKey, arrange, customerRowHeight = 23 },
       name,
       range,
-      pageIndex,
       printerStore,
       isSomeSubtotalTr
     } = this.props
@@ -164,8 +277,7 @@ class Table extends React.Component {
 
     // 列
     const columns = this.getColumns()
-    // 列宽固定(避免跳页bug)
-    const thWidths = printerStore.tablesInfo[name]?.head.widths || []
+
     // 每页合计在前
     const subtotalTrPageSummary = () => {
       return (
@@ -194,26 +306,6 @@ class Table extends React.Component {
         </>
       )
     }
-    const getTdStyle = (index, style = {}) => {
-      const width = thWidths[index]
-      const { fontSize } = style
-      let tdStyle = {}
-      let minWidth = 24
-
-      if (!width) return tdStyle
-      if (fontSize) minWidth = _.parseInt(fontSize) * 2
-      if (width >= 150) {
-        tdStyle = {
-          minWidth: width
-        }
-      } else {
-        tdStyle = {
-          minWidth,
-          width
-        }
-      }
-      return tdStyle
-    }
 
     return (
       <table
@@ -232,7 +324,7 @@ class Table extends React.Component {
                 data-name={getTableColumnName(name, col.index)}
                 draggable
                 style={{
-                  ...getTdStyle(i, col.headStyle),
+                  ...this.getTdStyle(i, col.headStyle),
                   ...col.headStyle
                 }}
                 className={classNames({
@@ -264,59 +356,11 @@ class Table extends React.Component {
                   <td colSpan='99' />
                 ) : (
                   _.map(columns, (col, j) => {
-                    // 单元格里增加条形码
-                    return col.type === 'barcode' ? (
-                      <td
-                        key={j}
-                        data-name={getTableColumnName(name, col.index)}
-                        style={{
-                          ...getTdStyle(j, col.style),
-                          ...col.style
-                        }}
-                        className={classNames({
-                          active:
-                            getTableColumnName(name, col.index) ===
-                            printerStore.selected
-                        })}
-                      >
-                        <BarCodeTd
-                          value={
-                            printerStore
-                              .templateTable(col.text, dataKey, i, pageIndex)
-                              .replace(/\(\)/g, '') ?? ''
-                          }
-                          height={`${(customerRowHeight || 40) - 18}px`} // 高度
-                          fontSize={12} // 设置文本的字体
-                          margin={1} // 设置条形码周围的空白边距
-                          textMargin={0} // 设置条形码和文本之间的间距
-                          width={1}
-                        />
-                      </td>
-                    ) : (
-                      <td
-                        key={j}
-                        data-name={getTableColumnName(name, col.index)}
-                        style={{
-                          ...getTdStyle(j, col.style),
-                          ...col.style
-                        }}
-                        className={classNames({
-                          active:
-                            getTableColumnName(name, col.index) ===
-                            printerStore.selected
-                        })}
-                        dangerouslySetInnerHTML={{
-                          __html: col.isSpecialColumn
-                            ? printerStore.templateSpecialDetails(
-                                col,
-                                dataKey,
-                                i
-                              )
-                            : printerStore
-                                .templateTable(col.text, dataKey, i, pageIndex)
-                                .replace(/\(\)/g, '')
-                        }}
-                      />
+                    return this.renderTdMap[col.type ?? 'default']?.call(
+                      this,
+                      col,
+                      j,
+                      i
                     )
                   })
                 )}
