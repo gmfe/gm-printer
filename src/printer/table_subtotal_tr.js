@@ -68,6 +68,10 @@ const SubtotalTr = props => {
     ).toFixed(2)
   }
 
+  const getData = field => {
+    const data = printerStore.data.common
+    return data?.[field] ?? ''
+  }
   // 每页小计
   // show 是否展示小计，fields<Array> 合计的字段和展现的name，displayName 是否显示名字
   if (show && printerStore.ready) {
@@ -113,7 +117,7 @@ const SubtotalTr = props => {
                 <div
                   style={{
                     fontWeight: 'bold',
-                    'justify-content': flexStyle[subtotal.style?.textAlign], // flex布局中textAlign不生效，改使用justify-content
+                    justifyContent: flexStyle[subtotal.style?.textAlign], // flex布局中textAlign不生效，改使用justify-content
                     ...subtotal.style
                   }}
                   className='gm-flex-page'
@@ -133,11 +137,19 @@ const SubtotalTr = props => {
                       }
                     >
                       {/* 这样写是为了支持自定义单元，index = 1时是自定义单元格 */}
-                      {index === 0 ? sumData(list, item.valueField) : ''}
+                      {item.type === 'useSummarize'
+                        ? getData(item.valueField)
+                        : index === 0
+                        ? sumData(list, item.valueField)
+                        : ''}
+                      {/* {index === 0 ? sumData(list, item.valueField) : ''} */}
                     </span>
                     {subtotal?.needUpperCase && ( // 是否需要大写金额
                       <span>
-                        {index === 0
+                        {item.type === 'useSummarize'
+                          ? '大写：' +
+                            coverDigit2Uppercase(getData(item.valueField))
+                          : index === 0
                           ? '大写：' +
                             coverDigit2Uppercase(sumData(list, item.valueField))
                           : ''}

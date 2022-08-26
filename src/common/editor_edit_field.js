@@ -20,6 +20,7 @@ import {
 import { get, toJS } from 'mobx'
 import PropTypes from 'prop-types'
 import { subtotalRadioList } from './util'
+import _ from 'lodash'
 
 @inject('editStore')
 @observer
@@ -226,6 +227,13 @@ class EditorField extends React.Component {
       (editStore.computedTableSpecialConfig?.subtotal &&
         get(subtotal, 'isCustomCells')) ||
       false
+
+    // 打印账户总计金额
+    const printAccount =
+      (editStore.computedTableSpecialConfig?.subtotal &&
+        get(subtotal, 'isPrintAccount')) ||
+      false
+
     //  整单合计是否大写
     const overallOrderNeedUpperCase =
       (editStore.computedTableSpecialConfig?.overallOrder &&
@@ -433,7 +441,15 @@ class EditorField extends React.Component {
             </Flex>
           </div>
         )}
-
+        {/* 结款单不需要这个配置 */}
+        {!isSomeSubtotalTr && (
+          <EditorSubtotalCheck
+            subtotalCheckDisabled
+            subtotalChecked={printAccount}
+            subtotalCheckOnChange={editStore.setPrintAccount}
+            subtotalCheckText='打印账户总计金额'
+          />
+        )}
         <EditorSubtotalCheck
           subtotalCheckDisabled
           subtotalChecked={subtotalNeedUpperCase}
@@ -464,8 +480,12 @@ class EditorField extends React.Component {
               subtotalCheckText='开启自定义单元格'
             />
             <Text
+              // 只有自定义单元格的valueField值是空的，以后自每页合计，记得加type，之前没加，都无法区分
               value={
-                subtotal && subtotal?.fields?.[1] ? subtotal.fields[1].name : ''
+                subtotal && subtotal?.fields?.length > 1
+                  ? _.find(subtotal?.fields, item => !item.valueField)?.name ??
+                    ''
+                  : ''
               }
               onChange={editStore.setSubtotalFields}
               style={{ width: '65px', margin: '5px 0 5px 80px' }}

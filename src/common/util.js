@@ -16,4 +16,9 @@ const subtotalRadioList = [
   }
 ]
 
-export { subtotalRadioList }
+const accountRadioList = {
+  total_item_price: i18next.t('下单金额'),
+  real_item_price: i18next.t('出库金额')
+}
+
+export { subtotalRadioList, accountRadioList }
