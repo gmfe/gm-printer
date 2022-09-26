@@ -36,6 +36,7 @@ class ContextMenu extends React.Component {
         autoFillConfig?.dataKey
       )
     }
+
     /** 初始化特殊控制的配置 */
     if (specialControlConfig?.multiDigitDecimal) {
       // 多位小数
