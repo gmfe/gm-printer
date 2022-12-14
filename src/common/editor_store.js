@@ -928,7 +928,7 @@ class EditorStore {
       const arr = _selectedRegion.split('.')
       if (arr.includes('table')) {
         const height = this.config.contents[arr[2]]?.customerRowHeight
-        resHeight = height === undefined ? 23 : height
+        resHeight = [undefined, ''].includes(height) ? 23 : height
       }
     }
     return resHeight
