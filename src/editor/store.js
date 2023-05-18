@@ -336,6 +336,16 @@ class Store extends EditorStore {
               textAlign: 'center'
             },
             text: i18next.t('{{列.货值}}')
+          },
+          {
+            head: i18next.t('周转物数量更正'),
+            headStyle: {
+              textAlign: 'center'
+            },
+            style: {
+              textAlign: 'center'
+            },
+            text: i18next.t('{{列.周转物数量更正}}')
           }
         ]
         break
