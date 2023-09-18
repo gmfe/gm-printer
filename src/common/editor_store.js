@@ -653,6 +653,38 @@ class EditorStore {
   }
 
   @action
+  setDiyOverallOrderShow(name) {
+    const arr = name.split('.')
+    const table = this.config.contents[arr[2]]
+    this.overallOrderShow = !this.overallOrderShow
+    // const colSpanLength = getColSpanLength(table)
+    if (table.diyOverallOrder) {
+      set(table.diyOverallOrder, {
+        show: !table.diyOverallOrder.show
+      })
+      // table.overallOrder.fields[0].colSpan =
+      //   colSpanLength - (table.overallOrder.fields?.[1]?.colSpan ?? 0)
+    } else {
+      // 兼容已经存在的配送单据，他们的配置存在后端的，没有overallOrder这个配置，给加上
+      set(table, {
+        diyOverallOrder: {
+          show: true,
+          fields: [
+            {
+              name: '自定义整单合计：',
+              valueField: '{{出库金额}}',
+              style: {
+                fontWeight: 'bold'
+              }
+            }
+          ]
+        }
+      })
+    }
+    this.config = toJS(this.config)
+  }
+
+  @action
   setConfigTable(who, value) {
     if (!this.computedIsSelectTable) {
       return
@@ -664,7 +696,12 @@ class EditorStore {
   @action
   changeTableDataKey(name, key) {
     const arr = name.split('.')
-    const { dataKey, overallOrder, subtotal } = this.config.contents[arr[2]]
+    const {
+      dataKey,
+      overallOrder,
+      subtotal,
+      diyOverallOrder
+    } = this.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
     let newDataKey
     // 当前有这个key则去掉
@@ -692,6 +729,8 @@ class EditorStore {
     if (overallOrder?.show) overallOrder.show = false
     // 每页合计不显示
     if (subtotal?.show) subtotal.show = false
+    // 自定义每页合计不显示
+    if (diyOverallOrder?.show) diyOverallOrder.show = false
   }
 
   @action
@@ -1436,6 +1475,121 @@ class EditorStore {
             'justify-content': flexStyle[value.textAlign]
           }
         })
+      })
+    }
+  }
+
+  // 自定义整单合计样式设置
+  @action.bound
+  setDiyOverallOrderStyle(value) {
+    if (this.selectedRegion) {
+      const flexStyle = {
+        left: 'flex-start',
+        center: 'center',
+        right: 'flex-end'
+      }
+      const arr = this.selectedRegion.split('.')
+      const diyOverallOrderConfigFields = this.config.contents[arr[2]]
+        ?.diyOverallOrder.fields
+      _.forEach(diyOverallOrderConfigFields, item => {
+        const oldStyle = item.style || {}
+        set(item, {
+          style: {
+            ...oldStyle,
+            ...value,
+            // 整单合计里使用的flex布局，textAlign不生效
+            'justify-content': flexStyle[value.textAlign]
+          }
+        })
+      })
+    }
+  }
+
+  // 自定义整单合计设置大写金额
+  @action.bound
+  setDiyOverallOrderUpperCase() {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const diyOverallOrderConfig = this.config.contents[arr[2]]
+        ?.diyOverallOrder
+
+      const oldNeedUpperCase = diyOverallOrderConfig?.needUpperCase
+      this.config.contents[arr[2]]?.diyOverallOrder &&
+        set(diyOverallOrderConfig, { needUpperCase: !oldNeedUpperCase })
+      // 没有大写金额时，将大写在前和大小写分开的多选框设置为false
+      if (
+        this.config.contents[arr[2]]?.diyOverallOrder &&
+        diyOverallOrderConfig.needUpperCase === false
+      ) {
+        diyOverallOrderConfig.isUpperCaseBefore &&
+          set(diyOverallOrderConfig, { isUpperCaseBefore: false })
+        diyOverallOrderConfig.isUpperLowerCaseSeparate &&
+          set(diyOverallOrderConfig, { isUpperLowerCaseSeparate: false })
+      }
+    }
+  }
+
+  // 自定义整单合计设置大写金额在前
+  @action.bound
+  setDiyOverallOrderUpperCaseBefore() {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const diyOverallOrderConfig = this.config.contents[arr[2]]
+        ?.diyOverallOrder
+
+      const oldUpperCaseBefore = diyOverallOrderConfig?.isUpperCaseBefore
+      this.config.contents[arr[2]]?.diyOverallOrder &&
+        set(diyOverallOrderConfig, { isUpperCaseBefore: !oldUpperCaseBefore })
+    }
+  }
+
+  // 自定义整单合计设置大小写金额分开
+  @action.bound
+  setDiyOverallOrderUpperLowerCaseSeparate() {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const diyOverallOrderConfig = this.config.contents[arr[2]]
+        ?.diyOverallOrder
+
+      const oldUpperLowerCaseSeparate =
+        diyOverallOrderConfig.isUpperLowerCaseSeparate
+      set(diyOverallOrderConfig, {
+        isUpperLowerCaseSeparate: !oldUpperLowerCaseSeparate
+      })
+    }
+  }
+
+  // 自定义整单合计 字段设置
+  @action.bound
+  setDiyOverallOrderValueField(value) {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const diyOverallOrderConfig = this.config.contents[arr[2]]
+        ?.diyOverallOrder
+
+      const oldValueField = diyOverallOrderConfig.fields?.[0]
+      set(oldValueField, {
+        valueField: value
+      })
+    }
+  }
+
+  // 整单合计自定义单元格文本输入
+  @action.bound
+  setDiyOverallOrderFields(value) {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const diyOverallOrderConfig = table?.diyOverallOrder
+
+      const oldValueField = diyOverallOrderConfig.fields?.[0]
+      set(oldValueField, {
+        name: value
       })
     }
   }

@@ -5,6 +5,7 @@ import CommonContextMenu from '../common/common_context_menu'
 import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
 import { Printer } from '../printer'
+import { isMultiTable } from '../util'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -79,6 +80,11 @@ class ContextMenu extends React.Component {
     editStore.setOverallOrderShow(name)
   }
 
+  handleDiyOverallOrder = name => {
+    const { editStore } = this.props
+    editStore.setDiyOverallOrderShow(name)
+  }
+
   renderOrderActionBtn = name => {
     if (!this.hasSubtotalBtn(name)) {
       return null
@@ -87,7 +93,8 @@ class ContextMenu extends React.Component {
     const {
       editStore: {
         config: {
-          page: { type }
+          page: { type },
+          showDiyOverAllOrder
         },
         isAutoFilling
       }
@@ -96,7 +103,8 @@ class ContextMenu extends React.Component {
     const {
       dataKey,
       subtotal,
-      overallOrder
+      overallOrder,
+      diyOverallOrder
     } = this.props.editStore.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
 
@@ -105,6 +113,7 @@ class ContextMenu extends React.Component {
     const isCategoryActive = keyArr.includes('category')
     const isSubtotalActive = subtotal.show
     const isOverallOrder = overallOrder?.show
+    const isDiyOverallOrder = diyOverallOrder?.show
 
     return (
       <>
@@ -147,6 +156,14 @@ class ContextMenu extends React.Component {
         >
           {i18next.t('整单合计')}
         </div>
+        {!isMultiTable(dataKey) && showDiyOverAllOrder && (
+          <div
+            onClick={this.handleDiyOverallOrder.bind(this, name)}
+            className={isDiyOverallOrder ? 'active' : ''}
+          >
+            {i18next.t('自定义整单合计')}
+          </div>
+        )}
       </>
     )
   }

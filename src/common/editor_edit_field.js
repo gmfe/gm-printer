@@ -82,6 +82,11 @@ class EditorField extends React.Component {
     editStore.setOverallOrderStyle(value)
   }
 
+  handleDiyOverallOrderStyleChange = value => {
+    const { editStore } = this.props
+    editStore.setDiyOverallOrderStyle(value)
+  }
+
   renderBlocks() {
     const { editStore, showNewDate } = this.props
     const { type, text, style, link } = editStore.computedSelectedInfo
@@ -193,7 +198,8 @@ class EditorField extends React.Component {
     const {
       specialConfig,
       subtotal,
-      overallOrder
+      overallOrder,
+      diyOverallOrder
     } = editStore.computedTableSpecialConfig
 
     // 小计样式,specialConfig可能是undefined
@@ -254,7 +260,30 @@ class EditorField extends React.Component {
       (editStore.computedTableSpecialConfig?.overallOrder &&
         get(overallOrder, 'isCustomCells')) ||
       false
+    // 自定义整单合计样式
+    const diyOverallOrderStyle =
+      (diyOverallOrder && diyOverallOrder?.fields[0].style) || {}
 
+    //  自定义整单合计是否大写
+    const diyOverallOrderNeedUpperCase =
+      (editStore.computedTableSpecialConfig?.diyOverallOrder &&
+        get(diyOverallOrder, 'needUpperCase')) ||
+      false
+    // 自定义整单合计大写的金额是否在前
+    const diyOverallOrderCaseBefore =
+      (editStore.computedTableSpecialConfig?.diyOverallOrder &&
+        get(diyOverallOrder, 'isUpperCaseBefore')) ||
+      false
+    // 自定义整单合计大写和小写的金额是否分开
+    const diyOverallOrderUpperLowerCaseSeparate =
+      (editStore.computedTableSpecialConfig?.diyOverallOrder &&
+        get(diyOverallOrder, 'isUpperLowerCaseSeparate')) ||
+      false
+    // 自定义整单合计内容
+
+    const diyOverallOrderValueField =
+      editStore.computedTableSpecialConfig?.diyOverallOrder?.fields?.[0]
+        .valueField
     return (
       <div>
         <Title title={i18next.t('编辑字段')} />
@@ -539,6 +568,68 @@ class EditorField extends React.Component {
           onChange={editStore.setOverallOrderFields}
           style={{ width: '65px', margin: '5px 0 5px 80px' }}
         />
+        {/* 自定义整单合计 */}
+        {editStore.config.showDiyOverAllOrder && (
+          <Flex>
+            <Flex>{i18next.t('自定义整单合计')}：</Flex>
+            <div>
+              <Fonter
+                style={diyOverallOrderStyle}
+                onChange={this.handleDiyOverallOrderStyleChange}
+              />
+              <Separator />
+              <TextAlign
+                style={diyOverallOrderStyle}
+                onChange={this.handleDiyOverallOrderStyleChange}
+              />
+              <EditorSubtotalCheck
+                subtotalCheckDisabled
+                subtotalChecked={diyOverallOrderNeedUpperCase}
+                subtotalCheckOnChange={editStore.setDiyOverallOrderUpperCase}
+                subtotalCheckText='显示大写金额'
+                marginLeft
+              />
+              <EditorSubtotalCheck
+                subtotalCheckDisabled={diyOverallOrderNeedUpperCase}
+                subtotalChecked={diyOverallOrderCaseBefore}
+                subtotalCheckOnChange={
+                  editStore.setDiyOverallOrderUpperCaseBefore
+                }
+                subtotalCheckText='大写金额在前'
+                marginLeft
+              />
+              <EditorSubtotalCheck
+                subtotalCheckDisabled={diyOverallOrderNeedUpperCase}
+                subtotalChecked={diyOverallOrderUpperLowerCaseSeparate}
+                subtotalCheckOnChange={
+                  editStore.setDiyOverallOrderUpperLowerCaseSeparate
+                }
+                subtotalCheckText='大、小写金额分左右两边展示'
+                marginLeft
+              />
+              <Flex>
+                <Flex alignCenter>文案修改：</Flex>
+                <Text
+                  value={
+                    diyOverallOrder && diyOverallOrder?.fields?.[0]
+                      ? diyOverallOrder.fields[0].name
+                      : ''
+                  }
+                  onChange={editStore.setDiyOverallOrderFields}
+                  style={{ width: '100px', margin: '5px 0 5px 0px' }}
+                />
+              </Flex>
+              <Textarea
+                value={diyOverallOrderValueField}
+                placeholder={i18next.t('请输入要整单合计字段')}
+                onChange={value =>
+                  editStore.setDiyOverallOrderValueField(value)
+                }
+              />
+              <TipInfo text={i18next.t('不支持双栏和三栏模式')} />
+            </div>
+          </Flex>
+        )}
       </div>
     )
   }
@@ -572,11 +663,17 @@ class EditorSubtotalCheck extends React.Component {
       subtotalCheckDisabled,
       subtotalChecked,
       subtotalCheckOnChange,
-      subtotalCheckText
+      subtotalCheckText,
+      marginLeft
     } = this.props
 
     return (
-      <Flex style={{ margin: '5px 0 5px 62px' }}>
+      <Flex
+        style={{
+          margin: '5px 0 5px 62px',
+          marginLeft: marginLeft ? '0' : '62px'
+        }}
+      >
         <Flex alignCenter>
           <input
             type='checkbox'
@@ -595,7 +692,8 @@ EditorSubtotalCheck.propTypes = {
   subtotalCheckDisabled: PropTypes.bool,
   subtotalChecked: PropTypes.bool,
   subtotalCheckOnChange: PropTypes.func,
-  subtotalCheckText: PropTypes.string
+  subtotalCheckText: PropTypes.string,
+  marginLeft: PropTypes.string
 }
 
 export default EditorField
