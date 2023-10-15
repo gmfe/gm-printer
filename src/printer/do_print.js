@@ -14,11 +14,11 @@ let $printer = window.document.getElementById(printerId)
  * @param {boolean} isTipZoom zoom的时候是否提示
  */
 function init({ isTest, isTipZoom = true } = {}) {
-  isTipZoom &&
-    isZoom() &&
-    window.alert(
-      '检测您的浏览器使用了缩放,为了避免影响打印布局,请重置缩放到100%后再进行打印'
-    )
+  // isTipZoom &&
+  //   isZoom() &&
+  //   window.alert(
+  //     '检测您的浏览器使用了缩放,为了避免影响打印布局,请重置缩放到100%后再进行打印'
+  //   )
   if (!$printer) {
     $printer = window.document.createElement('iframe')
     $printer.id = printerId
