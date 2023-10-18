@@ -17,6 +17,7 @@ import SpecialTr from './table_special_tr'
 import SubtotalTr from './table_subtotal_tr'
 import PageSummary from './page_summary'
 import OverallOrder from './table_overallOrder_tr'
+import DiyOverallOrder from './table_diy_overallOrder_tr'
 
 @inject('printerStore')
 @observer
@@ -302,6 +303,12 @@ class Table extends React.Component {
             range={range}
             config={config}
             printerStore={printerStore}
+          />
+          <DiyOverallOrder
+            range={range}
+            config={config}
+            printerStore={printerStore}
+            pageIndex={pageIndex}
           />
         </tbody>
       </table>
