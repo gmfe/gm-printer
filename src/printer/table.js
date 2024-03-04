@@ -114,25 +114,35 @@ class Table extends React.Component {
           const data = {
             ...val,
             index,
-            text: val.text.replace(
-              // 解释下正则 可读性好差
-              // < (price\()? > ----  匹配< price( >函数  < ？>代表0-1个
-              // < [^{{]+ >     ----  除了{{ 的其他值      < + >代表 至少一个
-              /{{(price\()?列\.([^{{]+)}}/g,
-              (s, s1, s2) => {
-                if (s1) {
-                  // 有price函数插进来， 匹配字符串并添加后缀，生成三栏或者双栏数据
-                  // {{price(列.出库金额,1)}} ---》{{price(列.出库金额_MULTI_SUFFIX,1)}}
-                  const _s = s.replace(
-                    /[\u4e00-\u9fa5]+\.[\u4e00-\u9fa5]*[_]?[\u4e00-\u9fa5]*/g,
-                    match => `${match}${MULTI_SUFFIX}${colNum}`
-                  )
-                  return _s
-                } else {
-                  return `{{列.${s2}${MULTI_SUFFIX}${colNum}}}`
-                }
-              }
-            )
+            // 先匹配 {{ }}模版中的
+            text: val.text.replace(/{{(.*?)}}/g, s => {
+              // 再匹配 列.xxx 相关的
+              s = s.replace(
+                /(列.[\u4e00-\u9fa5]*[A-Za-z_]?[\u4e00-\u9fa5]*)/g,
+                m => m + `${MULTI_SUFFIX}${colNum}`
+              )
+              return s
+            })
+            // 以前的正则不能匹配到一个{{ }} 三元运算符中多个模版字符串的情况
+            // text: val.text.replace(
+            //   // 解释下正则 可读性好差
+            //   // < (price\()? > ----  匹配< price( >函数  < ？>代表0-1个
+            //   // < [^{{]+ >     ----  除了{{ 的其他值      < + >代表 至少一个
+            //   /{{(price\()?列\.([^{{]+)}}/g,
+            //   (s, s1, s2) => {
+            //     if (s1) {
+            //       // 有price函数插进来， 匹配字符串并添加后缀，生成三栏或者双栏数据
+            //       // {{price(列.出库金额,1)}} ---》{{price(列.出库金额_MULTI_SUFFIX,1)}}
+            //       const _s = s.replace(
+            //         /[\u4e00-\u9fa5]+\.[\u4e00-\u9fa5]*[_]?[\u4e00-\u9fa5]*/g,
+            //         match => `${match}${MULTI_SUFFIX}${colNum}`
+            //       )
+            //       return _s
+            //     } else {
+            //       return `{{列.${s2}${MULTI_SUFFIX}${colNum}}}`
+            //     }
+            //   }
+            // )
           }
           // 多栏商品的明细取 __details_MULTI_SUFFIX
           if (val.specialDetailsKey)
