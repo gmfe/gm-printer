@@ -114,11 +114,10 @@ class Table extends React.Component {
           const data = {
             ...val,
             index,
-            // 先匹配 {{ }}模版中的
             text: val.text.replace(/{{(.*?)}}/g, s => {
               // 再匹配 列.xxx 相关的
               s = s.replace(
-                /(列.[\u4e00-\u9fa5]*[A-Za-z_]?[\u4e00-\u9fa5]*)/g,
+                /(列.[\u4e00-\u9fa5]*[A-Za-z_]?[\u4e00-\u9fa5]*[A-Za-z_]*[\u4e00-\u9fa5]*)/g,
                 m => m + `${MULTI_SUFFIX}${colNum}`
               )
               return s
