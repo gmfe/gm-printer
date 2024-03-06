@@ -481,8 +481,11 @@ class PrinterStore {
   templateTable(text, dataKey, index, pageIndex) {
     // 做好保护，出错就返回 text
     try {
-      const list = this.data._table[dataKey] || this.data._table.orders
-
+      let list = this.data._table[dataKey] || this.data._table.orders
+      // 采购任务打印存在两个表格，第二表格没有明细，数据需要做去重
+      if (dataKey === 'purchase_no_detail') {
+        list = _.uniqBy(list, '序号')
+      }
       return _.template(text, {
         interpolate: /{{([\s\S]+?)}}/g
       })({
