@@ -455,6 +455,12 @@ class EditorField extends React.Component {
             <Flex>{i18next.t('合计栏打印金额')}：</Flex>
             <Flex style={{ marginLeft: 57 }}>
               {subtotalRadioList.map(fields => {
+                // 兼容
+                let subtotalFields = subtotal?.fields?.[0].valueField
+                if (subtotalFields === 'total_item_price')
+                  subtotalFields = '下单金额'
+                if (subtotalFields === 'real_item_price')
+                  subtotalFields = '出库金额'
                 return (
                   <Radio
                     style={{ marginLeft: 5 }}
@@ -462,7 +468,7 @@ class EditorField extends React.Component {
                     value={fields.value}
                     key={fields.id}
                     inputName='subtotalRadio'
-                    checked={subtotal?.fields?.[0].valueField === fields.id}
+                    checked={subtotalFields === fields.id}
                     radioChecked={() => editStore.subtotalRadioCheck(fields)}
                   />
                 )
@@ -532,6 +538,21 @@ class EditorField extends React.Component {
             style={overallOrderStyle}
             onChange={this.handleOverallOrderStyleChange}
           />
+        </Flex>
+        <Flex style={{ marginLeft: 57 }}>
+          {subtotalRadioList.map((fields, i) => {
+            return (
+              <Radio
+                style={{ marginLeft: 5 }}
+                id={`${fields.id}${i}`}
+                value={fields.value}
+                key={fields.id}
+                inputName='overallOrderRadio'
+                checked={overallOrder?.fields?.[0]?.valueField === fields.id}
+                radioChecked={() => editStore.setOverallOrderValueField(fields)}
+              />
+            )
+          })}
         </Flex>
         <EditorSubtotalCheck
           subtotalCheckDisabled

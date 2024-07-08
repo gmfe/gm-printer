@@ -30,10 +30,11 @@ const SubtotalTr = props => {
         isUpperCaseBefore, // 决定小写金额是否在前
         isUpperLowerCaseSeparate, // 决定大小写金额是否分开在两端
         style,
+
         fields = [
           {
             name: i18next.t('每页合计：'),
-            valueField: 'real_item_price'
+            valueField: '出库金额'
           }
         ],
         displayName = false // 是否展示字段名
@@ -68,6 +69,30 @@ const SubtotalTr = props => {
     ).toFixed(2)
   }
 
+  // 计算合计
+  const sumData2 = (list, field) => {
+    // 兼容之前
+    if (field === 'total_item_price') field = '下单金额'
+    if (field === 'real_item_price') field = '出库金额'
+    if (field === 'settle_money2') field = '结算金额'
+    if (field === 'total_money2') field = '金额'
+    return _.reduce(
+      list,
+      (a, b) => {
+        let result = a
+        result = a.plus(b[field] || 0)
+        if (b?.[field + MULTI_SUFFIX]) {
+          result = result.plus(b?.[field + MULTI_SUFFIX])
+        }
+        if (b?.[field + MULTI_SUFFIX3]) {
+          result = result.plus(b?.[field + MULTI_SUFFIX3])
+        }
+        return result
+      },
+      Big(0)
+    ).toFixed(2)
+  }
+
   const getData = field => {
     const data = printerStore.data.common
     return data?.[field] ?? ''
@@ -82,7 +107,7 @@ const SubtotalTr = props => {
       const sum = {}
 
       _.each(fields, v => {
-        sum[v.name] = sumData(list, v.valueField)
+        sum[v.name] = sumData2(list, v.valueField)
       })
       let subtotalStr = ''
       for (const name in sum) {
@@ -140,7 +165,7 @@ const SubtotalTr = props => {
                       {item.type === 'useSummarize'
                         ? getData(item.valueField)
                         : index === 0
-                        ? sumData(list, item.valueField)
+                        ? sumData2(list, item.valueField)
                         : ''}
                       {/* {index === 0 ? sumData(list, item.valueField) : ''} */}
                     </span>
@@ -151,7 +176,9 @@ const SubtotalTr = props => {
                             coverDigit2Uppercase(getData(item.valueField))
                           : index === 0
                           ? '大写：' +
-                            coverDigit2Uppercase(sumData(list, item.valueField))
+                            coverDigit2Uppercase(
+                              sumData2(list, item.valueField)
+                            )
                           : ''}
                       </span>
                     )}

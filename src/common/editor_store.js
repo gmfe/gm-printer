@@ -672,7 +672,7 @@ class EditorStore {
           fields: [
             {
               name: '自定义整单合计：',
-              valueField: '{{出库金额}}',
+              valueField: '{{列.出库金额}}',
               style: {
                 fontWeight: 'bold'
               }
@@ -1193,7 +1193,7 @@ class EditorStore {
           fields: [
             {
               name: '每页合计：',
-              valueField: 'real_item_price',
+              valueField: '出库金额',
               colSpan: colSpanLength
             }
           ]
@@ -1339,6 +1339,19 @@ class EditorStore {
           ? (subtotalConfig[2].name = value)
           : (subtotalConfig[1].name = value)
       }
+    }
+  }
+
+  // 整单合计金额单选设置
+  @action.bound
+  setOverallOrderValueField({ id }) {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const overallOrderConfig = this.config.contents[arr[2]]?.overallOrder
+      const oldValueField = overallOrderConfig.fields?.[0]
+      this.config.contents[arr[2]]?.overallOrder &&
+        set(oldValueField, { valueField: id })
     }
   }
 
