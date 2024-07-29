@@ -459,7 +459,10 @@ class EditorField extends React.Component {
                 let subtotalFields = subtotal?.fields?.[0].valueField
                 if (subtotalFields === 'total_item_price')
                   subtotalFields = '下单金额'
-                if (subtotalFields === 'real_item_price')
+                if (
+                  subtotalFields === 'real_item_price' ||
+                  !subtotal?.fields?.[0].valueField
+                )
                   subtotalFields = '出库金额'
                 return (
                   <Radio
@@ -548,7 +551,10 @@ class EditorField extends React.Component {
                 value={fields.value}
                 key={fields.id}
                 inputName='overallOrderRadio'
-                checked={overallOrder?.fields?.[0]?.valueField === fields.id}
+                checked={
+                  (overallOrder?.fields?.[0]?.valueField ?? '出库金额') ===
+                  fields.id
+                }
                 radioChecked={() => editStore.setOverallOrderValueField(fields)}
               />
             )
