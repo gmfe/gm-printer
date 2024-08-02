@@ -830,6 +830,21 @@ class EditorStore {
         break
       }
 
+      case 'qrcode': {
+        blocks.push({
+          type: 'qrcode',
+          text: value,
+          style: {
+            position: 'absolute',
+            left: '0px',
+            top: '0px',
+            width: '100px',
+            height: '100px'
+          }
+        })
+        break
+      }
+
       default: {
         blocks.push({
           text: `${key}：${value}`,
