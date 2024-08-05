@@ -607,6 +607,26 @@ class EditorStore {
     if (this.selectedRegion) {
       this.overallOrderShow = !this.overallOrderShow
       const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const colSpanLength = getColSpanLength(table)
+      if (!this.config.contents[arr[2]].subtotal.fields?.[0]) {
+        // 兼容已经存在的配送单据，他们的配置存在后端的，没有subtotal这个配置，给加上
+        set(table, {
+          subtotal: {
+            show: true,
+            fields: [
+              {
+                name: '每页合计：',
+                valueField: '下单金额',
+                style: {
+                  fontWeight: 'bold'
+                },
+                colSpan: colSpanLength
+              }
+            ]
+          }
+        })
+      }
       this.config.contents[arr[2]].subtotal.fields[0].valueField = fields.id
 
       const fieldList = this.config.contents[arr[2]].subtotal.fields
@@ -672,7 +692,7 @@ class EditorStore {
           fields: [
             {
               name: '自定义整单合计：',
-              valueField: '{{出库金额}}',
+              valueField: '{{列.出库金额}}',
               style: {
                 fontWeight: 'bold'
               }
@@ -798,6 +818,21 @@ class EditorStore {
       case 'image': {
         blocks.push({
           type: 'image',
+          text: value,
+          style: {
+            position: 'absolute',
+            left: '0px',
+            top: '0px',
+            width: '100px',
+            height: '100px'
+          }
+        })
+        break
+      }
+
+      case 'qrcode': {
+        blocks.push({
+          type: 'qrcode',
           text: value,
           style: {
             position: 'absolute',
@@ -1193,7 +1228,7 @@ class EditorStore {
           fields: [
             {
               name: '每页合计：',
-              valueField: 'real_item_price',
+              valueField: '出库金额',
               colSpan: colSpanLength
             }
           ]
@@ -1339,6 +1374,39 @@ class EditorStore {
           ? (subtotalConfig[2].name = value)
           : (subtotalConfig[1].name = value)
       }
+    }
+  }
+
+  // 整单合计金额单选设置
+  @action.bound
+  setOverallOrderValueField({ id }) {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const colSpanLength = getColSpanLength(table)
+      if (!this.config.contents[arr[2]].overallOrder.fields?.[0]) {
+        // 兼容已经存在的配送单据，他们的配置存在后端的，没有overallOrder这个配置，给加上
+        set(table, {
+          overallOrder: {
+            show: true,
+            fields: [
+              {
+                name: '整单合计：',
+                valueField: '下单金额',
+                style: {
+                  fontWeight: 'bold'
+                },
+                colSpan: colSpanLength
+              }
+            ]
+          }
+        })
+      }
+      const overallOrderConfig = this.config.contents[arr[2]]?.overallOrder
+      const oldValueField = overallOrderConfig.fields?.[0]
+      this.config.contents[arr[2]]?.overallOrder &&
+        set(oldValueField, { valueField: id })
     }
   }
 
