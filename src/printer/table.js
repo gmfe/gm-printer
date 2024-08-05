@@ -290,13 +290,13 @@ class Table extends React.Component {
                         dangerouslySetInnerHTML={{
                           __html: col.isSpecialColumn
                             ? printerStore.templateSpecialDetails(
-                              col,
-                              dataKey,
-                              i
-                            )
+                                col,
+                                dataKey,
+                                i
+                              )
                             : printerStore
-                              .templateTable(col.text, dataKey, i, pageIndex)
-                              .replace(/\(\)/g, '')
+                                .templateTable(col.text, dataKey, i, pageIndex)
+                                .replace(/\(\)/g, '')
                         }}
                       />
                     )
