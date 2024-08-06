@@ -14,6 +14,7 @@ import { inject, observer } from 'mobx-react'
 import classNames from 'classnames'
 import { MULTI_SUFFIX } from '../config'
 import SpecialTr from './table_special_tr'
+import CategoryTr from './table_category_tr'
 import SubtotalTr from './table_subtotal_tr'
 import PageSummary from './page_summary'
 import OverallOrder from './table_overallOrder_tr'
@@ -263,6 +264,9 @@ class Table extends React.Component {
         <tbody>
           {_.map(_.range(range.begin, range.end), i => {
             const _special = tableData[i] && tableData[i]._special
+            const _specialText = tableData[i] && tableData[i]._specialText
+            if (_specialText)
+              return <CategoryTr key={i} config={config} data={_specialText} />
             if (_special)
               return <SpecialTr key={i} config={config} data={_special} />
             // 如果项为空对象展现一个占满一行的td
