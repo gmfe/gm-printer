@@ -70,6 +70,13 @@ class ContextMenu extends React.Component {
     editStore.setSubtotalShow(name)
   }
 
+  handleCategoryConfig = (key, name) => {
+    const { editStore } = this.props
+    editStore.changeTableDataKey(name, key)
+
+    editStore.setCategoryConfigShow(name)
+  }
+
   handleChangeTableData = isAutoFilling => {
     const { editStore } = this.props
     editStore.handleChangeTableData(isAutoFilling)
@@ -111,6 +118,7 @@ class ContextMenu extends React.Component {
     const isMultiActive = keyArr.includes('multi')
     const isThreeActive = keyArr.includes('multi3')
     const isCategoryActive = keyArr.includes('category')
+    const isNewCategoryActive = keyArr.includes('newCategory')
     const isSubtotalActive = subtotal.show
     const isOverallOrder = overallOrder?.show
     const isDiyOverallOrder = diyOverallOrder?.show
@@ -135,6 +143,12 @@ class ContextMenu extends React.Component {
         <div
           onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
           className={isCategoryActive ? 'active' : ''}
+        >
+          {i18next.t('分类小计')}
+        </div>
+        <div
+          onClick={this.handleCategoryConfig.bind(this, 'newCategory', name)}
+          className={isNewCategoryActive ? 'active' : ''}
         >
           {i18next.t('商品分类')}
         </div>

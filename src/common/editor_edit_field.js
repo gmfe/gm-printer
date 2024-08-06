@@ -72,6 +72,11 @@ class EditorField extends React.Component {
     editStore.setSpecialStyle(value)
   }
 
+  handleCategoryStyleChange = value => {
+    const { editStore } = this.props
+    editStore.setCategoryStyle(value)
+  }
+
   handleSubtotalStyleChange = value => {
     const { editStore } = this.props
     editStore.setSubtotalStyle(value)
@@ -202,6 +207,9 @@ class EditorField extends React.Component {
       diyOverallOrder
     } = editStore.computedTableSpecialConfig
 
+    // 新分类
+    const categoryStyle =
+      toJS(editStore.computedTableSpecialConfig)?.categoryConfig?.style || {}
     // 小计样式,specialConfig可能是undefined
     const specialStyle =
       toJS(editStore.computedTableSpecialConfig)?.specialConfig?.style || {}
@@ -416,6 +424,19 @@ class EditorField extends React.Component {
           text={i18next.t('说明：谨慎修改{}中的内容,避免出现数据异常')}
         />
         <Gap />
+
+        <Flex>
+          <Flex>{i18next.t('分类设置')}：</Flex>
+          <Fonter
+            style={categoryStyle}
+            onChange={this.handleCategoryStyleChange}
+          />
+          <Separator />
+          <TextAlign
+            style={categoryStyle}
+            onChange={this.handleCategoryStyleChange}
+          />
+        </Flex>
 
         <Flex>
           <Flex>{i18next.t('小计设置')}：</Flex>
