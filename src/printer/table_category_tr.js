@@ -10,7 +10,7 @@ const CategoryTr = props => {
   return (
     <tr>
       <td colSpan='99'>
-        <div style={{ ...categoryConfig?.style }}>{data?.text ?? '11'}</div>
+        <div style={{ ...categoryConfig?.style }}>{data?.text ?? ''}</div>
       </td>
     </tr>
   )
