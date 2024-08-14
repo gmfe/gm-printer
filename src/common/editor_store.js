@@ -603,6 +603,26 @@ class EditorStore {
   }
 
   @action
+  setCategoryConfigShow(name) {
+    const arr = name.split('.')
+    const table = this.config.contents[arr[2]]
+    this.overallOrderShow = !this.overallOrderShow
+    // 切换的时候，要把对应table的多余空数据清掉
+    this.clearExtraTableData(table.dataKey)
+
+    // 兼容存在后端的模板
+    if (!table?.categoryConfig) {
+      set(table, {
+        categoryConfig: {
+          show: true,
+          style: { fontWeight: 'bold' },
+          type: 'categoryConfig'
+        }
+      })
+    }
+  }
+
+  @action
   subtotalRadioCheck(fields) {
     if (this.selectedRegion) {
       this.overallOrderShow = !this.overallOrderShow
@@ -740,6 +760,7 @@ class EditorStore {
     newDataKey = _.sortBy(newDataKey, [
       o => o === 'multi3',
       o => o === 'multi',
+      o => o === 'newCategory',
       o => o === 'category',
       o => o === 'orders'
     ])
@@ -1114,6 +1135,27 @@ class EditorStore {
             ...oldStyle,
             ...value
           }
+        }
+      })
+    }
+  }
+
+  // 设置新模版样式
+  @action.bound
+  setCategoryStyle(value) {
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const tableConfig = this.config.contents[arr[2]]
+
+      const oldStyle = tableConfig?.categoryConfig
+        ? tableConfig.categoryConfig.style
+        : {}
+      set(tableConfig?.categoryConfig, {
+        ...(tableConfig?.categoryConfig ?? {}),
+        style: {
+          ...oldStyle,
+          ...value
         }
       })
     }
