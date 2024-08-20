@@ -1,19 +1,22 @@
-# gm-printer 
-    
-gm-printer是一个实现开发者自定义网页打印的人类高质量开源库，你可以根据业务需要自定义打印字段配置(<a href='#template_config'>配置详情</a>)，完成高质量网页打印功能。
-    
+# gm-printer
+
+gm-printer 是一个实现开发者自定义网页打印的人类高质量开源库，你可以根据业务需要自定义打印字段配置(<a href='#template_config'>配置详情</a>)，完成高质量网页打印功能。
 
 ## <div id='development'>开发指南</div>
+
 以下操作将帮助你在本地机器上安装和运行该项目，进行开发
+
 ```bash
 # 先安装依赖
 yarn
 # 项目启动
 yarn start
 # 项目构建(基本不怎么使用)
-yarn build 
+yarn build
 ```
+
 ## <div id='usage'>安装使用指南</div>
+
 ```bash
 # npm
 npm i gm-printer
@@ -22,9 +25,10 @@ yarn add gm-printer
 ```
 
 ## <div id='simple_categroy'>配置目录简述</div>
+
 ```bash
 ├── src
-│   ├── index.js 
+│   ├── index.js
 │   ├── add_fields # 右侧对应的字段配置
 │   ├── data_to_key # 原始数据转换成打印数据
 │   ├── mock_data # 模拟数据
@@ -35,55 +39,60 @@ yarn add gm-printer
 ```
 
 ## 版本管理
-所有的版本都有 3 个数字：x.y.z。  
-  * 第一个数字是主版本。  
-  * 第二个数字是次版本。  
-  * 第三个数字是补丁版本。   
 
-当发布新的版本时，不仅仅是随心所欲地增加数字，还要遵循以下规则： 
-  * 当进行不兼容的 API 更改时，则升级主版本。
-  * 当以向后兼容的方式添加功能时，则升级次版本。
-  * 当进行向后兼容的缺陷修复时，则升级补丁版本。  
+所有的版本都有 3 个数字：x.y.z。
+
+- 第一个数字是主版本。
+- 第二个数字是次版本。
+- 第三个数字是补丁版本。
+
+当发布新的版本时，不仅仅是随心所欲地增加数字，还要遵循以下规则：
+
+- 当进行不兼容的 API 更改时，则升级主版本。
+- 当以向后兼容的方式添加功能时，则升级次版本。
+- 当进行向后兼容的缺陷修复时，则升级补丁版本。
 
 该约定在所有编程语言中均被采用，每个 npm 软件包都必须遵守该约定，这一点非常重要，因为整个系统都依赖于此。
 
-## 版本发布  [<font size=2.5>参考链接</font>](https://eminoda.github.io/2021/01/29/npm-semver-strategy/)
-一般版本发布分为如下几个版：
-  * 内测版本(alpha)
-  * 公测版本(beta)
-  * 正式版本的候选版本(rc: release candiate)
-  * 正式版本
+## 版本发布
 
-发布操作如下：  
+gm-printer 是一个单独的打印库，使用 github action 发布版本
 
-  前情提要：
-  * 发布重大版本或版本改动较大时，先发布alpha、beta、rc等先行版本。
-  * 将`pageage.json`中的`version`修改为`X.X.X-beta.0`，或者运行 `npm version X.X.X-beta.0`来更新`package.json`，同时创建一个 git 标签[参考](https://docs.npmjs.com/cli/version)。
-```bash
-npm login # 输入用户名和密码
+1. beta 版本包的版本发布(在自己的 feature|fix 分支)，执行 yarn release 后选择 beta 版本
 
-# 之后发布你要发布的测试版本
-npm publish --tag (alpha | beta)
+   ![image-20230509125111428](./assets/image-20230509125111428.png)
 
-# 或发布正式版用
-npm publish
-```
+2. 正式版本的发布
 
+   1. 提 pr 到 master
+   2. 切换到 master，之后执行 yarn release 选择正式版本（注意 minor 和 patch 的区别)![image-20230509125629476](./assets/image-20230509125629476.png)
+
+3. 选择后版本后再输入 y，会自动生成 tag 和 push，触发 github action 的 release.yml，且生成 changelog![image-20230509125812166](./assets/image-20230509125812166.png)
+
+![image-20230509125922115](./assets/image-20230509125922115.png)
+
+![image-20230509130332523](./assets/image-20230509130332523.png)
+
+自此自动发包完成！
 上述操作在自己的分支上进行发布版本即可，发完后，将分支合并到 master 上！！！
 
 ## <div id='template_config'>模板文件(template_config)</div>
-config主要是有下面6大部分组成
+
+config 主要是有下面 6 大部分组成
+
 ```js
 export default {
-  'name': '模板名称',   // 模板名称
-  'page': {},         // 模板整体的配置信息
-  'header': {},       // 页眉(每页都会渲染)
-  'contents': {},     // 主要内容(contents只渲染一次!第一页放不下,会顺延到次页继续渲染,直至全部渲染)
-  'sign': {},         // 签名(只在最后一页渲染)
-  'footer': {}        // 页脚(每页都会渲染)
+  name: '模板名称', // 模板名称
+  page: {}, // 模板整体的配置信息
+  header: {}, // 页眉(每页都会渲染)
+  contents: {}, // 主要内容(contents只渲染一次!第一页放不下,会顺延到次页继续渲染,直至全部渲染)
+  sign: {}, // 签名(只在最后一页渲染)
+  footer: {} // 页脚(每页都会渲染)
 }
 ```
+
 一个简单模板配置如下
+
 ```js
 export default {
   name: '模板名称',
@@ -95,18 +104,22 @@ export default {
       height: '297mm' // 纸张高度
     },
     printDirection: 'vertical', // 打印布局方向(两种: vertical, horizontal)
-    gap: {       // 纸张内边距
+    gap: {
+      // 纸张内边距
       paddingRight: '5mm',
       paddingLeft: '5mm',
       paddingBottom: '5mm',
       paddingTop: '5mm'
     }
   },
-  header: {     // 页眉
-    blocks: [   // blocks数组,里面元素
+  header: {
+    // 页眉
+    blocks: [
+      // blocks数组,里面元素
       {
         text: '收货人: {{收货人}}', // 文本块
-        style: {                  // 文本块样式
+        style: {
+          // 文本块样式
           right: '',
           left: '450px',
           position: 'absolute',
@@ -114,15 +127,17 @@ export default {
         }
       }
     ],
-    style: {                      // header 的样式
+    style: {
+      // header 的样式
       height: '97px'
     }
   },
-  contents: [  // contents数组,元素是object. 
+  contents: [
+    // contents数组,元素是object.
     {
       blocks: [
         {
-          text: '收货人: {{收货人}}',  // 模板字符串用{{}}表示
+          text: '收货人: {{收货人}}', // 模板字符串用{{}}表示
           style: {
             right: '',
             left: '450px',
@@ -136,27 +151,32 @@ export default {
       }
     },
     {
-      className: '',   
-      type: 'table',   // type 表明是table 
-      dataKey: 'orders_category',  // table的接受哪些数据. dataKey详细看下文
-      subtotal: {     // 是否显示table每页合计
+      className: '',
+      type: 'table', // type 表明是table
+      dataKey: 'orders_category', // table的接受哪些数据. dataKey详细看下文
+      subtotal: {
+        // 是否显示table每页合计
         show: false
       },
-      columns: [      // 表单列配置
+      columns: [
+        // 表单列配置
         {
           head: '序号',
-          headStyle: {    // 表头样式
+          headStyle: {
+            // 表头样式
             textAlign: 'center'
           },
-          style: {       // 表格样式
+          style: {
+            // 表格样式
             textAlign: 'center'
           },
-          text: '{{列.序号}}'  // 表格内容
+          text: '{{列.序号}}' // 表格内容
         }
       ]
     }
   ],
-  sign: {    // 签名(只在最后一页打印)
+  sign: {
+    // 签名(只在最后一页打印)
     blocks: [
       {
         text: '签收人：',
@@ -171,7 +191,8 @@ export default {
       height: '46px'
     }
   },
-  footer: {   // 页脚
+  footer: {
+    // 页脚
     blocks: [
       {
         text: '页码： {{当前页码}} / {{页码总数}}',
@@ -201,6 +222,7 @@ export default {
 ```
 
 ## data 数据
+
 ```json
   {
     common: object, // 非表格数据
@@ -228,4 +250,3 @@ contents.panel.0.block.0 //区域块的每一个块
 contents.table.0 //区域表格
 contents.table.0.column.0 // 区域表格的每一个表格
 ```
-

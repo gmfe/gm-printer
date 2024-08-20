@@ -1,13 +1,14 @@
 {
   "name": "gm-printer",
-  "version": "10.27.0",
+  "version": "10.27.2",
   "description": "diy printer",
   "main": "src/index.js",
   "scripts": {
     "precommit": "lint-staged",
     "start": "webpack-dev-server --hot",
     "build": "webpack -p",
-    "locale": "i18n-m sync src/"
+    "locale": "i18n-m sync src/",
+    "release": "bumpp"
   },
   "lint-staged": {
     "./src/**/*.js": [
@@ -107,7 +108,8 @@
     "url-loader": "^1.1.1",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.7"
+    "webpack-dev-server": "^3.1.7",
+    "bumpp": "8.2.0"
   },
   "dependencies": {
     "qrcode.react": "^0.9.2"
