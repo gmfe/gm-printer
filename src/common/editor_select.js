@@ -2,6 +2,10 @@ import i18next from '../../locales'
 import React from 'react'
 import { observer, inject } from 'mobx-react'
 import { Flex, Option, Select } from '../components'
+import {
+  RadioGroup,
+  Radio,
+} from '@gmfe/react'
 import { InputWithUnit } from '../common/component'
 import { pageTypeMap, printDirectionList } from '../config'
 import _ from 'lodash'
@@ -13,6 +17,10 @@ import PropTypes from 'prop-types'
 class EditorSelector extends React.Component {
   handleConfigName = e => {
     this.props.editStore.setConfigName(e.target.value)
+  }
+
+  handleConfigIsFixLastFooter = (_val) => {
+    this.props.editStore.setConfigIsFixLastFooter(_val)
   }
 
   handlePageType = value => {
@@ -37,13 +45,13 @@ class EditorSelector extends React.Component {
 
   render() {
     const {
-      config: { name, page, batchPrintConfig },
+      config: { name, page, batchPrintConfig, isFixLastFooter, showDiyOverAllOrder },
       computedRegionList,
       computedSelectedRegionTip,
       selectedRegion
     } = this.props.editStore
     const isDIY = page.type === 'DIY'
-
+    
     return (
       <div>
         <Flex alignCenter>
@@ -148,6 +156,22 @@ class EditorSelector extends React.Component {
             </div>
           </>
         )}
+
+        {
+          showDiyOverAllOrder !== undefined && <Flex alignCenter className='gm-padding-top-5'>
+          <label htmlFor={1}>{'是否固定末页签名和页脚区域：'}</label>
+          <RadioGroup
+            name='isFixFooter'
+            value={isFixLastFooter}
+            inline
+            onChange={this.handleConfigIsFixLastFooter}
+            className="gm-flex"
+          >
+            <Radio value={true} style={{ display: 'flex', marginRight: 10}}><span style={{ marginLeft: 5}}>是</span></Radio>
+            <Radio value={false} style={{ display: 'flex'}}><span style={{ marginLeft: 5}}>否</span></Radio>
+          </RadioGroup>
+        </Flex>
+        }
 
         <Flex className='gm-padding-top-5 gm-text-red' column>
           {computedSelectedRegionTip}
