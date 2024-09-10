@@ -20,7 +20,7 @@ const Sign = props => (
     {...props}
     style={{
       ...props.style,
-      position: props?.flag ? 'relative' : 'absolute',
+      position: props?.flag ? 'absolute' : 'relative',
       left: 0,
       right: 0
     }}
@@ -38,7 +38,7 @@ const Footer = props => (
     {...props}
     style={{
       ...props.style,
-      position: props?.flag ? 'relative' : 'absolute',
+      position: props?.flag ? 'absolute' : 'relative',
       bottom: 0,
       left: 0,
       right: 0
@@ -226,7 +226,11 @@ class Printer extends React.Component {
                   flag={isLastPage && config?.isFixLastFooter}
                 />
               )}
-              <Footer config={config.footer} pageIndex={i} flag={isLastPage && config?.isFixLastFooter} />
+              <Footer
+                config={config.footer}
+                pageIndex={i}
+                flag={isLastPage && config?.isFixLastFooter}
+              />
             </Page>
           )
         })}
