@@ -187,6 +187,9 @@ class PrinterStore {
     this.config = config || {}
   }
 
+  /** 处理采购单的明细
+      一行有多个明细, 并且采购明细是换行展示, 明细数据超多的情况则需要分割到不同页面中
+      比如： 一行有20行明细，当前页只能放下17行明细 ,剩下的3行明细需要放到下一页进行展示 */
   @action
   computedData(dataKey, table, end, currentRemainTableHeight) {
     /** 当前数据 */
@@ -195,20 +198,26 @@ class PrinterStore {
     let count = 0
     _.forEach(Array(end).fill(1), (val, i) => {
       const details = tableData[i]?.__details || []
-      count += details.length
+      // 双栏---获取第二列的数据
+      const detailsMulti = tableData[i]?.__details_MULTI_SUFFIX || []
+      count = details.length + detailsMulti.length + count
     })
 
     /** 明细data */
     const detailsData = tableData[end]?.__details
+    // 双栏明细data
+    const detailsDataMulti = tableData[end]?.__details_MULTI_SUFFIX
+    // 采购单如果使用双栏，取明细最多的那个数据
+    const data =
+      detailsData?.length > detailsDataMulti?.length
+        ? detailsData
+        : detailsDataMulti
     // 如果没有details 和 明细不换行, 就不用计算了
-    if (!detailsData || dataKey.includes('noLineBreak')) {
+    if (!data || dataKey.includes('noLineBreak')) {
       return []
     }
-
-    const detailsHeights = table.body.children.slice(
-      count,
-      count + detailsData.length
-    )
+    // 获取当前行的所有明细的高度集
+    const detailsHeights = table.body.children.slice(count, count + data.length)
 
     const { ranges, detailsPageHeight } = caclSingleDetailsPageHeight(
       detailsHeights,
@@ -216,11 +225,19 @@ class PrinterStore {
     )
 
     // 分局明细拆分后的数据
-    const splitTableData = _.map(ranges, range => {
-      const _tableData = Object.assign({}, tableData[end])
-      _tableData.__details = detailsData.slice(...range)
-      return _tableData
-    })
+    const splitTableData = _.map(
+      _.filter(ranges, i => i[0] !== i[1]), // 过滤掉 {[0,3],[3,3]}这周情况
+      range => {
+        const _tableData = Object.assign({}, tableData[end])
+        _tableData.__details = data.slice(...range)
+        // 双栏中的数据也要做处理
+        if (isMultiTable(dataKey)) {
+          _tableData.__details_MULTI_SUFFIX = data.slice(...range)
+        }
+
+        return _tableData
+      }
+    )
 
     // 插入原table数据中
     tableData.splice(end, 1, ...splitTableData)
@@ -431,7 +448,7 @@ class PrinterStore {
     const pageFixLineNum = this.config.financeSpecialConfig.pageFixLineNum
     while (index < this.config.contents.length) {
       const content = this.config.contents[index]
-      // debugger
+
       const table = this.tablesInfo[`contents.table.${index}`]
       // 表格行的索引,用于table.slice(begin, end), 分割到不同页面中
       let begin = 0
