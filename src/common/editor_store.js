@@ -217,7 +217,10 @@ class EditorStore {
   @action
   init(config, data) {
     // batchPrintConfig: 1 不连续打印（一张采购单不出现多供应商）2 连续打印（一张采购单可能出现多个供应商）
-    this.config = Object.assign({ batchPrintConfig: 1, isFixLastFooter: false }, config)
+    this.config = Object.assign(
+      { batchPrintConfig: 1, isFixLastFooter: true },
+      config
+    )
     this.originConfig = config
     this.selected = null
     this.selectedRegion = null
