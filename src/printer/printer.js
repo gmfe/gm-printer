@@ -223,13 +223,13 @@ class Printer extends React.Component {
                   config={config.sign}
                   pageIndex={i}
                   style={{ bottom: config.footer.style.height }}
-                  flag={isLastPage && config?.isFixLastFooter}
+                  flag={isLastPage && config?.isFixLastFooter !== false}
                 />
               )}
               <Footer
                 config={config.footer}
                 pageIndex={i}
-                flag={isLastPage && config?.isFixLastFooter}
+                flag={isLastPage && config?.isFixLastFooter !== false}
               />
             </Page>
           )
