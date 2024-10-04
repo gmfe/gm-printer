@@ -209,7 +209,7 @@ class PrinterStore {
     const detailsDataMulti = tableData[end]?.__details_MULTI_SUFFIX
     // 采购单如果使用双栏，取明细最多的那个数据
     const data =
-      detailsData?.length > detailsDataMulti?.length
+      detailsData?.length > (detailsDataMulti?.length || 0)
         ? detailsData
         : detailsDataMulti
     // 如果没有details 和 明细不换行, 就不用计算了
