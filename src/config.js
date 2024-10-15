@@ -1,4 +1,7 @@
 import i18next from '../locales'
+
+export const LONG_PRINT = "longPrint"
+
 export const pageTypeMap = {
   A4: {
     name: 'A4',
@@ -76,6 +79,21 @@ export const pageTypeMap = {
       paddingRight: '16mm',
       paddingBottom: '5mm',
       paddingLeft: '16mm'
+    }
+  },
+  // 新增长条打印配置选项
+  [LONG_PRINT]: {
+    name: i18next.t('长条打印'),
+    size: {
+      width: '80mm',
+      height: '100mm'
+    },
+    printDirection: 'vertical',
+    gap: {
+      paddingTop: '5mm',
+      paddingRight: '5mm',
+      paddingBottom: '5mm',
+      paddingLeft: '5mm'
     }
   },
   DIY: {

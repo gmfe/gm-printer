@@ -1,7 +1,7 @@
 import i18next from '../../locales'
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { tableClassNameList } from '../config'
+import { tableClassNameList, LONG_PRINT } from '../config'
 import _ from 'lodash'
 import { Hr, ImageUploader } from '../common/component'
 import { observer, inject } from 'mobx-react'
@@ -191,7 +191,8 @@ class CommonContextMenu extends React.Component {
     const arr = name.split('.')
     const { className } = editStore.config.contents[arr[2]]
     const isActive = c => className === c
-
+    const { config } = editStore
+    const isLongPrint = config?.page?.type === LONG_PRINT
     return (
       <>
         {renderTableAction && (
@@ -204,17 +205,22 @@ class CommonContextMenu extends React.Component {
         <div onClick={this.handleRemove}>{i18next.t('移除列')}</div>
         <Hr />
 
-        {_.map(tableClassNameList, o => (
-          <div
-            onClick={this.handleSetTableConfig.bind(this, o.value)}
-            key={o.value}
-            className={isActive(o.value) ? 'active' : ''}
-          >
-            {o.text}
-          </div>
-        ))}
+        {!isLongPrint && (
+          <>
+            {' '}
+            {_.map(tableClassNameList, o => (
+              <div
+                onClick={this.handleSetTableConfig.bind(this, o.value)}
+                key={o.value}
+                className={isActive(o.value) ? 'active' : ''}
+              >
+                {o.text}
+              </div>
+            ))}{' '}
+            <Hr />
+          </>
+        )}
 
-        <Hr />
         <div onClick={this.handleAddContent.bind(this, 0, '')}>
           {i18next.t('向上插入区域块')}
         </div>

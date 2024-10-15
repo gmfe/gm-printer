@@ -263,6 +263,13 @@
         top: calc(50% - 0.5em);
       }
 
+      .long_print_table_row{
+        cursor: move;
+        &.active{
+          outline: 1px solid rgb(82, 146, 247);
+        }
+      } 
+
       table {
         // 不被 before 遮挡
         position: relative;

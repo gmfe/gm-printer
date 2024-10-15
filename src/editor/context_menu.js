@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
 import { Printer } from '../printer'
 import { isMultiTable } from '../util'
+import { LONG_PRINT } from "../config"
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
@@ -122,17 +123,21 @@ class ContextMenu extends React.Component {
     const isSubtotalActive = subtotal.show
     const isOverallOrder = overallOrder?.show
     const isDiyOverallOrder = diyOverallOrder?.show
+    // 长条打印
+    const isLongPrint = type === LONG_PRINT
 
     return (
       <>
-        <div
-          onClick={this.handleChangeTableDataKey.bind(this, 'multi', name)}
-          className={isMultiActive ? 'active' : ''}
-        >
-          {i18next.t('双栏商品')}
-        </div>
+        {!isLongPrint && (
+          <div
+            onClick={this.handleChangeTableDataKey.bind(this, 'multi', name)}
+            className={isMultiActive ? 'active' : ''}
+          >
+            {i18next.t('双栏商品')}
+          </div>
+        )}
         {/* 三分纸高度太小，做不了三栏，会死循环 */}
-        {type !== 'A4/3' && (
+        {type !== 'A4/3' && !isLongPrint && (
           <div
             onClick={this.handleChangeTableDataKey.bind(this, 'multi3', name)}
             className={isThreeActive ? 'active' : ''}
