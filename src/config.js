@@ -90,10 +90,10 @@ export const pageTypeMap = {
     },
     printDirection: 'vertical',
     gap: {
-      paddingTop: '5mm',
-      paddingRight: '5mm',
-      paddingBottom: '5mm',
-      paddingLeft: '5mm'
+      paddingTop: '2mm',
+      paddingRight: '2mm',
+      paddingBottom: '2mm',
+      paddingLeft: '2mm'
     }
   },
   DIY: {
