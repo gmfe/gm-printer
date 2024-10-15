@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react'
 import _ from 'lodash'
 import { Printer } from '../printer'
 import { isMultiTable } from '../util'
-import { LONG_PRINT } from "../config"
+import { LONG_PRINT } from '../config'
 
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },

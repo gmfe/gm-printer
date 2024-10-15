@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { inject, observer } from 'mobx-react'
 import { getHeight } from '../util'
 import classNames from 'classnames'
-import { LONG_PRINT } from "../config"
+import { LONG_PRINT } from '../config'
 
 @inject('printerStore')
 @observer

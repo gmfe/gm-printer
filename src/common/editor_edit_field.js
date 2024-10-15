@@ -20,7 +20,7 @@ import {
 import { get, toJS } from 'mobx'
 import PropTypes from 'prop-types'
 import { subtotalRadioList } from './util'
-import { LONG_PRINT } from "../config"
+import { LONG_PRINT } from '../config'
 import _ from 'lodash'
 
 @inject('editStore')
@@ -547,7 +547,7 @@ class EditorField extends React.Component {
               value={
                 subtotal && subtotal?.fields?.length > 1
                   ? _.find(subtotal?.fields, item => !item.valueField)?.name ??
-                  ''
+                    ''
                   : ''
               }
               onChange={editStore.setSubtotalFields}

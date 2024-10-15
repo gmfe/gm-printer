@@ -10,7 +10,7 @@ import Panel from './panel'
 import Table from './table'
 import LongPrintTable from './long_print_table'
 import MergePage from './merge_page'
-import { LONG_PRINT } from "../config"
+import { LONG_PRINT } from '../config'
 
 // Header Sign Footer 相对特殊，要单独处理
 const Header = props => (
@@ -224,10 +224,10 @@ class Printer extends React.Component {
 
                 const end = isAutofillConfig
                   ? panel.end +
-                  Math.floor(
-                    remainPageHeight /
-                    printerStore.computedTableCustomerRowHeight
-                  )
+                    Math.floor(
+                      remainPageHeight /
+                        printerStore.computedTableCustomerRowHeight
+                    )
                   : panel.end
                 switch (panel.type) {
                   case 'table':

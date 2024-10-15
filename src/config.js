@@ -1,6 +1,6 @@
 import i18next from '../locales'
 
-export const LONG_PRINT = "longPrint"
+export const LONG_PRINT = 'longPrint'
 
 export const pageTypeMap = {
   A4: {
