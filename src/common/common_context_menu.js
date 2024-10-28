@@ -1,7 +1,11 @@
 import i18next from '../../locales'
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { tableClassNameList, longPrintTableClassNameList, LONG_PRINT } from '../config'
+import {
+  tableClassNameList,
+  longPrintTableClassNameList,
+  LONG_PRINT
+} from '../config'
 import _ from 'lodash'
 import { Hr, ImageUploader } from '../common/component'
 import { observer, inject } from 'mobx-react'
@@ -234,8 +238,8 @@ class CommonContextMenu extends React.Component {
               </div>
             ))}{' '}
             <Hr />
-          </>)
-        }
+          </>
+        )}
 
         <div onClick={this.handleAddContent.bind(this, 0, '')}>
           {i18next.t('向上插入区域块')}

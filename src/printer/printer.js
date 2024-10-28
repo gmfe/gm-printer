@@ -175,7 +175,7 @@ class Printer extends React.Component {
               // eslint-disable-next-line no-case-declarations
               const list = printerStore.data._table[content.dataKey]
               // console.log(content, "content");
-              if (content.className === "specialTable") {
+              if (content.className === 'specialTable') {
                 return (
                   <LongPrintTable
                     key={`contents.table.${index}`}
@@ -187,18 +187,20 @@ class Printer extends React.Component {
                   />
                 )
               } else {
-                return <Table
-                  key={`contents.table.${index}`}
-                  name={`contents.table.${index}`}
-                  config={content}
-                  range={{
-                    begin: 0,
-                    end: list?.length || 0
-                  }}
-                  placeholder={`${i18next.t('区域')} ${index}`}
-                  pageIndex={0}
-                  isSomeSubtotalTr={isSomeSubtotalTr}
-                />
+                return (
+                  <Table
+                    key={`contents.table.${index}`}
+                    name={`contents.table.${index}`}
+                    config={content}
+                    range={{
+                      begin: 0,
+                      end: list?.length || 0
+                    }}
+                    placeholder={`${i18next.t('区域')} ${index}`}
+                    pageIndex={0}
+                    isSomeSubtotalTr={isSomeSubtotalTr}
+                  />
+                )
               }
             default:
               return (
@@ -239,10 +241,10 @@ class Printer extends React.Component {
 
                 const end = isAutofillConfig
                   ? panel.end +
-                  Math.floor(
-                    remainPageHeight /
-                    printerStore.computedTableCustomerRowHeight
-                  )
+                    Math.floor(
+                      remainPageHeight /
+                        printerStore.computedTableCustomerRowHeight
+                    )
                   : panel.end
                 switch (panel.type) {
                   case 'table':

@@ -564,7 +564,7 @@ class EditorField extends React.Component {
               value={
                 subtotal && subtotal?.fields?.length > 1
                   ? _.find(subtotal?.fields, item => !item.valueField)?.name ??
-                  ''
+                    ''
                   : ''
               }
               onChange={editStore.setSubtotalFields}
