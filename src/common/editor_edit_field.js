@@ -380,6 +380,23 @@ class EditorField extends React.Component {
           </Flex>
         )}
 
+        {isLongPrint && (
+          <Flex alignCenter>
+            <Flex alignCenter>{i18next.t('表格样式')}：</Flex>
+            <Select
+              className='gm-printer-edit-select'
+              value={editStore.tableCustomStyle}
+              onChange={editStore.changeTableCustomStyle}
+            >
+              <Option value='default'>{i18next.t('默认样式')}</Option>
+              <Option value='className0'>{i18next.t('样式一')}</Option>
+              <Option value='className1'>{i18next.t('样式二')}</Option>
+              <Option value='className2'>{i18next.t('样式三')}</Option>
+              <Option value='specialTable'>{i18next.t('样式四')}</Option>
+            </Select>
+          </Flex>
+        )}
+
         <Gap height='5px' />
 
         <Flex>
@@ -547,7 +564,7 @@ class EditorField extends React.Component {
               value={
                 subtotal && subtotal?.fields?.length > 1
                   ? _.find(subtotal?.fields, item => !item.valueField)?.name ??
-                    ''
+                  ''
                   : ''
               }
               onChange={editStore.setSubtotalFields}

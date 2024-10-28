@@ -125,7 +125,16 @@ export const borderStyleList = [
 export const tableClassNameList = [
   { value: '', text: i18next.t('默认样式') },
   { value: 'className0', text: i18next.t('浅实线样式') },
-  { value: 'className1', text: i18next.t('无实线样式') }
+  { value: 'className1', text: i18next.t('无实线样式') },
+  { value: 'className2', text: i18next.t('样式三') }
+]
+
+export const longPrintTableClassNameList = [
+  { value: '', text: i18next.t('默认样式') },
+  { value: 'className0', text: i18next.t('样式一') },
+  { value: 'className1', text: i18next.t('样式二') },
+  { value: 'className2', text: i18next.t('样式三') },
+  { value: 'specialTable', text: i18next.t('样式四') }
 ]
 
 export const tableDataKeyList = [
