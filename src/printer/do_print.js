@@ -4,7 +4,6 @@ import Printer from './printer'
 import getCSS from './get_css'
 import BatchPrinter from './batch_printer'
 import BatchFinancePrinter from '../finance_voucher/components/finance_batch_printer'
-import { isZoom } from 'gm-util'
 import { afterImgAndSvgLoaded } from '../util'
 
 const printerId = '_gm-printer_' + Math.random()
@@ -77,14 +76,18 @@ function toDoPrint({ data, config }, isSomeSubtotalTr) {
 function toDoPrintBatch(list, isPrint = true) {
   return new window.Promise(resolve => {
     const $app = $printer.contentWindow.document.getElementById('appContainer')
-
+    // 获取模版类型
+    const templateType = list?.[0]?.config?.page?.type
+    // 初始化
     ReactDOM.unmountComponentAtNode($app)
     ReactDOM.render(
       <BatchPrinter
         list={list}
         onReady={() => {
           afterImgAndSvgLoaded(() => {
-            isPrint && $printer.contentWindow.print()
+            isPrint &&
+              templateType !== 'longPrint' &&
+              $printer.contentWindow.print()
             resolve()
           }, $app)
         }}
@@ -145,4 +148,17 @@ function getPrintContainerHTML() {
   return $printer.contentWindow.document.getElementsByTagName('html')[0]
     .innerHTML
 }
-export { doPrint, doBatchPrint, getPrintContainerHTML, doBatchFinancePrint }
+
+function setPrintStyle() {
+  const doc = document
+  const style = doc.createElement('style')
+  style.appendChild(doc.createTextNode(getCSS()))
+  doc.head.appendChild(style)
+}
+export {
+  doPrint,
+  doBatchPrint,
+  getPrintContainerHTML,
+  doBatchFinancePrint,
+  setPrintStyle
+}

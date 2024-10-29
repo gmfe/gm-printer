@@ -44,20 +44,28 @@ class Page extends React.Component {
         style={{
           ...pageStyle,
           boxSizing: 'content-box',
-          width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
-          [type === LONG_PRINT
-            ? 'minHeight'
-            : 'height']: `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`,
-          padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`
+          width:
+            type === LONG_PRINT
+              ? `${width}`
+              : `calc(${width} - ${paddingLeft} - ${paddingRight})`,
+          padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`,
+          height:
+            type === LONG_PRINT
+              ? ``
+              : `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`
         }}
       >
         <div
           className='gm-printer-page-inner'
           style={{
-            width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
-            [type === LONG_PRINT
-              ? 'minHeight'
-              : 'height']: `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`
+            width:
+              type === LONG_PRINT
+                ? `${width}`
+                : `calc(${width} - ${paddingLeft} - ${paddingRight})`,
+            height:
+              type === LONG_PRINT
+                ? ``
+                : `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`
           }}
         >
           {children}
