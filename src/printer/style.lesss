@@ -7,7 +7,7 @@
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -webkit-overflow-scrolling: touch;
-   // line-height: 2.5;
+  line-height: 1.5;
 
   background: white;
   page-break-after: always;
