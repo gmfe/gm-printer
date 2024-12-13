@@ -3,12 +3,14 @@ import React from 'react'
 import classNames from 'classnames'
 import { inject, observer, Provider } from 'mobx-react'
 import PropTypes from 'prop-types'
-import PrinterStore, { TR_BASE_HEIGHT } from './store'
+import PrinterStore from './store'
 import Page from './page'
 import _ from 'lodash'
 import Panel from './panel'
 import Table from './table'
+import LongPrintTable from './long_print_table'
 import MergePage from './merge_page'
+import { LONG_PRINT } from '../config'
 
 // Header Sign Footer 相对特殊，要单独处理
 const Header = props => (
@@ -161,6 +163,61 @@ class Printer extends React.Component {
     )
   }
 
+  renderLongPage() {
+    const { printerStore, isSomeSubtotalTr } = this.props
+    const { config } = printerStore
+    return (
+      <Page>
+        <Header config={config.header} pageIndex={0} />
+        {_.map(config.contents, (content, index) => {
+          switch (content.type) {
+            case 'table':
+              // eslint-disable-next-line no-case-declarations
+              const list = printerStore.data._table[content.dataKey]
+              // console.log(content, "content");
+              if (content.className === 'specialTable') {
+                return (
+                  <LongPrintTable
+                    key={`contents.table.${index}`}
+                    name={`contents.table.${index}`}
+                    config={content}
+                    range={{ begin: 0, end: list?.length || 0 }}
+                    pageIndex={0}
+                    placeholder={`${i18next.t('区域')} ${index}`}
+                  />
+                )
+              } else {
+                return (
+                  <Table
+                    key={`contents.table.${index}`}
+                    name={`contents.table.${index}`}
+                    config={content}
+                    range={{
+                      begin: 0,
+                      end: list?.length || 0
+                    }}
+                    placeholder={`${i18next.t('区域')} ${index}`}
+                    pageIndex={0}
+                    isSomeSubtotalTr={isSomeSubtotalTr}
+                  />
+                )
+              }
+            default:
+              return (
+                <Panel
+                  key={`contents.panel.${index}`}
+                  name={`contents.panel.${index}`}
+                  config={content}
+                  pageIndex={0}
+                  placeholder={`${i18next.t('区域')} ${index}`}
+                />
+              )
+          }
+        })}
+      </Page>
+    )
+  }
+
   renderPage() {
     const { printerStore, isSomeSubtotalTr } = this.props
     const { config, remainPageHeight, isAutoFilling } = printerStore
@@ -283,6 +340,9 @@ class Printer extends React.Component {
     const { printerStore, config } = this.props
     // batchPrintConfig: 1 不连续打印（纸张会间断）2 连续打印（纸张连续打，不间断）
     const batchPrintConfig = config.batchPrintConfig
+    if (config.page.type === LONG_PRINT) {
+      return !printerStore.ready ? this.renderBefore() : this.renderLongPage()
+    }
     if (batchPrintConfig === 2) {
       return this.renderMerge()
     } else {

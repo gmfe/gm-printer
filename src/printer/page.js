@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { inject, observer } from 'mobx-react'
 import { getHeight } from '../util'
 import classNames from 'classnames'
+import { LONG_PRINT } from '../config'
 
 @inject('printerStore')
 @observer
@@ -29,9 +30,9 @@ class Page extends React.Component {
 
     const {
       size: { width, height },
-      pageStyle
+      pageStyle,
+      type
     } = printerStore.config.page
-
     // 统一减2毫米,防止计算误差溢出
     const x = '- 2mm'
     return (
@@ -44,15 +45,21 @@ class Page extends React.Component {
           ...pageStyle,
           boxSizing: 'content-box',
           width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
-          height: `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`,
-          padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`
+          padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`,
+          height:
+            type === LONG_PRINT
+              ? ``
+              : `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`
         }}
       >
         <div
           className='gm-printer-page-inner'
           style={{
             width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
-            height: `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`
+            height:
+              type === LONG_PRINT
+                ? ``
+                : `calc(${height} - ${paddingTop} - ${paddingBottom} ${x})`
           }}
         >
           {children}

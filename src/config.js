@@ -1,4 +1,7 @@
 import i18next from '../locales'
+
+export const LONG_PRINT = 'longPrint'
+
 export const pageTypeMap = {
   A4: {
     name: 'A4',
@@ -78,6 +81,21 @@ export const pageTypeMap = {
       paddingLeft: '16mm'
     }
   },
+  // 新增长条打印配置选项
+  [LONG_PRINT]: {
+    name: i18next.t('长条打印'),
+    size: {
+      width: '80mm',
+      height: '100mm'
+    },
+    printDirection: 'vertical',
+    gap: {
+      paddingTop: '2mm',
+      paddingRight: '2mm',
+      paddingBottom: '2mm',
+      paddingLeft: '2mm'
+    }
+  },
   DIY: {
     name: i18next.t('自定义纸张'),
     size: {
@@ -107,7 +125,16 @@ export const borderStyleList = [
 export const tableClassNameList = [
   { value: '', text: i18next.t('默认样式') },
   { value: 'className0', text: i18next.t('浅实线样式') },
-  { value: 'className1', text: i18next.t('无实线样式') }
+  { value: 'className1', text: i18next.t('无实线样式') },
+  { value: 'className2', text: i18next.t('样式三') }
+]
+
+export const longPrintTableClassNameList = [
+  { value: '', text: i18next.t('默认样式') },
+  { value: 'className0', text: i18next.t('样式一') },
+  { value: 'className1', text: i18next.t('样式二') },
+  { value: 'className2', text: i18next.t('样式三') },
+  { value: 'specialTable', text: i18next.t('样式四') }
 ]
 
 export const tableDataKeyList = [

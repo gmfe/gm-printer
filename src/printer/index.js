@@ -4,7 +4,8 @@ import {
   doPrint,
   doBatchPrint,
   getPrintContainerHTML,
-  doBatchFinancePrint
+  doBatchFinancePrint,
+  setPrintStyle
 } from './do_print'
 import getCSS from './get_css'
 
@@ -15,5 +16,6 @@ export {
   BatchPrinter,
   getCSS,
   getPrintContainerHTML,
-  doBatchFinancePrint
+  doBatchFinancePrint,
+  setPrintStyle
 }

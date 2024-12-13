@@ -2,12 +2,9 @@ import i18next from '../../locales'
 import React from 'react'
 import { observer, inject } from 'mobx-react'
 import { Flex, Option, Select } from '../components'
-import {
-  RadioGroup,
-  Radio,
-} from '@gmfe/react'
+import { RadioGroup, Radio } from '@gmfe/react'
 import { InputWithUnit } from '../common/component'
-import { pageTypeMap, printDirectionList } from '../config'
+import { pageTypeMap, printDirectionList, LONG_PRINT } from '../config'
 import _ from 'lodash'
 import { dispatchMsg } from '../util'
 import PropTypes from 'prop-types'
@@ -19,7 +16,7 @@ class EditorSelector extends React.Component {
     this.props.editStore.setConfigName(e.target.value)
   }
 
-  handleConfigIsFixLastFooter = (_val) => {
+  handleConfigIsFixLastFooter = _val => {
     this.props.editStore.setConfigIsFixLastFooter(_val)
   }
 
@@ -45,13 +42,19 @@ class EditorSelector extends React.Component {
 
   render() {
     const {
-      config: { name, page, batchPrintConfig, isFixLastFooter, showDiyOverAllOrder },
+      config: {
+        name,
+        page,
+        batchPrintConfig,
+        isFixLastFooter,
+        showDiyOverAllOrder
+      },
       computedRegionList,
       computedSelectedRegionTip,
       selectedRegion
     } = this.props.editStore
     const isDIY = page.type === 'DIY'
-    
+    const isLongPrint = page.type === LONG_PRINT
     return (
       <div>
         <Flex alignCenter>
@@ -79,7 +82,7 @@ class EditorSelector extends React.Component {
           </Select>
         </Flex>
 
-        {isDIY && (
+        {(isDIY || isLongPrint) && (
           <Flex alignCenter className='gm-padding-top-5'>
             <div>{i18next.t('纸张宽度')}：</div>
             <InputWithUnit
@@ -102,21 +105,22 @@ class EditorSelector extends React.Component {
             />
           </Flex>
         )}
-
-        <Flex alignCenter className='gm-padding-top-5'>
-          <div>{i18next.t('打印布局')}：</div>
-          <Select
-            className='gm-printer-edit-select'
-            value={page.printDirection}
-            onChange={this.handlePrintDirection}
-          >
-            {_.map(printDirectionList, v => (
-              <Option key={v.value} value={v.value}>
-                {v.text}
-              </Option>
-            ))}
-          </Select>
-        </Flex>
+        {!isLongPrint && (
+          <Flex alignCenter className='gm-padding-top-5'>
+            <div>{i18next.t('打印布局')}：</div>
+            <Select
+              className='gm-printer-edit-select'
+              value={page.printDirection}
+              onChange={this.handlePrintDirection}
+            >
+              {_.map(printDirectionList, v => (
+                <Option key={v.value} value={v.value}>
+                  {v.text}
+                </Option>
+              ))}
+            </Select>
+          </Flex>
+        )}
 
         <Flex alignCenter className='gm-padding-top-5'>
           <div>{i18next.t('选择区域')}：</div>
@@ -157,21 +161,25 @@ class EditorSelector extends React.Component {
           </>
         )}
 
-        {
-          showDiyOverAllOrder !== undefined && <Flex alignCenter className='gm-padding-top-5'>
-          <label htmlFor={1}>{'是否固定末页签名和页脚区域：'}</label>
-          <RadioGroup
-            name='isFixFooter'
-            value={isFixLastFooter}
-            inline
-            onChange={this.handleConfigIsFixLastFooter}
-            className="gm-flex"
-          >
-            <Radio value={true} style={{ display: 'flex', marginRight: 10}}><span style={{ marginLeft: 5}}>是</span></Radio>
-            <Radio value={false} style={{ display: 'flex'}}><span style={{ marginLeft: 5}}>否</span></Radio>
-          </RadioGroup>
-        </Flex>
-        }
+        {showDiyOverAllOrder !== undefined && (
+          <Flex alignCenter className='gm-padding-top-5'>
+            <label htmlFor={1}>是否固定末页签名和页脚区域：</label>
+            <RadioGroup
+              name='isFixFooter'
+              value={isFixLastFooter}
+              inline
+              onChange={this.handleConfigIsFixLastFooter}
+              className='gm-flex'
+            >
+              <Radio value style={{ display: 'flex', marginRight: 10 }}>
+                <span style={{ marginLeft: 5 }}>是</span>
+              </Radio>
+              <Radio value={false} style={{ display: 'flex' }}>
+                <span style={{ marginLeft: 5 }}>否</span>
+              </Radio>
+            </RadioGroup>
+          </Flex>
+        )}
 
         <Flex className='gm-padding-top-5 gm-text-red' column>
           {computedSelectedRegionTip}
