@@ -191,7 +191,6 @@ class EditorStore {
       tr_count = Math.floor(
         this.remainPageHeihgt / this.computedTableCustomerRowHeight
       )
-      console.log(tr_count, 'tr_count')
     } else {
       tr_count = this.fillRowValue
     }
@@ -202,7 +201,6 @@ class EditorStore {
     _.map(tableData[0], (val, key) => {
       filledData[key] = ''
     })
-    console.log(tr_count, 'tr_count')
     return Array(tr_count).fill(filledData)
   }
 
@@ -238,7 +236,6 @@ class EditorStore {
       this.clearExtraTableData(dataKey)
       return
     }
-    console.log(table, 'table----------')
     this.mockData._table[dataKey] = table
   }
 

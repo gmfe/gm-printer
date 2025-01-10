@@ -128,7 +128,6 @@ class PrinterStore {
   @computed // 空数据的长度
   get filledTableLen() {
     const filledData = this.tableData.filter(x => x._isEmptyData)
-    console.log(filledData, 'filledData')
     return filledData.length
   }
 
@@ -160,26 +159,21 @@ class PrinterStore {
   getNormalTableBodyHeights(heights, dataKey) {
     if (!this.tableConfig) return heights
     const len = this.tableData.length
-    console.log(len, '=-=-=-==')
     // 如果是已经开了填充配置，回显的heights包括了填充的表格部分，关闭配置时，这种情况就要去掉填充的
     if (_.gt(heights.length, len)) return heights.slice(0, len)
-    console.log(this.tableData, 'this.tableData')
     const hasEmptyData = this.tableData.some(x => x._isEmptyData)
     const isOrderCategroy = dataKey === this.config?.autoFillConfig?.dataKey
     const { customerRowHeight = TR_BASE_HEIGHT } = this.tableConfig
     if (hasEmptyData && !this.isAutoFilling && isOrderCategroy) {
       // 如果tableData有填充的空数据， 则去掉
-      console.log('222222222222222222')
       return heights.slice(0, -this.filledTableLen)
     } else if (this.isAutoFilling && isOrderCategroy) {
       // 如果没有空数据，且isAutofilling是true,即选择了要填充数据
-      console.log('1111111111111111111111', customerRowHeight)
       return [
         ...heights,
         ...Array(this.filledTableLen).fill(_.toNumber(customerRowHeight))
       ]
     } else {
-      console.log('------------------------')
       // 正常情况
       return heights
     }
@@ -307,7 +301,6 @@ class PrinterStore {
           table.body.heights,
           dataKey
         )
-        console.log(heights, 'heights---------')
         // 表格行的索引,用于table.slice(begin, end), 分割到不同页面中
         let begin = 0
         let end = 0
@@ -610,8 +603,6 @@ class PrinterStore {
 
     table.push(...this.getFilledTableData(table))
     this.data._table[dataKey] = table
-    // this.data = cloneDeep(this.data)
-    console.log(toJS(this.data._table[dataKey]), 'this.data._table[dataKey]')
   }
 }
 
