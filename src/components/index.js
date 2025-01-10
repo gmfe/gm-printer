@@ -5,9 +5,12 @@ import { DropDown, DropDownItem, DropDownItems } from './dropdown'
 import Dialog from './dialog'
 import Switch from './switch'
 import ToolTip from './tooltip'
+import { RadioGroup, Radio } from './radio'
 
 export {
   Flex,
+  RadioGroup,
+  Radio,
   Select,
   Option,
   Tip,

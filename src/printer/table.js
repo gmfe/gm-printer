@@ -19,6 +19,7 @@ import SubtotalTr from './table_subtotal_tr'
 import PageSummary from './page_summary'
 import OverallOrder from './table_overallOrder_tr'
 import DiyOverallOrder from './table_diy_overallOrder_tr'
+import { toJS } from 'mobx'
 
 @inject('printerStore')
 @observer
@@ -40,7 +41,7 @@ class Table extends React.Component {
       const ths = tHead.querySelectorAll('th') || []
       const trs = $table.querySelectorAll('tbody tr') || []
       const detailsDiv = $table.querySelectorAll('tr td .b-table-details')
-
+      // 问题出现在这里
       printerStore.setHeight(name, getHeight($table))
 
       printerStore.setTable(name, {
@@ -168,11 +169,9 @@ class Table extends React.Component {
       printerStore,
       isSomeSubtotalTr
     } = this.props
-
     // 数据
     dataKey = getDataKey(dataKey, arrange)
     const tableData = printerStore.data._table[dataKey] || []
-
     // 列
     const columns = this.getColumns()
     // 列宽固定(避免跳页bug)
@@ -225,7 +224,6 @@ class Table extends React.Component {
       }
       return tdStyle
     }
-
     return (
       <table
         style={{
@@ -261,6 +259,7 @@ class Table extends React.Component {
             ))}
           </tr>
         </thead>
+
         <tbody>
           {_.map(_.range(range.begin, range.end), i => {
             const _special = tableData[i] && tableData[i]._special
@@ -271,11 +270,14 @@ class Table extends React.Component {
               return <SpecialTr key={i} config={config} data={_special} />
             // 如果项为空对象展现一个占满一行的td
             const isItemNone = !_.keys(tableData[i]).length
-
             return (
               <tr style={{ height: `${customerRowHeight}px` }} key={i}>
                 {isItemNone ? (
-                  <td colSpan='99' />
+                  !printerStore?.isAutoFilling ? (
+                    <td colSpan='99' />
+                  ) : (
+                    <></>
+                  )
                 ) : (
                   _.map(columns, (col, j) => {
                     return (

@@ -199,6 +199,7 @@ class ContextMenu extends React.Component {
           selected={editStore.selected}
           selectedRegion={editStore.selectedRegion}
           isAutoFilling={editStore.isAutoFilling}
+          fillIndex={editStore.fillIndex}
           lineheight={editStore.computedTableCustomerRowHeight}
           config={editStore.config}
           data={editStore.mockData}
