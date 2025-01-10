@@ -96,15 +96,16 @@ class Printer extends React.Component {
       // didMount 代表第一次渲染完成
       printerStore.setReady(true)
 
-      // 开始计算，获取各种数据
-      printerStore.computedPages()
-
       if (config.autoFillConfig?.checked) {
         this.props.printerStore.setAutofillConfig(
           config.autoFillConfig?.checked || false
         )
         this.props.printerStore.changeTableData()
       }
+      // 开始计算，获取各种数据
+      setTimeout(() => {
+        printerStore.computedPages()
+      }, 0)
 
       // 获取剩余空白高度，传到editor
       getremainpageHeight && getremainpageHeight(printerStore.remainPageHeight)
@@ -238,13 +239,15 @@ class Printer extends React.Component {
                   isAutoFilling &&
                   panel.end &&
                   content?.dataKey === autoFillConfig?.dataKey
-
+                const fillRowValue = autoFillConfig?.fillRowValue || 0
                 const end = isAutofillConfig
                   ? panel.end +
-                    Math.floor(
-                      remainPageHeight /
-                        printerStore.computedTableCustomerRowHeight
-                    )
+                    (fillRowValue === 0
+                      ? Math.floor(
+                          remainPageHeight /
+                            printerStore.computedTableCustomerRowHeight
+                        )
+                      : fillRowValue)
                   : panel.end
                 switch (panel.type) {
                   case 'table':

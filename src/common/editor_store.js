@@ -22,6 +22,9 @@ class EditorStore {
   @observable
   remainPageHeihgt = 0
 
+  @observable
+  fillRowValue = 0
+
   // 初始模板
   originConfig = null
 
@@ -58,6 +61,24 @@ class EditorStore {
 
   // 默认table的dataKey
   setTableDataKeyEffect() {} // 改变dataKey后,做的副作用操作
+
+  @action
+  setFillRowValue(value) {
+    const { autoFillConfig } = this.config
+    if (!this.selectedRegion && !autoFillConfig?.checked) return
+    this.fillRowValue = value
+    const dataKey =
+      this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
+    set(this.config, {
+      autoFillConfig: {
+        region: this.selectedRegion || autoFillConfig?.region,
+        dataKey,
+        checked: this.isAutoFilling,
+        // 填充行数字段
+        fillRowValue: this.fillRowValue
+      }
+    })
+  }
 
   defaultTableSubtotal = { show: false }
 
@@ -165,9 +186,15 @@ class EditorStore {
   getFilledTableData(tableData) {
     const { autoFillConfig } = this.config
     if (!this.selectedRegion && !autoFillConfig?.checked) return []
-    const tr_count = Math.floor(
-      this.remainPageHeihgt / this.computedTableCustomerRowHeight
-    )
+    let tr_count = 0
+    if (this.fillRowValue === 0) {
+      tr_count = Math.floor(
+        this.remainPageHeihgt / this.computedTableCustomerRowHeight
+      )
+      console.log(tr_count, 'tr_count')
+    } else {
+      tr_count = this.fillRowValue
+    }
 
     const filledData = {
       _isEmptyData: true // 表示是填充的空白数据
@@ -175,6 +202,7 @@ class EditorStore {
     _.map(tableData[0], (val, key) => {
       filledData[key] = ''
     })
+    console.log(tr_count, 'tr_count')
     return Array(tr_count).fill(filledData)
   }
 
@@ -184,20 +212,25 @@ class EditorStore {
     if (!this.selectedRegion && !autoFillConfig?.checked) return
     const dataKey =
       this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
-    const table = this.mockData._table[dataKey]
+    // 每次都更新一下？
+    const table = this.mockData._table[dataKey].filter(x => !x._isEmptyData)
+    // 赋值一下
     this.setAutoFillingConfig(isAutoFilling)
-
+    this.setFillRowValue(autoFillConfig?.fillRowValue || 0)
     set(this.config, {
       autoFillConfig: {
         region: this.selectedRegion || autoFillConfig?.region,
         dataKey,
-        checked: isAutoFilling
+        checked: isAutoFilling,
+        // 填充行数字段
+        fillRowValue: this.fillRowValue
       }
     })
 
     const hasHadEmptyData = _.some(table, data => data?._isEmptyData)
 
     // 开关打开，且之前数组不包含空数据，再进行填充
+    // && !hasHadEmptyData
     if (isAutoFilling && !hasHadEmptyData) {
       table.push(...this.getFilledTableData(table))
     }
@@ -205,6 +238,7 @@ class EditorStore {
       this.clearExtraTableData(dataKey)
       return
     }
+    console.log(table, 'table----------')
     this.mockData._table[dataKey] = table
   }
 
@@ -227,6 +261,7 @@ class EditorStore {
     this.insertPanel = 'header'
     this.mockData = data
     this.isAutoFilling = false
+    this.fillRowValue = 0
     this.isMultiDigitDecimal = false
   }
 

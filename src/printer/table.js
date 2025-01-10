@@ -168,7 +168,6 @@ class Table extends React.Component {
       printerStore,
       isSomeSubtotalTr
     } = this.props
-
     // 数据
     dataKey = getDataKey(dataKey, arrange)
     const tableData = printerStore.data._table[dataKey] || []
@@ -270,12 +269,19 @@ class Table extends React.Component {
             if (_special)
               return <SpecialTr key={i} config={config} data={_special} />
             // 如果项为空对象展现一个占满一行的td
+            console.log(
+              printerStore?.isAutoFilling,
+              'printerStore?.isAutoFilling'
+            )
             const isItemNone = !_.keys(tableData[i]).length
-
             return (
               <tr style={{ height: `${customerRowHeight}px` }} key={i}>
                 {isItemNone ? (
-                  <td colSpan='99' />
+                  !printerStore?.isAutoFilling ? (
+                    <td colSpan='99' />
+                  ) : (
+                    <></>
+                  )
                 ) : (
                   _.map(columns, (col, j) => {
                     return (
