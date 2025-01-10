@@ -1,5 +1,5 @@
 import i18next from '../../locales'
-import { action, observable, computed } from 'mobx'
+import { action, observable, computed, toJS } from 'mobx'
 import {
   getSumTrHeight,
   isMultiTable,
@@ -48,6 +48,10 @@ class PrinterStore {
   @observable
   isAutoFilling = false
 
+  // 是否自动行数填充
+  @observable
+  fillIndex = false
+
   /** 是否开启多位小数，默认不开启，取两位 */
   @observable
   isMultiDigitDecimal = false
@@ -72,6 +76,14 @@ class PrinterStore {
   @action
   setAutofillConfig(bol) {
     this.isAutoFilling = bol
+    if (!bol) {
+      this.fillIndex = false
+    }
+  }
+
+  @action
+  setFillIndex(value) {
+    this.fillIndex = value
   }
 
   @action
@@ -110,11 +122,11 @@ class PrinterStore {
     return tableConfig
   }
 
+  @computed
   get tableData() {
     if (!this.tableConfig) return []
     const { autoFillConfig } = this.config
     const { dataKey } = this.tableConfig
-
     if (autoFillConfig?.region) {
       /** 当前数据 */
       return this.data._table[dataKey] || []
@@ -125,7 +137,7 @@ class PrinterStore {
     return this.data._table[dataKey] || []
   }
 
-  // 空数据的长度
+  @computed // 空数据的长度
   get filledTableLen() {
     const filledData = this.tableData.filter(x => x._isEmptyData)
     return filledData.length
@@ -158,15 +170,12 @@ class PrinterStore {
 
   getNormalTableBodyHeights(heights, dataKey) {
     if (!this.tableConfig) return heights
-
     const len = this.tableData.length
     // 如果是已经开了填充配置，回显的heights包括了填充的表格部分，关闭配置时，这种情况就要去掉填充的
     if (_.gt(heights.length, len)) return heights.slice(0, len)
-
     const hasEmptyData = this.tableData.some(x => x._isEmptyData)
     const isOrderCategroy = dataKey === this.config?.autoFillConfig?.dataKey
     const { customerRowHeight = TR_BASE_HEIGHT } = this.tableConfig
-
     if (hasEmptyData && !this.isAutoFilling && isOrderCategroy) {
       // 如果tableData有填充的空数据， 则去掉
       return heights.slice(0, -this.filledTableLen)
@@ -194,7 +203,6 @@ class PrinterStore {
   computedData(dataKey, table, end, currentRemainTableHeight) {
     /** 当前数据 */
     const tableData = this.data._table[dataKey] || []
-
     let count = 0
     _.forEach(Array(end).fill(1), (val, i) => {
       const details = tableData[i]?.__details || []
@@ -238,11 +246,9 @@ class PrinterStore {
         return _tableData
       }
     )
-
     // 插入原table数据中
     tableData.splice(end, 1, ...splitTableData)
     this.data._table[dataKey] = tableData
-
     return detailsPageHeight
   }
 
@@ -300,7 +306,6 @@ class PrinterStore {
         let pageAccomodateTableHeight = +new Big(this.pageHeight)
           .minus(currentPageHeight)
           .toFixed(2)
-
         const heights = this.getNormalTableBodyHeights(
           table.body.heights,
           dataKey
@@ -320,7 +325,6 @@ class PrinterStore {
           let currentRemainTableHeight = 0
           /** 去最小的tr高度，用于下面的计算compare,(避免特殊情况：一般来说最小tr——height = 23, 比23还小的不考虑计算) */
           const minHeight = Math.max(getArrayMid(heights), 23)
-
           /* 遍历表格每一行，填充表格内容 */
           while (end < heights.length) {
             currentTableHeight += heights[end]
@@ -416,6 +420,7 @@ class PrinterStore {
         if (index === this.config.contents.length - 1) {
           currentPageHeight += this.height?.sign
         }
+
         if (currentPageHeight <= this.pageHeight) {
           // 空间充足，把信息加入 page，并轮下一个contents
           page.push({
@@ -435,7 +440,6 @@ class PrinterStore {
       }
     }
     this.pages.push(page)
-
     this.remainPageHeight = +Big(this.pageHeight - currentPageHeight).toFixed(0)
   }
 
@@ -499,14 +503,17 @@ class PrinterStore {
     // 做好保护，出错就返回 text
     try {
       let list = this.data._table[dataKey] || this.data._table.orders
+
       // 采购任务打印存在两个表格，第二表格没有明细，数据需要做去重
       if (dataKey === 'purchase_no_detail') {
         list = _.uniqBy(list, '序号')
       }
+
       return _.template(text, {
         interpolate: /{{([\s\S]+?)}}/g
       })({
         ...this.data.common,
+
         [i18next.t('列')]: list[index],
         [i18next.t('当前页码')]: pageIndex + 1,
         [i18next.t('页码总数')]: this.pages.length,
@@ -590,6 +597,8 @@ class PrinterStore {
     _.map(tableData[0], (val, key) => {
       filledData[key] = ''
     })
+    console.log(tr_count, 'tr_count')
+
     return Array(tr_count).fill(filledData)
   }
 
@@ -598,9 +607,23 @@ class PrinterStore {
     const { autoFillConfig } = this.config
     if (!this.isAutoFilling) return
     const dataKey = autoFillConfig?.dataKey
-    const table = this.data._table[dataKey]
-
-    table.push(...this.getFilledTableData(table))
+    const table = this.data._table[dataKey]?.filter(item => !item._isEmptyData)
+    const emptyTable = this.data._table[dataKey]?.filter(
+      item => item._isEmptyData
+    )
+    const lastKey = _.findLast(table, item => item?.序号)?.序号 + 1
+    const fillList = _.map(
+      emptyTable?.length === 0 ? this.getFilledTableData(table) : emptyTable,
+      (item, index) => {
+        if (this.fillIndex) {
+          return { ...item, 序号: index + lastKey }
+        } else {
+          return { ...item, 序号: '' }
+        }
+      }
+    )
+    console.log(fillList, 'fillList')
+    table.push(...fillList)
     this.data._table[dataKey] = table
   }
 }
