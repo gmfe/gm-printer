@@ -11,6 +11,7 @@ import Table from './table'
 import LongPrintTable from './long_print_table'
 import MergePage from './merge_page'
 import { LONG_PRINT } from '../config'
+import Big from 'big.js'
 
 // Header Sign Footer 相对特殊，要单独处理
 const Header = props => (
@@ -72,12 +73,26 @@ class Printer extends React.Component {
     if (nextProps.selectedRegion !== this.props.selectedRegion) {
       this.props.printerStore.setSelectedRegion(nextProps.selectedRegion)
     }
-    if (nextProps.isAutoFilling !== this.props.isAutoFilling) {
+
+    if (
+      nextProps.isAutoFilling !== this.props.isAutoFilling ||
+      nextProps.fillRowValue !== this.props.printerStore.fillRowValue ||
+      nextProps.fillIndex !== this.props.printerStore.fillIndex
+    ) {
       await this.props.printerStore.setAutofillConfig(nextProps.isAutoFilling)
+      await this.props.printerStore.setFillRowValue(nextProps.fillRowValue)
+      await this.props.printerStore.setFillIndex(nextProps.fillIndex)
       await this.props.printerStore.setData(nextProps.data)
       await this.props.printerStore.setReady(true)
+      if (nextProps.fillRowValue === 0) {
+        // 自适应要先reset一下 在计算高度
+        await this.props.printerStore.resetTableData()
+        await this.props.printerStore.computedPages()
+      }
+      await this.props.printerStore.changeTableData()
       await this.props.printerStore.computedPages()
     }
+
     if (nextProps.lineheight !== this.props.lineheight) {
       await this.props.getremainpageHeight(
         this.props.printerStore.remainPageHeight
@@ -96,19 +111,30 @@ class Printer extends React.Component {
       // didMount 代表第一次渲染完成
       printerStore.setReady(true)
 
-      // 开始计算，获取各种数据
-      printerStore.computedPages()
-
       if (config.autoFillConfig?.checked) {
         this.props.printerStore.setAutofillConfig(
           config.autoFillConfig?.checked || false
         )
-        this.props.printerStore.changeTableData()
+        this.props.printerStore.setFillRowValue(
+          config.autoFillConfig?.fillRowValue || 0
+        )
+        this.props.printerStore.setFillIndex(
+          config.autoFillConfig?.fillIndex || false
+        )
       }
-
+      // 开始计算，获取各种数据
+      // 如果是自适应要先计算高度，在算出行数 不是自适应就先计算行数 在计算高度
+      if (config.autoFillConfig?.fillRowValue === 0) {
+        printerStore.computedPages()
+        printerStore.changeTableData()
+      } else {
+        printerStore.changeTableData()
+        printerStore.computedPages()
+      }
       // 获取剩余空白高度，传到editor
       getremainpageHeight && getremainpageHeight(printerStore.remainPageHeight)
     }
+
     // Printer 不是立马就呈现出最终样式，有个过程。这个过程需要时间，什么 ready，不太清楚，估借 setState 来获取过程结束时刻
     this.setState({}, () => {
       this.props.onReady()
@@ -220,16 +246,19 @@ class Printer extends React.Component {
 
   renderPage() {
     const { printerStore, isSomeSubtotalTr } = this.props
-    const { config, remainPageHeight, isAutoFilling } = printerStore
+    const {
+      config,
+      remainPageHeight,
+      isAutoFilling,
+      fillRowValue
+    } = printerStore
     return (
       <>
         {_.map(printerStore.pages, (page, i) => {
           const isLastPage = i === printerStore.pages.length - 1
-
           return (
             <Page key={i}>
               <Header config={config.header} pageIndex={i} />
-
               {_.map(page, (panel, ii) => {
                 const content = config.contents[panel.index]
                 const autoFillConfig = config?.autoFillConfig || {}
@@ -237,15 +266,16 @@ class Printer extends React.Component {
                   isLastPage &&
                   isAutoFilling &&
                   panel.end &&
-                  content?.dataKey === autoFillConfig?.dataKey
-
-                const end = isAutofillConfig
-                  ? panel.end +
-                    Math.floor(
+                  content?.dataKey === autoFillConfig?.dataKey &&
+                  fillRowValue === 0
+                const endList = isAutofillConfig
+                  ? Math.floor(
                       remainPageHeight /
                         printerStore.computedTableCustomerRowHeight
                     )
-                  : panel.end
+                  : 0
+                const end = +Big(panel?.end || 0).add(endList)
+
                 switch (panel.type) {
                   case 'table':
                     return (
@@ -391,6 +421,8 @@ Printer.propTypes = {
   selected: PropTypes.string,
   selectedRegion: PropTypes.string,
   isAutoFilling: PropTypes.bool,
+  fillRowValue: PropTypes.number,
+  fillIndex: PropTypes.number,
   lineheight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   data: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,

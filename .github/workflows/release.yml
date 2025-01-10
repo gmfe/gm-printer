@@ -22,10 +22,7 @@ jobs:
           node-version: 16.x
           registry-url: 'https://registry.npmjs.org'
 
-      - name: ChangeLog
-        run: npx changelogithub
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  
 
       - name: Setup
         run: npm i -g @antfu/ni
@@ -47,3 +44,7 @@ jobs:
           fi
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          # - name: ChangeLog
+          # run: npx changelogithub
+          # env:
+          #   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
