@@ -77,6 +77,7 @@ class Panel extends React.Component {
   }
 
   render() {
+    console.log('render')
     const {
       name,
       config,
