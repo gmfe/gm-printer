@@ -226,7 +226,7 @@ class PrinterStore {
 
     // 分局明细拆分后的数据
     const splitTableData = _.map(
-      _.filter(ranges, i[0] !== i[1] || (!i[0] && !i[1])), // 过滤掉 {[0,3],[3,3]}这周情况
+      _.filter(ranges, i => i[0] !== i[1] || (!i[0] && !i[1])), // 过滤掉 {[0,3],[3,3]}这周情况
       range => {
         const _tableData = Object.assign({}, tableData[end])
         _tableData.__details = data.slice(...range)
