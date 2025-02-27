@@ -37,6 +37,9 @@ class ContextMenu extends React.Component {
         autoFillConfig?.checked,
         autoFillConfig?.dataKey
       )
+      console.log(autoFillConfig, 'autoFillConfig')
+      editStore.setTableCustomerRowCount(autoFillConfig?.tableRowCount)
+      editStore.setAutoIndexConfig(autoFillConfig?.index)
     }
     /** 初始化特殊控制的配置 */
     if (specialControlConfig?.multiDigitDecimal) {
@@ -199,10 +202,12 @@ class ContextMenu extends React.Component {
           selected={editStore.selected}
           selectedRegion={editStore.selectedRegion}
           isAutoFilling={editStore.isAutoFilling}
+          isAutoIndex={editStore.isAutoIndex}
           lineheight={editStore.computedTableCustomerRowHeight}
           config={editStore.config}
           data={editStore.mockData}
           getremainpageHeight={editStore.setRemainPageHeight}
+          setTableInfo={editStore.setTableInfo}
           overallorder={editStore.overallOrderShow}
         />
       </CommonContextMenu>

@@ -343,6 +343,30 @@ class EditorField extends React.Component {
           />
           px
         </Flex>
+        {editStore.isAutoFilling &&
+          editStore.selectedRegion ===
+            editStore.config.autoFillConfig.region && (
+            <>
+              <Flex alignCenter>
+                <>{i18next.t('设置行数')}：</>
+                <input
+                  value={editStore.tableCustomerRowCount}
+                  onChange={e => {
+                    const value = e.target.value
+                    console.log(value, '---')
+                    if (+value <= 100 && +value >= 1) {
+                      editStore.setTableCustomerRowCount(value)
+                    }
+                  }}
+                  type='number'
+                  className='gm-printer-edit-input-custom gm-margin-top-10'
+                />
+              </Flex>
+              <div className='gm-text-desc gm-margin-top-10'>
+                {i18next.t('当前区域高度/期望行数计算合适行高')}
+              </div>
+            </>
+          )}
 
         <Gap height='5px' />
 

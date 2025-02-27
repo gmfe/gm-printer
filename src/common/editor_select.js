@@ -2,7 +2,7 @@ import i18next from '../../locales'
 import React from 'react'
 import { observer, inject } from 'mobx-react'
 import { Flex, Option, Select } from '../components'
-import { RadioGroup, Radio } from '@gmfe/react'
+// import { RadioGroup, Radio } from '@gmfe/react'
 import { InputWithUnit } from '../common/component'
 import { pageTypeMap, printDirectionList, LONG_PRINT } from '../config'
 import _ from 'lodash'
@@ -164,7 +164,7 @@ class EditorSelector extends React.Component {
         {showDiyOverAllOrder !== undefined && (
           <Flex alignCenter className='gm-padding-top-5'>
             <label htmlFor={1}>是否固定末页签名和页脚区域：</label>
-            <RadioGroup
+            {/* <RadioGroup
               name='isFixFooter'
               value={isFixLastFooter}
               inline
@@ -176,8 +176,8 @@ class EditorSelector extends React.Component {
               </Radio>
               <Radio value={false} style={{ display: 'flex' }}>
                 <span style={{ marginLeft: 5 }}>否</span>
-              </Radio>
-            </RadioGroup>
+              </Radio> */}
+            {/* </RadioGroup> */}
           </Flex>
         )}
 

@@ -103,6 +103,13 @@ class Printer extends React.Component {
         this.props.printerStore.setAutofillConfig(
           config.autoFillConfig?.checked || false
         )
+        // 暂时不知道要不要
+        // this.props.printerStore.setTableCustomerRowCount(
+        //   config.autoFillConfig?.tableRowCount || 0
+        // )
+        // this.props.printerStore.setIsAutoIndex(
+        //   config.autoFillConfig?.isAutoIndex || false
+        // )
         this.props.printerStore.changeTableData()
       }
 
@@ -113,6 +120,12 @@ class Printer extends React.Component {
     this.setState({}, () => {
       this.props.onReady()
     })
+
+    console.log(
+      this.props.printerStore.height,
+      'this.props.printerStore.height'
+    )
+    this.props.setTableInfo(this.props.printerStore.height)
   }
 
   init() {
@@ -391,12 +404,14 @@ Printer.propTypes = {
   selected: PropTypes.string,
   selectedRegion: PropTypes.string,
   isAutoFilling: PropTypes.bool,
+  isAutoIndex: PropTypes.bool,
   lineheight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   data: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
   onReady: PropTypes.func,
   isSomeSubtotalTr: PropTypes.bool,
   getremainpageHeight: PropTypes.func,
+  setTableInfo: PropTypes.func,
   overallorder: PropTypes.bool
 }
 

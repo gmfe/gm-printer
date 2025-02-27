@@ -33,7 +33,6 @@ class Table extends React.Component {
 
   componentDidMount() {
     const { name, printerStore } = this.props
-
     if (!printerStore.ready) {
       const $table = this.ref.current.querySelector('table')
       const tHead = $table.querySelector('thead')
@@ -42,7 +41,6 @@ class Table extends React.Component {
       const detailsDiv = $table.querySelectorAll('tr td .b-table-details')
 
       printerStore.setHeight(name, getHeight($table))
-
       printerStore.setTable(name, {
         head: {
           height: getHeight(tHead),

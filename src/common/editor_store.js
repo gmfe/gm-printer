@@ -50,20 +50,50 @@ class EditorStore {
   @observable
   isAutoFilling = false
 
+  // 是否自动行数填充
+  @observable
+  isAutoIndex = false
+
+  // 每页的行数
+  @observable
+  tableCustomerRowCount = 0
+
+  // 开启的表格的高度
+  @observable
+  fillTableHeight = 0
+
   /** 是否开启多位小数，默认不开启，取两位 */
   @observable
   isMultiDigitDecimal = false
 
   defaultTableDataKey = 'orders'
 
+  // eslint-disable-next-line
+
+  @observable tablesInfo = null
   // 默认table的dataKey
   setTableDataKeyEffect() {} // 改变dataKey后,做的副作用操作
 
   defaultTableSubtotal = { show: false }
 
+  @action.bound
+  setTableInfo(printerTableInfo) {
+    console.log('name', printerTableInfo)
+    this.tablesInfo = printerTableInfo
+    // this.tablesInfo[name] = table
+  }
+
   @action
   setAutoFillingConfig(bol) {
     this.isAutoFilling = bol
+    if (!bol) {
+      this.isAutoIndex = false
+    }
+  }
+
+  @action
+  setAutoIndexConfig(bol) {
+    this.isAutoIndex = bol
   }
 
   @action
@@ -186,12 +216,26 @@ class EditorStore {
       this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
     const table = this.mockData._table[dataKey]
     this.setAutoFillingConfig(isAutoFilling)
-
+    this.fillTableHeight = Math.floor(
+      Number(this.tablesInfo?.[this.selectedRegion]) +
+        Number(this.remainPageHeihgt)
+    )
+    const tableRowCount = isAutoFilling
+      ? Math.floor(this.fillTableHeight / this.computedTableCustomerRowHeight)
+      : 0
+    if (isAutoFilling) {
+      this.tableCustomerRowCount = tableRowCount
+    } else {
+      this.tableCustomerRowCount = tableRowCount
+      this.fillTableHeight = 0
+    }
     set(this.config, {
       autoFillConfig: {
         region: this.selectedRegion || autoFillConfig?.region,
         dataKey,
-        checked: isAutoFilling
+        checked: isAutoFilling,
+        index: !isAutoFilling ? false : this.isAutoIndex,
+        tableRowCount: !isAutoFilling ? 0 : tableRowCount
       }
     })
 
@@ -206,6 +250,23 @@ class EditorStore {
       return
     }
     this.mockData._table[dataKey] = table
+  }
+
+  @action.bound
+  handleChangeTableIndex(isAutoIndex = false) {
+    const { autoFillConfig } = this.config
+    if (!this.selectedRegion && !autoFillConfig?.checked) return
+    const dataKey =
+      this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
+    this.setAutoIndexConfig(isAutoIndex)
+    set(this.config, {
+      autoFillConfig: {
+        region: this.selectedRegion || autoFillConfig?.region,
+        dataKey,
+        checked: this.isAutoFilling,
+        index: isAutoIndex
+      }
+    })
   }
 
   @action
@@ -1038,19 +1099,43 @@ class EditorStore {
   }
 
   @action.bound
-  setTableCustomerRowHeight(val) {
+  setTableCustomerRowHeight(val, isRow) {
+    if (!isRow) {
+      const resCount = Math.floor(this.fillTableHeight / val)
+      set(this.config, {
+        autoFillConfig: {
+          ...this.config.autoFillConfig,
+          tableRowCount: resCount
+        }
+      })
+      this.tableCustomerRowCount = resCount
+    }
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       if (arr.includes('table')) {
         this.config.contents[arr[2]] = {
           ...this.config.contents[arr[2]],
-          customerRowHeight: val
+          customerRowHeight: val,
+          customerRowCount: this.tableCustomerRowCount
         }
         // // 用于触发printer更新最新的剩余高度
         // this.setLineHeight(val)
-        this.setAutoFillingConfig(false)
+        // this.setAutoFillingConfig(false)
       }
     }
+  }
+
+  @action.bound
+  setTableCustomerRowCount(val) {
+    this.tableCustomerRowCount = val
+    set(this.config, {
+      autoFillConfig: {
+        ...this.config.autoFillConfig,
+        tableRowCount: val
+      }
+    })
+    const resHeight = Math.floor(this.fillTableHeight / val)
+    this.setTableCustomerRowHeight(resHeight, true)
   }
 
   // 获得双栏表格排列类型
