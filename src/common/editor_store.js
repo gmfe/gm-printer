@@ -1115,8 +1115,7 @@ class EditorStore {
       if (arr.includes('table')) {
         this.config.contents[arr[2]] = {
           ...this.config.contents[arr[2]],
-          customerRowHeight: val,
-          customerRowCount: this.tableCustomerRowCount
+          customerRowHeight: val
         }
         // // 用于触发printer更新最新的剩余高度
         // this.setLineHeight(val)
