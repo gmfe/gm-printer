@@ -200,8 +200,14 @@ class EditorStore {
     const filledData = {
       _isEmptyData: true // 表示是填充的空白数据
     }
+    const index = tableData[tableData.length - 1]?.['序号']
     _.map(tableData[0], (val, key) => {
-      filledData[key] = ''
+      if (key === '序号') {
+        console.log(index, tableData, 'index')
+        filledData[key] = index + 1
+      } else {
+        filledData[key] = ''
+      }
     })
     return Array(tr_count).fill(filledData)
   }
@@ -314,6 +320,8 @@ class EditorStore {
     this.insertPanel = 'header'
     this.mockData = data
     this.isAutoFilling = false
+    this.isAutoIndex = false
+    this.tableCustomerRowCount = 0
     this.isMultiDigitDecimal = false
   }
 

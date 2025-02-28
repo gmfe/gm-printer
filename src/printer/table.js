@@ -233,7 +233,11 @@ class Table extends React.Component {
         }}
       >
         <thead>
-          <tr style={{ height: `${customerRowHeight}px` }}>
+          <tr
+            style={{
+              height: `${customerRowHeight}px`
+            }}
+          >
             {_.map(columns, (col, i) => (
               <th
                 key={i}
@@ -271,7 +275,12 @@ class Table extends React.Component {
             const isItemNone = !_.keys(tableData[i]).length
 
             return (
-              <tr style={{ height: `${customerRowHeight}px` }} key={i}>
+              <tr
+                style={{
+                  height: `${customerRowHeight}px`
+                }}
+                key={i}
+              >
                 {isItemNone ? (
                   <td colSpan='99' />
                 ) : (
