@@ -338,6 +338,8 @@ class EditorField extends React.Component {
               if (+value <= 100 && +value >= 0)
                 editStore.setTableCustomerRowHeight(value)
             }}
+            min={5}
+            max={40}
             type='number'
             className='gm-printer-edit-input-custom'
           />
@@ -353,8 +355,12 @@ class EditorField extends React.Component {
                   value={editStore.tableCustomerRowCount}
                   onChange={e => {
                     const value = e.target.value
-                    console.log(value, '---')
-                    if (+value <= 100 && +value >= 1) {
+                    console.log(value, '===')
+                    if (value <= 5) {
+                      editStore.setTableCustomerRowCount(5)
+                    } else if (value >= 40) {
+                      editStore.setTableCustomerRowCount(40)
+                    } else {
                       editStore.setTableCustomerRowCount(value)
                     }
                   }}

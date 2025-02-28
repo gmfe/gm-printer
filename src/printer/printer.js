@@ -11,6 +11,7 @@ import Table from './table'
 import LongPrintTable from './long_print_table'
 import MergePage from './merge_page'
 import { LONG_PRINT } from '../config'
+import { toJS } from 'mobx'
 
 // Header Sign Footer 相对特殊，要单独处理
 const Header = props => (
@@ -120,12 +121,8 @@ class Printer extends React.Component {
     this.setState({}, () => {
       this.props.onReady()
     })
-
-    console.log(
-      this.props.printerStore.height,
-      'this.props.printerStore.height'
-    )
-    this.props.setTableInfo(this.props.printerStore.height)
+    this.props?.setTableInfo &&
+      this.props.setTableInfo(this.props.printerStore.height)
   }
 
   init() {
@@ -251,12 +248,12 @@ class Printer extends React.Component {
                   isAutoFilling &&
                   panel.end &&
                   content?.dataKey === autoFillConfig?.dataKey
-
                 const end = isAutofillConfig
                   ? panel.end +
                     Math.floor(
                       remainPageHeight /
-                        printerStore.computedTableCustomerRowHeight
+                        (autoFillConfig?.tableCustomerRowHeight ||
+                          printerStore.computedTableCustomerRowHeight)
                     )
                   : panel.end
                 switch (panel.type) {

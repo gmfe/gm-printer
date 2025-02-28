@@ -139,8 +139,8 @@ class PrinterStore {
       const _selectedRegion = this.selectedRegion || _defaultRegion
       const arr = _selectedRegion.split('.')
       if (arr.includes('table')) {
-        console.log(this.config.contents[arr[2]], '---')
         const height = this.config.contents[arr[2]]?.customerRowHeight
+
         return [undefined, ''].includes(height) ? 23 : height
       }
     }

@@ -78,9 +78,7 @@ class EditorStore {
 
   @action.bound
   setTableInfo(printerTableInfo) {
-    console.log('name', printerTableInfo)
     this.tablesInfo = printerTableInfo
-    // this.tablesInfo[name] = table
   }
 
   @action
@@ -209,6 +207,31 @@ class EditorStore {
   }
 
   @action.bound
+  setInitAutoFillConfig(autoFillConfig) {
+    set(this.config, {
+      autoFillConfig
+    })
+    this.isAutoFilling = autoFillConfig?.checked
+    this.isAutoIndex = autoFillConfig?.index
+    this.tableCustomerRowCount = autoFillConfig?.tableRowCount
+    this.fillTableHeight = autoFillConfig?.fillTableHeight
+    const dataKey =
+      this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
+    const table = this.mockData._table[dataKey]
+    const hasHadEmptyData = _.some(table, data => data?._isEmptyData)
+
+    // 开关打开，且之前数组不包含空数据，再进行填充
+    if (autoFillConfig?.checked && !hasHadEmptyData) {
+      table.push(...this.getFilledTableData(table))
+    }
+    if (!autoFillConfig?.checked) {
+      this.clearExtraTableData(dataKey)
+      return
+    }
+    this.mockData._table[dataKey] = table
+  }
+
+  @action.bound
   handleChangeTableData(isAutoFilling = false) {
     const { autoFillConfig } = this.config
     if (!this.selectedRegion && !autoFillConfig?.checked) return
@@ -218,8 +241,10 @@ class EditorStore {
     this.setAutoFillingConfig(isAutoFilling)
     this.fillTableHeight = Math.floor(
       Number(this.tablesInfo?.[this.selectedRegion]) +
-        Number(this.remainPageHeihgt)
+        Number(this.remainPageHeihgt) -
+        15
     )
+
     const tableRowCount = isAutoFilling
       ? Math.floor(this.fillTableHeight / this.computedTableCustomerRowHeight)
       : 0
@@ -235,7 +260,8 @@ class EditorStore {
         dataKey,
         checked: isAutoFilling,
         index: !isAutoFilling ? false : this.isAutoIndex,
-        tableRowCount: !isAutoFilling ? 0 : tableRowCount
+        tableRowCount: !isAutoFilling ? 0 : tableRowCount,
+        fillTableHeight: !isAutoFilling ? 0 : this.fillTableHeight
       }
     })
 
@@ -1105,7 +1131,8 @@ class EditorStore {
       set(this.config, {
         autoFillConfig: {
           ...this.config.autoFillConfig,
-          tableRowCount: resCount
+          tableRowCount: resCount,
+          tableCustomerRowHeight: val
         }
       })
       this.tableCustomerRowCount = resCount
@@ -1117,7 +1144,6 @@ class EditorStore {
           ...this.config.contents[arr[2]],
           customerRowHeight: val
         }
-        // // 用于触发printer更新最新的剩余高度
         // this.setLineHeight(val)
         // this.setAutoFillingConfig(false)
       }
@@ -1127,13 +1153,16 @@ class EditorStore {
   @action.bound
   setTableCustomerRowCount(val) {
     this.tableCustomerRowCount = val
+    const resHeight = Math.floor(this.fillTableHeight / val)
     set(this.config, {
       autoFillConfig: {
         ...this.config.autoFillConfig,
-        tableRowCount: val
+        // 行数
+        tableRowCount: val,
+        // 行高
+        tableCustomerRowHeight: resHeight
       }
     })
-    const resHeight = Math.floor(this.fillTableHeight / val)
     this.setTableCustomerRowHeight(resHeight, true)
   }
 

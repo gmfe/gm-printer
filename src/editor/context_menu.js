@@ -33,13 +33,18 @@ class ContextMenu extends React.Component {
     } = this.props
 
     if (autoFillConfig?.checked) {
-      editStore.handleChangeTableData(
-        autoFillConfig?.checked,
-        autoFillConfig?.dataKey
-      )
-      console.log(autoFillConfig, 'autoFillConfig')
-      editStore.setTableCustomerRowCount(autoFillConfig?.tableRowCount)
-      editStore.setAutoIndexConfig(autoFillConfig?.index)
+      editStore.setInitAutoFillConfig(autoFillConfig)
+      // editStore.handleChangeTableData(
+      //   autoFillConfig?.checked,
+      //   autoFillConfig?.dataKey
+      // )
+      // console.log(autoFillConfig, 'autoFillConfig')
+      // console.log(
+      //   autoFillConfig?.tableRowCount,
+      //   'autoFillConfig?.tableRowCount'
+      // )
+      // editStore.setTableCustomerRowCount(autoFillConfig?.tableRowCount)
+      // editStore.setAutoIndexConfig(autoFillConfig?.index)
     }
     /** 初始化特殊控制的配置 */
     if (specialControlConfig?.multiDigitDecimal) {
