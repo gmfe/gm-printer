@@ -190,7 +190,7 @@ class EditorStore {
   }
 
   @action
-  getFilledTableData(tableData) {
+  getFilledTableData(tableData, lastLength) {
     const { autoFillConfig } = this.config
     if (!this.selectedRegion && !autoFillConfig?.checked) return []
     const tr_count = Math.floor(
@@ -200,16 +200,19 @@ class EditorStore {
     const filledData = {
       _isEmptyData: true // 表示是填充的空白数据
     }
-    const index = tableData[tableData.length - 1]?.['序号']
     _.map(tableData[0], (val, key) => {
-      if (key === '序号') {
-        console.log(index, tableData, 'index')
-        filledData[key] = index + 1
-      } else {
-        filledData[key] = ''
-      }
+      filledData[key] = ''
     })
-    return Array(tr_count).fill(filledData)
+    let index = lastLength
+    return Array(tr_count)
+      .fill(filledData)
+      .map((item, i) => {
+        index = index + 1
+        return {
+          ...item,
+          序号: this.isAutoIndex ? index : ''
+        }
+      })
   }
 
   @action.bound
@@ -224,11 +227,14 @@ class EditorStore {
     const dataKey =
       this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
     const table = this.mockData._table[dataKey]
+    const filterTable = table.filter(item => !item?._isEmptyData)
+    const lastLength = _.findLast(filterTable, data => data?.['序号'])?.['序号']
+
     const hasHadEmptyData = _.some(table, data => data?._isEmptyData)
 
     // 开关打开，且之前数组不包含空数据，再进行填充
     if (autoFillConfig?.checked && !hasHadEmptyData) {
-      table.push(...this.getFilledTableData(table))
+      table.push(...this.getFilledTableData(table, lastLength))
     }
     if (!autoFillConfig?.checked) {
       this.clearExtraTableData(dataKey)
@@ -244,6 +250,7 @@ class EditorStore {
     const dataKey =
       this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
     const table = this.mockData._table[dataKey]
+    const lastLength = _.findLastIndex(table, data => data?.['序号'])
     this.setAutoFillingConfig(isAutoFilling)
     this.fillTableHeight = Math.floor(
       Number(this.tablesInfo?.[this.selectedRegion]) +
@@ -275,7 +282,7 @@ class EditorStore {
 
     // 开关打开，且之前数组不包含空数据，再进行填充
     if (isAutoFilling && !hasHadEmptyData) {
-      table.push(...this.getFilledTableData(table))
+      table.push(...this.getFilledTableData(table, lastLength))
     }
     if (!isAutoFilling) {
       this.clearExtraTableData(dataKey)
@@ -293,6 +300,7 @@ class EditorStore {
     this.setAutoIndexConfig(isAutoIndex)
     set(this.config, {
       autoFillConfig: {
+        ...autoFillConfig,
         region: this.selectedRegion || autoFillConfig?.region,
         dataKey,
         checked: this.isAutoFilling,

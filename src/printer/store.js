@@ -1,5 +1,5 @@
 import i18next from '../../locales'
-import { action, observable, computed } from 'mobx'
+import { action, observable, computed, toJS } from 'mobx'
 import {
   getSumTrHeight,
   isMultiTable,
@@ -48,6 +48,10 @@ class PrinterStore {
   @observable
   isAutoFilling = false
 
+  // 是否自动行数填充
+  @observable
+  isAutoIndex = false
+
   /** 是否开启多位小数，默认不开启，取两位 */
   @observable
   isMultiDigitDecimal = false
@@ -72,6 +76,11 @@ class PrinterStore {
   @action
   setAutofillConfig(bol) {
     this.isAutoFilling = bol
+  }
+
+  @action
+  setAutofillIndex(bol) {
+    this.isAutoIndex = bol
   }
 
   @action
@@ -436,7 +445,6 @@ class PrinterStore {
       }
     }
     this.pages.push(page)
-
     this.remainPageHeight = +Big(this.pageHeight - currentPageHeight).toFixed(0)
   }
 
@@ -581,14 +589,9 @@ class PrinterStore {
   getFilledTableData(tableData) {
     const { autoFillConfig } = this.config
     if (!this.selectedRegion && !autoFillConfig?.checked) return []
-    console.log(
-      this.computedTableCustomerRowHeight,
-      'computedTableCustomerRowHeight'
-    )
     const tr_count = Math.floor(
       this.remainPageHeight / this.computedTableCustomerRowHeight
     )
-
     const filledData = {
       _isEmptyData: true // 表示是填充的空白数据
     }
@@ -604,9 +607,37 @@ class PrinterStore {
     if (!this.isAutoFilling) return
     const dataKey = autoFillConfig?.dataKey
     const table = this.data._table[dataKey]
-
     table.push(...this.getFilledTableData(table))
-    this.data._table[dataKey] = table
+    const filterTable = table.filter(item => !item?._isEmptyData)
+    let lastIndex = _.findLast(filterTable, item => item?.['序号'])?.['序号']
+    console.log(lastIndex, 'lastIndex')
+    const indexArr = _.map(table, item => {
+      if (item?._isEmptyData) {
+        lastIndex = lastIndex + 1
+      }
+      return {
+        ...item,
+        序号: autoFillConfig?.index ? lastIndex : item?.序号
+      }
+    })
+
+    this.data._table[dataKey] = indexArr
+  }
+
+  @action.bound
+  tableAddIndex() {
+    const { autoFillConfig } = this.config
+    if (!this.isAutoFilling) return
+    const dataKey = autoFillConfig?.dataKey
+    const table = this.data._table[dataKey]
+    const filterTable = table.filter(item => !item?._isEmptyData)
+    const hasEmptyData = table.filter(item => item?._isEmptyData)
+    let lastLength = _.findLast(filterTable, data => data?.['序号'])?.['序号']
+    _.forEach(hasEmptyData, item => {
+      lastLength = lastLength + 1
+      item['序号'] = this.isAutoIndex ? lastLength : ''
+    })
+    this.data._table[dataKey] = filterTable.concat(hasEmptyData)
   }
 }
 

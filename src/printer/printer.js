@@ -79,6 +79,11 @@ class Printer extends React.Component {
       await this.props.printerStore.setReady(true)
       await this.props.printerStore.computedPages()
     }
+    if (nextProps.isAutoIndex !== this.props.isAutoIndex) {
+      await this.props.printerStore.setAutofillIndex(nextProps.isAutoIndex)
+      await this.props.printerStore.tableAddIndex()
+      await this.props.printerStore.computedPages()
+    }
     if (nextProps.lineheight !== this.props.lineheight) {
       await this.props.getremainpageHeight(
         this.props.printerStore.remainPageHeight
@@ -90,30 +95,29 @@ class Printer extends React.Component {
   }
 
   componentDidMount() {
-    const { printerStore, config, getremainpageHeight } = this.props
+    const {
+      printerStore,
+      config,
+      getremainpageHeight,
+      setTableInfo
+    } = this.props
     const batchPrintConfig = config.batchPrintConfig
     // 连续打印不需要计算
     if (batchPrintConfig !== 2) {
       // didMount 代表第一次渲染完成
       printerStore.setReady(true)
 
-      // 开始计算，获取各种数据
-      printerStore.computedPages()
-
       if (config.autoFillConfig?.checked) {
         this.props.printerStore.setAutofillConfig(
           config.autoFillConfig?.checked || false
         )
-        // 暂时不知道要不要
-        // this.props.printerStore.setTableCustomerRowCount(
-        //   config.autoFillConfig?.tableRowCount || 0
-        // )
-        // this.props.printerStore.setIsAutoIndex(
-        //   config.autoFillConfig?.isAutoIndex || false
-        // )
-        this.props.printerStore.changeTableData()
+        this.props.printerStore.setAutofillIndex(
+          config.autoFillConfig?.index || false
+        )
       }
-
+      // 开始计算，获取各种数据
+      printerStore.computedPages()
+      this.props.printerStore.changeTableData()
       // 获取剩余空白高度，传到editor
       getremainpageHeight && getremainpageHeight(printerStore.remainPageHeight)
     }
@@ -121,8 +125,7 @@ class Printer extends React.Component {
     this.setState({}, () => {
       this.props.onReady()
     })
-    this.props?.setTableInfo &&
-      this.props.setTableInfo(this.props.printerStore.height)
+    setTableInfo && this.props.setTableInfo(this.props.printerStore.height)
   }
 
   init() {
