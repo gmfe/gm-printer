@@ -9,6 +9,9 @@ import { Flex, Switch } from '../components'
 class EditorCutomizedConfig extends React.Component {
   handleAutoFilling = value => {
     const { editStore } = this.props
+    if (!value) {
+      editStore.setFillIndex(false)
+    }
     editStore.handleChangeTableData(value)
   }
 
@@ -17,10 +20,15 @@ class EditorCutomizedConfig extends React.Component {
     editStore.setMultiDigitDecimal(value)
   }
 
+  handleFillIndex = value => {
+    const { editStore } = this.props
+    editStore.setFillIndex(value)
+  }
+
   render() {
     const {
       editStore,
-      editStore: { isAutoFilling, isMultiDigitDecimal }
+      editStore: { isAutoFilling, isMultiDigitDecimal, fillIndex }
     } = this.props
     // 是table
     if (editStore.computedRegionIsTable) {
@@ -30,6 +38,16 @@ class EditorCutomizedConfig extends React.Component {
             <div>{i18next.t('行数是否自动填充')}：</div>
             <Switch checked={isAutoFilling} onChange={this.handleAutoFilling} />
           </Flex>
+
+          {isAutoFilling && (
+            <Flex className='gm-padding-top-5 '>
+              <div>{i18next.t('空白行是否填充序号')}：</div>
+              <Switch
+                checked={fillIndex || false}
+                onChange={this.handleFillIndex}
+              />
+            </Flex>
+          )}
           <Flex className='gm-padding-top-5 gm-text-red' column>
             {i18next.t('注意：填充仅支持单栏数据使用')}
           </Flex>

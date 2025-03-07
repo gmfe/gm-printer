@@ -7,3 +7,4 @@ logs
 .eslintcache
 build/font/
 build/demo.js
+.history/
