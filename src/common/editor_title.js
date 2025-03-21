@@ -7,7 +7,8 @@ import {
   DropDown,
   DropDownItem,
   DropDownItems,
-  Dialog
+  Dialog,
+  Tip
 } from '../components'
 import { doPrint } from '../printer'
 import { toJS } from 'mobx'
@@ -46,6 +47,13 @@ class EditorTitle extends React.Component {
   handleSave = () => {
     const { editStore, isPurchase } = this.props
     const result = editStore.config
+    console.log(result, 'result')
+    if (result.isSave) {
+      Tip.warning(
+        i18next.t('检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！')
+      )
+      return
+    }
     if (!isPurchase && result.batchPrintConfig) {
       delete result.batchPrintConfig
     }
@@ -76,7 +84,12 @@ class EditorTitle extends React.Component {
 
   handleSaveAs = () => {
     const { editStore } = this.props
-
+    if (editStore.config.isSave) {
+      Tip.warning(
+        i18next.t('检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！')
+      )
+      return
+    }
     Dialog.render({
       title: i18next.t('另存为'),
       children: <DialogChildren editStore={editStore} />,

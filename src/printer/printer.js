@@ -235,6 +235,9 @@ class Printer extends React.Component {
       <>
         {_.map(printerStore.pages, (page, i) => {
           const isLastPage = i === printerStore.pages.length - 1
+          if (page.length === 0) {
+            return null
+          }
           return (
             <Page key={i}>
               <Header config={config.header} pageIndex={i} />
