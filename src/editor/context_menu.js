@@ -18,6 +18,10 @@ const blockTypeList = [
   {
     value: 'uniform_social_credit_code',
     text: i18next.t('插入苏州安全监管平台二维码')
+  },
+  {
+    value: 'qrcode_order_id',
+    text: i18next.t('插入订单二维码')
   }
 ]
 

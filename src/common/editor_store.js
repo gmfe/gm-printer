@@ -503,7 +503,7 @@ class EditorStore {
     } else {
       return
     }
-
+    console.log('type')
     switch (type) {
       case '':
       case 'text':
@@ -587,6 +587,18 @@ class EditorStore {
             height: '75px'
           },
           text: `{{uniform_social_credit_code}}`
+        })
+        break
+      case 'qrcode_order_id':
+        blocks.push({
+          type: 'qrcode',
+          style: {
+            left: '0px',
+            top: '5px',
+            width: '75px',
+            height: '75px'
+          },
+          text: `{{qrcode_order_id}}`
         })
         break
       default:

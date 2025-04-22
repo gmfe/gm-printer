@@ -9,7 +9,6 @@ import {
 } from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
-import { Tip } from '../components'
 
 export const TR_BASE_HEIGHT = 23
 const price = (n, f = 2) => {
@@ -34,7 +33,6 @@ class PrinterStore {
 
   /** 当前页剩余空白高度 */
   @observable remainPageHeight = 0
-  @observable isSave = false
 
   data = {}
 
@@ -61,12 +59,6 @@ class PrinterStore {
   @action
   setMultiDigitDecimal(bool) {
     this.isMultiDigitDecimal = bool
-  }
-
-  @action
-  setIsSave(bool) {
-    this.isSave = bool
-    this.config.isSave = bool
   }
 
   @action
@@ -262,17 +254,12 @@ class PrinterStore {
 
   @action
   computedPages() {
-    this.setIsSave(false)
     // 每次先初始化置空
     this.pages = []
     // 每页必有 页眉header, 页脚footer , 签名
     const allPagesHaveThisHeight = this.height.header + this.height.footer
     // 退出计算! 因为页眉 + 页脚 > currentPageHeight,页面装不下其他东西
     if (allPagesHaveThisHeight > this.pageHeight) {
-      Tip.warning(
-        i18next.t('检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！')
-      )
-      this.setIsSave(true)
       return
     }
 
@@ -376,18 +363,6 @@ class PrinterStore {
                   heights.splice(end, 1, ...detailsPageHeight)
                   end++
                 }
-              }
-              // 第一页一点表格都放不下时，什么都不展示
-              if (begin === 0 && end === 0 && index === 0) {
-                index++
-                this.pages = []
-                this.setIsSave(true)
-                Tip.warning(
-                  i18next.t(
-                    '检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！'
-                  )
-                )
-                break
               }
               // 第一条极端会有问题
               if (end !== 0) {

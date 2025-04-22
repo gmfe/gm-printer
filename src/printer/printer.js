@@ -78,10 +78,6 @@ class Printer extends React.Component {
       nextProps.isAutoFilling !== this.props.isAutoFilling ||
       nextProps.fillIndex !== this.props.printerStore.fillIndex
     ) {
-      // 连续打印计算导致死循环 所以这里做了判断 五年前的提交记录是这样写的 我跟着写 在componentDidMount里写了
-      if (nextProps.config.batchPrintConfig == 2) {
-        return
-      }
       await this.props.printerStore.setAutofillConfig(nextProps.isAutoFilling)
       await this.props.printerStore.setFillIndex(nextProps.fillIndex)
       await this.props.printerStore.setData(nextProps.data)
@@ -239,9 +235,6 @@ class Printer extends React.Component {
       <>
         {_.map(printerStore.pages, (page, i) => {
           const isLastPage = i === printerStore.pages.length - 1
-          if (page.length === 0) {
-            return null
-          }
           return (
             <Page key={i}>
               <Header config={config.header} pageIndex={i} />
