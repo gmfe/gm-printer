@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react'
 import { dispatchMsg, getStyleWithDiff } from '../util'
 import BarCode from './barcode'
 import QrCode from './qrcode'
+import Tag from './tag'
 
 @inject('printerStore')
 @observer
@@ -146,6 +147,11 @@ class Block extends React.Component {
       specialStyle = { zIndex: 9 }
       content = <Counter value={value} />
       name = `${name}.counter`
+    } else if (type === 'tag') {
+      // 🌡特殊处理: counter层级(9) 比 普通block层级(10)低. 为了让普通block被选中
+      specialStyle = { zIndex: 9 }
+      content = <Tag value={value} />
+      name = `${name}.tag`
     } else if (type === 'split_order_title') {
       // ⛑‍分单打印时,特殊的标题(由station的order_print的splitOrder函数修改config)
       content = (

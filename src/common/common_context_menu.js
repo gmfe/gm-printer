@@ -383,6 +383,7 @@ class CommonContextMenu extends React.Component {
               {arr.length === 6 &&
                 arr[5] === 'counter' &&
                 this.renderCounterMenu()}
+              {arr.length === 6 && arr[5] === 'tag' && this.renderCounterMenu()}
             </div>
           </Menu>
         )}
