@@ -554,6 +554,15 @@ class EditorStore {
           }
         })
         break
+      case 'tag':
+        blocks.push({
+          type: 'tag',
+          style: {
+            left: '0px',
+            top: '0px'
+          }
+        })
+        break
       case 'barcode':
         blocks.push({
           type: 'barcode',
@@ -793,8 +802,21 @@ class EditorStore {
     } else if (newDataKey.includes('multi3') && key === 'multi') {
       newDataKey = _.without(newDataKey, 'multi3')
     }
+    // 标签小计和分类小计互斥
+    if (newDataKey.includes('category') && key === 'tag') {
+      newDataKey = _.without(newDataKey, 'category')
+    } else if (newDataKey.includes('tag') && key === 'category') {
+      newDataKey = _.without(newDataKey, 'tag')
+    }
+    // 标签小计和商品分类互斥
+    if (newDataKey.includes('newCategory') && key === 'tag') {
+      newDataKey = _.without(newDataKey, 'newCategory')
+    } else if (newDataKey.includes('tag') && key === 'newCategory') {
+      newDataKey = _.without(newDataKey, 'tag')
+    }
 
     newDataKey = _.sortBy(newDataKey, [
+      o => o === 'tag',
       o => o === 'multi3',
       o => o === 'multi',
       o => o === 'newCategory',

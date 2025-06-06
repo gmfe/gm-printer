@@ -13,6 +13,7 @@ const blockTypeList = [
   { value: 'line', text: i18next.t('插入线条') },
   { value: 'image', text: i18next.t('插入图片') },
   { value: 'counter', text: i18next.t('插入分类汇总') },
+  { value: 'tag', text: i18next.t('插入标签汇总') },
   { value: 'barcode', text: i18next.t('插入订单条形码') },
   { value: 'qrcode', text: i18next.t('插入订单溯源二维码') },
   {
@@ -119,6 +120,7 @@ class ContextMenu extends React.Component {
     const isMultiActive = keyArr.includes('multi')
     const isThreeActive = keyArr.includes('multi3')
     const isCategoryActive = keyArr.includes('category')
+    const isTagActive = keyArr.includes('tag')
     const isNewCategoryActive = keyArr.includes('newCategory')
     const isSubtotalActive = subtotal.show
     const isOverallOrder = overallOrder?.show
@@ -150,6 +152,12 @@ class ContextMenu extends React.Component {
           className={isCategoryActive ? 'active' : ''}
         >
           {i18next.t('分类小计')}
+        </div>
+        <div
+          onClick={this.handleChangeTableDataKey.bind(this, 'tag', name)}
+          className={isTagActive ? 'active' : ''}
+        >
+          {i18next.t('标签小计')}
         </div>
         <div
           onClick={this.handleCategoryConfig.bind(this, 'newCategory', name)}
