@@ -85,9 +85,12 @@ function toDoPrintBatch(list, isPrint = true) {
         list={list}
         onReady={() => {
           afterImgAndSvgLoaded(() => {
-            isPrint &&
-              templateType !== 'longPrint' &&
-              $printer.contentWindow.print()
+            // 以前的逻辑，先移除templateType的判断条件，有问题再修复
+            // isPrint &&
+            //   templateType !== 'longPrint' &&
+            //   $printer.contentWindow.print()
+            console.log('templateType', templateType)
+            isPrint && $printer.contentWindow.print()
             resolve()
           }, $app)
         }}
