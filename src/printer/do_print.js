@@ -89,7 +89,7 @@ function toDoPrintBatch(list, isPrint = true) {
             // isPrint &&
             //   templateType !== 'longPrint' &&
             //   $printer.contentWindow.print()
-            console.log('templateType', templateType)
+            // console.log('templateType', templateType)
             isPrint && $printer.contentWindow.print()
             resolve()
           }, $app)
