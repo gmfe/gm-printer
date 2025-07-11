@@ -1,12 +1,19 @@
 import EditorStore from '../common/editor_store'
-import { action } from 'mobx'
+import { action, observable } from 'mobx'
 import i18next from '../../locales'
 
 class Store extends EditorStore {
   constructor({ defaultTableDataKey }) {
     super()
     this.defaultTableDataKey = defaultTableDataKey // 修改默认dataKey
+    const arr = this.selectedRegion?.split('.')
+    if (arr?.length > 2) {
+      this.customerTag = this.config.contents[arr[2]].customerTag
+    }
   }
+
+  @observable
+  customerTag = false
 
   /* start---------设置采购明细相关--------- */
   @action.bound
@@ -99,6 +106,12 @@ class Store extends EditorStore {
   }
 
   /* end---------设置采购明细相关--------- */
+  @action.bound
+  doSomething(val) {
+    const arr = this.selectedRegion.split('.')
+    this.config.contents[arr[2]].customerTag = val
+    this.customerTag = val
+  }
 }
 
 export default new Store({ defaultTableDataKey: 'purchase_no_detail' })
