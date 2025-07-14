@@ -69,6 +69,7 @@ export default {
     },
     {
       type: 'table',
+      customerTag: true,
       columns: [
         {
           head: '序号',

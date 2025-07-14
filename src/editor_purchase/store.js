@@ -6,10 +6,6 @@ class Store extends EditorStore {
   constructor({ defaultTableDataKey }) {
     super()
     this.defaultTableDataKey = defaultTableDataKey // 修改默认dataKey
-    const arr = this.selectedRegion?.split('.')
-    if (arr?.length > 2) {
-      this.customerTag = this.config.contents[arr[2]].customerTag
-    }
   }
 
   @observable
@@ -107,10 +103,9 @@ class Store extends EditorStore {
 
   /* end---------设置采购明细相关--------- */
   @action.bound
-  doSomething(val) {
+  switchCustomerTag(val) {
     const arr = this.selectedRegion.split('.')
     this.config.contents[arr[2]].customerTag = val
-    this.customerTag = val
   }
 }
 

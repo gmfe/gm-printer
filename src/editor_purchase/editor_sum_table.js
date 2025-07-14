@@ -12,16 +12,17 @@ import { inject, observer } from 'mobx-react'
 class TableDetailEditor extends Component {
   handleSwitchChange = val => {
     const { editStore } = this.props
-    editStore.doSomething(val)
+    editStore.switchCustomerTag(val)
   }
 
   render() {
     const { editStore } = this.props
-    console.log(this.props)
     const {
       addFields: { sumTableConfig }
     } = this.props
     if (editStore.computedRegionIsTable) {
+      const arr = editStore.selectedRegion.split('.')
+      const tableConfig = editStore.config.contents[arr[2]]
       return (
         <div className='gm-margin-top-5'>
           <Flex>
@@ -29,7 +30,7 @@ class TableDetailEditor extends Component {
               {sumTableConfig.label || i18next.t('配置')}
             </div>
             <Switch
-              checked={editStore.customerTag}
+              checked={tableConfig.customerTag}
               onChange={this.handleSwitchChange}
             />
           </Flex>
