@@ -1021,6 +1021,7 @@ class EditorStore {
             specialConfig: { style: {} },
             dataKey: defaultTableDataKey, // 默认
             subtotal: defaultTableSubtotal, // 默认的每页合计配置
+            customerTag: false, // 特殊标记，用于提供用户干预功能标记
             columns: [
               {
                 head: i18next.t('表头'),

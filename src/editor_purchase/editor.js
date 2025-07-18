@@ -10,6 +10,7 @@ import EditorSelect from '../common/editor_select'
 import EditorField from '../common/editor_edit_field'
 import EditorAddField from '../common/editor_add_field'
 import EditorSpecialTable from './editor_special_table'
+import EditorSumTable from './editor_sum_table'
 import ContextMenu from './context_menu'
 import i18next from '../../locales'
 import withStore from '../common/hoc_with_store'
@@ -47,7 +48,8 @@ class Editor extends React.Component {
             <EditorAddField addFields={addFields} />
             <Gap height='5px' />
             <EditorSpecialTable addFields={addFields} />
-
+            <Gap height='5px' />
+            <EditorSumTable addFields={addFields} />
             <div id='gm-printer-tip' />
 
             <div id='gm-printer-modal' />
