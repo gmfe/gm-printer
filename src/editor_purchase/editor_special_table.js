@@ -24,7 +24,13 @@ const dataKeyList = [
   },
   { value: 'purchase_one_row', text: i18next.t('单列-总表下方一行') },
   { value: 'purchase_flex_2', text: i18next.t('双栏-总表下方一行两栏') },
-  { value: 'purchase_flex_4', text: i18next.t('四栏-总表下方一行四栏') }
+  { value: 'purchase_flex_4', text: i18next.t('四栏-总表下方一行四栏') },
+  { value: 'purchase_detail_one_row', text: i18next.t('按采购明细单行') }
+]
+
+const purchasePrintSettingDataKeyList = [
+  { value: 'goods', text: i18next.t('按商品排序') },
+  { value: 'merchant', text: i18next.t('按商户排序') }
 ]
 
 @inject('editStore')
@@ -35,8 +41,30 @@ class TableDetailEditor extends React.Component {
     editStore.setPurchaseTableKey(dataKey)
   }
 
-  handleDetailAddField = value => {
+  handlePurchaseSettingKeyChange = dataKey => {
     const { editStore } = this.props
+
+    editStore.setPurchasePrintSettingKey(dataKey)
+  }
+
+  handleDetailAddField = ({ key, value }) => {
+    const { editStore, config } = this.props
+    if (editStore.computedDataKey === 'purchase_detail_one_row') {
+      // 序号 {{列.序号}}
+      const transform = str => {
+        return str
+          .replace(/{{\s*([^}]+)\s*}}/g, '{{$1}}') // 先标准化（去掉多余空格）
+          .replace(/{{([^.\s}]+)}}/g, '{{列.$1}}')
+      }
+
+      if (config.dataKey !== 'purchase_independent_rol_sku') {
+        editStore.setPurchaseTableKey('purchase_independent_rol_sku')
+      }
+
+      editStore.addFieldToTable({ key, value: transform(value) })
+
+      return
+    }
     editStore.specialTextAddField('*' + value)
   }
 
@@ -52,10 +80,11 @@ class TableDetailEditor extends React.Component {
 
   render() {
     const {
-      addFields: { detailFields }
+      addFields: { detailFields },
+      editStore
     } = this.props
     const {
-      dataKey,
+      purchaseSettingKey,
       specialConfig: { template_text, style }
     } = this.props.config
 
@@ -67,7 +96,7 @@ class TableDetailEditor extends React.Component {
           <div>{i18next.t('采购明细')}：</div>
           <Select
             className='gm-printer-edit-select'
-            value={dataKey}
+            value={editStore.computedDataKey}
             onChange={this.handleDataKeyChange}
           >
             {_.map(dataKeyList, v => (
@@ -77,7 +106,24 @@ class TableDetailEditor extends React.Component {
             ))}
           </Select>
         </Flex>
-        {dataKey !== 'purchase_no_detail' && (
+
+        {editStore.computedDataKey === 'purchase_detail_one_row' && (
+          <Flex alignCenter className='gm-padding-top-5'>
+            <div>{i18next.t('打印设置')}：</div>
+            <Select
+              className='gm-printer-edit-select'
+              value={purchaseSettingKey}
+              onChange={this.handlePurchaseSettingKeyChange}
+            >
+              {_.map(purchasePrintSettingDataKeyList, v => (
+                <Option key={v.value} value={v.value}>
+                  {v.text}
+                </Option>
+              ))}
+            </Select>
+          </Flex>
+        )}
+        {editStore.computedDataKey !== 'purchase_no_detail' && (
           <>
             <div className='gm-padding-top-5'>
               <div>{i18next.t('添加字段')}：</div>
@@ -86,27 +132,32 @@ class TableDetailEditor extends React.Component {
                   <FieldBtn
                     key={o.key}
                     name={o.key}
-                    onClick={this.handleDetailAddField.bind(this, o.value)}
+                    onClick={this.handleDetailAddField.bind(this, o)}
                   />
                 ))}
               </Flex>
             </div>
 
-            <div className='gm-padding-top-5'>
-              <div>{i18next.t('字段设置')}：</div>
-              <Fonter style={style} onChange={this.handleSpecialStyleChange} />
-              <Separator />
-              <TextAlign
-                style={style}
-                onChange={this.handleSpecialStyleChange}
-              />
-              <Gap />
-              <Textarea
-                onChange={this.handleSpecialTextChange}
-                value={template_text}
-                placeholder={i18next.t('请输入明细字段')}
-              />
-            </div>
+            {editStore.computedDataKey !== 'purchase_detail_one_row' && (
+              <div className='gm-padding-top-5'>
+                <div>{i18next.t('字段设置')}：</div>
+                <Fonter
+                  style={style}
+                  onChange={this.handleSpecialStyleChange}
+                />
+                <Separator />
+                <TextAlign
+                  style={style}
+                  onChange={this.handleSpecialStyleChange}
+                />
+                <Gap />
+                <Textarea
+                  onChange={this.handleSpecialTextChange}
+                  value={template_text}
+                  placeholder={i18next.t('请输入明细字段')}
+                />
+              </div>
+            )}
             <TipInfo
               text={i18next.t(
                 '说明：在字段之间自行设置间隔符号,但谨慎修改{}中的内容,避免出现数据异常'

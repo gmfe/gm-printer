@@ -19,7 +19,7 @@ import SubtotalTr from './table_subtotal_tr'
 import PageSummary from './page_summary'
 import OverallOrder from './table_overallOrder_tr'
 import DiyOverallOrder from './table_diy_overallOrder_tr'
-import { toJS } from 'mobx'
+// import { toJS } from 'mobx'
 
 @inject('printerStore')
 @observer
@@ -280,6 +280,26 @@ class Table extends React.Component {
                   )
                 ) : (
                   _.map(columns, (col, j) => {
+                    const rowSpan = printerStore.templateTableRowSpan(
+                      col.text,
+                      dataKey,
+                      i,
+                      range.begin
+                    )
+                    // 说明该单元格不需要显示 已被合并
+                    if (rowSpan === -1) {
+                      return null
+                    }
+
+                    // 新的一页如果有需要合并单元格的则不显示数据
+                    if (
+                      range.begin &&
+                      range.begin === i &&
+                      Array.isArray(rowSpan)
+                    ) {
+                      return <td rowSpan={rowSpan[0]} />
+                    }
+
                     return (
                       <td
                         key={j}
@@ -288,6 +308,7 @@ class Table extends React.Component {
                           ...getTdStyle(j, col.style),
                           ...col.style
                         }}
+                        {...(rowSpan > 1 && { rowSpan: rowSpan })}
                         className={classNames({
                           active:
                             getTableColumnName(name, col.index) ===

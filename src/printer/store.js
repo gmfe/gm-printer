@@ -524,6 +524,53 @@ class PrinterStore {
     }
   }
 
+  /**
+   *
+   * @param text
+   * @param dataKey
+   * @param index
+   * @param begin
+   * @returns {number[]|number|*|number|null} -1 需要合并单元格; >1 合并的单元格数量; [] 表示分页需要合并的行数; null 表示不需要合并
+   */
+  templateTableRowSpan(text, dataKey, index, begin) {
+    try {
+      if (
+        dataKey !== 'purchase_detail_one_row' &&
+        dataKey !== 'purchase_independent_rol_sku' &&
+        dataKey !== 'purchase_independent_rol_address'
+      ) {
+        return null
+      }
+      const list = this.data._table[dataKey] || this.data._table.orders
+
+      const interpolate = /{{([\s\S]+?)}}/g
+      const match = interpolate.exec(text)
+      // 显示在表格上的 th 名
+      const showFiledText = match[1].split('.')[1]
+
+      if (list[index]._mergeCell.some(v => v === showFiledText)) {
+        // 新的一页，需要重新合并
+        if (index && index === begin && list[index]._origin.rowSpan === -1) {
+          // 新的一页需要还需要合并的单元格数量
+          let newPageCellRowSpan = 1
+          for (let i = index - 1; i < list.length; i--) {
+            const record = list[i]
+            if (record._origin.rowSpan > 1) {
+              newPageCellRowSpan = record._origin.rowSpan - (index - i)
+              break
+            }
+          }
+          return [newPageCellRowSpan]
+        }
+
+        return list[index]._origin?.rowSpan || 1
+      }
+      return 1
+    } catch (err) {
+      return null
+    }
+  }
+
   templateTable(text, dataKey, index, pageIndex) {
     // 做好保护，出错就返回 text
     try {

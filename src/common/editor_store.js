@@ -1054,11 +1054,61 @@ class EditorStore {
       const arr = this.selectedRegion.split('.')
       const table = this.config.contents[arr[2]]
 
+      const getDataKey = () => {
+        if (dataKey === 'purchase_detail_one_row') {
+          if (!table.purchaseSettingKey) {
+            this.setPurchasePrintSettingKey()
+            return dataKey
+          }
+          if (table.purchaseSettingKey === 'goods') {
+            return 'purchase_independent_rol_sku'
+          }
+          if (table.purchaseSettingKey === 'address') {
+            return 'purchase_independent_rol_address'
+          }
+        }
+        return dataKey
+      }
+
+      dataKey = getDataKey()
+
       this.selected = null // 清空点中项
       table.dataKey = dataKey
       // 改变dataKey后做副作用action
       this.setTableDataKeyEffect(table, dataKey)
       this.clearAllTableEmptyData()
+    }
+  }
+
+  // 采购明细商品打印设置
+  @action.bound setPurchasePrintSettingKey(dataKey = 'goods') {
+    const arr = this.selectedRegion.split('.')
+    const table = this.config.contents[arr[2]]
+    table.purchaseSettingKey = dataKey
+
+    set(table, {
+      purchaseSettingKey: dataKey,
+      dataKey:
+        dataKey === 'goods'
+          ? 'purchase_independent_rol_sku'
+          : 'purchase_independent_rol_address'
+    })
+  }
+
+  // 用于 采购明细 select 的显示
+  @computed get computedDataKey() {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+
+      const { dataKey } = table
+      if (
+        dataKey === 'purchase_independent_rol_sku' ||
+        dataKey === 'purchase_independent_rol_address'
+      ) {
+        return 'purchase_detail_one_row'
+      }
+      return dataKey
     }
   }
 
