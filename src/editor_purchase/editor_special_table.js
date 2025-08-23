@@ -56,9 +56,16 @@ class TableDetailEditor extends React.Component {
           .replace(/{{\s*([^}]+)\s*}}/g, '{{$1}}') // 先标准化（去掉多余空格）
           .replace(/{{([^.\s}]+)}}/g, '{{列.$1}}')
       }
-
-      if (config.dataKey !== 'purchase_independent_rol_sku') {
+      if (
+        config.purchaseSettingKey === 'goods' &&
+        config.dataKey !== 'purchase_independent_rol_sku'
+      ) {
         editStore.setPurchaseTableKey('purchase_independent_rol_sku')
+      } else if (
+        config.purchaseSettingKey === 'merchant' &&
+        config.dataKey !== 'purchase_independent_rol_address'
+      ) {
+        editStore.setPurchaseTableKey('purchase_independent_rol_address')
       }
 
       editStore.addFieldToTable({ key, value: transform(value) })
