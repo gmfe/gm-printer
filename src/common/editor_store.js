@@ -1063,7 +1063,7 @@ class EditorStore {
           if (table.purchaseSettingKey === 'goods') {
             return 'purchase_independent_rol_sku'
           }
-          if (table.purchaseSettingKey === 'address') {
+          if (table.purchaseSettingKey === 'merchant') {
             return 'purchase_independent_rol_address'
           }
         }
