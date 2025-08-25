@@ -115,20 +115,27 @@ class TableDetailEditor extends React.Component {
         </Flex>
 
         {editStore.computedDataKey === 'purchase_detail_one_row' && (
-          <Flex alignCenter className='gm-padding-top-5'>
-            <div>{i18next.t('打印设置')}：</div>
-            <Select
-              className='gm-printer-edit-select'
-              value={purchaseSettingKey}
-              onChange={this.handlePurchaseSettingKeyChange}
-            >
-              {_.map(purchasePrintSettingDataKeyList, v => (
-                <Option key={v.value} value={v.value}>
-                  {v.text}
-                </Option>
-              ))}
-            </Select>
-          </Flex>
+          <>
+            <Flex alignCenter className='gm-padding-top-5'>
+              <div>{i18next.t('打印设置')}：</div>
+              <Select
+                className='gm-printer-edit-select'
+                value={purchaseSettingKey}
+                onChange={this.handlePurchaseSettingKeyChange}
+              >
+                {_.map(purchasePrintSettingDataKeyList, v => (
+                  <Option key={v.value} value={v.value}>
+                    {v.text}
+                  </Option>
+                ))}
+              </Select>
+            </Flex>
+            <TipInfo
+              text={i18next.t(
+                '  说明：该设置仅对采购任务导出/打印/分享有效！对采购单据无效。'
+              )}
+            />
+          </>
         )}
         {editStore.computedDataKey !== 'purchase_no_detail' && (
           <>
