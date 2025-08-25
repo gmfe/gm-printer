@@ -153,30 +153,32 @@ class TableDetailEditor extends React.Component {
             </div>
 
             {editStore.computedDataKey !== 'purchase_detail_one_row' && (
-              <div className='gm-padding-top-5'>
-                <div>{i18next.t('字段设置')}：</div>
-                <Fonter
-                  style={style}
-                  onChange={this.handleSpecialStyleChange}
+              <>
+                <div className='gm-padding-top-5'>
+                  <div>{i18next.t('字段设置')}：</div>
+                  <Fonter
+                    style={style}
+                    onChange={this.handleSpecialStyleChange}
+                  />
+                  <Separator />
+                  <TextAlign
+                    style={style}
+                    onChange={this.handleSpecialStyleChange}
+                  />
+                  <Gap />
+                  <Textarea
+                    onChange={this.handleSpecialTextChange}
+                    value={template_text}
+                    placeholder={i18next.t('请输入明细字段')}
+                  />
+                </div>
+                <TipInfo
+                  text={i18next.t(
+                    '说明：在字段之间自行设置间隔符号,但谨慎修改{}中的内容,避免出现数据异常'
+                  )}
                 />
-                <Separator />
-                <TextAlign
-                  style={style}
-                  onChange={this.handleSpecialStyleChange}
-                />
-                <Gap />
-                <Textarea
-                  onChange={this.handleSpecialTextChange}
-                  value={template_text}
-                  placeholder={i18next.t('请输入明细字段')}
-                />
-              </div>
+              </>
             )}
-            <TipInfo
-              text={i18next.t(
-                '说明：在字段之间自行设置间隔符号,但谨慎修改{}中的内容,避免出现数据异常'
-              )}
-            />
           </>
         )}
       </div>
