@@ -40,7 +40,14 @@ export const noSubtotalBtnTableDataKeySet = new Set(
 @observer
 class Editor extends React.Component {
   render() {
-    const { onSave, showEditor, addFields, showNewDate, mockData } = this.props
+    const {
+      onSave,
+      showEditor,
+      addFields,
+      showNewDate,
+      mockData,
+      mergeClassificationAndLabel
+    } = this.props
 
     return (
       <div className='gm-printer-edit'>
@@ -83,6 +90,7 @@ class Editor extends React.Component {
             <EditorField
               tableDataKeyList={tableDataKeyList}
               showNewDate={showNewDate}
+              mergeClassificationAndLabel={mergeClassificationAndLabel}
             />
             <Gap height='5px' />
             <EditorAddField addFields={addFields} />
@@ -109,7 +117,8 @@ Editor.propTypes = {
   showEditor: PropTypes.bool,
   mockData: PropTypes.object.isRequired,
   addFields: PropTypes.object.isRequired,
-  showNewDate: PropTypes.bool
+  showNewDate: PropTypes.bool,
+  mergeClassificationAndLabel: PropTypes.bool
 }
 
 Editor.defaultProps = {

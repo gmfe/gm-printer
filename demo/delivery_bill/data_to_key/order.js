@@ -691,7 +691,10 @@ function order(data) {
         text: `${key}小计：${subtotal}`,
         upperCaseText: `${key}小计：${subtotal}&nbsp;&nbsp;&nbsp;大写：${coverDigit2Uppercase(
           subtotal
-        )}`
+        )}`,
+        isUpperCaseBefore: `大写：${coverDigit2Uppercase(
+          subtotal
+        )}&nbsp;&nbsp;&nbsp;${key}小计：${subtotal}`
       }
     }
 
