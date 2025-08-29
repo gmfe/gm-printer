@@ -1298,12 +1298,19 @@ class EditorStore {
         }
       }
 
-      set(tableConfig, {
-        specialConfig: {
-          ...tableConfig.specialConfig,
-          [key]: newValue
-        }
-      })
+      const specialConfig = {
+        ...tableConfig.specialConfig,
+        [key]: newValue
+      }
+      if (!tableConfig.specialConfig?.fields?.[0]) {
+        specialConfig.fields = [
+          {
+            valueField: '出库金额'
+          }
+        ]
+      }
+
+      set(tableConfig, { specialConfig })
 
       // 没有大写金额时，将大写在前和大小写分开的多选框设置为false
       if (tableConfig?.specialConfig?.needUpperCase === false) {
