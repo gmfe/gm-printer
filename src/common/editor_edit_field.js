@@ -756,7 +756,7 @@ class EditorField extends React.Component {
                         inputName='classificationAndLabelTallyRadio'
                         checked={
                           (specialConfig?.fields?.[0]?.valueField ??
-                            '出库金额') === fields.id
+                            '下单金额') === fields.id
                         }
                         radioChecked={() =>
                           editStore.setClassificationAndLabelTallyField(fields)

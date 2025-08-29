@@ -1305,7 +1305,7 @@ class EditorStore {
       if (!tableConfig.specialConfig?.fields?.[0]) {
         specialConfig.fields = [
           {
-            valueField: '出库金额'
+            valueField: '下单金额'
           }
         ]
       }
