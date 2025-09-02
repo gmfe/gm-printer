@@ -95,6 +95,9 @@ const SpecialTr = ({ data, config }) => {
         throw Error('_special缺少text,请检查data_to_key处理table数据代码!')
 
       if (isUpperLowerCaseSeparate) {
+        const htmlStr = isUpperCaseBefore
+          ? data[fields[0].valueField]?.upperLowerCaseSeparateAndUpperCaseBefore
+          : data[fields[0].valueField]?.upperLowerCaseSeparate
         return (
           <tr>
             <td
@@ -102,11 +105,10 @@ const SpecialTr = ({ data, config }) => {
               style={Object.assign({ fontWeight: 'bold' }, style)}
             >
               <Flex
-                className='gm-flex-page gm-flex-justify-between-page gm-flex-grow-page'
+                className='gm-flex-page gm-flex-justify-between-page'
+                style={{ 'justify-content': 'space-between' }}
                 dangerouslySetInnerHTML={{
-                  __html:
-                    data[fields[0].valueField]?.upperLowerCaseSeparate ||
-                    data.text
+                  __html: htmlStr || data.text
                 }}
               />
             </td>
