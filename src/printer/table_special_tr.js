@@ -102,7 +102,7 @@ const SpecialTr = ({ data, config }) => {
               style={Object.assign({ fontWeight: 'bold' }, style)}
             >
               <Flex
-                className='gm-flex-justify-between'
+                className='gm-flex-page gm-flex-justify-between-page gm-flex-grow-page'
                 dangerouslySetInnerHTML={{
                   __html:
                     data[fields[0].valueField]?.upperLowerCaseSeparate ||
