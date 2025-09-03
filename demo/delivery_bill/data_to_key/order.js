@@ -444,7 +444,7 @@ function generateMulti3Data(list, categoryTotal) {
     multiList.push({
       ...sku1,
       ...sku2,
-      ...sku3,
+      ...sku3
     })
 
     index += 3
@@ -678,20 +678,31 @@ function order(data) {
   _.forEach(groupByCategory1, (value, key) => {
     // 分类小计
     let subtotal = Big(0)
+    // 下单金额
+    let subTotalPrice = Big(0)
+    // 实际金额
+    let subAccountPrice = Big(0)
     const list = _.map(value, sku => {
       subtotal = subtotal.plus(sku._origin.real_item_price)
+      subTotalPrice = subTotalPrice.plus(sku._origin.total_item_price)
+      // 没有这个字段，则设置为0
+      subAccountPrice = subAccountPrice.plus(sku._origin.account_price || 0)
       return {
         ...sku,
         序号: index++
       }
     })
     subtotal = subtotal.toFixed(2)
+    subTotalPrice = subTotalPrice.toFixed(2)
+    subAccountPrice = subAccountPrice.toFixed(2)
     const categoryTotal = {
       _special: {
-        text: `${key}小计：${subtotal}`,
-        upperCaseText: `${key}小计：${subtotal}&nbsp;&nbsp;&nbsp;大写：${coverDigit2Uppercase(
-          subtotal
-        )}`
+        text: `${key}小计：${subTotalPrice}`,
+        ...getTotalAmount(key, {
+          subtotal,
+          subTotalPrice,
+          subAccountPrice
+        })
       }
     }
 
@@ -743,6 +754,54 @@ function order(data) {
       turnover // 周转物
     },
     _origin: data
+  }
+}
+
+/**
+ * 获取合计金额数据
+ * @param key
+ * @param options subtotal 出库金额， subTotalPrice 下单金额， subAccountPrice 实际金额
+ * @returns {{出库金额: {text: string, upperCaseText: string, upperCaseBefore: string, upperLowerCaseSeparate: string}, 下单金额: {text: string, upperCaseText: string, upperCaseBefore: string, upperLowerCaseSeparate: string}, 实际金额: {text: string, upperCaseText: string, upperCaseBefore: string, upperLowerCaseSeparate: string}}}
+ */
+function getTotalAmount(key, options) {
+  const { subtotal = 0, subTotalPrice = 0, subAccountPrice = 0 } = options
+  return {
+    出库金额: {
+      text: `${key}小计：${subtotal}`,
+      upperCaseText: `${key}小计：${subtotal}&nbsp;&nbsp;&nbsp;大写：${coverDigit2Uppercase(
+        subtotal
+      )}`,
+      upperCaseBefore: `${key}小计：${coverDigit2Uppercase(
+        subtotal
+      )}&nbsp;&nbsp;&nbsp;${subtotal}`,
+      upperLowerCaseSeparate: `<div>${key}小计：${coverDigit2Uppercase(
+        subtotal
+      )}</div><div>${subtotal}</div>`
+    },
+    下单金额: {
+      text: `${key}小计：${subTotalPrice}`,
+      upperCaseText: `${key}小计：${subTotalPrice}&nbsp;&nbsp;&nbsp;大写：${coverDigit2Uppercase(
+        subTotalPrice
+      )}`,
+      upperCaseBefore: `${key}小计：${coverDigit2Uppercase(
+        subTotalPrice
+      )}&nbsp;&nbsp;&nbsp;${subTotalPrice}`,
+      upperLowerCaseSeparate: `<div>${key}小计：${coverDigit2Uppercase(
+        subTotalPrice
+      )}</div><div>${subTotalPrice}</div>`
+    },
+    实际金额: {
+      text: `${key}小计：${subAccountPrice}`,
+      upperCaseText: `${key}小计：${subAccountPrice}&nbsp;&nbsp;&nbsp;大写：${coverDigit2Uppercase(
+        subAccountPrice
+      )}`,
+      upperCaseBefore: `${key}小计：${coverDigit2Uppercase(
+        subAccountPrice
+      )}&nbsp;&nbsp;&nbsp;${subAccountPrice}`,
+      upperLowerCaseSeparate: `<div>${key}小计：${coverDigit2Uppercase(
+        subAccountPrice
+      )}</div><div>${subAccountPrice}</div>`
+    }
   }
 }
 

@@ -14,6 +14,7 @@ const DeliveryEditor = ({ handleSave }) => (
     mockData={toKey(deliveryData)}
     onSave={handleSave}
     showEditor
+    mergeClassificationAndLabel
     addFields={DeliveryAddFields}
   />
 )

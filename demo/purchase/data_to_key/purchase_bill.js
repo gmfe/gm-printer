@@ -2,7 +2,13 @@ import moment from 'moment'
 import i18next from '../../../locales'
 import _ from 'lodash'
 import Big from 'big.js'
-import { money, toFixed2, getSpecialTable } from './util'
+import {
+  money,
+  toFixed2,
+  getSpecialTable,
+  getPurchaseIndependentRolSku,
+  getPurchaseIndependentRolAddress
+} from './util'
 import {convertNumber2Sid, coverDigit2Uppercase} from '../../util'
 const Price = {
   getUnit() {
@@ -122,6 +128,12 @@ function purchaseBill(data) {
     [i18next.t('任务数')]: tasks.length
   }
 
+  console.log('==> bill:', tasks)
+  const purchase_independent_rol_sku = getPurchaseIndependentRolSku(tasks)
+  const purchase_independent_rol_address = getPurchaseIndependentRolAddress(
+    tasks
+  )
+
   const normalTable = generateTable(tasks)
 
   // 按一级分类分组
@@ -165,7 +177,11 @@ function purchaseBill(data) {
         []
       ), // 明细: 当行-总表下方一行
       purchase_flex_2: getSpecialTable(normalTable, 2, 'flex'), // 明细: 两栏-总表下方一行两栏
-      purchase_flex_4: getSpecialTable(normalTable, 4, 'flex') // 明细: 四栏-总表下方一行四栏
+      purchase_flex_4: getSpecialTable(normalTable, 4, 'flex'), // 明细: 四栏-总表下方一行四栏
+
+      purchase_detail_one_row: normalTable, // 明细按采购明细单行 无明细字段
+      purchase_independent_rol_sku, // 明细按采购明细单行 商品排序 且有明细字段
+      purchase_independent_rol_address, // 明细按采购明细单行 按商户排序 有明细字段
     }
   }
 }

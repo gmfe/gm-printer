@@ -3,6 +3,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import { observer } from 'mobx-react'
 import { has, get } from 'mobx'
+import { Flex } from '../components'
 
 /**
  * 分类小计组件
@@ -13,7 +14,15 @@ import { has, get } from 'mobx'
 const SpecialTr = ({ data, config }) => {
   const specialConfig =
     has(config, 'specialConfig') && get(config, 'specialConfig')
-  const { style, template_text, separator, needUpperCase } = specialConfig
+  const {
+    style,
+    template_text,
+    separator,
+    needUpperCase,
+    isUpperCaseBefore,
+    isUpperLowerCaseSeparate,
+    fields
+  } = specialConfig
   const { list, type, fixedSize } = data
 
   let compiled
@@ -85,16 +94,46 @@ const SpecialTr = ({ data, config }) => {
       if (!data.text)
         throw Error('_special缺少text,请检查data_to_key处理table数据代码!')
 
+      if (isUpperLowerCaseSeparate) {
+        const htmlStr = isUpperCaseBefore
+          ? data[fields[0].valueField]?.upperLowerCaseSeparateAndUpperCaseBefore
+          : data[fields[0].valueField]?.upperLowerCaseSeparate
+        return (
+          <tr>
+            <td
+              colSpan={99}
+              style={Object.assign({ fontWeight: 'bold' }, style)}
+            >
+              <Flex
+                className='gm-flex-page gm-flex-justify-between-page'
+                style={{ 'justify-content': 'space-between' }}
+                dangerouslySetInnerHTML={{
+                  __html: htmlStr || data.text
+                }}
+              />
+            </td>
+          </tr>
+        )
+      }
+
+      // eslint-disable-next-line no-case-declarations
+      const getHtml = () => {
+        if (isUpperCaseBefore) {
+          return data[fields[0].valueField]?.upperCaseBefore
+        }
+        if (needUpperCase) {
+          return data[fields[0].valueField]?.upperCaseText
+        }
+        return data[fields?.[0]?.valueField]?.text || data.text
+      }
+
       return (
         <tr>
           <td
             colSpan={99}
             style={Object.assign({ fontWeight: 'bold' }, style)}
             dangerouslySetInnerHTML={{
-              __html:
-                needUpperCase && data.upperCaseText
-                  ? data.upperCaseText
-                  : data.text
+              __html: getHtml() || data.text
             }}
           />
         </tr>

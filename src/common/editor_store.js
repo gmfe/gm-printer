@@ -1271,6 +1271,76 @@ class EditorStore {
     }
   }
 
+  // 分类/标签 小计
+  @action.bound setClassificationAndLabelTally(key, value = null) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const tableConfig = this.config.contents[arr[2]]
+
+      const initValue = {
+        style: {},
+        needUpperCase: false,
+        isUpperCaseBefore: false,
+        isUpperLowerCaseSeparate: false
+      }
+
+      const oldValue = tableConfig.specialConfig
+        ? tableConfig.specialConfig[key] || initValue[key]
+        : initValue[key]
+
+      let newValue = null
+      if (typeof oldValue === 'boolean' && !value) {
+        newValue = !oldValue
+      } else if (typeof value === 'object' && value !== null) {
+        newValue = {
+          ...oldValue,
+          ...value
+        }
+      }
+
+      const specialConfig = {
+        ...tableConfig.specialConfig,
+        [key]: newValue
+      }
+      if (!tableConfig.specialConfig?.fields?.[0]) {
+        specialConfig.fields = [
+          {
+            valueField: '下单金额'
+          }
+        ]
+      }
+
+      set(tableConfig, { specialConfig })
+
+      // 没有大写金额时，将大写在前和大小写分开的多选框设置为false
+      if (tableConfig?.specialConfig?.needUpperCase === false) {
+        tableConfig.specialConfig.isUpperCaseBefore &&
+          set(tableConfig.specialConfig, { isUpperCaseBefore: false })
+        tableConfig.specialConfig.isUpperLowerCaseSeparate &&
+          set(tableConfig.specialConfig, { isUpperLowerCaseSeparate: false })
+      }
+    }
+  }
+
+  // 分类/标签 小计设置金额字段
+  @action.bound setClassificationAndLabelTallyField(fields) {
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const tableConfig = this.config.contents[arr[2]]
+
+      set(tableConfig, {
+        specialConfig: {
+          ...tableConfig.specialConfig,
+          fields: [
+            {
+              valueField: fields.id
+            }
+          ]
+        }
+      })
+    }
+  }
+
   @action.bound
   setSpecialUpperCase() {
     if (this.selectedRegion) {

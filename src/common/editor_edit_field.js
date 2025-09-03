@@ -78,6 +78,11 @@ class EditorField extends React.Component {
     editStore.setCategoryStyle(value)
   }
 
+  handleClassificationAndLabelTally = style => {
+    const { editStore } = this.props
+    editStore.setClassificationAndLabelTally('style', style)
+  }
+
   handleSubtotalStyleChange = value => {
     const { editStore } = this.props
     editStore.setSubtotalStyle(value)
@@ -198,7 +203,12 @@ class EditorField extends React.Component {
   }
 
   renderTable() {
-    const { tableDataKeyList, editStore, isSomeSubtotalTr } = this.props
+    const {
+      tableDataKeyList,
+      editStore,
+      isSomeSubtotalTr,
+      mergeClassificationAndLabel
+    } = this.props
     const { head, headStyle, text, style } = editStore.computedSelectedInfo
     const { config } = editStore
     const isLongPrint = config?.page?.type === LONG_PRINT
@@ -294,6 +304,22 @@ class EditorField extends React.Component {
     const diyOverallOrderValueField =
       editStore.computedTableSpecialConfig?.diyOverallOrder?.fields?.[0]
         .valueField
+
+    // 分类/标签小计 是否需要大写
+    const classificationAndLabelTallyNeedUpperCase =
+      (editStore.computedTableSpecialConfig?.specialConfig &&
+        get(specialConfig, 'needUpperCase')) ||
+      false
+    const classificationAndLabelTallyUpperCaseBefore =
+      (editStore.computedTableSpecialConfig?.specialConfig &&
+        get(specialConfig, 'isUpperCaseBefore')) ||
+      false
+    // 自定义整单合计大写和小写的金额是否分开
+    const classificationAndLabelTallyLowerCaseSeparate =
+      (editStore.computedTableSpecialConfig?.specialConfig &&
+        get(specialConfig, 'isUpperLowerCaseSeparate')) ||
+      false
+
     return (
       <div>
         <Title title={i18next.t('编辑字段')} />
@@ -446,38 +472,41 @@ class EditorField extends React.Component {
         />
         <Gap />
 
-        <Flex>
-          <Flex>{i18next.t('分类设置')}：</Flex>
-          <Fonter
-            style={categoryStyle}
-            onChange={this.handleCategoryStyleChange}
-          />
-          <Separator />
-          <TextAlign
-            style={categoryStyle}
-            onChange={this.handleCategoryStyleChange}
-          />
-        </Flex>
+        {!mergeClassificationAndLabel && (
+          <>
+            <Flex>
+              <Flex>{i18next.t('分类设置')}：</Flex>
+              <Fonter
+                style={categoryStyle}
+                onChange={this.handleCategoryStyleChange}
+              />
+              <Separator />
+              <TextAlign
+                style={categoryStyle}
+                onChange={this.handleCategoryStyleChange}
+              />
+            </Flex>
 
-        <Flex>
-          <Flex>{i18next.t('小计设置')}：</Flex>
-          <Fonter
-            style={specialStyle}
-            onChange={this.handleSpecialStyleChange}
-          />
-          <Separator />
-          <TextAlign
-            style={specialStyle}
-            onChange={this.handleSpecialStyleChange}
-          />
-        </Flex>
-
-        <EditorSubtotalCheck
-          subtotalCheckDisabled
-          subtotalChecked={specialTrNeedUpperCase}
-          subtotalCheckOnChange={editStore.setSpecialUpperCase}
-          subtotalCheckText='显示大写金额'
-        />
+            <Flex>
+              <Flex>{i18next.t('小计设置')}：</Flex>
+              <Fonter
+                style={specialStyle}
+                onChange={this.handleSpecialStyleChange}
+              />
+              <Separator />
+              <TextAlign
+                style={specialStyle}
+                onChange={this.handleSpecialStyleChange}
+              />
+            </Flex>
+            <EditorSubtotalCheck
+              subtotalCheckDisabled
+              subtotalChecked={specialTrNeedUpperCase}
+              subtotalCheckOnChange={editStore.setSpecialUpperCase}
+              subtotalCheckText='显示大写金额'
+            />
+          </>
+        )}
 
         <Flex>
           <Flex>{i18next.t('每页合计设置')}：</Flex>
@@ -685,7 +714,10 @@ class EditorField extends React.Component {
                       : ''
                   }
                   onChange={editStore.setDiyOverallOrderFields}
-                  style={{ width: '100px', margin: '5px 0 5px 0px' }}
+                  style={{
+                    width: '100px',
+                    margin: '5px 0 5px 0px'
+                  }}
                 />
               </Flex>
               <Textarea
@@ -698,6 +730,79 @@ class EditorField extends React.Component {
               <TipInfo text={i18next.t('不支持双栏和三栏模式')} />
             </div>
           </Flex>
+        )}
+        {mergeClassificationAndLabel && (
+          <>
+            <Flex>{i18next.t('分类/标签小计')}：</Flex>
+            <Flex style={{ marginLeft: 57 }}>
+              <div>
+                <Fonter
+                  style={specialStyle}
+                  onChange={this.handleClassificationAndLabelTally}
+                />
+                <Separator />
+                <TextAlign
+                  style={specialStyle}
+                  onChange={this.handleClassificationAndLabelTally}
+                />
+                <Flex style={{ marginLeft: 0 }}>
+                  {subtotalRadioList.map((fields, i) => {
+                    return (
+                      <Radio
+                        style={{ marginLeft: 5 }}
+                        id={`${fields.id}${i}`}
+                        value={fields.value}
+                        key={fields.id}
+                        inputName='classificationAndLabelTallyRadio'
+                        checked={
+                          (specialConfig?.fields?.[0]?.valueField ??
+                            '下单金额') === fields.id
+                        }
+                        radioChecked={() =>
+                          editStore.setClassificationAndLabelTallyField(fields)
+                        }
+                      />
+                    )
+                  })}
+                </Flex>
+                <EditorSubtotalCheck
+                  subtotalCheckDisabled
+                  subtotalChecked={classificationAndLabelTallyNeedUpperCase}
+                  subtotalCheckOnChange={() =>
+                    editStore.setClassificationAndLabelTally('needUpperCase')
+                  }
+                  subtotalCheckText='显示大写金额'
+                  marginLeft
+                />
+                <EditorSubtotalCheck
+                  subtotalCheckDisabled={
+                    classificationAndLabelTallyNeedUpperCase
+                  }
+                  subtotalChecked={classificationAndLabelTallyUpperCaseBefore}
+                  subtotalCheckOnChange={() =>
+                    editStore.setClassificationAndLabelTally(
+                      'isUpperCaseBefore'
+                    )
+                  }
+                  subtotalCheckText='大写金额在前'
+                  marginLeft
+                />
+                <EditorSubtotalCheck
+                  subtotalCheckDisabled={
+                    classificationAndLabelTallyNeedUpperCase
+                  }
+                  subtotalChecked={classificationAndLabelTallyLowerCaseSeparate}
+                  subtotalCheckOnChange={() =>
+                    editStore.setClassificationAndLabelTally(
+                      'isUpperLowerCaseSeparate'
+                    )
+                  }
+                  subtotalCheckText='大、小写金额分左右两边展示'
+                  marginLeft
+                />
+              </div>
+            </Flex>
+          </>
         )}
       </div>
     )
@@ -720,7 +825,8 @@ EditorField.propTypes = {
   editStore: PropTypes.object,
   tableDataKeyList: PropTypes.array,
   showNewDate: PropTypes.bool,
-  isSomeSubtotalTr: PropTypes.bool
+  isSomeSubtotalTr: PropTypes.bool,
+  mergeClassificationAndLabel: PropTypes.bool
 }
 EditorField.defaultProps = {
   showNewDate: false
