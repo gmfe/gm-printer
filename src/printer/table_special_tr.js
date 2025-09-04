@@ -32,6 +32,13 @@ const SpecialTr = ({ data, config }) => {
     compiled = () => template_text
   }
 
+  const defaultFields = [
+    {
+      valueField: '下单金额'
+    }
+  ]
+  const newFields = fields || defaultFields
+
   switch (type) {
     case 'flex':
       // eslint-disable-next-line no-case-declarations
@@ -95,9 +102,13 @@ const SpecialTr = ({ data, config }) => {
         throw Error('_special缺少text,请检查data_to_key处理table数据代码!')
 
       if (isUpperLowerCaseSeparate) {
+        const UpperCaseBefore =
+          data[newFields[0].valueField]
+            ?.upperLowerCaseSeparateAndUpperCaseBefore
+
         const htmlStr = isUpperCaseBefore
-          ? data[fields[0].valueField]?.upperLowerCaseSeparateAndUpperCaseBefore
-          : data[fields[0].valueField]?.upperLowerCaseSeparate
+          ? UpperCaseBefore
+          : data[newFields[0].valueField]?.upperLowerCaseSeparate
         return (
           <tr>
             <td
@@ -119,12 +130,12 @@ const SpecialTr = ({ data, config }) => {
       // eslint-disable-next-line no-case-declarations
       const getHtml = () => {
         if (isUpperCaseBefore) {
-          return data[fields[0].valueField]?.upperCaseBefore
+          return data[newFields[0].valueField]?.upperCaseBefore
         }
         if (needUpperCase) {
-          return data[fields[0].valueField]?.upperCaseText
+          return data[newFields[0].valueField]?.upperCaseText
         }
-        return data[fields?.[0]?.valueField]?.text || data.text
+        return data[newFields[0]?.valueField]?.text || data.text
       }
 
       return (
