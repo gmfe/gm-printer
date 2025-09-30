@@ -676,6 +676,41 @@ TipInfo.propTypes = {
   color: PropTypes.string
 }
 
+const Checkbox = ({
+  id,
+  value,
+  radioChecked,
+  checked,
+  style,
+  inputName,
+  disabled
+}) => (
+  <div style={style}>
+    <input
+      type='checkbox'
+      value={value}
+      id={id}
+      name={inputName ?? 'radio'}
+      onChange={radioChecked}
+      checked={checked}
+      style={{ margin: '5px 5px 0 0' }}
+      disabled={disabled}
+    />
+    <label htmlFor={id}>{value}</label>
+    <Gap />
+  </div>
+)
+
+Checkbox.propTypes = {
+  id: PropTypes.string,
+  value: PropTypes.string,
+  style: PropTypes.string,
+  inputName: PropTypes.string,
+  radioChecked: PropTypes.func,
+  checked: PropTypes.bool,
+  disabled: PropTypes.bool
+}
+
 export {
   Text,
   Textarea,
@@ -696,5 +731,6 @@ export {
   Gap,
   RadioGap,
   FieldBtn,
-  TipInfo
+  TipInfo,
+  Checkbox
 }

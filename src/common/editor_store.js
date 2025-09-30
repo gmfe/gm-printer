@@ -968,7 +968,30 @@ class EditorStore {
 
   @action.bound
   radioChecked(fields) {
+    if (fields.id === 'noSpecail') {
+      this.config.specialOtherConfig = []
+    }
     this.config.specialConfig = fields.id
+  }
+
+  @action.bound
+  multipleRadioChecked(fields) {
+    if (this.config.specialConfig === 'noSpecail') {
+      this.config.specialOtherConfig = []
+      return
+    }
+    const arr = this.config?.specialOtherConfig
+      ? [...this.config.specialOtherConfig]
+      : []
+    if (arr.includes(fields.id)) {
+      // 如果已选中，则取消选中
+      const index = arr.indexOf(fields.id)
+      arr.splice(index, 1)
+    } else {
+      // 如果未选中，则添加
+      arr.push(fields.id)
+    }
+    this.config.specialOtherConfig = arr
   }
 
   @action

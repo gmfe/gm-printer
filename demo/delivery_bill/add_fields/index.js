@@ -140,6 +140,31 @@ const specialFields = [
   {
     id: 'noSpecail',
     value: i18next.t('无特殊控制')
+  },
+  {
+    id: 'orderQuanty',
+    value: i18next.t(
+      '下单数量（基本单位或销售单位）为0.01时不展现下单数（基本单位和销售单位），下单金额，出库数（基本单位，销售单位），出库金额，销售额'
+    )
+  },
+  {
+    id: 'basicUnit',
+    value: i18next.t('基本单位与销售单位不一致时出库金额，销售金额为空')
+  },
+  {
+    id: 'rateSort',
+    value: i18next.t('是否按税率排序')
+  },
+  {
+    id: 'boxNumSort',
+    value: i18next.t('是否按箱号排序')
+  }
+]
+
+const specialOtherFields = [
+  {
+    id: 'outboundQuantityNotZero',
+    value: i18next.t('实际出库数为0时，不展示该商品行')
   }
 ]
 
@@ -152,5 +177,6 @@ export default {
   commonFields,
   tableFields,
   summaryFields,
-  specialFields
+  specialFields,
+  specialOtherFields
 }
