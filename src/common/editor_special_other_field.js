@@ -24,7 +24,6 @@ class SpecialOtherField extends React.Component {
               radioChecked={() =>
                 editStore.multipleRadioChecked(fields, tableData)
               }
-              disabled={specialConfig === 'noSpecail'}
             />
           ))}
 
