@@ -976,10 +976,6 @@ class EditorStore {
 
   @action.bound
   multipleRadioChecked(fields) {
-    if (this.config.specialConfig === 'noSpecail') {
-      this.config.specialOtherConfig = []
-      return
-    }
     const arr = this.config?.specialOtherConfig
       ? [...this.config.specialOtherConfig]
       : []
@@ -990,6 +986,13 @@ class EditorStore {
     } else {
       // 如果未选中，则添加
       arr.push(fields.id)
+      if (
+        fields.id === 'outboundQuantityNotZero' &&
+        this.config.specialConfig === 'noSpecail'
+      ) {
+        // 如果选中：实际出库数为0时，不展示该商品行，且无特殊控制选中，清空无特殊控制的选中
+        this.config.specialConfig = ''
+      }
     }
     this.config.specialOtherConfig = arr
   }
