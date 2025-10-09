@@ -994,7 +994,12 @@ class EditorStore {
         this.config.specialConfig = ''
       }
     }
-    this.config.specialOtherConfig = arr
+    // this.config.specialOtherConfig = arr
+
+    this.config = {
+      ...this.config,
+      specialOtherConfig: arr
+    }
   }
 
   @action
