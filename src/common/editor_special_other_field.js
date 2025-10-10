@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Gap, Checkbox } from './component'
+import { Gap, RadioGap, Title, Checkbox } from './component'
 import { observer, inject } from 'mobx-react'
+import i18next from '../../locales'
 
 @inject('editStore')
 @observer
@@ -14,6 +15,8 @@ class SpecialOtherField extends React.Component {
     const specialConfig = editStore?.config?.specialConfig
     return (
       <div>
+        <Title title={i18next.t('配送单数据过滤')} />
+        <RadioGap />
         {specialOtherFields &&
           specialOtherFields.map(fields => (
             <Checkbox
