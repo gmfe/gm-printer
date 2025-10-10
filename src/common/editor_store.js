@@ -968,9 +968,6 @@ class EditorStore {
 
   @action.bound
   radioChecked(fields) {
-    if (fields.id === 'noSpecail') {
-      this.config.specialOtherConfig = []
-    }
     this.config.specialConfig = fields.id
   }
 
