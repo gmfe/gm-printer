@@ -1,6 +1,7 @@
 export default {
   name: '',
   specialConfig: 'noSpecail',
+  specialOtherConfig: [],
   // autoFillConfig: {
   //   region: '',
   //   dataKey: 'orders_category',
