@@ -133,11 +133,12 @@ const SpecialTr = ({ data, config }) => {
           return data[newFields[0].valueField]?.upperCaseBefore
         }
         if (needUpperCase) {
-          return data[newFields[0].valueField]?.upperCaseText
+          return (
+            data[newFields[0].valueField]?.upperCaseText || data?.upperCaseText
+          )
         }
         return data[newFields[0]?.valueField]?.text || data.text
       }
-
       return (
         <tr>
           <td
