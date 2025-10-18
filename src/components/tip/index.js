@@ -7,38 +7,50 @@ import _ from 'lodash'
 
 const tips = []
 
-const Tip = (props) => {
+const Tip = props => {
   const { list } = props
 
-  return <React.Fragment>
-    {_.map(list, (item, index) => {
-      return (
-        <div key={index} className='gm-animated gm-animated-fade-in-right-100'>
-          <Flex alignCenter className='gm-tip'>
-            <SvgInfoCircle className='gm-svg-info'/>
-            <div style={{ paddingLeft: '10px' }}>
-              <div>{item}</div>
-            </div>
-          </Flex>
-        </div>
-      )
-    })}
-  </React.Fragment>
+  return (
+    <>
+      {_.map(list, (item, index) => {
+        return (
+          <div
+            key={index}
+            className='gm-animated gm-animated-fade-in-right-100'
+          >
+            <Flex alignCenter className='gm-tip'>
+              <SvgInfoCircle className='gm-svg-info' />
+              <div style={{ paddingLeft: '10px' }}>
+                <div>{item}</div>
+              </div>
+            </Flex>
+          </div>
+        )
+      })}
+    </>
+  )
 }
 
-function getTipDOM (id) {
-  return window.shadowRoot.getElementById(id)
+function getTipDOM(id) {
+  return window?.shadowRoot?.getElementById(id)
 }
 
 Tip.warning = (message = '') => {
   tips.push(message)
-
+  // TODO 这里要判断是否有dom 避免报错
   setTimeout(() => {
+    const dom = getTipDOM('gm-printer-tip')
     tips.shift()
-    ReactDOM.render(<Tip list={tips}/>, getTipDOM('gm-printer-tip'))
+    if (!dom) {
+      return
+    }
+    ReactDOM.render(<Tip list={tips} />)
   }, 3000)
-
-  ReactDOM.render(<Tip list={tips}/>, getTipDOM('gm-printer-tip'))
+  const dom = getTipDOM('gm-printer-tip')
+  if (!dom) {
+    return
+  }
+  ReactDOM.render(<Tip list={tips} />, getTipDOM('gm-printer-tip'))
 }
 
 Tip.propTypes = {
