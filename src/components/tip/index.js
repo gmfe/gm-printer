@@ -37,19 +37,12 @@ function getTipDOM(id) {
 
 Tip.warning = (message = '') => {
   tips.push(message)
-  // TODO 这里要判断是否有dom 避免报错
+
   setTimeout(() => {
-    const dom = getTipDOM('gm-printer-tip')
     tips.shift()
-    if (!dom) {
-      return
-    }
-    ReactDOM.render(<Tip list={tips} />)
+    ReactDOM.render(<Tip list={tips} />, getTipDOM('gm-printer-tip'))
   }, 3000)
-  const dom = getTipDOM('gm-printer-tip')
-  if (!dom) {
-    return
-  }
+
   ReactDOM.render(<Tip list={tips} />, getTipDOM('gm-printer-tip'))
 }
 
