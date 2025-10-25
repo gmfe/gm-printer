@@ -20,6 +20,9 @@ class Store extends EditorStore {
 
     const arr = this.selectedRegion.split('.')
     const tableConfig = this.config.contents[arr[2]]
+    const __detailsColumn = tableConfig.columns.find(
+      o => o.specialDetailsKey === '__details'
+    )
 
     // 先去掉所有明细列
     const newCols = tableConfig.columns.filter(o => !o.isSpecialColumn)
@@ -38,9 +41,10 @@ class Store extends EditorStore {
         separator: '+',
         // detailsType: 'purchase_last_col',
         specialDetailsKey: '__details',
-        text: i18next.t(
-          '{{采购数量_采购单位}}{{采购单位}}*{{商户名}}*{{商品备注}}'
-        )
+        //   这里写的有问题，应该先用原来的值，没有才用默认值
+        text:
+          __detailsColumn?.text ||
+          i18next.t('{{采购数量_采购单位}}{{采购单位}}*{{商户名}}*{{商品备注}}')
       })
       // 通过detailsType属性区分单列-总表最后一列的数据是否换行展示
       dataKey === 'purchase_last_col'
