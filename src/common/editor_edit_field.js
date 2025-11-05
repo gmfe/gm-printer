@@ -750,7 +750,7 @@ class EditorField extends React.Component {
                     return (
                       <Radio
                         style={{ marginLeft: 5 }}
-                        id={`${fields.id}${i}`}
+                        id={`${fields.id}_${i}`}
                         value={fields.value}
                         key={fields.id}
                         inputName='classificationAndLabelTallyRadio'
