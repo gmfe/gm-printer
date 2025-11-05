@@ -34,7 +34,7 @@ const SpecialTr = ({ data, config }) => {
 
   const defaultFields = [
     {
-      valueField: '下单金额'
+      valueField: '出库金额'
     }
   ]
   const newFields = fields || defaultFields
