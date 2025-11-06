@@ -72,7 +72,7 @@ class Text extends React.Component {
   }
 
   render() {
-    const { value, placeholder, style, className } = this.props
+    const { value, placeholder, style, className, ...rest } = this.props
     return (
       <input
         className={classNames('gm-printer-edit-input', className)}
@@ -81,6 +81,7 @@ class Text extends React.Component {
         placeholder={placeholder}
         onChange={this.handleChange}
         style={style}
+        {...rest}
       />
     )
   }

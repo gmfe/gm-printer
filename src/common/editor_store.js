@@ -57,6 +57,10 @@ class EditorStore {
   @observable
   isMultiDigitDecimal = false
 
+  /** 免税产品税率显示 */
+  @observable
+  taxFreeProductRateDisplay = ''
+
   defaultTableDataKey = 'orders'
 
   // 默认table的dataKey
@@ -101,7 +105,19 @@ class EditorStore {
     this.isMultiDigitDecimal = bool
     set(this.config, {
       specialControlConfig: {
+        ...this.config.specialControlConfig,
         multiDigitDecimal: bool
+      }
+    })
+  }
+
+  @action
+  setTaxFreeProductRateDisplay(value) {
+    this.taxFreeProductRateDisplay = value
+    set(this.config, {
+      specialControlConfig: {
+        ...this.config.specialControlConfig,
+        taxFreeProductRateDisplay: value
       }
     })
   }
@@ -257,6 +273,13 @@ class EditorStore {
     this.isAutoFilling = false
     this.fillIndex = false
     this.isMultiDigitDecimal = false
+    const taxFreeProductRateDisplayValue =
+      config?.specialControlConfig?.taxFreeProductRateDisplay
+    this.taxFreeProductRateDisplay =
+      taxFreeProductRateDisplayValue &&
+      typeof taxFreeProductRateDisplayValue === 'object'
+        ? String(taxFreeProductRateDisplayValue)
+        : taxFreeProductRateDisplayValue || ''
   }
 
   @action
@@ -1018,6 +1041,8 @@ class EditorStore {
   @action
   addContentByDiff(name, diff, type) {
     const arr = name.split('.')
+    console.log(arr, '==arr')
+
     if (arr.length === 3 && arr[0] === 'contents') {
       this.addContent(name, ~~arr[2] + diff, type)
     } else if (arr.length === 5 && arr[3] === 'column') {

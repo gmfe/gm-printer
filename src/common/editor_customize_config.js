@@ -3,6 +3,7 @@ import { inject, observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Flex, Switch } from '../components'
+import { Text } from './component'
 
 @inject('editStore')
 @observer
@@ -25,10 +26,25 @@ class EditorCutomizedConfig extends React.Component {
     editStore.setFillIndex(value)
   }
 
+  handleTaxFreeProductRateDisplay = e => {
+    const value = e.target.value
+    console.log(value)
+
+    const { editStore } = this.props
+    // 限制10位以内，如果超过则截断
+    const trimmedValue = value.length > 10 ? value.slice(0, 10) : value
+    editStore.setTaxFreeProductRateDisplay(trimmedValue)
+  }
+
   render() {
     const {
       editStore,
-      editStore: { isAutoFilling, isMultiDigitDecimal, fillIndex }
+      editStore: {
+        isAutoFilling,
+        isMultiDigitDecimal,
+        fillIndex,
+        taxFreeProductRateDisplay
+      }
     } = this.props
     // 是table
     if (editStore.computedRegionIsTable) {
@@ -52,10 +68,19 @@ class EditorCutomizedConfig extends React.Component {
             {i18next.t('注意：填充仅支持单栏数据使用')}
           </Flex>
           <Flex alignCenter className='gm-padding-top-5'>
-            <div>{i18next.t('是否开启多位小数')}：</div>
+            <div>{i18next.t('是否开启多位小数2')}：</div>
             <Switch
               checked={isMultiDigitDecimal}
               onChange={this.handleMultiDigitDecimal}
+            />
+          </Flex>
+          <Flex alignCenter className='gm-padding-top-5'>
+            <div>{i18next.t('免税产品税率显示')}：</div>
+            <Text
+              value={taxFreeProductRateDisplay || ''}
+              onChange={this.handleTaxFreeProductRateDisplay}
+              placeholder={i18next.t('请输入')}
+              maxLength={10}
             />
           </Flex>
         </>

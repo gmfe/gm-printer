@@ -241,6 +241,10 @@ class CommonContextMenu extends React.Component {
           </>
         )}
 
+        <div onClick={this.handleAddContent.bind(this, 1, 'table')}>
+          {i18next.t('插入销售额（按税率统计）')}
+        </div>
+
         <div onClick={this.handleAddContent.bind(this, 0, '')}>
           {i18next.t('向上插入区域块')}
         </div>

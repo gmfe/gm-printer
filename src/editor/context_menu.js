@@ -44,6 +44,12 @@ class ContextMenu extends React.Component {
       // 多位小数
       editStore.setMultiDigitDecimal(specialControlConfig?.multiDigitDecimal)
     }
+    if (specialControlConfig?.taxFreeProductRateDisplay !== undefined) {
+      // 免税产品税率显示
+      editStore.setTaxFreeProductRateDisplay(
+        specialControlConfig?.taxFreeProductRateDisplay || ''
+      )
+    }
   }
 
   /**
