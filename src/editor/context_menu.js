@@ -202,11 +202,12 @@ class ContextMenu extends React.Component {
   }
 
   render() {
-    const { editStore } = this.props
+    const { editStore, customTableConfigs } = this.props
     return (
       <CommonContextMenu
         renderTableAction={this.renderOrderActionBtn}
         insertBlockList={blockTypeList}
+        customTableConfigs={customTableConfigs}
       >
         <Printer
           key={editStore.computedPrinterKey}
@@ -226,6 +227,7 @@ class ContextMenu extends React.Component {
 }
 ContextMenu.propTypes = {
   editStore: PropTypes.object,
-  mockData: PropTypes.object
+  mockData: PropTypes.object,
+  customTableConfigs: PropTypes.array
 }
 export default ContextMenu

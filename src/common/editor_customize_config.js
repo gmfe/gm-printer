@@ -28,12 +28,30 @@ class EditorCutomizedConfig extends React.Component {
 
   handleTaxFreeProductRateDisplay = e => {
     const value = e.target.value
-    console.log(value)
 
     const { editStore } = this.props
     // 限制10位以内，如果超过则截断
     const trimmedValue = value.length > 10 ? value.slice(0, 10) : value
     editStore.setTaxFreeProductRateDisplay(trimmedValue)
+
+    // 如果选中了表格，同时更新表格配置
+    if (editStore.selectedRegion && editStore.computedRegionIsTable) {
+      const arr = editStore.selectedRegion.split('.')
+      const tableConfig = editStore.config.contents[arr[2]]
+
+      const dataKey = tableConfig.dataKey
+      const tableData = editStore.mockData._table[dataKey]
+
+      if (dataKey === 'taxRateSales' && tableData?.length) {
+        const list = tableData.map(item => {
+          if (item._origin && !Number(item._origin?.tax_rate)) {
+            item['税率'] = value
+          }
+          return item
+        })
+        editStore.updateTableData(dataKey, list)
+      }
+    }
   }
 
   render() {
@@ -68,7 +86,7 @@ class EditorCutomizedConfig extends React.Component {
             {i18next.t('注意：填充仅支持单栏数据使用')}
           </Flex>
           <Flex alignCenter className='gm-padding-top-5'>
-            <div>{i18next.t('是否开启多位小数2')}：</div>
+            <div>{i18next.t('是否开启多位小数')}：</div>
             <Switch
               checked={isMultiDigitDecimal}
               onChange={this.handleMultiDigitDecimal}

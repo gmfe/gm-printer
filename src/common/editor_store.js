@@ -273,13 +273,9 @@ class EditorStore {
     this.isAutoFilling = false
     this.fillIndex = false
     this.isMultiDigitDecimal = false
-    const taxFreeProductRateDisplayValue =
-      config?.specialControlConfig?.taxFreeProductRateDisplay
+
     this.taxFreeProductRateDisplay =
-      taxFreeProductRateDisplayValue &&
-      typeof taxFreeProductRateDisplayValue === 'object'
-        ? String(taxFreeProductRateDisplayValue)
-        : taxFreeProductRateDisplayValue || ''
+      config?.specialControlConfig?.taxFreeProductRateDisplay || ''
   }
 
   @action
@@ -500,6 +496,11 @@ class EditorStore {
       const block = this.computedSelectedInfo
       block[who] = value
     }
+  }
+
+  @action.bound
+  updateTableData(dataKey, tableData) {
+    this.mockData._table[dataKey] = tableData
   }
 
   @action
@@ -1039,19 +1040,20 @@ class EditorStore {
   }
 
   @action
-  addContentByDiff(name, diff, type) {
+  addContentByDiff(name, diff, type, tableConfig = null) {
     const arr = name.split('.')
-    console.log(arr, '==arr')
 
     if (arr.length === 3 && arr[0] === 'contents') {
-      this.addContent(name, ~~arr[2] + diff, type)
+      this.addContent(name, ~~arr[2] + diff, type, tableConfig)
     } else if (arr.length === 5 && arr[3] === 'column') {
-      this.addContent(name, ~~arr[2] + diff, type)
+      this.addContent(name, ~~arr[2] + diff, type, tableConfig)
+    } else {
+      console.warn('addContentByDiff: Invalid name format', name)
     }
   }
 
   @action.bound
-  addContent(name, index, type) {
+  addContent(name, index, type, tableConfig = null) {
     const defaultTableDataKey = this.defaultTableDataKey
     const defaultTableSubtotal = this.defaultTableSubtotal
 
@@ -1061,27 +1063,89 @@ class EditorStore {
     if ((arr.length === 3 || arr.length === 5) && arr[0] === 'contents') {
       if (index >= 0 && index <= this.config.contents.length) {
         if (type === 'table') {
-          this.config.contents.splice(index, 0, {
-            type: 'table',
-            className: '',
-            specialConfig: { style: {} },
-            dataKey: defaultTableDataKey, // 默认
-            subtotal: defaultTableSubtotal, // 默认的每页合计配置
-            customerTag: false, // 特殊标记，用于提供用户干预功能标记
-            columns: [
-              {
-                head: i18next.t('表头'),
-                headStyle: {
-                  textAlign: 'center',
-                  minWidth: '30px'
+          // 如果传入了自定义表格配置，使用自定义配置，否则使用默认配置
+          const finalTableConfig = tableConfig
+            ? {
+                // 先展开自定义配置，支持传入其他配置项
+                ...tableConfig,
+                // 然后设置必需的属性，确保都有值
+                type: 'table',
+                className: tableConfig.className || '',
+                specialConfig: tableConfig.specialConfig || {
+                  style: {}
                 },
-                text: i18next.t('内容'),
-                style: {
-                  textAlign: 'center'
-                }
+                dataKey: tableConfig.dataKey || defaultTableDataKey,
+                subtotal:
+                  tableConfig.subtotal !== undefined
+                    ? tableConfig.subtotal
+                    : defaultTableSubtotal,
+                customerTag:
+                  tableConfig.customerTag !== undefined
+                    ? tableConfig.customerTag
+                    : false,
+                columns: tableConfig.columns || [
+                  {
+                    head: i18next.t('表头'),
+                    headStyle: {
+                      textAlign: 'center',
+                      minWidth: '30px'
+                    },
+                    text: i18next.t('内容'),
+                    style: {
+                      textAlign: 'center'
+                    }
+                  }
+                ]
               }
-            ]
-          })
+            : {
+                type: 'table',
+                className: '',
+                specialConfig: { style: {} },
+                dataKey: defaultTableDataKey, // 默认
+                subtotal: defaultTableSubtotal, // 默认的每页合计配置
+                customerTag: false, // 特殊标记，用于提供用户干预功能标记
+                columns: [
+                  {
+                    head: i18next.t('表头'),
+                    headStyle: {
+                      textAlign: 'center',
+                      minWidth: '30px'
+                    },
+                    text: i18next.t('内容'),
+                    style: {
+                      textAlign: 'center'
+                    }
+                  }
+                ]
+              }
+
+          // 确保数据源存在，如果不存在则初始化为空数组
+          const dataKey = finalTableConfig.dataKey
+          if (!this.mockData._table) {
+            this.mockData._table = {}
+          }
+          if (!this.mockData._table[dataKey]) {
+            this.mockData._table[dataKey] = []
+          }
+
+          // 如果 dataKey 是 taxRateSales，并且有 head 为 custom_filed 的列，修改其 text
+          if (
+            finalTableConfig.dataKey === 'taxRateSales' &&
+            finalTableConfig.columns &&
+            this.mockData._table[dataKey] &&
+            this.mockData._table[dataKey].length > 0
+          ) {
+            const firstRowData = this.mockData._table[dataKey][0]
+
+            finalTableConfig.columns.forEach(column => {
+              if (column.head === 'custom_filed' && firstRowData.custom_filed) {
+                // 将 text 设置为第一行的 custom_filed 值
+                column.text = firstRowData.custom_filed
+              }
+            })
+          }
+
+          this.config.contents.splice(index, 0, finalTableConfig)
         } else {
           this.config.contents.splice(index, 0, {
             blocks: [],

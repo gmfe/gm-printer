@@ -537,7 +537,8 @@ class PrinterStore {
       if (
         dataKey !== 'purchase_detail_one_row' &&
         dataKey !== 'purchase_independent_rol_sku' &&
-        dataKey !== 'purchase_independent_rol_address'
+        dataKey !== 'purchase_independent_rol_address' &&
+        dataKey !== 'taxRateSales'
       ) {
         return null
       }
@@ -545,6 +546,7 @@ class PrinterStore {
 
       const interpolate = /{{([\s\S]+?)}}/g
       const match = interpolate.exec(text)
+      if (!match) return null
       // 显示在表格上的 th 名
       const showFiledText = match[1].split('.')[1]
 
@@ -555,7 +557,7 @@ class PrinterStore {
           let newPageCellRowSpan = 1
           for (let i = index - 1; i < list.length; i--) {
             const record = list[i]
-            if (record._origin.rowSpan > 1) {
+            if (record && record._origin && record._origin.rowSpan > 1) {
               newPageCellRowSpan = record._origin.rowSpan - (index - i)
               break
             }

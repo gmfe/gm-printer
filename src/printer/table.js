@@ -224,6 +224,16 @@ class Table extends React.Component {
       }
       return tdStyle
     }
+
+    const headText = col => {
+      if (dataKey === 'taxRateSales') {
+        return col.head === 'custom_field'
+          ? tableData?.[0]?.custom_field || ''
+          : col.headAlias
+      }
+      return col.head
+    }
+
     return (
       <table
         style={{
@@ -254,7 +264,7 @@ class Table extends React.Component {
                 onDrop={this.handleDrop}
                 onDragOver={this.handleDragOver}
               >
-                {col.head}
+                {headText(col)}
               </th>
             ))}
           </tr>
@@ -264,10 +274,17 @@ class Table extends React.Component {
           {_.map(_.range(range.begin, range.end), i => {
             const _special = tableData[i] && tableData[i]._special
             const _specialText = tableData[i] && tableData[i]._specialText
+            const _customTr = tableData[i] && tableData[i]._customTr
+
             if (_specialText)
               return <CategoryTr key={i} config={config} data={_specialText} />
             if (_special)
               return <SpecialTr key={i} config={config} data={_special} />
+
+            if (_customTr) {
+              return <tr dangerouslySetInnerHTML={{ __html: _customTr }} />
+            }
+
             // 如果项为空对象展现一个占满一行的td
             const isItemNone = !_.keys(tableData[i]).length
             return (
@@ -308,7 +325,9 @@ class Table extends React.Component {
                           ...getTdStyle(j, col.style),
                           ...col.style
                         }}
-                        {...(rowSpan > 1 && { rowSpan: rowSpan })}
+                        {...(rowSpan > 1 && {
+                          rowSpan: rowSpan
+                        })}
                         className={classNames({
                           active:
                             getTableColumnName(name, col.index) ===
