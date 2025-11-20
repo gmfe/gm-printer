@@ -42,10 +42,14 @@ class EditorCutomizedConfig extends React.Component {
       const dataKey = tableConfig.dataKey
       const tableData = editStore.mockData._table[dataKey]
 
-      if (dataKey === 'taxRateSales' && tableData?.length) {
+      if (tableData?.length) {
         const list = tableData.map(item => {
-          if (item._origin && !Number(item._origin?.tax_rate)) {
-            item['税率'] = value
+          if (item._origin && Number(item._origin?.tax_rate) === 0) {
+            if (String(value).length > 0) {
+              item['税率'] = value
+            } else {
+              item['税率'] = '0.00%'
+            }
           }
           return item
         })
