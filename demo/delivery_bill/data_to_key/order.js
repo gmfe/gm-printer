@@ -668,10 +668,20 @@ function order(data) {
 
   /* -------- 分类 和 双栏 + 分类 ------- */
   let kCategory = []
+  let kCategoryDiy = []
+  let kCategoryAndDiy = []
   let kCategoryMulti = []
+  let kCategoryMultiDiy = []
+  let kCategoryMultiAndDiy = []
   let kCategoryMultiVertical = []
+  let kCategoryMultiVerticalDiy = []
+  let kCategoryMultiVerticalAndDiy = []
   let kCategoryMulti3 = []
+  let kCategoryMulti3Diy = []
+  let kCategoryMulti3AndDiy = []
   let kCategoryMulti3Vertical = []
+  let kCategoryMulti3VerticalDiy = []
+  let kCategoryMulti3VerticalAndDiy = []
   const kCounter = [] // 分类汇总
 
   let index = 1
@@ -705,27 +715,62 @@ function order(data) {
         })
       }
     }
+    const diyCategoryTotal = {
+      _diyCategorySubtotal: true,
+      _originalIndex: index - 1
+    }
+
 
     // 商品分类汇总数组
     kCounter.push({ text: key, len: value.length, subtotal })
 
     /* -------- 分类  ------------- */
     kCategory = kCategory.concat(list, categoryTotal)
+    kCategoryDiy = kCategoryDiy.concat(list, diyCategoryTotal)
+    kCategoryAndDiy = kCategoryAndDiy.concat(
+      list,
+      categoryTotal,
+      diyCategoryTotal
+    )
     /* -------- 双栏 + 分类 ------- */
     kCategoryMulti = kCategoryMulti.concat(
       generateMultiData(list, categoryTotal)
+    )
+    kCategoryMultiDiy = kCategoryMultiDiy.concat(
+      generateMultiData(list, diyCategoryTotal)
+    )
+    kCategoryMultiAndDiy = kCategoryMultiAndDiy.concat(
+      generateMultiData(list, categoryTotal, diyCategoryTotal)
     )
     /* -------- 双栏 + 分类（纵向） ------- */
     kCategoryMultiVertical = kCategoryMultiVertical.concat(
       generateMultiData2(list, categoryTotal)
     )
+    kCategoryMultiVerticalDiy = kCategoryMultiVerticalDiy.concat(
+      generateMultiData2(list, diyCategoryTotal)
+    )
+    kCategoryMultiVerticalAndDiy = kCategoryMultiVerticalDiy.concat(
+      generateMultiData2(list, categoryTotal, diyCategoryTotal)
+    )
     /* -------- 三栏 + 分类 ------- */
     kCategoryMulti3 = kCategoryMulti3.concat(
       generateMulti3Data(list, categoryTotal)
     )
+    kCategoryMulti3Diy = kCategoryMulti3Diy.concat(
+      generateMulti3Data(list, diyCategoryTotal)
+    )
+    kCategoryMulti3AndDiy = kCategoryMulti3AndDiy.concat(
+      generateMulti3Data(list, categoryTotal, diyCategoryTotal)
+    )
     /* -------- 三栏 + 分类（纵向） ------- */
     kCategoryMulti3Vertical = kCategoryMulti3Vertical.concat(
       generateMulti3Data2(list, categoryTotal)
+    )
+    kCategoryMulti3VerticalDiy = kCategoryMulti3VerticalDiy.concat(
+      generateMulti3Data2(list, diyCategoryTotal)
+    )
+    kCategoryMulti3VerticalAndDiy = kCategoryMulti3VerticalAndDiy.concat(
+      generateMulti3Data2(list, categoryTotal, diyCategoryTotal)
     )
   })
 
@@ -748,6 +793,22 @@ function order(data) {
       orders_category_multi3: kCategoryMulti3, // 分类 + 三栏
       orders_category_multi_vertical: kCategoryMultiVertical, // 分类+双栏（纵向）
       orders_category_multi3_vertical: kCategoryMulti3Vertical, // 分类+三栏（纵向）
+
+      orders_categoryDiy: kCategoryDiy, // 自定义分类
+      orders_category_categoryDiy: kCategoryAndDiy, // 分类 + 自定义分类
+
+      orders_categoryDiy_multi: kCategoryMultiDiy, // 自定义分类 + 双栏
+      orders_category_multi_and_diy: kCategoryMultiAndDiy, // 分类 + 双栏 + 自定义分类
+
+      orders_category_multi_vertical_diy: kCategoryMultiVerticalDiy, // 自定义分类 + 双栏（纵向）
+      orders_category_multi_vertical_and_diy: kCategoryMultiVerticalAndDiy, // 分类 + 双栏（纵向） + 自定义分类
+
+      orders_category_multi3_diy: kCategoryMulti3Diy, // 自定义分类 + 三栏
+      orders_category_multi3_and_diy: kCategoryMulti3AndDiy, // 分类 + 三栏 + 自定义分类
+
+      orders_category_multi3_vertical_diy: kCategoryMulti3VerticalDiy, // 自定义分类 + 三栏（纵向）
+      orders_category_multi3_vertical_and_diy: kCategoryMulti3VerticalAndDiy, // 分类 + 三栏（纵向） + 自定义分类
+
       abnormal: generateAbnormalData(data, kOrders), // 异常明细
       reward: generateRewardData(data.reward_sku_list),
       combination: combination, // 组合商品

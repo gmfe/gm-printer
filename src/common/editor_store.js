@@ -5,6 +5,7 @@ import _ from 'lodash'
 import { dispatchMsg, getBlockName, exchange, getColSpanLength } from '../util'
 import { accountRadioList } from './util'
 import React from 'react'
+import { createDiySummaryStoreMethods } from './diy_summary_helper'
 
 class EditorStore {
   @observable
@@ -785,7 +786,8 @@ class EditorStore {
               valueField: '{{列.出库金额}}',
               style: {
                 fontWeight: 'bold'
-              }
+              },
+              rightName: '自定义整单合计：'
             }
           ]
         }
@@ -804,14 +806,17 @@ class EditorStore {
   }
 
   @action
-  changeTableDataKey(name, key) {
+  changeTableDataKey(name, key, options = {}) {
     const arr = name.split('.')
+    const table = this.config.contents[arr[2]]
     const {
       dataKey,
       overallOrder,
       subtotal,
-      diyOverallOrder
-    } = this.config.contents[arr[2]]
+      diyOverallOrder,
+      diyCategorySubtotal,
+      diyTagSubtotal
+    } = table
     const keyArr = dataKey.split('_')
     let newDataKey
     // 当前有这个key则去掉
@@ -827,19 +832,54 @@ class EditorStore {
       newDataKey = _.without(newDataKey, 'multi3')
     }
     // 标签小计和分类小计互斥
-    if (newDataKey.includes('category') && key === 'tag') {
-      newDataKey = _.without(newDataKey, 'category')
-    } else if (newDataKey.includes('tag') && key === 'category') {
-      newDataKey = _.without(newDataKey, 'tag')
+    if (
+      newDataKey.includes('category') &&
+      (key === 'tag' || key === 'tagDiy')
+    ) {
+      newDataKey = _.without(newDataKey, 'category', 'categoryDiy')
+
+      if (diyCategorySubtotal?.show) {
+        set(diyCategorySubtotal, { show: false })
+        set(table, { isDiyCategorySubtotal: false })
+      }
+    } else if (
+      newDataKey.includes('tag') &&
+      (key === 'category' || key === 'categoryDiy')
+    ) {
+      newDataKey = _.without(newDataKey, 'tag', 'tagDiy')
+
+      if (diyTagSubtotal?.show) {
+        set(diyTagSubtotal, { show: false })
+        set(table, { isDiyTagSubtotal: false })
+      }
     }
     // 标签小计和商品分类互斥
-    if (newDataKey.includes('newCategory') && key === 'tag') {
+    if (
+      newDataKey.includes('newCategory') &&
+      (key === 'tag' || key === 'tagDiy')
+    ) {
       newDataKey = _.without(newDataKey, 'newCategory')
-    } else if (newDataKey.includes('tag') && key === 'newCategory') {
-      newDataKey = _.without(newDataKey, 'tag')
+    } else if (
+      (newDataKey.includes('tag') || newDataKey.includes('tagDiy')) &&
+      key === 'newCategory'
+    ) {
+      newDataKey = _.without(newDataKey, 'tag', 'tagDiy')
+    }
+
+    if (newDataKey.includes('categoryDiy')) {
+      this.setDiyCategorySubtotalShow(name, true)
+    } else {
+      this.setDiyCategorySubtotalShow(name, false)
+    }
+    if (newDataKey.includes('tagDiy')) {
+      this.setDiyTagSubtotalShow(name, true)
+    } else {
+      this.setDiyTagSubtotalShow(name, false)
     }
 
     newDataKey = _.sortBy(newDataKey, [
+      o => o === 'tagDiy',
+      o => o === 'categoryDiy',
       o => o === 'tag',
       o => o === 'multi3',
       o => o === 'multi',
@@ -849,6 +889,7 @@ class EditorStore {
     ])
 
     this.config.contents[arr[2]].dataKey = newDataKey.join('_')
+
     // 整单合计不显示
     if (overallOrder?.show) overallOrder.show = false
     // 每页合计不显示
@@ -1980,7 +2021,7 @@ class EditorStore {
 
   // 整单合计自定义单元格文本输入
   @action.bound
-  setDiyOverallOrderFields(value) {
+  setDiyOverallOrderFields(value, fieldIndex = 0) {
     if (this.selectedRegion) {
       this.overallOrderShow = !this.overallOrderShow
       const arr = this.selectedRegion.split('.')
@@ -1988,9 +2029,15 @@ class EditorStore {
       const diyOverallOrderConfig = table?.diyOverallOrder
 
       const oldValueField = diyOverallOrderConfig.fields?.[0]
-      set(oldValueField, {
-        name: value
-      })
+      if (fieldIndex === 0) {
+        set(oldValueField, {
+          name: value
+        })
+      } else if (fieldIndex === 1) {
+        set(oldValueField, {
+          rightName: value
+        })
+      }
     }
   }
 
@@ -2050,6 +2097,214 @@ class EditorStore {
     if (!('summaryColumns' in modify && 'style' in modify)) {
       this.setAutoFillingConfig(false)
     }
+  }
+
+  // ========== 自定义每页合计方法 ==========
+  @action.bound
+  setDiySubtotalShow(name) {
+    const methods = createDiySummaryStoreMethods(
+      'diySubtotal',
+      '自定义每页合计'
+    )
+    return methods.setDiySubtotalShow.call(this, name)
+  }
+
+  @action.bound
+  setDiySubtotalStyle(value) {
+    const methods = createDiySummaryStoreMethods(
+      'diySubtotal',
+      '自定义每页合计'
+    )
+    return methods.setDiySubtotalStyle.call(this, value)
+  }
+
+  @action.bound
+  setDiySubtotalUpperCase() {
+    const methods = createDiySummaryStoreMethods(
+      'diySubtotal',
+      '自定义每页合计'
+    )
+    return methods.setDiySubtotalUpperCase.call(this)
+  }
+
+  @action.bound
+  setDiySubtotalUpperCaseBefore() {
+    const methods = createDiySummaryStoreMethods(
+      'diySubtotal',
+      '自定义每页合计'
+    )
+    return methods.setDiySubtotalUpperCaseBefore.call(this)
+  }
+
+  @action.bound
+  setDiySubtotalUpperLowerCaseSeparate() {
+    const methods = createDiySummaryStoreMethods(
+      'diySubtotal',
+      '自定义每页合计'
+    )
+    return methods.setDiySubtotalUpperLowerCaseSeparate.call(this)
+  }
+
+  @action.bound
+  setDiySubtotalValueField(value) {
+    const methods = createDiySummaryStoreMethods(
+      'diySubtotal',
+      '自定义每页合计'
+    )
+    return methods.setDiySubtotalValueField.call(this, value)
+  }
+
+  @action.bound
+  setDiySubtotalFields(value, fieldIndex = 0) {
+    const methods = createDiySummaryStoreMethods(
+      'diySubtotal',
+      '自定义每页合计'
+    )
+    return methods.setDiySubtotalFields.call(this, value, fieldIndex)
+  }
+
+  // ========== 自定义分类小计方法 ==========
+  @action.bound
+  setDiyCategorySubtotalShow(name, show) {
+    const methods = createDiySummaryStoreMethods(
+      'diyCategorySubtotal',
+      '自定义分类小计'
+    )
+    methods.setDiyCategorySubtotalShow.call(this, name, show)
+
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      if (table?.diyCategorySubtotal?.show && table?.diyTagSubtotal?.show) {
+        set(table.diyTagSubtotal, { show: false })
+      }
+    }
+  }
+
+  @action.bound
+  setDiyCategorySubtotalStyle(value) {
+    const methods = createDiySummaryStoreMethods(
+      'diyCategorySubtotal',
+      '自定义分类小计'
+    )
+    return methods.setDiyCategorySubtotalStyle.call(this, value)
+  }
+
+  @action.bound
+  setDiyCategorySubtotalUpperCase() {
+    const methods = createDiySummaryStoreMethods(
+      'diyCategorySubtotal',
+      '自定义分类小计'
+    )
+    return methods.setDiyCategorySubtotalUpperCase.call(this)
+  }
+
+  @action.bound
+  setDiyCategorySubtotalUpperCaseBefore() {
+    const methods = createDiySummaryStoreMethods(
+      'diyCategorySubtotal',
+      '自定义分类小计'
+    )
+    return methods.setDiyCategorySubtotalUpperCaseBefore.call(this)
+  }
+
+  @action.bound
+  setDiyCategorySubtotalUpperLowerCaseSeparate() {
+    const methods = createDiySummaryStoreMethods(
+      'diyCategorySubtotal',
+      '自定义分类小计'
+    )
+    return methods.setDiyCategorySubtotalUpperLowerCaseSeparate.call(this)
+  }
+
+  @action.bound
+  setDiyCategorySubtotalValueField(value) {
+    const methods = createDiySummaryStoreMethods(
+      'diyCategorySubtotal',
+      '自定义分类小计'
+    )
+    return methods.setDiyCategorySubtotalValueField.call(this, value)
+  }
+
+  @action.bound
+  setDiyCategorySubtotalFields(value, fieldIndex = 0) {
+    const methods = createDiySummaryStoreMethods(
+      'diyCategorySubtotal',
+      '自定义分类小计'
+    )
+    return methods.setDiyCategorySubtotalFields.call(this, value, fieldIndex)
+  }
+
+  // ========== 自定义标签小计方法 ==========
+  @action.bound
+  setDiyTagSubtotalShow(name, show) {
+    const methods = createDiySummaryStoreMethods(
+      'diyTagSubtotal',
+      '自定义标签小计'
+    )
+    methods.setDiyTagSubtotalShow.call(this, name, show)
+
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      if (table?.diyTagSubtotal?.show && table?.diyCategorySubtotal?.show) {
+        set(table.diyCategorySubtotal, { show: false })
+      }
+    }
+  }
+
+  @action.bound
+  setDiyTagSubtotalStyle(value) {
+    const methods = createDiySummaryStoreMethods(
+      'diyTagSubtotal',
+      '自定义标签小计'
+    )
+    return methods.setDiyTagSubtotalStyle.call(this, value)
+  }
+
+  @action.bound
+  setDiyTagSubtotalUpperCase() {
+    const methods = createDiySummaryStoreMethods(
+      'diyTagSubtotal',
+      '自定义标签小计'
+    )
+    return methods.setDiyTagSubtotalUpperCase.call(this)
+  }
+
+  @action.bound
+  setDiyTagSubtotalUpperCaseBefore() {
+    const methods = createDiySummaryStoreMethods(
+      'diyTagSubtotal',
+      '自定义标签小计'
+    )
+    return methods.setDiyTagSubtotalUpperCaseBefore.call(this)
+  }
+
+  @action.bound
+  setDiyTagSubtotalUpperLowerCaseSeparate() {
+    const methods = createDiySummaryStoreMethods(
+      'diyTagSubtotal',
+      '自定义标签小计'
+    )
+    return methods.setDiyTagSubtotalUpperLowerCaseSeparate.call(this)
+  }
+
+  @action.bound
+  setDiyTagSubtotalValueField(value) {
+    const methods = createDiySummaryStoreMethods(
+      'diyTagSubtotal',
+      '自定义标签小计'
+    )
+    return methods.setDiyTagSubtotalValueField.call(this, value)
+  }
+
+  @action.bound
+  setDiyTagSubtotalFields(value, fieldIndex = 0) {
+    const methods = createDiySummaryStoreMethods(
+      'diyTagSubtotal',
+      '自定义标签小计'
+    )
+    return methods.setDiyTagSubtotalFields.call(this, value, fieldIndex)
   }
 }
 

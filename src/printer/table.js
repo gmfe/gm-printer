@@ -8,7 +8,8 @@ import {
   getMultiNumber,
   getTableColumnName,
   getWidth,
-  isMultiTable
+  isMultiTable,
+  collectGroups
 } from '../util'
 import { inject, observer } from 'mobx-react'
 import classNames from 'classnames'
@@ -19,6 +20,7 @@ import SubtotalTr from './table_subtotal_tr'
 import PageSummary from './page_summary'
 import OverallOrder from './table_overallOrder_tr'
 import DiyOverallOrder from './table_diy_overallOrder_tr'
+import DiySummary from './table_diy_summary_tr'
 // import { toJS } from 'mobx'
 
 @inject('printerStore')
@@ -171,6 +173,7 @@ class Table extends React.Component {
     } = this.props
     // 数据
     dataKey = getDataKey(dataKey, arrange)
+
     const tableData = printerStore.data._table[dataKey] || []
     // 列
     const columns = this.getColumns()
@@ -234,6 +237,14 @@ class Table extends React.Component {
       return col.head
     }
 
+    const needDiyCategory = dataKey.includes('categoryDiy')
+    const diyCategoryGroups = needDiyCategory
+      ? collectGroups(tableData, range)
+      : []
+
+    const needDiyTag = config.diyTagSubtotal?.show && dataKey.includes('tagDiy')
+    const diyTagGroups = needDiyTag ? collectGroups(tableData, range) : []
+
     return (
       <table
         style={{
@@ -272,14 +283,76 @@ class Table extends React.Component {
 
         <tbody>
           {_.map(_.range(range.begin, range.end), i => {
-            const _special = tableData[i] && tableData[i]._special
-            const _specialText = tableData[i] && tableData[i]._specialText
-            const _customTr = tableData[i] && tableData[i]._customTr
+            const row = tableData[i]
+            const _special = row && row._special
+            const _specialText = row && row._specialText
+            const _customTr = row && row._customTr
+            const _diyCategorySubtotal = row && row._diyCategorySubtotal
+            const _diyTagSubtotal = row && row._diyTagSubtotal
 
-            if (_specialText)
-              return <CategoryTr key={i} config={config} data={_specialText} />
-            if (_special)
-              return <SpecialTr key={i} config={config} data={_special} />
+            if (_specialText) {
+              return (
+                <CategoryTr
+                  key={`category_${i}`}
+                  config={config}
+                  data={_specialText}
+                />
+              )
+            }
+            if (_special) {
+              return (
+                <SpecialTr
+                  key={`special_${i}`}
+                  config={config}
+                  data={_special}
+                />
+              )
+            }
+            // 分类小计 & 自定义分类小计
+            if (_diyCategorySubtotal) {
+              const groupInfo = diyCategoryGroups.find(
+                g => g.specialIndex === i
+              )
+
+              if (groupInfo && printerStore?.ready) {
+                return (
+                  <DiySummary
+                    key={`diy_category_${i}`}
+                    configKey='diyCategorySubtotal'
+                    config={config}
+                    printerStore={printerStore}
+                    pageIndex={pageIndex}
+                    range={{ begin: groupInfo.begin, end: groupInfo.end }}
+                    getTableData={(store, key, arrange) => {
+                      const all =
+                        store.data._table[getDataKey(key, arrange)] || []
+                      return all.slice(groupInfo.begin, groupInfo.end)
+                    }}
+                  />
+                )
+              }
+            }
+
+            if (_diyTagSubtotal) {
+              const groupInfo = diyTagGroups.find(g => g.specialIndex === i)
+
+              if (groupInfo && printerStore?.ready) {
+                return (
+                  <DiySummary
+                    key={`diy_tag_${i}`}
+                    configKey='diyTagSubtotal'
+                    config={config}
+                    printerStore={printerStore}
+                    range={{ begin: groupInfo.begin, end: groupInfo.end }}
+                    getTableData={(store, key, arrange) => {
+                      const all =
+                        store.data._table[getDataKey(key, arrange)] || []
+                      return all.slice(groupInfo.begin, groupInfo.end)
+                    }}
+                  />
+                )
+              }
+            }
 
             if (_customTr) {
               return <tr dangerouslySetInnerHTML={{ __html: _customTr }} />
@@ -354,6 +427,20 @@ class Table extends React.Component {
           {this.props.config.subtotal.isCommutationPlace
             ? PageSummarySubtotalTr()
             : subtotalTrPageSummary()}
+          {/* 自定义每页合计 */}
+          <DiySummary
+            key={`diy_subtotal_${pageIndex}`}
+            configKey='diySubtotal'
+            config={config}
+            printerStore={printerStore}
+            range={range}
+            pageIndex={pageIndex}
+            getTableData={(store, key, arrange, range) => {
+              const tableData =
+                store.data._table[getDataKey(key, arrange)] || []
+              return tableData.slice(range.begin, range.end)
+            }}
+          />
           <OverallOrder
             range={range}
             config={config}

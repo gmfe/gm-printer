@@ -100,6 +100,43 @@ class ContextMenu extends React.Component {
     editStore.setDiyOverallOrderShow(name)
   }
 
+  // 通用的自定义合计菜单项处理
+  handleDiySummary = (name, configKey) => {
+    const { editStore } = this.props
+    const methodName = configKey
+      .split(/(?=[A-Z])/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('')
+
+    const method = editStore[`set${methodName}Show`]
+
+    if (configKey === 'diyCategorySubtotal') {
+      const arr = name.split('.')
+      const dataKey = editStore.config.contents[arr[2]].dataKey
+      console.log('dataKey==> handleDiySummary', dataKey)
+
+      if (!dataKey.split('_').includes('category')) {
+        editStore.changeTableDataKey(name, 'category', {
+          type: 'diyCategorySubtotal'
+        })
+      }
+    }
+    if (configKey === 'diyTagSubtotal') {
+      const arr = name.split('.')
+      const dataKey = editStore.config.contents[arr[2]].dataKey
+      console.log('dataKey==> handleDiySummary', dataKey)
+
+      if (!dataKey.split('_').includes('tag')) {
+        editStore.changeTableDataKey(name, 'tag', {
+          type: 'diyTagSubtotal'
+        })
+      }
+    }
+    if (method) {
+      method(name)
+    }
+  }
+
   renderOrderActionBtn = name => {
     if (!this.hasSubtotalBtn(name)) {
       return null
@@ -119,7 +156,10 @@ class ContextMenu extends React.Component {
       dataKey,
       subtotal,
       overallOrder,
-      diyOverallOrder
+      diySubtotal,
+      diyTagSubtotal,
+      diyOverallOrder,
+      diyCategorySubtotal
     } = this.props.editStore.config.contents[arr[2]]
     const keyArr = dataKey.split('_')
 
@@ -131,6 +171,10 @@ class ContextMenu extends React.Component {
     const isSubtotalActive = subtotal.show
     const isOverallOrder = overallOrder?.show
     const isDiyOverallOrder = diyOverallOrder?.show
+    const isDiySubtotal = diySubtotal?.show
+    const isDiyTagSubtotal = diyTagSubtotal?.show
+    const isDiyCategorySubtotal = diyCategorySubtotal?.show
+
     // 长条打印
     const isLongPrint = type === LONG_PRINT
 
@@ -154,16 +198,45 @@ class ContextMenu extends React.Component {
           </div>
         )}
         <div
-          onClick={this.handleChangeTableDataKey.bind(this, 'category', name)}
+          onClick={this.handleChangeTableDataKey.bind(
+            this,
+            'category',
+            name,
+            isCategoryActive
+          )}
           className={isCategoryActive ? 'active' : ''}
         >
           {i18next.t('分类小计')}
+        </div>
+        <div
+          // onClick={() =>
+          //   this.handleDiySummary(
+          //     name,
+          //     'diyCategorySubtotal',
+          //     isDiyCategorySubtotal
+          //   )
+          // }
+          onClick={this.handleChangeTableDataKey.bind(
+            this,
+            'categoryDiy',
+            name
+          )}
+          className={isDiyCategorySubtotal ? 'active' : ''}
+        >
+          {i18next.t('自定义分类小计')}
         </div>
         <div
           onClick={this.handleChangeTableDataKey.bind(this, 'tag', name)}
           className={isTagActive ? 'active' : ''}
         >
           {i18next.t('标签小计')}
+        </div>
+        <div
+          // onClick={() => this.handleDiySummary(name, 'diyTagSubtotal')}
+          onClick={this.handleChangeTableDataKey.bind(this, 'tagDiy', name)}
+          className={isDiyTagSubtotal ? 'active' : ''}
+        >
+          {i18next.t('自定义标签小计')}
         </div>
         <div
           onClick={this.handleCategoryConfig.bind(this, 'newCategory', name)}
@@ -176,6 +249,12 @@ class ContextMenu extends React.Component {
           className={isSubtotalActive ? 'active' : ''}
         >
           {i18next.t('每页合计')}
+        </div>
+        <div
+          onClick={() => this.handleDiySummary(name, 'diySubtotal')}
+          className={isDiySubtotal ? 'active' : ''}
+        >
+          {i18next.t('自定义每页合计')}
         </div>
         <div
           onClick={this.handleChangeTableData.bind(this, !isAutoFilling)}

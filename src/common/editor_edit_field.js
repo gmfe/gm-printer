@@ -601,6 +601,15 @@ class EditorField extends React.Component {
             />
           </>
         )}
+
+        {this.renderDiySummaryEditor({
+          label: '自定义每页合计',
+          placeholder: '请输入要每页合计字段',
+          showConfigKey: 'showDiySubtotal',
+          configKey: 'diySubtotal',
+          editStore
+        })}
+
         <Flex>
           <Flex>{i18next.t('整单合计')}：</Flex>
           <Fonter
@@ -705,8 +714,8 @@ class EditorField extends React.Component {
                 subtotalCheckText='大、小写金额分左右两边展示'
                 marginLeft
               />
-              <Flex>
-                <Flex alignCenter>文案修改：</Flex>
+              {/* <Flex>
+                <Flex alignCenter>左侧文案修改：</Flex>
                 <Text
                   value={
                     diyOverallOrder && diyOverallOrder?.fields?.[0]
@@ -719,7 +728,28 @@ class EditorField extends React.Component {
                     margin: '5px 0 5px 0px'
                   }}
                 />
-              </Flex>
+              </Flex> */}
+              <EditorText
+                label={i18next.t('左侧文案修改')}
+                value={
+                  diyOverallOrder && diyOverallOrder?.fields?.[0]
+                    ? diyOverallOrder.fields[0].name
+                    : ''
+                }
+                onChange={e =>
+                  editStore.setDiyOverallOrderFields(e.target.value, 0)
+                }
+              />
+              {diyOverallOrder?.isUpperLowerCaseSeparate && (
+                <EditorText
+                  label={i18next.t('右侧文案修改')}
+                  value={diyOverallOrder?.fields?.[0]?.rightName || ''}
+                  onChange={e =>
+                    editStore.setDiyOverallOrderFields(e.target.value, 1)
+                  }
+                />
+              )}
+
               <Textarea
                 value={diyOverallOrderValueField}
                 placeholder={i18next.t('请输入要整单合计字段')}
@@ -802,9 +832,133 @@ class EditorField extends React.Component {
                 />
               </div>
             </Flex>
+
+            {(() => {
+              const { diyCategorySubtotal } =
+                editStore.computedTableSpecialConfig || {}
+
+              const activeConfig = diyCategorySubtotal?.show
+                ? {
+                    showConfigKey: 'showDiyCategorySubtotal',
+                    configKey: 'diyCategorySubtotal'
+                  }
+                : {
+                    showConfigKey: 'showDiyTagSubtotal',
+                    configKey: 'diyTagSubtotal'
+                  }
+
+              return this.renderDiySummaryEditor({
+                ...activeConfig,
+                label: i18next.t('自定义分类/标签小计'),
+                placeholder: '请输入要分类/标签小计字段',
+                editStore
+              })
+            })()}
           </>
         )}
       </div>
+    )
+  }
+
+  // 通用的自定义合计编辑界面渲染
+  renderDiySummaryEditor({
+    label,
+    placeholder,
+    showConfigKey,
+    configKey,
+    editStore
+  }) {
+    if (
+      showConfigKey &&
+      Object.prototype.hasOwnProperty.call(
+        editStore.config || {},
+        showConfigKey
+      ) &&
+      !editStore.config[showConfigKey]
+    ) {
+      return null
+    }
+
+    const diyConfig = editStore.computedTableSpecialConfig?.[configKey]
+    const style = (diyConfig && diyConfig?.fields?.[0]?.style) || {}
+    const needUpperCase =
+      (editStore.computedTableSpecialConfig?.[configKey] &&
+        diyConfig?.needUpperCase) ||
+      false
+    const caseBefore =
+      (editStore.computedTableSpecialConfig?.[configKey] &&
+        diyConfig?.isUpperCaseBefore) ||
+      false
+    const upperLowerCaseSeparate = diyConfig?.isUpperLowerCaseSeparate || false
+    const valueField =
+      editStore.computedTableSpecialConfig?.[configKey]?.fields?.[0]?.valueField
+
+    const methodName = configKey
+      .split(/(?=[A-Z])/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('')
+
+    const setStyleMethod = editStore[`set${methodName}Style`]
+    const setUpperCaseMethod = editStore[`set${methodName}UpperCase`]
+    const setUpperCaseBeforeMethod =
+      editStore[`set${methodName}UpperCaseBefore`]
+    const setUpperLowerCaseSeparateMethod =
+      editStore[`set${methodName}UpperLowerCaseSeparate`]
+    const setValueFieldMethod = editStore[`set${methodName}ValueField`]
+    const setFieldsMethod = editStore[`set${methodName}Fields`]
+
+    return (
+      <Flex>
+        <Flex>{label}：</Flex>
+        <div>
+          <Fonter style={style} onChange={setStyleMethod} />
+          <Separator />
+          <TextAlign style={style} onChange={setStyleMethod} />
+          <EditorSubtotalCheck
+            subtotalCheckDisabled
+            subtotalChecked={needUpperCase}
+            subtotalCheckOnChange={setUpperCaseMethod}
+            subtotalCheckText='显示大写金额'
+            marginLeft
+          />
+          <EditorSubtotalCheck
+            subtotalCheckDisabled={needUpperCase}
+            subtotalChecked={caseBefore}
+            subtotalCheckOnChange={setUpperCaseBeforeMethod}
+            subtotalCheckText='大写金额在前'
+            marginLeft
+          />
+          <EditorSubtotalCheck
+            subtotalCheckDisabled={needUpperCase}
+            subtotalChecked={upperLowerCaseSeparate}
+            subtotalCheckOnChange={setUpperLowerCaseSeparateMethod}
+            subtotalCheckText='大、小写金额分左右两边展示'
+            marginLeft
+          />
+          <EditorText
+            label={i18next.t('左侧文案修改')}
+            value={
+              diyConfig && diyConfig?.fields?.[0]
+                ? diyConfig.fields[0].name
+                : ''
+            }
+            onChange={e => setFieldsMethod(e.target.value, 0)}
+          />
+          {diyConfig?.isUpperLowerCaseSeparate && (
+            <EditorText
+              label={i18next.t('右侧文案修改')}
+              value={diyConfig?.fields?.[0]?.rightName || ''}
+              onChange={e => setFieldsMethod(e.target.value, 1)}
+            />
+          )}
+          <Textarea
+            value={valueField}
+            placeholder={placeholder}
+            onChange={value => setValueFieldMethod(value)}
+          />
+          <TipInfo text={i18next.t('不支持双栏和三栏模式')} />
+        </div>
+      </Flex>
     )
   }
 
@@ -857,7 +1011,7 @@ class EditorSubtotalCheck extends React.Component {
             onChange={subtotalCheckOnChange}
           />
         </Flex>
-        <Flex>&nbsp;{i18next.t(`${subtotalCheckText}`)}</Flex>
+        <Flex>&nbsp;{subtotalCheckText}</Flex>
       </Flex>
     )
   }
@@ -869,6 +1023,28 @@ EditorSubtotalCheck.propTypes = {
   subtotalCheckOnChange: PropTypes.func,
   subtotalCheckText: PropTypes.string,
   marginLeft: PropTypes.string
+}
+
+function EditorText({ label, value, onChange }) {
+  return (
+    <>
+      <Flex alignCenter>{label}：</Flex>
+      <Text
+        value={value}
+        onChange={onChange}
+        style={{
+          width: '100px',
+          margin: '5px 0 5px 0px'
+        }}
+      />
+    </>
+  )
+}
+
+EditorText.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired
 }
 
 export default EditorField

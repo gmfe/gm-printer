@@ -293,7 +293,49 @@ const getColSpanLength = table => {
     : table.columns.length
 }
 
+/**
+ * 收集分类小计的组
+ * @param {*} tableData
+ * @param {*} range
+ * @param {*} key
+ * @returns
+ */
+const collectGroups = (tableData, range, key = '_collect') => {
+  const groups = []
+  let currentGroup = []
+  let currentStart = range.begin
+
+  for (let idx = range.begin; idx < range.end; idx++) {
+    const row = tableData[idx]
+    const isSpecial = row && row[key]
+
+    if (isSpecial) {
+      if (currentGroup.length) {
+        groups.push({
+          groupKey: extractCategoryName(row[key]?.text),
+          begin: currentStart,
+          end: idx,
+          specialIndex: idx
+        })
+        currentGroup = []
+      }
+      currentStart = idx + 1
+    } else if (row && Object.keys(row).length) {
+      currentGroup.push(row)
+    }
+  }
+
+  return groups
+
+  function extractCategoryName(text) {
+    if (!text) return ''
+    const match = text.match(/^(.*?)[：:]/)
+    return match ? match[1] : ''
+  }
+}
+
 export {
+  collectGroups,
   getHeight,
   getWidth,
   pxAdd,
