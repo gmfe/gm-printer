@@ -833,7 +833,7 @@ class EditorStore {
     }
     // 标签小计和分类小计互斥
     if (
-      newDataKey.includes('category') &&
+      (newDataKey.includes('category') || newDataKey.includes('categoryDiy')) &&
       (key === 'tag' || key === 'tagDiy')
     ) {
       newDataKey = _.without(newDataKey, 'category', 'categoryDiy')
@@ -843,7 +843,7 @@ class EditorStore {
         set(table, { isDiyCategorySubtotal: false })
       }
     } else if (
-      newDataKey.includes('tag') &&
+      (newDataKey.includes('tag') || newDataKey.includes('tagDiy')) &&
       (key === 'category' || key === 'categoryDiy')
     ) {
       newDataKey = _.without(newDataKey, 'tag', 'tagDiy')
@@ -867,14 +867,22 @@ class EditorStore {
     }
 
     if (newDataKey.includes('categoryDiy')) {
-      this.setDiyCategorySubtotalShow(name, true)
+      if (!diyCategorySubtotal?.show) {
+        this.setDiyCategorySubtotalShow(name)
+      }
     } else {
-      this.setDiyCategorySubtotalShow(name, false)
+      if (diyCategorySubtotal?.show) {
+        this.setDiyCategorySubtotalShow(name)
+      }
     }
     if (newDataKey.includes('tagDiy')) {
-      this.setDiyTagSubtotalShow(name, true)
+      if (!diyTagSubtotal?.show) {
+        this.setDiyTagSubtotalShow(name)
+      }
     } else {
-      this.setDiyTagSubtotalShow(name, false)
+      if (diyTagSubtotal?.show) {
+        this.setDiyTagSubtotalShow(name)
+      }
     }
 
     newDataKey = _.sortBy(newDataKey, [
@@ -887,6 +895,8 @@ class EditorStore {
       o => o === 'category',
       o => o === 'orders'
     ])
+
+    // console.log('newDataKey==> changeTableDataKey', newDataKey)
 
     this.config.contents[arr[2]].dataKey = newDataKey.join('_')
 
