@@ -1,10 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import { coverDigit2Uppercase, getDataKey } from '../util'
+import { coverDigit2Uppercase, getDataKey, isMultiTable } from '../util'
+import { MULTI_SUFFIX, MULTI_SUFFIX3 } from '../config'
 import { observer } from 'mobx-react'
 import classNames from 'classnames'
 import Big from 'big.js'
+
+function buildTemplateField(fieldStr, suffix) {
+  // 如果 field 是 "{{列.下单数}}"，提取出 "下单数"
+  const match = fieldStr.match(/\{\{列\.([^}]+)\}\}/)
+  if (match) {
+    // 构造新的模板字符串：{{列.下单数_MULTI_SUFFIX}}
+    return `{{列.${match[1]}${suffix}}}`
+  }
+  // 如果 field 不是模板格式，直接返回（这种情况应该不会发生）
+  return fieldStr + suffix
+}
 
 /**
  * 通用的自定义合计组件
@@ -28,20 +40,50 @@ const DiySummary = props => {
     ? getTableData(printerStore, dataKey, arrange, range)
     : printerStore.data._table[getDataKey(dataKey, arrange)] || []
 
+  // 判断是否是多栏表格
+  const isMulti = isMultiTable(dataKey)
+
   // 计算合计
   const sumData = field => {
+    if (isMulti) {
+      return _.reduce(
+        tableData,
+        (a, b, i) => {
+          let result = a
+          // 先通过 templateTable 获取原始字段的值
+          const bRes = getRes(field, i)
+          result = a.plus(+bRes || 0)
+
+          // 双栏
+          const multiField = buildTemplateField(field, MULTI_SUFFIX)
+          result = result.plus(+getRes(multiField, i) || 0)
+
+          // 三栏
+          const multiField3 = buildTemplateField(field, MULTI_SUFFIX3)
+          result = result.plus(+getRes(multiField3, i) || 0)
+
+          return result
+        },
+        Big(0)
+      ).toFixed(2)
+    }
+
     return _.reduce(
       tableData,
       (a, b, i) => {
         let result = a
-        const bRes = printerStore
-          .templateTable(field, dataKey, range ? range.begin + i : i, pageIndex)
-          .replace(/\(\)/g, '')
+        const bRes = getRes(field, i)
         result = a.plus(+bRes || 0)
         return result
       },
       Big(0)
     ).toFixed(2)
+
+    function getRes(field, i) {
+      return printerStore
+        .templateTable(field, dataKey, range ? range.begin + i : i, pageIndex)
+        .replace(/\(\)/g, '')
+    }
   }
 
   if (!diyConfig?.show || !printerStore?.ready) {
