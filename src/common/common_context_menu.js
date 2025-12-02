@@ -149,6 +149,17 @@ class CommonContextMenu extends React.Component {
     })
   }
 
+  handleAddContentWithConfig = (diff, type, tableConfig) => {
+    const { editStore } = this.props
+    const { name } = this.state
+
+    editStore.addContentByDiff(name, diff, type, tableConfig)
+
+    this.setState({
+      name: null
+    })
+  }
+
   handleInsertImage = imgURL => {
     this.handleInsertBlock('image', imgURL)
   }
@@ -240,7 +251,6 @@ class CommonContextMenu extends React.Component {
             <Hr />
           </>
         )}
-
         <div onClick={this.handleAddContent.bind(this, 0, '')}>
           {i18next.t('向上插入区域块')}
         </div>
@@ -296,7 +306,7 @@ class CommonContextMenu extends React.Component {
   }
 
   renderPanel = () => {
-    let { insertBlockList } = this.props
+    let { insertBlockList, customTableConfigs } = this.props
     const { name } = this.state
     const arr = name.split('.')
     const type = arr[0]
@@ -327,6 +337,21 @@ class CommonContextMenu extends React.Component {
             </div>
           )
         })}
+
+        {customTableConfigs &&
+          customTableConfigs.map(customConfig => (
+            <div
+              key={customConfig.label}
+              onClick={this.handleAddContentWithConfig.bind(
+                this,
+                1,
+                'table',
+                customConfig.tableConfig
+              )}
+            >
+              {customConfig.label}
+            </div>
+          ))}
 
         {arr[0] === 'contents' && (
           <>
@@ -410,6 +435,7 @@ CommonContextMenu.propTypes = {
   editStore: PropTypes.object,
   insertBlockList: PropTypes.array.isRequired,
   renderTableAction: PropTypes.func,
+  customTableConfigs: PropTypes.array,
   children: PropTypes.element.isRequired
 }
 

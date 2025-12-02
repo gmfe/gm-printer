@@ -47,7 +47,8 @@ class Editor extends React.Component {
       addFields,
       showNewDate,
       mockData,
-      mergeClassificationAndLabel
+      mergeClassificationAndLabel,
+      customTableConfigs
     } = this.props
 
     return (
@@ -106,7 +107,7 @@ class Editor extends React.Component {
         )}
 
         <div className='gm-printer-edit-wrap'>
-          <ContextMenu />
+          <ContextMenu customTableConfigs={customTableConfigs} />
         </div>
       </div>
     )
@@ -120,7 +121,8 @@ Editor.propTypes = {
   mockData: PropTypes.object.isRequired,
   addFields: PropTypes.object.isRequired,
   showNewDate: PropTypes.bool,
-  mergeClassificationAndLabel: PropTypes.bool
+  mergeClassificationAndLabel: PropTypes.bool,
+  customTableConfigs: PropTypes.array
 }
 
 Editor.defaultProps = {

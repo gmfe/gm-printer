@@ -15,9 +15,10 @@ const regExp = text => {
  * 每列统计
  * @param key
  * @param dataList
+ * @param summaryFieldsResultToNumber 需要转换为数字的汇总字段
  * @returns {*|string}
  */
-const sumCol = (key, dataList) => {
+const sumCol = (key, dataList, summaryFieldsResultToNumber = []) => {
   let result
   try {
     result = dataList
@@ -26,6 +27,10 @@ const sumCol = (key, dataList) => {
         return acc
       }, Big(0))
       .toFixed(2)
+
+    if (summaryFieldsResultToNumber.includes(key)) {
+      result = Number(result)
+    }
   } catch (e) {
     result = ''
   }
@@ -53,6 +58,14 @@ const PageSummary = props => {
     const tableData = printerStore.data._table[_dataKey] || []
     const currentPageTableData = tableData.slice(range.begin, range.end)
 
+    // 需要转换为数字的汇总字段
+    let summaryFieldsResultToNumber =
+      printerStore.config?.summaryFieldsResultToNumber
+    if (summaryFieldsResultToNumber) {
+      summaryFieldsResultToNumber = summaryFieldsResultToNumber.map(item =>
+        regExp(item)
+      )
+    }
     return (
       <tr>
         {_.map(columns, (col, index) => {
@@ -66,7 +79,7 @@ const PageSummary = props => {
               summaryConfig.summaryColumns
                 .map(text => regExp(text))
                 .includes(key) && key
-                ? sumCol(key, currentPageTableData)
+                ? sumCol(key, currentPageTableData, summaryFieldsResultToNumber)
                 : ' '
           }
 

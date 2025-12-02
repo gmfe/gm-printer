@@ -44,6 +44,12 @@ class ContextMenu extends React.Component {
       // 多位小数
       editStore.setMultiDigitDecimal(specialControlConfig?.multiDigitDecimal)
     }
+    if (specialControlConfig?.taxFreeProductRateDisplay !== undefined) {
+      // 免税产品税率显示
+      editStore.setTaxFreeProductRateDisplay(
+        specialControlConfig?.taxFreeProductRateDisplay || ''
+      )
+    }
   }
 
   /**
@@ -196,11 +202,12 @@ class ContextMenu extends React.Component {
   }
 
   render() {
-    const { editStore } = this.props
+    const { editStore, customTableConfigs } = this.props
     return (
       <CommonContextMenu
         renderTableAction={this.renderOrderActionBtn}
         insertBlockList={blockTypeList}
+        customTableConfigs={customTableConfigs}
       >
         <Printer
           key={editStore.computedPrinterKey}
@@ -220,6 +227,7 @@ class ContextMenu extends React.Component {
 }
 ContextMenu.propTypes = {
   editStore: PropTypes.object,
-  mockData: PropTypes.object
+  mockData: PropTypes.object,
+  customTableConfigs: PropTypes.array
 }
 export default ContextMenu

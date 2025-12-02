@@ -3,6 +3,7 @@ import { inject, observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Flex, Switch } from '../components'
+import { Text } from './component'
 
 @inject('editStore')
 @observer
@@ -25,10 +26,47 @@ class EditorCutomizedConfig extends React.Component {
     editStore.setFillIndex(value)
   }
 
+  handleTaxFreeProductRateDisplay = e => {
+    const value = e.target.value
+
+    const { editStore } = this.props
+    // 限制10位以内，如果超过则截断
+    const trimmedValue = value.length > 10 ? value.slice(0, 10) : value
+    editStore.setTaxFreeProductRateDisplay(trimmedValue)
+
+    // 如果选中了表格，同时更新表格配置
+    if (editStore.selectedRegion && editStore.computedRegionIsTable) {
+      const arr = editStore.selectedRegion.split('.')
+      const tableConfig = editStore.config.contents[arr[2]]
+
+      const dataKey = tableConfig.dataKey
+      const tableData = editStore.mockData._table[dataKey]
+
+      if (tableData?.length) {
+        const list = tableData.map(item => {
+          if (item._origin && Number(item._origin?.tax_rate) === 0) {
+            if (String(value).length > 0) {
+              item['税率'] = value
+            } else {
+              item['税率'] = '0.00%'
+            }
+          }
+          return item
+        })
+        editStore.updateTableData(dataKey, list)
+      }
+    }
+  }
+
   render() {
     const {
       editStore,
-      editStore: { isAutoFilling, isMultiDigitDecimal, fillIndex }
+      editStore: {
+        isAutoFilling,
+        isMultiDigitDecimal,
+        fillIndex,
+        taxFreeProductRateDisplay
+      }
     } = this.props
     // 是table
     if (editStore.computedRegionIsTable) {
@@ -56,6 +94,15 @@ class EditorCutomizedConfig extends React.Component {
             <Switch
               checked={isMultiDigitDecimal}
               onChange={this.handleMultiDigitDecimal}
+            />
+          </Flex>
+          <Flex alignCenter className='gm-padding-top-5'>
+            <div>{i18next.t('免税产品税率显示')}：</div>
+            <Text
+              value={taxFreeProductRateDisplay || ''}
+              onChange={this.handleTaxFreeProductRateDisplay}
+              placeholder={i18next.t('请输入')}
+              maxLength={10}
             />
           </Flex>
         </>
