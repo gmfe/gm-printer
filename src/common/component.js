@@ -134,7 +134,7 @@ class TextPX extends React.Component {
     const { onChange } = this.props
     // 理论上这里只会有字符串和 event 两种类型
     if (Object.prototype.toString.call(value) === '[object Object]') {
-      value = value.target.value
+      value = value?.target?.value
     }
     if (value === '') {
       onChange('')
