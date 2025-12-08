@@ -294,7 +294,13 @@ class PrinterStore {
         tableCount++
         // 表格原始的高度和宽度信息
         const table = this.tablesInfo[`contents.table.${index}`]
-        const { subtotal, dataKey, summaryConfig, overallOrder } = content
+        const {
+          subtotal,
+          dataKey,
+          summaryConfig,
+          overallOrder,
+          diySubtotal
+        } = content
         // 如果显示每页合计,那么table高度多预留一行高度
         const subtotalTrHeight = subtotal.show ? getSumTrHeight(subtotal) : 0
         // 如果显示整单合计,那么table高度多预留一行高度
@@ -306,12 +312,20 @@ class PrinterStore {
           summaryConfig?.pageSummaryShow && !isMultiTable(dataKey) // 双栏table没有每页合计
             ? getSumTrHeight(summaryConfig)
             : 0
+
+        // 如果显示自定义每页合计,那么table高度多预留一行高度
+        const diySubtotalTrHeight = diySubtotal?.show
+          ? getOverallOrderTrHeight(diySubtotal) // 使用相同的计算方式
+          : 0
+
         // 每个表格都具有的高度
         const allTableHaveThisHeight =
           table.head.height +
           subtotalTrHeight +
           pageSummaryTrHeight +
-          overallOrderTrHeight
+          overallOrderTrHeight +
+          diySubtotalTrHeight
+
         /** 当前page页面的最小高度 */
         const currentPageMinimumHeight =
           allPagesHaveThisHeight + allTableHaveThisHeight
