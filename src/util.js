@@ -303,12 +303,31 @@ const getColSpanLength = table => {
 const collectGroups = (tableData, range, key = '_collect') => {
   const groups = []
   let currentGroup = []
-  let currentStart = range.begin
+  let currentStart = 0
 
-  for (let idx = range.begin; idx < range.end; idx++) {
+  // for (let idx = range.begin; idx < range.end; idx++) {
+  //   const row = tableData[idx]
+  //   const isSpecial = row && row[key]
+
+  //   if (isSpecial) {
+  //     if (currentGroup.length) {
+  //       groups.push({
+  //         groupKey: extractCategoryName(row[key]?.text),
+  //         begin: currentStart,
+  //         end: idx,
+  //         specialIndex: idx
+  //       })
+  //       currentGroup = []
+  //     }
+  //     currentStart = idx + 1
+  //   } else if (row && Object.keys(row).length) {
+  //     currentGroup.push(row)
+  //   }
+  // }
+
+  for (let idx = 0; idx < tableData.length; idx++) {
     const row = tableData[idx]
     const isSpecial = row && row[key]
-
     if (isSpecial) {
       if (currentGroup.length) {
         groups.push({
