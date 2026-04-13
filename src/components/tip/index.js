@@ -38,12 +38,20 @@ function getTipDOM(id) {
 Tip.warning = (message = '') => {
   tips.push(message)
 
+  const tipDOM = getTipDOM('gm-printer-tip')
+  if (!tipDOM) {
+    // 打印 iframe 场景下不存在 gm-printer-tip 容器，用 alert 兜底
+    window.alert(message)
+    tips.pop()
+    return
+  }
+
   setTimeout(() => {
     tips.shift()
-    ReactDOM.render(<Tip list={tips} />, getTipDOM('gm-printer-tip'))
+    ReactDOM.render(<Tip list={tips} />, tipDOM)
   }, 3000)
 
-  ReactDOM.render(<Tip list={tips} />, getTipDOM('gm-printer-tip'))
+  ReactDOM.render(<Tip list={tips} />, tipDOM)
 }
 
 Tip.propTypes = {
