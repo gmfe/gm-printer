@@ -1,5 +1,5 @@
 import i18next from '../../locales'
-import { action, observable, computed, toJS } from 'mobx'
+import { action, observable, computed } from 'mobx'
 import {
   getSumTrHeight,
   isMultiTable,
@@ -530,7 +530,7 @@ class PrinterStore {
       })({
         ...this.data.common,
         [i18next.t('当前页码')]: pageIndex + 1,
-        [i18next.t('页码总数')]: this.pages.length,
+        [i18next.t('页码总数')]: Math.max(1, this.pages.length),
         price: price
       })
     } catch (err) {
@@ -604,7 +604,7 @@ class PrinterStore {
 
         [i18next.t('列')]: list[index],
         [i18next.t('当前页码')]: pageIndex + 1,
-        [i18next.t('页码总数')]: this.pages.length,
+        [i18next.t('页码总数')]: Math.max(1, this.pages.length),
         price: price // 提供一个价格处理函数
       })
     } catch (err) {
@@ -626,7 +626,7 @@ class PrinterStore {
         ...this.data.common,
         [i18next.t('列')]: list[index],
         [i18next.t('当前页码')]: pageIndex + 1,
-        [i18next.t('页码总数')]: this.pages.length,
+        [i18next.t('页码总数')]: Math.max(1, this.pages.length),
         price: price // 提供一个价格处理函数
       })
       res =
