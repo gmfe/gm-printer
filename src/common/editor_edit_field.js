@@ -341,6 +341,11 @@ class EditorField extends React.Component {
                 ))}
               </Select>
             </Flex>
+            <TipInfo
+              text={i18next.t(
+                '说明：修改数据类型后，支持展示异常商品、组合商品、积分、周转物等信息'
+              )}
+            />
             <Gap height='5px' />
           </>
         )}
