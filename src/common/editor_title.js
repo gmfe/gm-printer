@@ -72,13 +72,15 @@ class EditorTitle extends React.Component {
   }
 
   handleTestPrint = () => {
-    const { mockData, editStore } = this.props
+    // 新增结款单每页合计标识，测试打印时原样透传到打印入口
+    const { mockData, editStore, isSomeSubtotalTr } = this.props
     doPrint(
       {
         config: toJS(editStore.config),
         data: mockData
       },
-      true
+      true,
+      isSomeSubtotalTr
     )
   }
 
@@ -140,10 +142,14 @@ class EditorTitle extends React.Component {
 EditorTitle.propTypes = {
   onSave: PropTypes.func.isRequired,
   isPurchase: PropTypes.bool,
-  editStore: PropTypes.object
+  editStore: PropTypes.object,
+  // 标识是否为结款单每页合计场景
+  isSomeSubtotalTr: PropTypes.bool
 }
 EditorTitle.defaultProps = {
-  isPurchase: false
+  isPurchase: false,
+  // 默认按非结款单每页合计场景处理
+  isSomeSubtotalTr: false
 }
 
 EditorTitle.wrappedComponent.propTypes = {
