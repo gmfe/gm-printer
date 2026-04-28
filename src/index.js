@@ -1,6 +1,7 @@
 // ‼️优先初始化语言设置(必须先初始化语言)
 import '../locales'
-import Editor from './editor'
+import Editor, { Editor2 } from './editor'
+
 import EditorPurchase from './editor_purchase'
 import EditorStockIn from './editor_stockin'
 import EditorStockOut from './editor_stockout'
@@ -27,6 +28,7 @@ export { setLocale } from '../locales'
 
 export {
   Editor,
+  Editor2,
   EditorStockIn,
   EditorStockOut,
   EditorPurchase,
