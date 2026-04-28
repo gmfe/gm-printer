@@ -42,7 +42,8 @@ class Editor extends React.Component {
 
         {showEditor && (
           <div className='gm-printer-edit-zone'>
-            <EditorTitle onSave={onSave} />
+            {/* 透传结款单每页合计标识给标题区，用于测试打印时走对应逻辑 */}
+            <EditorTitle onSave={onSave} isSomeSubtotalTr={isSomeSubtotalTr} />
             <Gap height='10px' />
             <EditorSelect />
             <Gap height='5px' />
