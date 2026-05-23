@@ -1,6 +1,11 @@
 import React from 'react'
 import _ from 'lodash'
-import { getDataKey, isMultiTable } from '../util'
+import {
+  getDataKey,
+  isMultiTable,
+  formatSumWithPrecision,
+  getHighPrecisionField
+} from '../util'
 import Big from 'big.js'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
@@ -16,17 +21,27 @@ const regExp = text => {
  * @param key
  * @param dataList
  * @param summaryFieldsResultToNumber 需要转换为数字的汇总字段
+ * @param formatter 精度格式化函数，由 stationv2 传入 AmountPrecisionUtil(precision_control)
+ * @param highPrecisionMapping 高精度字段映射，优先用高精度字段求和
  * @returns {*|string}
  */
-const sumCol = (key, dataList, summaryFieldsResultToNumber = []) => {
+const sumCol = (
+  key,
+  dataList,
+  summaryFieldsResultToNumber = [],
+  formatter,
+  highPrecisionMapping
+) => {
   let result
   try {
-    result = dataList
-      .reduce((acc, item) => {
-        acc = acc.plus(item[key] || 0)
-        return acc
-      }, Big(0))
-      .toFixed(2)
+    // 优先使用高精度字段求和
+    const sumKey = getHighPrecisionField(key, highPrecisionMapping)
+    const sum = dataList.reduce((acc, item) => {
+      const val = item[sumKey] ?? item._origin?.[sumKey] ?? 0
+      acc = acc.plus(val)
+      return acc
+    }, Big(0))
+    result = formatSumWithPrecision(sum, formatter)
 
     if (summaryFieldsResultToNumber.includes(key)) {
       result = Number(result)
@@ -66,6 +81,8 @@ const PageSummary = props => {
         regExp(item)
       )
     }
+    const formatter = printerStore.config?.payAmountFormatter
+    const highPrecisionMapping = printerStore.config?.highPrecisionFieldMapping
     return (
       <tr>
         {_.map(columns, (col, index) => {
@@ -79,7 +96,13 @@ const PageSummary = props => {
               summaryConfig.summaryColumns
                 .map(text => regExp(text))
                 .includes(key) && key
-                ? sumCol(key, currentPageTableData, summaryFieldsResultToNumber)
+                ? sumCol(
+                    key,
+                    currentPageTableData,
+                    summaryFieldsResultToNumber,
+                    formatter,
+                    highPrecisionMapping
+                  )
                 : ' '
           }
 

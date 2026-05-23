@@ -2,7 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 // import Big from 'big.js'
-import { coverDigit2Uppercase, getDataKey } from '../util'
+import {
+  coverDigit2Uppercase,
+  getDataKey,
+  formatSumWithPrecision
+} from '../util'
 import { observer } from 'mobx-react'
 import classNames from 'classnames'
 import Big from 'big.js'
@@ -15,20 +19,30 @@ const DiyOverallOrder = props => {
   } = props
   const tableData = printerStore.data._table[getDataKey(dataKey)] || []
 
+  const formatter = printerStore.config?.payAmountFormatter
+  const highPrecisionMapping = printerStore.config?.highPrecisionFieldMapping
+
   // 计算合计
   const sumData = field => {
-    return _.reduce(
+    // 查找高精度字段，有则直接从原始数据取值，避免 templateTable 的精度损失
+    const hpField = highPrecisionMapping?.[field]
+    const sum = _.reduce(
       tableData,
       (a, b, i) => {
         let result = a
-        const bRes = printerStore
-          .templateTable(field, dataKey, i, pageIndex)
-          .replace(/\(\)/g, '')
-        result = a.plus(+bRes || 0)
+        if (hpField) {
+          result = a.plus(b._origin?.[hpField] ?? b[hpField] ?? 0)
+        } else {
+          const bRes = printerStore
+            .templateTable(field, dataKey, i, pageIndex)
+            .replace(/\(\)/g, '')
+          result = a.plus(+bRes || 0)
+        }
         return result
       },
       Big(0)
-    ).toFixed(2)
+    )
+    return formatSumWithPrecision(sum, formatter)
   }
 
   if (!diyOverallOrder?.show || !printerStore?.ready) {

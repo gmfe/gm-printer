@@ -353,6 +353,27 @@ const collectGroups = (tableData, range, key = '_collect') => {
   }
 }
 
+/**
+ * 使用精度格式化函数格式化 Big.js 求和结果，无格式化函数时兜底 toFixed(2)
+ * @param {Big} sum - Big.js 实例
+ * @param {Function} [formatter] - 可选的精度格式化函数
+ * @returns {string}
+ */
+const formatSumWithPrecision = (sum, formatter) => {
+  return formatter ? formatter(sum).toFixed() : sum.toFixed(2)
+}
+
+/**
+ * 根据高精度字段映射，获取求和时应使用的字段名
+ * 如果字段有对应的高精度版本，返回高精度字段名，否则返回原字段名
+ * @param {string} field - 原始字段名
+ * @param {Object} mapping - 高精度字段映射，格式：{ normalField: 'high_precision_field' }
+ * @returns {string}
+ */
+const getHighPrecisionField = (field, mapping) => {
+  return mapping?.[field] || field
+}
+
 export {
   collectGroups,
   getHeight,
@@ -373,5 +394,7 @@ export {
   caclSingleDetailsPageHeight,
   getArrayMid,
   getColSpanLength,
-  getOverallOrderTrHeight
+  getOverallOrderTrHeight,
+  formatSumWithPrecision,
+  getHighPrecisionField
 }

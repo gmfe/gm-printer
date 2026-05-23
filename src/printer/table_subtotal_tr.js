@@ -4,7 +4,11 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import { MULTI_SUFFIX, MULTI_SUFFIX3 } from '../config'
 import Big from 'big.js'
-import { coverDigit2Uppercase, getDataKey } from '../util'
+import {
+  coverDigit2Uppercase,
+  getDataKey,
+  formatSumWithPrecision
+} from '../util'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
 import classNames from 'classnames'
@@ -45,58 +49,47 @@ const SubtotalTr = props => {
     isSomeSubtotalTr
   } = props
   const tableData = printerStore.data._table[getDataKey(dataKey, arrange)] || []
-  // 计算合计
-  const sumData = (list, field) => {
-    return _.reduce(
-      list,
-      (a, b) => {
-        let result = a
-
-        const _origin = b._origin || {}
-        const _origin2 = b['_origin' + MULTI_SUFFIX] || {}
-        const _origin3 = b['_origin' + MULTI_SUFFIX3] || {}
-
-        result = a.plus(_origin[field] || 0)
-        if (_origin2[field]) {
-          result = result.plus(_origin2[field])
-        }
-        if (_origin3[field]) {
-          result = result.plus(_origin3[field])
-        }
-        return result
-      },
-      Big(0)
-    ).toFixed(2)
-  }
 
   // 计算合计
-  const sumData2 = (list, field) => {
+  const sumData2 = (list, field, formatter, highPrecisionMapping) => {
+    // 在字段名转换前，查找是否有高精度字段
+    const hpField = highPrecisionMapping?.[field]
+
     // 兼容之前
     if (field === 'total_item_price') field = '下单金额'
     if (field === 'real_item_price') field = '出库金额'
     if (field === 'settle_money2') field = '结算金额'
     if (field === 'total_money2') field = '金额'
-    return _.reduce(
+
+    const sum = _.reduce(
       list,
       (a, b) => {
         let result = a
-        result = a.plus(b[field] || 0)
-        if (b?.[field + MULTI_SUFFIX]) {
+        // 优先使用高精度字段（从 _origin 中取原始数据）
+        if (hpField) {
+          result = a.plus(b._origin?.[hpField] ?? b[hpField] ?? 0)
+        } else {
+          result = a.plus(b[field] || 0)
+        }
+        if (!hpField && b?.[field + MULTI_SUFFIX]) {
           result = result.plus(b?.[field + MULTI_SUFFIX])
         }
-        if (b?.[field + MULTI_SUFFIX3]) {
+        if (!hpField && b?.[field + MULTI_SUFFIX3]) {
           result = result.plus(b?.[field + MULTI_SUFFIX3])
         }
         return result
       },
       Big(0)
-    ).toFixed(2)
+    )
+    return formatSumWithPrecision(sum, formatter)
   }
 
   const getData = field => {
     const data = printerStore.data.common
     return data?.[field] ?? ''
   }
+  const formatter = printerStore.config?.payAmountFormatter
+  const highPrecisionMapping = printerStore.config?.highPrecisionFieldMapping
   // 每页小计
   // show 是否展示小计，fields<Array> 合计的字段和展现的name，displayName 是否显示名字
   if (show && printerStore.ready) {
@@ -107,7 +100,12 @@ const SubtotalTr = props => {
       const sum = {}
 
       _.each(fields, v => {
-        sum[v.name] = sumData2(list, v.valueField)
+        sum[v.name] = sumData2(
+          list,
+          v.valueField,
+          formatter,
+          highPrecisionMapping
+        )
       })
       let subtotalStr = ''
       for (const name in sum) {
@@ -165,9 +163,14 @@ const SubtotalTr = props => {
                       {item.type === 'useSummarize'
                         ? getData(item.valueField)
                         : index === 0
-                        ? sumData2(list, item.valueField)
+                        ? sumData2(
+                            list,
+                            item.valueField,
+                            formatter,
+                            highPrecisionMapping
+                          )
                         : ''}
-                      {/* {index === 0 ? sumData(list, item.valueField) : ''} */}
+                      {/* {index === 0 ? sumData(list, item.valueField, formatter) : ''} */}
                     </span>
                     {subtotal?.needUpperCase && ( // 是否需要大写金额
                       <span>
@@ -177,7 +180,12 @@ const SubtotalTr = props => {
                           : index === 0
                           ? '大写：' +
                             coverDigit2Uppercase(
-                              sumData2(list, item.valueField)
+                              sumData2(
+                                list,
+                                item.valueField,
+                                formatter,
+                                highPrecisionMapping
+                              )
                             )
                           : ''}
                       </span>

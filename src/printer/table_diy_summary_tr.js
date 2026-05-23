@@ -1,7 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import { coverDigit2Uppercase, getDataKey, isMultiTable } from '../util'
+import {
+  coverDigit2Uppercase,
+  getDataKey,
+  isMultiTable,
+  formatSumWithPrecision
+} from '../util'
 import { MULTI_SUFFIX, MULTI_SUFFIX3 } from '../config'
 import { observer } from 'mobx-react'
 import classNames from 'classnames'
@@ -43,14 +48,20 @@ const DiySummary = props => {
   // 判断是否是多栏表格
   const isMulti = isMultiTable(dataKey)
 
+  const formatter = printerStore.config?.payAmountFormatter
+  const highPrecisionMapping = printerStore.config?.highPrecisionFieldMapping
+
   // 计算合计
   const sumData = field => {
+    // 查找高精度字段，有则直接从原始数据取值，避免 templateTable 的精度损失
+    const hpField = highPrecisionMapping?.[field]
+
     if (isMulti) {
-      return _.reduce(
+      // 多栏表格暂不使用高精度字段，保持原有 templateTable 逻辑
+      const sum = _.reduce(
         tableData,
         (a, b, i) => {
           let result = a
-          // 先通过 templateTable 获取原始字段的值
           const bRes = getRes(field, i)
           result = a.plus(+bRes || 0)
 
@@ -65,10 +76,24 @@ const DiySummary = props => {
           return result
         },
         Big(0)
-      ).toFixed(2)
+      )
+      return formatSumWithPrecision(sum, formatter)
     }
 
-    return _.reduce(
+    // 单栏：有高精度字段则直接从原始数据取值
+    if (hpField) {
+      const sum = _.reduce(
+        tableData,
+        (a, b, i) => {
+          return a.plus(b._origin?.[hpField] ?? b[hpField] ?? 0)
+        },
+        Big(0)
+      )
+      return formatSumWithPrecision(sum, formatter)
+    }
+
+    // 兜底：无高精度字段，使用 templateTable
+    const sum = _.reduce(
       tableData,
       (a, b, i) => {
         let result = a
@@ -77,7 +102,8 @@ const DiySummary = props => {
         return result
       },
       Big(0)
-    ).toFixed(2)
+    )
+    return formatSumWithPrecision(sum, formatter)
 
     function getRes(field, i) {
       return printerStore
