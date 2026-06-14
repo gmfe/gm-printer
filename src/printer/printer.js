@@ -103,10 +103,10 @@ class Printer extends React.Component {
   componentDidMount() {
     const { printerStore, config, getremainpageHeight } = this.props
     const batchPrintConfig = config.batchPrintConfig
-    // 连续打印不需要计算
+    // didMount 代表第一次渲染完成
+    printerStore.setReady(true)
+    // 连续打印不需要分页计算
     if (batchPrintConfig !== 2) {
-      // didMount 代表第一次渲染完成
-      printerStore.setReady(true)
       printerStore.computedPages()
       if (config.autoFillConfig?.checked) {
         this.props.printerStore.setAutofillConfig(
