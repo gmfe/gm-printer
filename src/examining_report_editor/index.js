@@ -1,6 +1,4 @@
 import withShadowDom from '../common/hoc_with_shadow_dom'
 import Editor from './editor'
-import EditorMenuConfig from './editor_menu_config'
 
 export default withShadowDom(Editor)
-export const Editor2 = withShadowDom(EditorMenuConfig)

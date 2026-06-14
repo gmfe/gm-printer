@@ -94,11 +94,43 @@ class EditorStore {
 
   @action
   setSubtotalFieldsCol(arr) {
-    // this.overallOrderShow = !this.overallOrderShow
-    // 重新计算每页合计的单元格
     const table = this.config.contents[arr[2]]
+    if (!table?.subtotal?.show) return
+
+    const colSpanLength = getColSpanLength(table)
+    if (!table.subtotal.fields?.length) {
+      set(table.subtotal, {
+        fields: [
+          {
+            name: '每页合计：',
+            valueField: 'real_item_price',
+            colSpan: colSpanLength
+          }
+        ]
+      })
+      return
+    }
+
     const subtotalLength = table.subtotal.fields.length
     table.subtotal.fields[subtotalLength - 1].colSpan += 1
+  }
+
+  @action
+  updateSelectedRegionAfterContentInsert(insertIndex) {
+    const updateNameIndex = name => {
+      if (!name) return name
+      const parts = name.split('.')
+      if (parts[0] !== 'contents') return name
+      const regionIndex = ~~parts[2]
+      if (regionIndex >= insertIndex) {
+        parts[2] = String(regionIndex + 1)
+        return parts.join('.')
+      }
+      return name
+    }
+
+    this.selectedRegion = updateNameIndex(this.selectedRegion)
+    this.selected = updateNameIndex(this.selected)
   }
 
   @action
@@ -266,6 +298,7 @@ class EditorStore {
       { batchPrintConfig: 1, isFixLastFooter: true },
       config
     )
+    this.defaultTableDataKey = config.defaultTableDataKey || 'orders'
     this.originConfig = config
     this.selected = null
     this.selectedRegion = null
@@ -1205,6 +1238,8 @@ class EditorStore {
             }
           })
         }
+        this.updateSelectedRegionAfterContentInsert(index)
+        this.config = toJS(this.config)
       }
     }
   }

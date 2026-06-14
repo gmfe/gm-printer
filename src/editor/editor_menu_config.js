@@ -13,7 +13,7 @@ import EditorField from '../common/editor_edit_field'
 import EditorAddField from '../common/editor_add_field'
 import EditorPageSummary from '../common/editor_page_summary'
 import EditorCutomizedConfig from '../common/editor_customize_config'
-import ContextMenu from './context_menu2'
+import ContextMenu from './context_menu_config'
 import i18next from '../../locales'
 import withStore from '../common/hoc_with_store'
 
@@ -51,7 +51,6 @@ class Editor extends React.Component {
       customTableConfigs,
       menuConfig
     } = this.props
-    console.log('menuConfig', menuConfig)
     return (
       <div className='gm-printer-edit'>
         <Flex className='gm-printer-edit-title-fixed'>
