@@ -3,7 +3,7 @@ import '../locales'
 import Editor, { Editor2 } from './editor'
 
 import EditorPurchase from './editor_purchase'
-import examiningReportEditor from './examining_report_editor'
+import EditorExaminingReport from './examining_report_editor'
 import EditorStockIn from './editor_stockin'
 import EditorStockOut from './editor_stockout'
 import EditorSettle from './editor_settle'
@@ -33,7 +33,7 @@ export {
   EditorStockIn,
   EditorStockOut,
   EditorPurchase,
-  examiningReportEditor,
+  EditorExaminingReport,
   EditorSettle,
   EditorStatement,
   EditorAccoutStatement,

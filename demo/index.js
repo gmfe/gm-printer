@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import DeliveryEditor from './delivery_bill'
-import DeliveryEditor2 from './delivery_bill/index2'
+import ExaminingReportEditor from './examining_report'
 import PurchaseEditor from './purchase'
 import StockInEditor from './stock_in'
 import SettleEditor from './settle'
@@ -31,8 +31,8 @@ class App extends React.Component {
             <button onClick={this.handleOnClick.bind(this, 'delivery')}>
               配送单
             </button>
-            <button onClick={this.handleOnClick.bind(this, 'delivery2')}>
-              配送单菜单可配置
+            <button onClick={this.handleOnClick.bind(this, 'examining_report')}>
+              检测报告
             </button>
             <button onClick={this.handleOnClick.bind(this, 'purchase')}>
               采购单
@@ -48,8 +48,8 @@ class App extends React.Component {
         {selected === 'delivery' && (
           <DeliveryEditor handleSave={this.handleSave} />
         )}
-        {selected === 'delivery2' && (
-          <DeliveryEditor2 handleSave={this.handleSave} />
+        {selected === 'examining_report' && (
+          <ExaminingReportEditor handleSave={this.handleSave} />
         )}
         {selected === 'purchase' && (
           <PurchaseEditor handleSave={this.handleSave} />

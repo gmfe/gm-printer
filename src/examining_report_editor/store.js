@@ -36,10 +36,18 @@ class Store extends EditorStore {
   }
 
   getDefaultTableConfig() {
+    console.log('getDefaultTableConfig--->')
     return {
       dataKey: this.defaultTableDataKey,
       subtotal: { show: false },
-      columns: DEFAULT_TABLE_COLUMNS
+      columns: [
+        {
+          head: i18next.t('表头'),
+          text: i18next.t('{{列.表头}}'),
+          style: { textAlign: 'center' },
+          headStyle: { textAlign: 'center' }
+        }
+      ]
     }
   }
 
@@ -51,9 +59,6 @@ class Store extends EditorStore {
 
   @action.bound
   addContent(name, index, type, tableConfig = null) {
-    if (type === 'table' && !tableConfig) {
-      tableConfig = this.getDefaultTableConfig()
-    }
     super.addContent(name, index, type, tableConfig)
     this.config = toJS(this.config)
   }
