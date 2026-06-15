@@ -39,6 +39,9 @@ const tableFields = {
     { key: i18next.t('金额'), value: i18next.t('{{列.金额}}') },
     { key: i18next.t('结算金额'), value: i18next.t('{{列.结算金额}}') },
     { key: i18next.t('入库/退货时间'), value: i18next.t('{{列.入库时间}}') },
+    { key: i18next.t('折让原因'), value: i18next.t('{{列.折让原因}}') },
+    { key: i18next.t('折让类型'), value: i18next.t('{{列.折让类型}}') },
+    { key: i18next.t('折让金额'), value: i18next.t('{{列.折让金额}}') },
     { key: i18next.t('自定义'), value: '' }
   ],
   [i18next.t('折让')]: [

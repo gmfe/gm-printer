@@ -552,7 +552,8 @@ class PrinterStore {
         dataKey !== 'purchase_detail_one_row' &&
         dataKey !== 'purchase_independent_rol_sku' &&
         dataKey !== 'purchase_independent_rol_address' &&
-        dataKey !== 'taxRateSales'
+        dataKey !== 'taxRateSales' &&
+        dataKey !== 'ordinary'
       ) {
         return null
       }
