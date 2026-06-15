@@ -10,7 +10,7 @@ import addFields from './add_fields'
 
 const SettleEditor = ({ handleSave }) => <EditorSettle
   config={config}
-  mockData={formatData(data)}
+  mockData={formatData(data, config)}
   onSave={handleSave}
   showEditor
   addFields={addFields}
