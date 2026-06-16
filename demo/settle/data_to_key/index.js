@@ -14,7 +14,7 @@ const REASON = {
 
 const TYPE = { 1: i18next.t('加钱'), 2: i18next.t('扣钱') }
 
-const getTableData = (data, type) => {
+const getTableData = (data, type, config) => {
   let result = null
   if (type === 'ordinary') {
     // 按submit_time 排序
@@ -22,7 +22,12 @@ const getTableData = (data, type) => {
       return moment(a.submit_time).isAfter(moment(b.submit_time)) ? 1 : -1
     })
 
-    result = _.map(sheets, (item, index) => {
+    // 按折让明细展开行：一个单据 N 条折让 = N 行，公共列(序号/单据类型/单据编号/金额/结算金额/入库时间)合并
+    result = []
+    let seq = 0
+
+    sheets.forEach(item => {
+      seq += 1
       const total_money = Big(item.sku_money || 0)
         .plus(item.delta_money)
         .div(100)
@@ -35,20 +40,61 @@ const getTableData = (data, type) => {
       const total_money2 = item.type === 1 ? total_money : total_money * -1
       const settle_money2 = item.type === 1 ? settle_money : settle_money * -1
 
-      return {
-        [i18next.t('序号')]: index + 1,
-        [i18next.t('单据类型')]:
-          item.type === 1 ? i18next.t('成品入库单') : i18next.t('成品退货单'),
-        [i18next.t('单据编号')]: item._id,
-        [i18next.t('金额')]: total_money,
-        [i18next.t('结算金额')]: settle_money,
-        [i18next.t('入库时间')]: moment(item.submit_time).format('YYYY-MM-DD'),
-        _origin: {
-          ...item,
-          total_money2,
-          settle_money2
-        }
-      }
+      // 判断模板的 ordinary 表是否配了折让相关列，没配则不展开(一个单据一行)
+      const ordinaryTable = _.find(
+        _.get(config, 'contents', []),
+        c => c.type === 'table' && c.dataKey === 'ordinary'
+      )
+      const colTexts = _.map(_.get(ordinaryTable, 'columns', []), 'text')
+      // 折让相关列不参与合并，每条折让单独一行
+      const DISCOUNT_KEYS = ['折让原因', '折让类型', '折让金额']
+      const hasDiscountCol = colTexts.some(t =>
+        DISCOUNT_KEYS.some(k => t.includes(k))
+      )
+      // 合并列 = 模板里除折让外的所有列
+      const mergeCellList = _.compact(
+        colTexts.map(t => {
+          const name = (t.match(/列\.([^.}]+)/) || [])[1]
+          return name && !DISCOUNT_KEYS.some(k => name.includes(k))
+            ? name
+            : null
+        })
+      )
+      const discounts =
+        hasDiscountCol && item.discount && item.discount.length
+          ? item.discount
+          : [{}]
+
+      discounts.forEach((d, di) => {
+        const isFirst = di === 0
+        result.push({
+          [i18next.t('序号')]: seq,
+          [i18next.t('单据类型')]:
+            item.type === 1 ? i18next.t('成品入库单') : i18next.t('成品退货单'),
+          [i18next.t('单据编号')]: item._id,
+          // 合计只累加首行，被合并行清零避免重复计算
+          [i18next.t('金额')]: isFirst ? total_money2 : 0,
+          [i18next.t('结算金额')]: isFirst ? settle_money2 : 0,
+          [i18next.t('入库时间')]: moment(item.submit_time).format(
+            'YYYY-MM-DD'
+          ),
+          [i18next.t('折让原因')]: d.reason ? REASON[d.reason] : '',
+          [i18next.t('折让类型')]: d.action ? TYPE[d.action] : '',
+          [i18next.t('折让金额')]:
+            d.money != null
+              ? Big(d.money || 0)
+                  .div(100)
+                  .toFixed(2)
+              : '',
+          _origin: {
+            ...item,
+            // 首行 rowSpan=合并行数，其余行 -1 表示被合并(不渲染)
+            rowSpan: isFirst ? discounts.length : -1
+          },
+          // 声明哪些列参与合并(除折让外的所有模板列)
+          _mergeCell: mergeCellList
+        })
+      })
     })
   } else if (type === 'delta') {
     result = _.map(data.discount, (item, index) => {
@@ -88,7 +134,7 @@ const generateUpperPrice = data => {
   }
 }
 
-const formatData = data => {
+const formatData = (data, config) => {
   return {
     common: {
       [i18next.t('单据日期')]: moment(data.date_time).format(
@@ -128,7 +174,7 @@ const formatData = data => {
       ...generateUpperPrice(data)
     },
     _table: {
-      ordinary: getTableData(data, 'ordinary'),
+      ordinary: getTableData(data, 'ordinary', config),
       delta: getTableData(data, 'delta')
     },
     _origin: data

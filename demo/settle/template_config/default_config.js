@@ -177,6 +177,36 @@ export default {
             textAlign: 'center'
           },
           text: i18next.t('{{列.结算金额}}')
+        },
+        {
+          head: i18next.t('折让原因'),
+          headStyle: {
+            textAlign: 'center'
+          },
+          style: {
+            textAlign: 'center'
+          },
+          text: i18next.t('{{列.折让原因}}')
+        },
+        {
+          head: i18next.t('折让类型'),
+          headStyle: {
+            textAlign: 'center'
+          },
+          style: {
+            textAlign: 'center'
+          },
+          text: i18next.t('{{列.折让类型}}')
+        },
+        {
+          head: i18next.t('折让金额'),
+          headStyle: {
+            textAlign: 'center'
+          },
+          style: {
+            textAlign: 'center'
+          },
+          text: i18next.t('{{列.折让金额}}')
         }
       ]
     },
