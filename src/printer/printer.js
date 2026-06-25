@@ -374,6 +374,7 @@ class Printer extends React.Component {
       onReady,
       selectedRegion,
       printerStore,
+      isLast,
       ...rest
     } = this.props
     const {
@@ -390,7 +391,8 @@ class Printer extends React.Component {
         className={classNames('gm-printer', className)}
         style={Object.assign({}, style, {
           width,
-          breakAfter: batchPrintConfig === 2 ? 'auto' : 'always'
+          breakAfter: batchPrintConfig === 2 || isLast ? 'auto' : 'always',
+          pageBreakAfter: batchPrintConfig === 2 || isLast ? 'auto' : 'always'
         })}
       >
         {this.doRender()}
