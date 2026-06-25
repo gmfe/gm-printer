@@ -17,8 +17,6 @@
 // page
 .gm-printer-page {
   overflow: hidden;
-  page-break-after: always;
-
   + .gm-printer-page {
     page-break-before: always;
   }
