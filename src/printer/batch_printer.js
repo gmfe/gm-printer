@@ -20,13 +20,7 @@ class BatchPrinter extends React.Component {
     const { list } = this.props
 
     return _.map(list, ({ config, data }, i) => (
-      <Printer
-        key={i}
-        data={data}
-        config={config}
-        onReady={this.handleReady}
-        isLast={i === list.length - 1}
-      />
+      <Printer key={i} data={data} config={config} onReady={this.handleReady} />
     ))
   }
 }
