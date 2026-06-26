@@ -390,7 +390,10 @@ class Printer extends React.Component {
         className={classNames('gm-printer', className)}
         style={Object.assign({}, style, {
           width,
-          breakAfter: batchPrintConfig === 2 ? 'auto' : 'always'
+          breakAfter:
+            batchPrintConfig === 2 || config?.page?.type === LONG_PRINT
+              ? 'auto'
+              : 'always'
         })}
       >
         {this.doRender()}
