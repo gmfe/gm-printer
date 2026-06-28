@@ -1245,15 +1245,26 @@ class EditorStore {
   @action.bound setPurchasePrintSettingKey(dataKey = 'goods') {
     const arr = this.selectedRegion.split('.')
     const table = this.config.contents[arr[2]]
-    table.purchaseSettingKey = dataKey
 
     set(table, {
       purchaseSettingKey: dataKey,
       dataKey:
         dataKey === 'goods'
           ? 'purchase_independent_rol_sku'
-          : 'purchase_independent_rol_address'
+          : 'purchase_independent_rol_address',
+      // 切换打印设置时，重置明细行排序为默认值（候选值列表会变化）
+      detail_sort_type: 0
     })
+  }
+
+  // 采购明细行排序设置
+  // dataKey 取值：0=DEFAULT | 1=商户编码升序 | 2=商户编码降序 | 3=规格编码升序 | 4=规格编码降序
+  @action.bound setPurchaseDetailSortKey(dataKey = 0) {
+    const arr = this.selectedRegion.split('.')
+    const table = this.config.contents[arr[2]]
+    // 用 mobx 的 set 触发新字段 detail_sort_type 的 observable 更新
+    // mobx 4 不跟踪直接赋值的新增字段,会 Select value 不刷新
+    set(table, { detail_sort_type: dataKey })
   }
 
   // 用于 采购明细 select 的显示
