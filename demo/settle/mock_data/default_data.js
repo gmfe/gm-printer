@@ -48,6 +48,24 @@ export default {
       type: 1,
       update_time: '2019-06-03T10:31:56.819',
       zhezhangs: null,
+      discount: [
+        {
+          action: '1',
+          reason: '3',
+          money: -500,
+          remark: '批量优惠',
+          create_time: '2019-05-23T10:30:00',
+          operator: 'miaomiao'
+        },
+        {
+          action: '2',
+          reason: '1',
+          money: -100,
+          remark: '抹零',
+          create_time: '2019-05-23T10:31:00',
+          operator: 'miaomiao'
+        }
+      ],
       _id: 'T7936-JHD-2019-05-23-00001'
     },
     {
@@ -68,6 +86,10 @@ export default {
       type: 1,
       update_time: '2019-06-03T10:31:56.819',
       zhezhangs: null,
+      discount: [
+        { action: '2', reason: '4', money: -200, remark: '供应商罚款', create_time: '2019-05-23T10:32:00', operator: 'miaomiao' },
+        { action: '1', reason: '5', money: -300, remark: '其他扣款', create_time: '2019-05-23T10:33:00', operator: 'miaomiao' }
+      ],
       _id: 'T7936-JHD-2019-05-23-00002'
     }
   ],
