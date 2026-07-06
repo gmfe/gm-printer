@@ -18,6 +18,33 @@ const blockTypeList = [
 }))
 @observer
 class ContextMenu extends React.Component {
+  componentDidMount() {
+    const {
+      editStore,
+      editStore: {
+        config: { autoFillConfig, specialControlConfig }
+      }
+    } = this.props
+
+    if (autoFillConfig?.checked) {
+      editStore.handleChangeTableData(
+        autoFillConfig?.checked,
+        autoFillConfig?.dataKey
+      )
+    }
+    /** 初始化特殊控制的配置 */
+    if (specialControlConfig?.multiDigitDecimal) {
+      // 多位小数
+      editStore.setMultiDigitDecimal(specialControlConfig?.multiDigitDecimal)
+    }
+    if (specialControlConfig?.taxFreeProductRateDisplay !== undefined) {
+      // 免税产品税率显示
+      editStore.setTaxFreeProductRateDisplay(
+        specialControlConfig?.taxFreeProductRateDisplay || ''
+      )
+    }
+  }
+
   /**
    * 是否存在每页合计按钮,非异常明细才有按钮
    * @param name => ContextMenu 的 this.state.name
