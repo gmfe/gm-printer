@@ -247,7 +247,7 @@ class EditorField extends React.Component {
       false
     // 每页合计样式
     const overallOrderStyle =
-      (overallOrder && overallOrder?.fields[0].style) || {}
+      (overallOrder && overallOrder?.fields?.[0]?.style) || {}
     // 每页合计自定义单元格
     const subtotalUpperCustomCell =
       (editStore.computedTableSpecialConfig?.subtotal &&
@@ -282,7 +282,7 @@ class EditorField extends React.Component {
       false
     // 自定义整单合计样式
     const diyOverallOrderStyle =
-      (diyOverallOrder && diyOverallOrder?.fields[0].style) || {}
+      (diyOverallOrder && diyOverallOrder?.fields?.[0]?.style) || {}
 
     //  自定义整单合计是否大写
     const diyOverallOrderNeedUpperCase =
@@ -303,7 +303,7 @@ class EditorField extends React.Component {
 
     const diyOverallOrderValueField =
       editStore.computedTableSpecialConfig?.diyOverallOrder?.fields?.[0]
-        .valueField
+        ?.valueField
 
     // 分类/标签小计 是否需要大写
     const classificationAndLabelTallyNeedUpperCase =
@@ -532,12 +532,12 @@ class EditorField extends React.Component {
             <Flex style={{ marginLeft: 57 }}>
               {subtotalRadioList.map(fields => {
                 // 兼容
-                let subtotalFields = subtotal?.fields?.[0].valueField
+                let subtotalFields = subtotal?.fields?.[0]?.valueField
                 if (subtotalFields === 'total_item_price')
                   subtotalFields = '下单金额'
                 if (
                   subtotalFields === 'real_item_price' ||
-                  !subtotal?.fields?.[0].valueField
+                  !subtotal?.fields?.[0]?.valueField
                 )
                   subtotalFields = '出库金额'
                 return (
@@ -597,8 +597,8 @@ class EditorField extends React.Component {
               // 只有自定义单元格的valueField值是空的，以后自每页合计，记得加type，之前没加，都无法区分
               value={
                 subtotal && subtotal?.fields?.length > 1
-                  ? _.find(subtotal?.fields, item => !item.valueField)?.name ??
-                    ''
+                  ? _.find(subtotal?.fields, item => item && !item.valueField)
+                      ?.name ?? ''
                   : ''
               }
               onChange={editStore.setSubtotalFields}
