@@ -72,12 +72,13 @@ class Text extends React.Component {
   }
 
   render() {
-    const { value, placeholder, style, className, ...rest } = this.props
+    const { value, placeholder, style, className, onChange, ...rest } =
+      this.props
     return (
       <input
         className={classNames('gm-printer-edit-input', className)}
         type='text'
-        value={value}
+        value={value == null || typeof value === 'object' ? '' : value}
         placeholder={placeholder}
         onChange={this.handleChange}
         style={style}
