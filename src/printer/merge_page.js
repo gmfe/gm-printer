@@ -21,9 +21,7 @@ class MergePage extends React.Component {
     const { width } = printerStore.config.page.size
 
     const borderStyle = getPageBorderBackgroundStyle({
-      enablePageBorder: printerStore.enablePageBorder,
-      borderId: printerStore.config.page.borderId,
-      pageBorderTypes: printerStore.config.pageBorderTypes
+      border: printerStore.config.page.border
     })
     const mergedPageStyle = mergePageStyleWithBorder(null, borderStyle)
 

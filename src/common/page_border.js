@@ -18,22 +18,11 @@ export function findPageBorderType(types, borderId) {
 }
 
 /**
- * 当前 borderId 是否仍适用于 pageType；不适用则应清空
+ * 规范化边框 gap；无效则 null
  */
-export function isPageBorderCompatible(types, borderId, pageType) {
-  if (!borderId) return true
-  return !!filterPageBorderTypes(types, pageType).find(
-    item => item.id === borderId
-  )
-}
-
-/**
- * 取边框自带边距；无配置则返回 null（表示不覆盖 page.gap）
- */
-export function getPageBorderGap(types, borderId) {
-  const item = findPageBorderType(types, borderId)
-  if (!item || !item.gap) return null
-  const { paddingTop, paddingRight, paddingBottom, paddingLeft } = item.gap
+export function normalizeBorderGap(gap) {
+  if (!gap) return null
+  const { paddingTop, paddingRight, paddingBottom, paddingLeft } = gap
   if (
     paddingTop == null &&
     paddingRight == null &&
@@ -51,17 +40,65 @@ export function getPageBorderGap(types, borderId) {
 }
 
 /**
+ * 从外部选项生成写入模板的边框快照（含图片、边距，随模板保存）
+ */
+export function snapshotPageBorder(item) {
+  if (!item || !item.id) return null
+  const gap = normalizeBorderGap(item.gap)
+  const snapshot = {
+    id: item.id,
+    name: item.name || '',
+    imageUrl: item.imageUrl || '',
+    pageTypes: item.pageTypes ? [...item.pageTypes] : []
+  }
+  if (gap) {
+    snapshot.gap = gap
+  }
+  return snapshot
+}
+
+/**
+ * 当前边框是否仍适用于 pageType
+ * 优先用外部 pageBorderTypes；否则用已保存快照上的 pageTypes
+ */
+export function isPageBorderCompatible(types, border, pageType) {
+  if (!border) return true
+  const borderId = typeof border === 'string' ? border : border.id
+  if (!borderId) return true
+  if (types && types.length) {
+    return !!filterPageBorderTypes(types, pageType).find(
+      item => item.id === borderId
+    )
+  }
+  const pageTypes =
+    typeof border === 'object' ? border.pageTypes || [] : []
+  return _.includes(pageTypes, pageType)
+}
+
+/**
+ * 取边框自带边距（从选项列表或已保存快照）
+ */
+export function getPageBorderGap(types, borderOrId) {
+  if (!borderOrId) return null
+  if (typeof borderOrId === 'object') {
+    return normalizeBorderGap(borderOrId.gap)
+  }
+  const item = findPageBorderType(types, borderOrId)
+  return normalizeBorderGap(item && item.gap)
+}
+
+/**
  * 选中边框：有 gap 则用边框 gap，无 gap 则保持 currentGap
  * 清空边框：回退纸张默认 gap
  */
 export function resolvePageGapForBorder({
   pageBorderTypes,
-  borderId,
+  border,
   pageType,
   currentGap
 }) {
-  if (borderId) {
-    const borderGap = getPageBorderGap(pageBorderTypes, borderId)
+  if (border) {
+    const borderGap = getPageBorderGap(pageBorderTypes, border)
     if (borderGap) return borderGap
     return currentGap ? { ...currentGap } : null
   }
@@ -74,18 +111,12 @@ export function resolvePageGapForBorder({
 
 /**
  * 生成要合并进 .gm-printer-page 的边框背景 style
- * 不满足条件时返回 {}
+ * 使用模板已保存的 border 快照（含 imageUrl），不依赖外部 pageBorderTypes
  */
-export function getPageBorderBackgroundStyle({
-  enablePageBorder,
-  borderId,
-  pageBorderTypes
-}) {
-  if (!enablePageBorder || !borderId) return {}
-  const item = findPageBorderType(pageBorderTypes, borderId)
-  if (!item || !item.imageUrl) return {}
+export function getPageBorderBackgroundStyle({ border }) {
+  if (!border || !border.imageUrl) return {}
   return {
-    backgroundImage: `url(${item.imageUrl})`,
+    backgroundImage: `url(${border.imageUrl})`,
     backgroundSize: '100% 100%',
     backgroundRepeat: 'no-repeat'
   }
@@ -99,4 +130,14 @@ export function mergePageStyleWithBorder(pageStyle, borderStyle) {
     ...(pageStyle || {}),
     ...(borderStyle || {})
   }
+}
+
+/** 兼容旧字段 page.borderId */
+export function getSavedPageBorder(page) {
+  if (!page) return null
+  if (page.border && page.border.id) return page.border
+  if (page.borderId) {
+    return { id: page.borderId, name: '', imageUrl: '', pageTypes: [] }
+  }
+  return null
 }

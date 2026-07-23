@@ -4,10 +4,12 @@ import config from './template_config/default_config'
 import data from './mock_data/default_data'
 import formatData from './data_to_key'
 import addFields from './add_fields'
+import pageBorderTypes from './page_border_types'
 
 const ExaminingReportEditorDemo = ({ handleSave, enablePageBorder }) => (
   <EditorExaminingReport
     enablePageBorder={enablePageBorder}
+    pageBorderTypes={pageBorderTypes}
     config={config}
     mockData={formatData(data)}
     onSave={handleSave}

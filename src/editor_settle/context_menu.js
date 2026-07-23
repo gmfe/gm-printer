@@ -69,6 +69,7 @@ class ContextMenu extends React.Component {
           selected={editStore.selected}
           selectedRegion={editStore.selectedRegion}
           enablePageBorder={editStore.enablePageBorder}
+          pageBorderTypes={editStore.pageBorderTypes}
           config={editStore.config}
           data={mockData}
           isSomeSubtotalTr

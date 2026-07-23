@@ -61,9 +61,17 @@ class PrinterStore {
   @observable
   enablePageBorder = false
 
+  @observable
+  pageBorderTypes = []
+
   @action
   setEnablePageBorder(enable) {
     this.enablePageBorder = !!enable
+  }
+
+  @action
+  setPageBorderTypes(types) {
+    this.pageBorderTypes = types || []
   }
 
   @action
@@ -88,6 +96,7 @@ class PrinterStore {
     this.data = data
     this.selected = null
     this.enablePageBorder = false
+    this.pageBorderTypes = []
   }
 
   @action

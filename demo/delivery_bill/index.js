@@ -7,10 +7,12 @@ import deliveryData from './mock_data/default_data'
 import toKey from './data_to_key'
 // 添加的字段
 import DeliveryAddFields from './add_fields'
+import pageBorderTypes from './page_border_types'
 
 const DeliveryEditor = ({ handleSave }) => (
   <Editor
     enablePageBorder
+    pageBorderTypes={pageBorderTypes}
     config={defaultConfig}
     mockData={toKey(deliveryData)}
     onSave={handleSave}

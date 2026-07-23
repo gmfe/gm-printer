@@ -56,6 +56,7 @@ class ContextMunu extends React.Component {
           selected={editStore.selected}
           selectedRegion={editStore.selectedRegion}
           enablePageBorder={editStore.enablePageBorder}
+          pageBorderTypes={editStore.pageBorderTypes}
           config={editStore.config}
         />
       </CommonContextMenu>

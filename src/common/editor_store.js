@@ -10,7 +10,10 @@ import {
   filterPageBorderTypes,
   isPageBorderCompatible,
   resolvePageGapForBorder,
-  getPageBorderGap
+  getPageBorderGap,
+  snapshotPageBorder,
+  getSavedPageBorder,
+  findPageBorderType
 } from './page_border'
 
 class EditorStore {
@@ -55,6 +58,10 @@ class EditorStore {
 
   @observable
   enablePageBorder = false
+
+  /** 外部传入的边框类型列表（不进模板 config） */
+  @observable
+  pageBorderTypes = []
 
   @observable
   insertPanel = 'header'
@@ -327,6 +334,7 @@ class EditorStore {
     this.taxFreeProductRateDisplay =
       config?.specialControlConfig?.taxFreeProductRateDisplay || ''
     this.enablePageBorder = !!options.enablePageBorder
+    this.pageBorderTypes = options.pageBorderTypes || []
   }
 
   @action
@@ -394,7 +402,7 @@ class EditorStore {
 
   @computed
   get computedAvailablePageBorders() {
-    const types = this.config?.pageBorderTypes
+    const types = this.pageBorderTypes
     const pageType = this.config?.page?.type
     return filterPageBorderTypes(types, pageType)
   }
@@ -405,16 +413,27 @@ class EditorStore {
   }
 
   @action
+  setPageBorderTypes(types) {
+    this.pageBorderTypes = types || []
+  }
+
+  @action
   setPageBorderId(borderId) {
     if (!this.config?.page) return
-    const nextBorderId = borderId || null
+    const item = borderId
+      ? findPageBorderType(this.pageBorderTypes, borderId)
+      : null
+    const nextBorder = snapshotPageBorder(item)
     const nextGap = resolvePageGapForBorder({
-      pageBorderTypes: this.config.pageBorderTypes,
-      borderId: nextBorderId,
+      pageBorderTypes: this.pageBorderTypes,
+      border: nextBorder,
       pageType: this.config.page.type,
       currentGap: this.config.page.gap
     })
-    const patch = { borderId: nextBorderId }
+    const patch = {
+      border: nextBorder,
+      borderId: null
+    }
     if (nextGap) {
       patch.gap = nextGap
     }
@@ -481,18 +500,15 @@ class EditorStore {
       name
     }
 
-    const borderId = this.config.page.borderId
+    const savedBorder = getSavedPageBorder(this.config.page)
     if (
-      borderId &&
-      !isPageBorderCompatible(this.config.pageBorderTypes, borderId, type)
+      savedBorder &&
+      !isPageBorderCompatible(this.pageBorderTypes, savedBorder, type)
     ) {
-      set(this.config.page, { borderId: null })
-    } else if (borderId) {
+      set(this.config.page, { border: null, borderId: null })
+    } else if (savedBorder) {
       // 纸张切换后仍匹配：仅当边框配置了 gap 时覆盖
-      const borderGap = getPageBorderGap(
-        this.config.pageBorderTypes,
-        borderId
-      )
+      const borderGap = getPageBorderGap(this.pageBorderTypes, savedBorder)
       if (borderGap) {
         set(this.config.page, { gap: borderGap })
       }

@@ -312,6 +312,7 @@ class ContextMenu extends React.Component {
           selected={editStore.selected}
           selectedRegion={editStore.selectedRegion}
           enablePageBorder={editStore.enablePageBorder}
+          pageBorderTypes={editStore.pageBorderTypes}
           isAutoFilling={editStore.isAutoFilling}
           fillIndex={editStore.fillIndex}
           lineheight={editStore.computedTableCustomerRowHeight}

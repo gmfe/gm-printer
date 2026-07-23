@@ -40,9 +40,7 @@ class Page extends React.Component {
     // 统一减2毫米,防止计算误差溢出
     const x = '- 2mm'
     const borderStyle = getPageBorderBackgroundStyle({
-      enablePageBorder: printerStore.enablePageBorder,
-      borderId: printerStore.config.page.borderId,
-      pageBorderTypes: printerStore.config.pageBorderTypes
+      border: printerStore.config.page.border
     })
     const mergedPageStyle = mergePageStyleWithBorder(pageStyle, borderStyle)
     return (

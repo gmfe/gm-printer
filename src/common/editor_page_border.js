@@ -14,7 +14,8 @@ class EditorPageBorder extends React.Component {
 
   render() {
     const { editStore } = this.props
-    const { borderId } = editStore.config.page || {}
+    const savedBorder = editStore.config.page?.border
+    const selectedId = savedBorder?.id || editStore.config.page?.borderId
     const list = editStore.computedAvailablePageBorders
 
     return (
@@ -26,7 +27,7 @@ class EditorPageBorder extends React.Component {
         ) : (
           <Flex wrap>
             {list.map(item => {
-              const active = borderId === item.id
+              const active = selectedId === item.id
               return (
                 <div
                   key={item.id}
@@ -61,7 +62,7 @@ class EditorPageBorder extends React.Component {
                 margin: '0 8px 8px 0',
                 padding: 4,
                 cursor: 'pointer',
-                border: !borderId ? '2px solid #56a3f2' : '1px dashed #ccc',
+                border: !selectedId ? '2px solid #56a3f2' : '1px dashed #ccc',
                 textAlign: 'center',
                 lineHeight: '64px',
                 fontSize: 12,
