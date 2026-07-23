@@ -67,8 +67,8 @@ Editor.propTypes = {
 }
 
 Editor.defaultProps = {
-  enablePageBorder: false
-  pageBorderTypes: [],
+  enablePageBorder: false,
+  pageBorderTypes: []
 }
 
 export default Editor
