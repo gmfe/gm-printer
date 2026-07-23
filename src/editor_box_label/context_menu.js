@@ -55,6 +55,7 @@ class ContextMunu extends React.Component {
           data={mockData}
           selected={editStore.selected}
           selectedRegion={editStore.selectedRegion}
+          enablePageBorder={editStore.enablePageBorder}
           config={editStore.config}
         />
       </CommonContextMenu>

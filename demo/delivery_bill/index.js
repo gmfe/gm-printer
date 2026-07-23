@@ -10,6 +10,7 @@ import DeliveryAddFields from './add_fields'
 
 const DeliveryEditor = ({ handleSave }) => (
   <Editor
+    enablePageBorder
     config={defaultConfig}
     mockData={toKey(deliveryData)}
     onSave={handleSave}

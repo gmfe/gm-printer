@@ -6,6 +6,12 @@ import { dispatchMsg, getBlockName, exchange, getColSpanLength } from '../util'
 import { accountRadioList } from './util'
 import React from 'react'
 import { createDiySummaryStoreMethods } from './diy_summary_helper'
+import {
+  filterPageBorderTypes,
+  isPageBorderCompatible,
+  resolvePageGapForBorder,
+  getPageBorderGap
+} from './page_border'
 
 class EditorStore {
   @observable
@@ -46,6 +52,9 @@ class EditorStore {
    */
   @observable
   selectedRegion = null
+
+  @observable
+  enablePageBorder = false
 
   @observable
   insertPanel = 'header'
@@ -299,7 +308,7 @@ class EditorStore {
   }
 
   @action
-  init(config, data) {
+  init(config, data, options = {}) {
     // batchPrintConfig: 1 不连续打印（一张采购单不出现多供应商）2 连续打印（一张采购单可能出现多个供应商）
     this.config = Object.assign(
       { batchPrintConfig: 1, isFixLastFooter: true },
@@ -317,6 +326,7 @@ class EditorStore {
 
     this.taxFreeProductRateDisplay =
       config?.specialControlConfig?.taxFreeProductRateDisplay || ''
+    this.enablePageBorder = !!options.enablePageBorder
   }
 
   @action
@@ -365,18 +375,50 @@ class EditorStore {
     const contentRegions = this.config.contents.map((v, i) => {
       if (v.type === 'table') {
         return { value: `contents.table.${i}`, text: i18next.t('区域') + i }
-      } else {
-        return { value: `contents.panel.${i}`, text: i18next.t('区域') + i }
       }
+      return { value: `contents.panel.${i}`, text: i18next.t('区域') + i }
     })
 
-    return [
+    const list = [
       { value: 'all', text: i18next.t('请选择区域') },
       { value: 'header', text: i18next.t('页眉') },
       ...contentRegions,
       { value: 'sign', text: i18next.t('签名') },
       { value: 'footer', text: i18next.t('页脚') }
     ]
+    if (this.enablePageBorder) {
+      list.push({ value: 'border', text: i18next.t('边框') })
+    }
+    return list
+  }
+
+  @computed
+  get computedAvailablePageBorders() {
+    const types = this.config?.pageBorderTypes
+    const pageType = this.config?.page?.type
+    return filterPageBorderTypes(types, pageType)
+  }
+
+  @action
+  setEnablePageBorder(enable) {
+    this.enablePageBorder = !!enable
+  }
+
+  @action
+  setPageBorderId(borderId) {
+    if (!this.config?.page) return
+    const nextBorderId = borderId || null
+    const nextGap = resolvePageGapForBorder({
+      pageBorderTypes: this.config.pageBorderTypes,
+      borderId: nextBorderId,
+      pageType: this.config.page.type,
+      currentGap: this.config.page.gap
+    })
+    const patch = { borderId: nextBorderId }
+    if (nextGap) {
+      patch.gap = nextGap
+    }
+    set(this.config.page, patch)
   }
 
   @action
@@ -438,6 +480,23 @@ class EditorStore {
       gap,
       name
     }
+
+    const borderId = this.config.page.borderId
+    if (
+      borderId &&
+      !isPageBorderCompatible(this.config.pageBorderTypes, borderId, type)
+    ) {
+      set(this.config.page, { borderId: null })
+    } else if (borderId) {
+      // 纸张切换后仍匹配：仅当边框配置了 gap 时覆盖
+      const borderGap = getPageBorderGap(
+        this.config.pageBorderTypes,
+        borderId
+      )
+      if (borderGap) {
+        set(this.config.page, { gap: borderGap })
+      }
+    }
   }
 
   @action
@@ -449,6 +508,9 @@ class EditorStore {
   @computed
   get computedSelectedRegionTip() {
     if (!this.selectedRegion) return ''
+    if (this.selectedRegion === 'border') {
+      return i18next.t('说明：边框铺满整页，内容区仍保留页边距')
+    }
     return /(contents)|(sign)/g.test(this.selectedRegion) ? (
       <>
         <div>{i18next.t('说明：所选区域的内容仅打印一次')}</div>

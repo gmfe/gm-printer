@@ -58,6 +58,14 @@ class PrinterStore {
   @observable
   isMultiDigitDecimal = false
 
+  @observable
+  enablePageBorder = false
+
+  @action
+  setEnablePageBorder(enable) {
+    this.enablePageBorder = !!enable
+  }
+
   @action
   setMultiDigitDecimal(bool) {
     this.isMultiDigitDecimal = bool
@@ -79,6 +87,7 @@ class PrinterStore {
     this.pages = [] // [page, page, ...] page 为数组
     this.data = data
     this.selected = null
+    this.enablePageBorder = false
   }
 
   @action

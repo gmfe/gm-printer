@@ -1,6 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { inject, observer } from 'mobx-react'
+import {
+  getPageBorderBackgroundStyle,
+  mergePageStyleWithBorder
+} from '../common/page_border'
 
 @inject('printerStore')
 @observer
@@ -16,10 +20,18 @@ class MergePage extends React.Component {
 
     const { width } = printerStore.config.page.size
 
+    const borderStyle = getPageBorderBackgroundStyle({
+      enablePageBorder: printerStore.enablePageBorder,
+      borderId: printerStore.config.page.borderId,
+      pageBorderTypes: printerStore.config.pageBorderTypes
+    })
+    const mergedPageStyle = mergePageStyleWithBorder(null, borderStyle)
+
     return (
       <div
         className='gm-printer-page'
         style={{
+          ...mergedPageStyle,
           boxSizing: 'content-box',
           width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
           padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`,

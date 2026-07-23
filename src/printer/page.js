@@ -4,6 +4,10 @@ import { inject, observer } from 'mobx-react'
 import { getHeight } from '../util'
 import classNames from 'classnames'
 import { LONG_PRINT } from '../config'
+import {
+  getPageBorderBackgroundStyle,
+  mergePageStyleWithBorder
+} from '../common/page_border'
 
 @inject('printerStore')
 @observer
@@ -35,6 +39,12 @@ class Page extends React.Component {
     } = printerStore.config.page
     // 统一减2毫米,防止计算误差溢出
     const x = '- 2mm'
+    const borderStyle = getPageBorderBackgroundStyle({
+      enablePageBorder: printerStore.enablePageBorder,
+      borderId: printerStore.config.page.borderId,
+      pageBorderTypes: printerStore.config.pageBorderTypes
+    })
+    const mergedPageStyle = mergePageStyleWithBorder(pageStyle, borderStyle)
     return (
       <div
         ref={this.ref}
@@ -42,7 +52,7 @@ class Page extends React.Component {
           'gm-printer-page-fontFamily': isFontFamily
         })}
         style={{
-          ...pageStyle,
+          ...mergedPageStyle,
           boxSizing: 'content-box',
           width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
           padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`,

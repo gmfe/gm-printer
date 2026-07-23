@@ -57,11 +57,16 @@ class Editor extends React.Component {
 }
 
 Editor.propTypes = {
+  enablePageBorder: PropTypes.bool,
   config: PropTypes.object.isRequired,
   showEditor: PropTypes.bool,
   onSave: PropTypes.func,
   addFields: PropTypes.object.isRequired,
   mockData: PropTypes.object.isRequired
+}
+
+Editor.defaultProps = {
+  enablePageBorder: false
 }
 
 export default Editor

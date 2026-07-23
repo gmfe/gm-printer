@@ -49,7 +49,7 @@ class App extends React.Component {
           <DeliveryEditor handleSave={this.handleSave} />
         )}
         {selected === 'examining_report' && (
-          <ExaminingReportEditor handleSave={this.handleSave} />
+          <ExaminingReportEditor handleSave={this.handleSave} enablePageBorder={true} />
         )}
         {selected === 'purchase' && (
           <PurchaseEditor handleSave={this.handleSave} />

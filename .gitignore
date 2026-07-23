@@ -8,3 +8,4 @@ logs
 build/font/
 build/demo.js
 .history/
+.superpowers/

@@ -5,8 +5,9 @@ import data from './mock_data/default_data'
 import formatData from './data_to_key'
 import addFields from './add_fields'
 
-const ExaminingReportEditorDemo = ({ handleSave }) => (
+const ExaminingReportEditorDemo = ({ handleSave, enablePageBorder }) => (
   <EditorExaminingReport
+    enablePageBorder={enablePageBorder}
     config={config}
     mockData={formatData(data)}
     onSave={handleSave}

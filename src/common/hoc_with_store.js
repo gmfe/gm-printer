@@ -7,7 +7,15 @@ const withStore = store => WrapComponent =>
     constructor(props) {
       super(props)
       this.store = store
-      this.store.init(props.config, props.mockData)
+      this.store.init(props.config, props.mockData, {
+        enablePageBorder: props.enablePageBorder
+      })
+    }
+
+    componentDidUpdate(prevProps) {
+      if (prevProps.enablePageBorder !== this.props.enablePageBorder) {
+        this.store.setEnablePageBorder(this.props.enablePageBorder)
+      }
     }
 
     componentDidMount() {

@@ -22,6 +22,7 @@ import PropTypes from 'prop-types'
 import { subtotalRadioList } from './util'
 import { LONG_PRINT } from '../config'
 import _ from 'lodash'
+import EditorPageBorder from './editor_page_border'
 
 @inject('editStore')
 @observer
@@ -971,7 +972,12 @@ class EditorField extends React.Component {
     const { editStore } = this.props
 
     let content = null
-    if (editStore.computedIsSelectBlock) {
+    if (
+      editStore.enablePageBorder &&
+      editStore.selectedRegion === 'border'
+    ) {
+      content = <EditorPageBorder />
+    } else if (editStore.computedIsSelectBlock) {
       content = this.renderBlocks()
     } else if (editStore.computedIsSelectTable) {
       content = this.renderTable()

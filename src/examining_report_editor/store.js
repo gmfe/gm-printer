@@ -24,8 +24,8 @@ class Store extends EditorStore {
   }
 
   @action
-  init(config, data) {
-    super.init(config, data)
+  init(config, data, options = {}) {
+    super.init(config, data, options)
     this.defaultTableDataKey = 'examiningDetail'
   }
 

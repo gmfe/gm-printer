@@ -73,6 +73,9 @@ class Printer extends React.Component {
     if (nextProps.selectedRegion !== this.props.selectedRegion) {
       this.props.printerStore.setSelectedRegion(nextProps.selectedRegion)
     }
+    if (nextProps.enablePageBorder !== this.props.enablePageBorder) {
+      this.props.printerStore.setEnablePageBorder(nextProps.enablePageBorder)
+    }
 
     if (
       nextProps.isAutoFilling !== this.props.isAutoFilling ||
@@ -130,10 +133,18 @@ class Printer extends React.Component {
   }
 
   init() {
-    const { printerStore, config, data, selected, selectedRegion } = this.props
+    const {
+      printerStore,
+      config,
+      data,
+      selected,
+      selectedRegion,
+      enablePageBorder
+    } = this.props
     printerStore.init(config, data)
     printerStore.setSelected(selected)
     printerStore.setSelectedRegion(selectedRegion)
+    printerStore.setEnablePageBorder(enablePageBorder)
   }
 
   renderBefore() {
@@ -416,11 +427,13 @@ Printer.propTypes = {
   onReady: PropTypes.func,
   isSomeSubtotalTr: PropTypes.bool,
   getremainpageHeight: PropTypes.func,
-  overallorder: PropTypes.bool
+  overallorder: PropTypes.bool,
+  enablePageBorder: PropTypes.bool
 }
 
 Printer.defaultProps = {
-  onReady: _.noop
+  onReady: _.noop,
+  enablePageBorder: false
 }
 
 class WithStorePrinter extends React.Component {

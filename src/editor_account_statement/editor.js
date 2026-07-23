@@ -98,6 +98,7 @@ class Editor extends React.Component {
 }
 
 Editor.propTypes = {
+  enablePageBorder: PropTypes.bool,
   config: PropTypes.object.isRequired,
   onSave: PropTypes.func,
   showEditor: PropTypes.bool,
@@ -106,6 +107,7 @@ Editor.propTypes = {
 }
 
 Editor.defaultProps = {
+  enablePageBorder: false,
   onSave: _.noop
 }
 
