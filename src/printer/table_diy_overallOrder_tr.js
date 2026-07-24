@@ -1,11 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-// import Big from 'big.js'
 import {
   coverDigit2Uppercase,
   getDataKey,
-  formatSumWithPrecision
+  formatSumWithPrecision,
+  toSumColTemplate,
+  templateSumResult,
+  extractSumField
 } from '../util'
 import { observer } from 'mobx-react'
 import classNames from 'classnames'
@@ -22,10 +24,13 @@ const DiyOverallOrder = props => {
   const formatter = printerStore.config?.payAmountFormatter
   const highPrecisionMapping = printerStore.config?.highPrecisionFieldMapping
 
-  // 计算合计
+  // 计算合计（逐行取原始列值，内置函数只作用在最终合计结果上）
   const sumData = field => {
     // 查找高精度字段，有则直接从原始数据取值，避免 templateTable 的精度损失
-    const hpField = highPrecisionMapping?.[field]
+    // 兼容映射 key 为模板串或字段名两种写法
+    const fieldKey = extractSumField(field)
+    const hpField =
+      highPrecisionMapping?.[field] || highPrecisionMapping?.[fieldKey]
     const sum = _.reduce(
       tableData,
       (a, b, i) => {
@@ -59,10 +64,17 @@ const DiyOverallOrder = props => {
   const isUpperCaseBefore = diyOverallOrder?.isUpperCaseBefore
   // 大写金额
   const needUpperCase = diyOverallOrder?.needUpperCase
-  // 小写金额
-  const numericValue = sumData(leftField.valueField)
+  const fieldKey = extractSumField(leftField.valueField)
+  // 求和用去掉内置函数后的列模板
+  const numericValue = sumData(toSumColTemplate(leftField.valueField))
+  // 仅对合计结果做模板/内置函数渲染
+  const displayValue = templateSumResult(
+    leftField.valueField,
+    numericValue,
+    fieldKey
+  )
   // 大写金额
-  const upperCaseValue = needUpperCase ? coverDigit2Uppercase(numericValue) : ''
+  const upperCaseValue = needUpperCase ? coverDigit2Uppercase(displayValue) : ''
 
   const leftText = () => {
     if (isUpperLowerCaseSeparate) {
@@ -71,25 +83,25 @@ const DiyOverallOrder = props => {
         return upperCaseValue
       }
       // 小写金额在前
-      return numericValue
+      return displayValue
     }
 
     // 大写金额在前且需要大写金额
     if (isUpperCaseBefore) {
-      return `${upperCaseValue} ${numericValue}`
+      return `${upperCaseValue} ${displayValue}`
     }
 
     if (needUpperCase) {
-      return `${numericValue} ${upperCaseValue}`
+      return `${displayValue} ${upperCaseValue}`
     }
 
-    return numericValue
+    return displayValue
   }
 
   const rightText = () => {
     if (isUpperLowerCaseSeparate) {
       if (isUpperCaseBefore) {
-        return `${rightName} ${numericValue}`
+        return `${rightName} ${displayValue}`
       }
       return `${rightName} ${upperCaseValue}`
     }
@@ -116,47 +128,6 @@ const DiyOverallOrder = props => {
       </td>
     </tr>
   )
-  // return (
-  //   diyOverallOrder?.show &&
-  //   printerStore?.ready && (
-  //     <tr>
-  //       {_.map(diyOverallOrder.fields, (item, index) => {
-  //         return (
-  //           <td colSpan={item.colSpan ?? 99} key={index}>
-  //             <div style={{ ...item.style }} className='gm-flex-page'>
-  //               {item.name}
-  //               <div
-  //                 className={classNames('gm-flex-page', {
-  //                   'gm-flex-justify-between-page':
-  //                     diyOverallOrder?.isUpperLowerCaseSeparate,
-  //                   'gm-flex-grow-page':
-  //                     diyOverallOrder?.isUpperLowerCaseSeparate
-  //                 })}
-  //               >
-  //                 <span
-  //                   className={
-  //                     diyOverallOrder?.isUpperCaseBefore
-  //                       ? 'gm-printer-subtotal-isUpperCaseBefore-inter'
-  //                       : ''
-  //                   }
-  //                 >
-  //                   {sumData(item.valueField)}
-  //                 </span>
-  //                 {diyOverallOrder?.needUpperCase && (
-  //                   <span>
-  //                     {coverDigit2Uppercase(sumData(item.valueField))
-  //                       ? coverDigit2Uppercase(sumData(item.valueField))
-  //                       : ''}
-  //                   </span>
-  //                 )}
-  //               </div>
-  //             </div>
-  //           </td>
-  //         )
-  //       })}
-  //     </tr>
-  //   )
-  // )
 }
 DiyOverallOrder.propTypes = {
   config: PropTypes.object.isRequired,
