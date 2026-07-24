@@ -1,16 +1,16 @@
 import React from 'react'
 import _ from 'lodash'
-import { getDataKey, isMultiTable } from '../util'
+import {
+  getDataKey,
+  isMultiTable,
+  extractSumField,
+  templateSumResult
+} from '../util'
 import Big from 'big.js'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
 import i18next from '../../locales'
 
-const regExp = text => {
-  const match = /{{([^{}]+)}}/.exec(text)
-  const key = match ? match[1] : ''
-  return key ? key.split('.')[1] : ''
-}
 /**
  * 每列统计
  * @param key
@@ -63,9 +63,14 @@ const PageSummary = props => {
       printerStore.config?.summaryFieldsResultToNumber
     if (summaryFieldsResultToNumber) {
       summaryFieldsResultToNumber = summaryFieldsResultToNumber.map(item =>
-        regExp(item)
+        extractSumField(item)
       )
     }
+
+    const summaryKeys = summaryConfig.summaryColumns.map(text =>
+      extractSumField(text)
+    )
+
     return (
       <tr>
         {_.map(columns, (col, index) => {
@@ -74,13 +79,17 @@ const PageSummary = props => {
           if (index === 0) {
             html = i18next.t('合计')
           } else {
-            const key = regExp(col.text)
-            html =
-              summaryConfig.summaryColumns
-                .map(text => regExp(text))
-                .includes(key) && key
-                ? sumCol(key, currentPageTableData, summaryFieldsResultToNumber)
-                : ' '
+            const key = extractSumField(col.text)
+            if (key && summaryKeys.includes(key)) {
+              const sum = sumCol(
+                key,
+                currentPageTableData,
+                summaryFieldsResultToNumber
+              )
+              html = templateSumResult(col.text, sum, key)
+            } else {
+              html = ' '
+            }
           }
 
           return (
