@@ -1,21 +1,18 @@
 import i18next from '../../locales'
-import { action, observable, computed, toJS } from 'mobx'
+import { action, observable, computed } from 'mobx'
 import {
   getSumTrHeight,
   isMultiTable,
   caclSingleDetailsPageHeight,
   getArrayMid,
-  getOverallOrderTrHeight
+  getOverallOrderTrHeight,
+  price
 } from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
 import { Tip } from '../components'
 
 export const TR_BASE_HEIGHT = 23
-const price = (n, f = 2) => {
-  if (isNaN(n)) return null
-  return Big(n || 0).toFixed(f)
-}
 class PrinterStore {
   @observable ready = false
 

@@ -7,7 +7,9 @@ import Big from 'big.js'
 import {
   coverDigit2Uppercase,
   getDataKey,
-  formatSumWithPrecision
+  formatSumWithPrecision,
+  extractSumField,
+  templateSumResult
 } from '../util'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
@@ -95,17 +97,19 @@ const SubtotalTr = props => {
   if (show && printerStore.ready) {
     const list = tableData.slice(range.begin, range.end)
 
+    // 先按字段求和，再对结果做模板/内置函数渲染
+    const formatSumValue = valueField => {
+      const fieldKey = extractSumField(valueField)
+      const sum = sumData2(list, fieldKey, formatter, highPrecisionMapping)
+      return templateSumResult(valueField, sum, fieldKey)
+    }
+
     // 针对结款单的
     if (isSomeSubtotalTr) {
       const sum = {}
 
       _.each(fields, v => {
-        sum[v.name] = sumData2(
-          list,
-          v.valueField,
-          formatter,
-          highPrecisionMapping
-        )
+        sum[v.name] = formatSumValue(v.valueField)
       })
       let subtotalStr = ''
       for (const name in sum) {
@@ -135,6 +139,18 @@ const SubtotalTr = props => {
       return (
         <tr>
           {_.map(fields, (item, index) => {
+            const fieldKey = extractSumField(item.valueField)
+            const sumDisplay =
+              item.type === 'useSummarize'
+                ? templateSumResult(
+                    item.valueField,
+                    getData(fieldKey),
+                    fieldKey
+                  )
+                : index === 0
+                ? formatSumValue(item.valueField)
+                : ''
+
             return (
               <td colSpan={item.colSpan ?? 99} key={index}>
                 <div
@@ -160,33 +176,12 @@ const SubtotalTr = props => {
                       }
                     >
                       {/* 这样写是为了支持自定义单元，index = 1时是自定义单元格 */}
-                      {item.type === 'useSummarize'
-                        ? getData(item.valueField)
-                        : index === 0
-                        ? sumData2(
-                            list,
-                            item.valueField,
-                            formatter,
-                            highPrecisionMapping
-                          )
-                        : ''}
-                      {/* {index === 0 ? sumData(list, item.valueField, formatter) : ''} */}
+                      {sumDisplay}
                     </span>
                     {subtotal?.needUpperCase && ( // 是否需要大写金额
                       <span>
-                        {item.type === 'useSummarize'
-                          ? '大写：' +
-                            coverDigit2Uppercase(getData(item.valueField))
-                          : index === 0
-                          ? '大写：' +
-                            coverDigit2Uppercase(
-                              sumData2(
-                                list,
-                                item.valueField,
-                                formatter,
-                                highPrecisionMapping
-                              )
-                            )
+                        {sumDisplay
+                          ? '大写：' + coverDigit2Uppercase(sumDisplay)
                           : ''}
                       </span>
                     )}

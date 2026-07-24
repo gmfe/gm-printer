@@ -5,7 +5,10 @@ import {
   coverDigit2Uppercase,
   getDataKey,
   isMultiTable,
-  formatSumWithPrecision
+  formatSumWithPrecision,
+  toSumColTemplate,
+  templateSumResult,
+  extractSumField
 } from '../util'
 import { MULTI_SUFFIX, MULTI_SUFFIX3 } from '../config'
 import { observer } from 'mobx-react'
@@ -51,10 +54,13 @@ const DiySummary = props => {
   const formatter = printerStore.config?.payAmountFormatter
   const highPrecisionMapping = printerStore.config?.highPrecisionFieldMapping
 
-  // 计算合计
+  // 计算合计（逐行取原始列值，内置函数只作用在最终合计结果上）
   const sumData = field => {
     // 查找高精度字段，有则直接从原始数据取值，避免 templateTable 的精度损失
-    const hpField = highPrecisionMapping?.[field]
+    // 兼容映射 key 为模板串或字段名两种写法
+    const fieldKey = extractSumField(field)
+    const hpField =
+      highPrecisionMapping?.[field] || highPrecisionMapping?.[fieldKey]
 
     if (isMulti) {
       // 多栏表格暂不使用高精度字段，保持原有 templateTable 逻辑
@@ -84,7 +90,7 @@ const DiySummary = props => {
     if (hpField) {
       const sum = _.reduce(
         tableData,
-        (a, b, i) => {
+        (a, b) => {
           return a.plus(b._origin?.[hpField] ?? b[hpField] ?? 0)
         },
         Big(0)
@@ -125,8 +131,16 @@ const DiySummary = props => {
   const isUpperLowerCaseSeparate = diyConfig?.isUpperLowerCaseSeparate
   const isUpperCaseBefore = diyConfig?.isUpperCaseBefore
   const needUpperCase = diyConfig?.needUpperCase
-  const numericValue = sumData(leftField.valueField)
-  const upperCaseValue = needUpperCase ? coverDigit2Uppercase(numericValue) : ''
+  const fieldKey = extractSumField(leftField.valueField)
+  // 求和用去掉内置函数后的列模板，多栏/高精度逻辑保持不变
+  const numericValue = sumData(toSumColTemplate(leftField.valueField))
+  // 仅对合计结果做模板/内置函数渲染
+  const displayValue = templateSumResult(
+    leftField.valueField,
+    numericValue,
+    fieldKey
+  )
+  const upperCaseValue = needUpperCase ? coverDigit2Uppercase(displayValue) : ''
 
   const leftText = () => {
     if (isUpperLowerCaseSeparate) {
@@ -135,25 +149,25 @@ const DiySummary = props => {
         return upperCaseValue
       }
       // 小写金额在前
-      return numericValue
+      return displayValue
     }
 
     // 大写金额在前且需要大写金额
     if (isUpperCaseBefore) {
-      return `${upperCaseValue} ${numericValue}`
+      return `${upperCaseValue} ${displayValue}`
     }
 
     if (needUpperCase) {
-      return `${numericValue} ${upperCaseValue}`
+      return `${displayValue} ${upperCaseValue}`
     }
 
-    return numericValue
+    return displayValue
   }
 
   const rightText = () => {
     if (isUpperLowerCaseSeparate) {
       if (isUpperCaseBefore) {
-        return `${rightName} ${numericValue}`
+        return `${rightName} ${displayValue}`
       }
       return `${rightName} ${upperCaseValue}`
     }

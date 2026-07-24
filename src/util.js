@@ -374,6 +374,82 @@ const getHighPrecisionField = (field, mapping) => {
   return mapping?.[field] || field
 }
 
+/**
+ * 打印模板内置金额格式化（与 printerStore.template 注入的 price 一致）
+ * @param {*} n
+ * @param {number} [f=2]
+ * @returns {string|null}
+ */
+const price = (n, f = 2) => {
+  if (isNaN(n)) return null
+  return Big(n || 0).toFixed(f)
+}
+
+/**
+ * 从合计配置解析用于求和的字段名
+ * 支持：出库金额 / {{出库金额}} / {{列.出库金额}} / {{price(出库金额,1)}} / {{price(列.出库金额)}}
+ * @param {string} text
+ * @returns {string}
+ */
+const extractSumField = text => {
+  if (text == null || text === '') return text
+  if (typeof text !== 'string') return text
+  if (!text.includes('{{')) return text
+
+  const priceMatch = text.match(
+    /price\s*\(\s*(?:列\.)?\s*([^,)]+?)(?:\s*,|\s*\))/
+  )
+  if (priceMatch) return priceMatch[1].trim()
+
+  const colMatch = text.match(/\{\{\s*列\.([^}]+?)\s*\}\}/)
+  if (colMatch) return colMatch[1].trim()
+
+  const bareMatch = text.match(/\{\{\s*([^{}()]+?)\s*\}\}/)
+  if (bareMatch) return bareMatch[1].trim()
+
+  return text
+}
+
+/**
+ * 对合计结果做 lodash 模板渲染并注入内置 price；无模板语法时原样返回合计值
+ * 语法错误时与 printerStore.template 一致：返回原文
+ * @param {string} text - valueField 或列 text
+ * @param {string|number} sumValue - 已求得的合计值
+ * @param {string} [fieldKey] - 字段名，默认从 text 解析
+ * @returns {string|number}
+ */
+const templateSumResult = (text, sumValue, fieldKey) => {
+  if (text == null || text === '' || typeof text !== 'string') {
+    return sumValue
+  }
+  if (!text.includes('{{')) {
+    return sumValue
+  }
+
+  const key = fieldKey || extractSumField(text)
+  try {
+    return _.template(text, {
+      interpolate: /{{([\s\S]+?)}}/g
+    })({
+      price,
+      [key]: sumValue,
+      列: { [key]: sumValue }
+    })
+  } catch (err) {
+    return text
+  }
+}
+
+/**
+ * 将合计配置转为用于逐行取值的列模板（去掉 price，仅保留 {{列.字段}}）
+ * @param {string} text
+ * @returns {string}
+ */
+const toSumColTemplate = text => {
+  const key = extractSumField(text)
+  return `{{列.${key}}}`
+}
+
 export {
   collectGroups,
   getHeight,
@@ -396,5 +472,9 @@ export {
   getColSpanLength,
   getOverallOrderTrHeight,
   formatSumWithPrecision,
-  getHighPrecisionField
+  getHighPrecisionField,
+  price,
+  extractSumField,
+  templateSumResult,
+  toSumColTemplate
 }
