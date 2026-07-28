@@ -450,6 +450,112 @@ const toSumColTemplate = text => {
   return `{{列.${key}}}`
 }
 
+/**
+ * 判断自定义合计配置是否包含函数或运算表达式
+ * @param {string} valueField
+ * @returns {boolean}
+ */
+const hasDiySummaryExpression = valueField => {
+  const expression =
+    typeof valueField === 'string'
+      ? valueField.match(/{{([\s\S]+?)}}/)?.[1]?.trim()
+      : ''
+  return expression ? !/^(?:列\.)?[\w㐀-鿿（）]+$/.test(expression) : false
+}
+
+/**
+ * 按字段/表达式和舍入顺序计算自定义合计
+ * @param {Object} options
+ * @returns {string}
+ */
+const calculateDiySummary = options => {
+  const {
+    tableData,
+    valueField,
+    formatter,
+    highPrecisionMapping,
+    isRoundFirst,
+    renderTemplate
+  } = options
+  const hasExpression = hasDiySummaryExpression(valueField)
+
+  // 用高精度字段构造公式上下文，不修改实际打印行
+  const getHighPrecisionRow = row => {
+    const formulaRow = { ...row }
+    _.forEach(highPrecisionMapping, (hpField, field) => {
+      const value = row._origin?.[hpField] ?? row[hpField]
+      if (value !== undefined && value !== null) {
+        formulaRow[field] = value
+      }
+    })
+    return formulaRow
+  }
+
+  if (!hasExpression) {
+    const fieldKey = extractSumField(valueField)
+    const mappedField = getHighPrecisionField(fieldKey, highPrecisionMapping)
+    const hpField = highPrecisionMapping?.[valueField] || mappedField
+    const hasHighPrecisionField = hpField !== fieldKey
+    const columnTemplate = valueField.includes('{{')
+      ? valueField
+      : toSumColTemplate(valueField)
+    const sum = _.reduce(
+      tableData,
+      (total, row, index) => {
+        const rawValue = hasHighPrecisionField
+          ? row._origin?.[hpField] ?? row[hpField] ?? 0
+          : renderTemplate(columnTemplate, index)
+        const value =
+          isRoundFirst && formatter ? formatter(rawValue).toFixed() : rawValue
+        const numericValue = value === '' || isNaN(Number(value)) ? 0 : value
+        return total.plus(numericValue)
+      },
+      Big(0)
+    )
+    return formatSumWithPrecision(sum, formatter)
+  }
+
+  // 表达式最多包含一个 price；后舍入模式下将 price 延迟到合计结果
+  const usesPrice = /\bprice\s*\(/.test(valueField)
+  let formulaPrecision = 2
+  let decimalPlaces = 0
+  const deferredPrice = (value, precision = 2) => {
+    formulaPrecision = precision
+    return value
+  }
+  const sum = _.reduce(
+    tableData,
+    (total, row, index) => {
+      const renderOptions = isRoundFirst
+        ? undefined
+        : {
+            rowTransform: getHighPrecisionRow,
+            priceFn: usesPrice ? deferredPrice : undefined
+          }
+      const result = String(
+        renderTemplate(valueField, index, renderOptions)
+      ).trim()
+      if (result === '' || isNaN(Number(result))) return total
+
+      const value =
+        isRoundFirst && !usesPrice && formatter
+          ? formatter(result).toFixed()
+          : result
+      const decimalPart = String(value).split('.')[1]
+      decimalPlaces = Math.max(decimalPlaces, decimalPart?.length || 0)
+      return total.plus(value)
+    },
+    Big(0)
+  )
+
+  if (!isRoundFirst && usesPrice) {
+    return price(sum, formulaPrecision)
+  }
+  return usesPrice
+    ? sum.toFixed(decimalPlaces)
+    : formatSumWithPrecision(sum, formatter)
+}
+
 export {
   collectGroups,
   getHeight,
@@ -476,5 +582,7 @@ export {
   price,
   extractSumField,
   templateSumResult,
-  toSumColTemplate
+  toSumColTemplate,
+  hasDiySummaryExpression,
+  calculateDiySummary
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import {
+  calculateDiySummary,
   coverDigit2Uppercase,
   getDataKey,
   isMultiTable,
@@ -53,67 +54,52 @@ const DiySummary = props => {
 
   const formatter = printerStore.config?.payAmountFormatter
   const highPrecisionMapping = printerStore.config?.highPrecisionFieldMapping
+  const isRoundFirst =
+    printerStore.data._origin?.precision_control?.is_round_first === true
 
-  // 计算合计（逐行取原始列值，内置函数只作用在最终合计结果上）
+  // 单栏使用统一计算器；多栏保留原有后缀字段累加逻辑
   const sumData = field => {
-    // 查找高精度字段，有则直接从原始数据取值，避免 templateTable 的精度损失
-    // 兼容映射 key 为模板串或字段名两种写法
-    const fieldKey = extractSumField(field)
-    const hpField =
-      highPrecisionMapping?.[field] || highPrecisionMapping?.[fieldKey]
-
-    if (isMulti) {
-      // 多栏表格暂不使用高精度字段，保持原有 templateTable 逻辑
-      const sum = _.reduce(
+    if (!isMulti) {
+      return calculateDiySummary({
         tableData,
-        (a, b, i) => {
-          let result = a
-          const bRes = getRes(field, i)
-          result = a.plus(+bRes || 0)
-
-          // 双栏
-          const multiField = buildTemplateField(field, MULTI_SUFFIX)
-          result = result.plus(+getRes(multiField, i) || 0)
-
-          // 三栏
-          const multiField3 = buildTemplateField(field, MULTI_SUFFIX3)
-          result = result.plus(+getRes(multiField3, i) || 0)
-
-          return result
-        },
-        Big(0)
-      )
-      return formatSumWithPrecision(sum, formatter)
+        valueField: field,
+        formatter,
+        highPrecisionMapping,
+        isRoundFirst,
+        renderTemplate: (template, index, options) =>
+          printerStore
+            .templateTable(
+              template,
+              dataKey,
+              range ? range.begin + index : index,
+              pageIndex,
+              options
+            )
+            .replace(/\(\)/g, '')
+      })
     }
 
-    // 单栏：有高精度字段则直接从原始数据取值
-    if (hpField) {
-      const sum = _.reduce(
-        tableData,
-        (a, b) => {
-          return a.plus(b._origin?.[hpField] ?? b[hpField] ?? 0)
-        },
-        Big(0)
-      )
-      return formatSumWithPrecision(sum, formatter)
-    }
-
-    // 兜底：无高精度字段，使用 templateTable
     const sum = _.reduce(
       tableData,
-      (a, b, i) => {
-        let result = a
-        const bRes = getRes(field, i)
-        result = a.plus(+bRes || 0)
-        return result
+      (total, row, index) => {
+        let result = total.plus(+getRes(field, index) || 0)
+        const multiField = buildTemplateField(field, MULTI_SUFFIX)
+        result = result.plus(+getRes(multiField, index) || 0)
+        const multiField3 = buildTemplateField(field, MULTI_SUFFIX3)
+        return result.plus(+getRes(multiField3, index) || 0)
       },
       Big(0)
     )
     return formatSumWithPrecision(sum, formatter)
 
-    function getRes(field, i) {
+    function getRes(template, index) {
       return printerStore
-        .templateTable(field, dataKey, range ? range.begin + i : i, pageIndex)
+        .templateTable(
+          template,
+          dataKey,
+          range ? range.begin + index : index,
+          pageIndex
+        )
         .replace(/\(\)/g, '')
     }
   }
@@ -131,15 +117,14 @@ const DiySummary = props => {
   const isUpperLowerCaseSeparate = diyConfig?.isUpperLowerCaseSeparate
   const isUpperCaseBefore = diyConfig?.isUpperCaseBefore
   const needUpperCase = diyConfig?.needUpperCase
-  const fieldKey = extractSumField(leftField.valueField)
-  // 求和用去掉内置函数后的列模板，多栏/高精度逻辑保持不变
-  const numericValue = sumData(toSumColTemplate(leftField.valueField))
-  // 仅对合计结果做模板/内置函数渲染
-  const displayValue = templateSumResult(
-    leftField.valueField,
-    numericValue,
-    fieldKey
-  )
+  // 单栏完整遵循统一舍入顺序；多栏保持原有求和后执行模板逻辑
+  const displayValue = isMulti
+    ? templateSumResult(
+        leftField.valueField,
+        sumData(toSumColTemplate(leftField.valueField)),
+        extractSumField(leftField.valueField)
+      )
+    : sumData(leftField.valueField)
   const upperCaseValue = needUpperCase ? coverDigit2Uppercase(displayValue) : ''
 
   const leftText = () => {

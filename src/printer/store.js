@@ -584,7 +584,7 @@ class PrinterStore {
     }
   }
 
-  templateTable(text, dataKey, index, pageIndex) {
+  templateTable(text, dataKey, index, pageIndex, options = {}) {
     // 做好保护，出错就返回 text
     try {
       let list = this.data._table[dataKey] || this.data._table.orders
@@ -594,15 +594,18 @@ class PrinterStore {
         list = _.uniqBy(list, '序号')
       }
 
+      const { rowTransform, priceFn = price } = options
+      const sourceRow = list[index]
+      const row = rowTransform ? rowTransform(sourceRow) : sourceRow
       return _.template(text, {
         interpolate: /{{([\s\S]+?)}}/g
       })({
         ...this.data.common,
 
-        [i18next.t('列')]: list[index],
+        [i18next.t('列')]: row,
         [i18next.t('当前页码')]: pageIndex + 1,
         [i18next.t('页码总数')]: this.pages.length,
-        price: price // 提供一个价格处理函数
+        price: priceFn // 提供一个价格处理函数
       })
     } catch (err) {
       return text

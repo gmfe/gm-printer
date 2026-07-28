@@ -5,10 +5,12 @@ import _ from 'lodash'
 import { MULTI_SUFFIX, MULTI_SUFFIX3 } from '../config'
 import Big from 'big.js'
 import {
+  calculateDiySummary,
   coverDigit2Uppercase,
   getDataKey,
   formatSumWithPrecision,
   extractSumField,
+  isMultiTable,
   templateSumResult
 } from '../util'
 import { observer } from 'mobx-react'
@@ -47,10 +49,14 @@ const SubtotalTr = props => {
       }
     },
     range,
+    pageIndex,
     printerStore,
     isSomeSubtotalTr
   } = props
   const tableData = printerStore.data._table[getDataKey(dataKey, arrange)] || []
+  const isMulti = isMultiTable(dataKey)
+  const isRoundFirst =
+    printerStore.data._origin?.precision_control?.is_round_first === true
 
   // 计算合计
   const sumData2 = (list, field, formatter, highPrecisionMapping) => {
@@ -97,8 +103,28 @@ const SubtotalTr = props => {
   if (show && printerStore.ready) {
     const list = tableData.slice(range.begin, range.end)
 
-    // 先按字段求和，再对结果做模板/内置函数渲染
+    // 单栏使用统一舍入逻辑，多栏保留原有后缀字段累加
     const formatSumValue = valueField => {
+      if (!isMulti) {
+        return calculateDiySummary({
+          tableData: list,
+          valueField,
+          formatter,
+          highPrecisionMapping,
+          isRoundFirst,
+          renderTemplate: (template, index, options) =>
+            printerStore
+              .templateTable(
+                template,
+                dataKey,
+                range.begin + index,
+                pageIndex,
+                options
+              )
+              .replace(/\(\)/g, '')
+        })
+      }
+
       const fieldKey = extractSumField(valueField)
       const sum = sumData2(list, fieldKey, formatter, highPrecisionMapping)
       return templateSumResult(valueField, sum, fieldKey)
@@ -201,7 +227,8 @@ const SubtotalTr = props => {
 SubtotalTr.propTypes = {
   config: PropTypes.object.isRequired,
   range: PropTypes.object.isRequired,
-  printStore: PropTypes.object
+  printStore: PropTypes.object,
+  pageIndex: PropTypes.number
 }
 
 export default observer(SubtotalTr)

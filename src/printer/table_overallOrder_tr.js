@@ -2,24 +2,56 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 // import Big from 'big.js'
-import { coverDigit2Uppercase } from '../util'
+import {
+  calculateDiySummary,
+  coverDigit2Uppercase,
+  extractSumField,
+  getDataKey,
+  hasDiySummaryExpression
+} from '../util'
 import { observer } from 'mobx-react'
 import classNames from 'classnames'
 
 const OverallOrder = props => {
   const {
-    config: { overallOrder },
+    config: { overallOrder, dataKey, arrange },
     printerStore,
     printerStore: {
       data: { common }
     }
   } = props
+  const tableDataKey = getDataKey(dataKey, arrange)
+  const tableData = printerStore.data._table[tableDataKey] || []
+  const formatter = printerStore.config?.payAmountFormatter
+  const highPrecisionMapping = printerStore.config?.highPrecisionFieldMapping
+  const isRoundFirst =
+    printerStore.data._origin?.precision_control?.is_round_first === true
+
+  // 普通字段沿用服务端整单值，表达式使用统一明细计算器
+  const getOverallValue = valueField => {
+    const fieldKey = extractSumField(valueField)
+    if (!hasDiySummaryExpression(valueField)) {
+      return common?.[fieldKey] ?? ''
+    }
+    return calculateDiySummary({
+      tableData,
+      valueField,
+      formatter,
+      highPrecisionMapping,
+      isRoundFirst,
+      renderTemplate: (template, index, options) =>
+        printerStore
+          .templateTable(template, tableDataKey, index, undefined, options)
+          .replace(/\(\)/g, '')
+    })
+  }
 
   return (
     overallOrder?.show &&
     printerStore?.ready && (
       <tr>
         {_.map(overallOrder.fields, (item, index) => {
+          const displayValue = getOverallValue(item.valueField)
           return (
             <td colSpan={item.colSpan} key={index}>
               <div style={{ ...item.style }} className='gm-flex-page'>
@@ -38,13 +70,11 @@ const OverallOrder = props => {
                         : ''
                     }
                   >
-                    {common?.[item.valueField] ?? ''}
+                    {displayValue}
                   </span>
                   {overallOrder?.needUpperCase && (
                     <span>
-                      {common?.[item.valueField]
-                        ? coverDigit2Uppercase(common[item.valueField])
-                        : ''}
+                      {displayValue ? coverDigit2Uppercase(displayValue) : ''}
                     </span>
                   )}
                 </div>

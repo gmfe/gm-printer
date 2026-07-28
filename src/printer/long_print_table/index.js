@@ -125,6 +125,7 @@ class Table extends React.Component {
         <>
           <SubtotalTr
             range={range}
+            pageIndex={pageIndex}
             config={config}
             printerStore={printerStore}
             isSomeSubtotalTr={isSomeSubtotalTr}
@@ -140,6 +141,7 @@ class Table extends React.Component {
           <PageSummary {...this.props} />
           <SubtotalTr
             range={range}
+            pageIndex={pageIndex}
             config={config}
             printerStore={printerStore}
             isSomeSubtotalTr={isSomeSubtotalTr}
