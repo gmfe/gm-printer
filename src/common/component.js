@@ -78,7 +78,7 @@ class Text extends React.Component {
       <input
         className={classNames('gm-printer-edit-input', className)}
         type='text'
-        value={value == null || typeof value === 'object' ? '' : value}
+        value={value}
         placeholder={placeholder}
         onChange={this.handleChange}
         style={style}

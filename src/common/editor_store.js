@@ -99,27 +99,20 @@ class EditorStore {
 
     const colSpanLength = getColSpanLength(table)
     if (!table.subtotal.fields?.length) {
-      const fields = [
-        {
-          name: '每页合计：',
-          valueField: 'real_item_price',
-          colSpan: colSpanLength
-        }
-      ]
-      if (table.subtotal.isCustomCells) {
-        const customCellField = { ...this.subtotalConfigFields }
-        fields[0].colSpan = colSpanLength - customCellField.colSpan
-        fields.push(customCellField)
-      }
-      set(table.subtotal, { fields })
+      set(table.subtotal, {
+        fields: [
+          {
+            name: '每页合计：',
+            valueField: 'real_item_price',
+            colSpan: colSpanLength
+          }
+        ]
+      })
       return
     }
 
     const subtotalLength = table.subtotal.fields.length
-    const lastField = table.subtotal.fields[subtotalLength - 1]
-    if (lastField) {
-      lastField.colSpan += 1
-    }
+    table.subtotal.fields[subtotalLength - 1].colSpan += 1
   }
 
   @action
@@ -1663,7 +1656,6 @@ class EditorStore {
       if (subtotalConfig?.isPrintAccount) {
         // 同时还开启了自定义单元格选项
         if (subtotalConfig?.fields?.length === 2) {
-          // fields添加自定义单元格
           subtotalConfig.fields = [
             subtotalConfig.fields[0],
             { ...this.subtotalAccountConfigFields },
@@ -1677,7 +1669,6 @@ class EditorStore {
             subtotalConfig.fields[0].colSpan -
             subtotalConfig.fields[1].colSpan
         } else {
-          // fields添加自定义单元格
           subtotalConfig.fields = [
             subtotalConfig.fields[0],
             { ...this.subtotalAccountConfigFields }
@@ -1726,7 +1717,7 @@ class EditorStore {
         isCustomCells: !oldCustomCells
       })
       // 兼容已经存在后端的模板，每页合计直接是显示的，导致每页合计配置没有fields,isCustomCells，手动添加上
-      if (!subtotalConfig.fields?.length) {
+      if (oldCustomCells === undefined && !subtotalConfig.fields) {
         set(subtotalConfig, {
           fields: [
             {
@@ -1737,16 +1728,14 @@ class EditorStore {
           ]
         })
       }
-      // 开启自定义单元格（必须拷贝，禁止共用 store 上的模板对象，否则 toJS/多次开关后 fields 会错乱）
+      // 开启自定义单元格（拷贝字段，避免共用 store 模板对象导致响应式异常）
       if (subtotalConfig?.isCustomCells) {
-        const customCellField = { ...this.subtotalConfigFields }
         // 同时还开启了打印账户总计金额
         if (subtotalConfig?.fields?.length === 2) {
-          const accountField = { ...this.subtotalAccountConfigFields }
           subtotalConfig.fields = [
             subtotalConfig.fields[0],
-            accountField,
-            customCellField
+            { ...this.subtotalAccountConfigFields },
+            { ...this.subtotalConfigFields }
           ]
           // 重新计算合并单元格的个数
           subtotalConfig.fields[0].colSpan = Math.floor(colSpanLength / 3)
@@ -1756,7 +1745,10 @@ class EditorStore {
             subtotalConfig.fields[0].colSpan -
             subtotalConfig.fields[1].colSpan
         } else {
-          subtotalConfig.fields = [subtotalConfig.fields[0], customCellField]
+          subtotalConfig.fields = [
+            subtotalConfig.fields[0],
+            { ...this.subtotalConfigFields }
+          ]
           // 重新计算合并单元格的个数
           subtotalConfig.fields[0].colSpan =
             colSpanLength - subtotalConfig.fields[1].colSpan
@@ -1785,30 +1777,20 @@ class EditorStore {
   // 每页合计自定义单元格文本输入
   @action.bound
   setSubtotalFields(value) {
-    if (!this.selectedRegion) return
-    // Text 组件应传入 string；防护误传 React 事件对象
-    if (typeof value !== 'string') return
+    if (this.selectedRegion) {
+      // 作用：触发组件的更新（与 setDiyOverallOrderFields 等保持一致）
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const subtotalConfig = table?.subtotal
 
-    const arr = this.selectedRegion.split('.')
-    const table = this.config.contents[arr[2]]
-    const subtotalConfig = table?.subtotal
-    if (!subtotalConfig?.isCustomCells) return
-
-    const fields = subtotalConfig.fields
-    if (!fields?.length) return
-
-    // 自定义单元格的 valueField 为空（与编辑面板展示逻辑一致）
-    const customField = _.find(fields, item => item && !item.valueField)
-    if (customField) {
-      customField.name = value
-      return
-    }
-
-    // 兼容：按位置写入（开启打印账户时自定义单元格在末位）
-    const target =
-      fields.length >= 3 ? fields[2] : fields.length >= 2 ? fields[1] : null
-    if (target) {
-      target.name = value
+      if (subtotalConfig?.isCustomCells) {
+        const fields = subtotalConfig.fields
+        const target = fields?.length === 3 ? fields[2] : fields?.[1]
+        if (target) {
+          set(target, { name: value })
+        }
+      }
     }
   }
 
@@ -1944,17 +1926,17 @@ class EditorStore {
   // 整单合计自定义单元格文本输入
   @action.bound
   setOverallOrderFields(value) {
-    if (!this.selectedRegion) return
-    if (typeof value !== 'string') return
+    if (this.selectedRegion) {
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const overallOrderConfig = table?.overallOrder
 
-    const arr = this.selectedRegion.split('.')
-    const table = this.config.contents[arr[2]]
-    const overallOrderConfig = table?.overallOrder
-
-    if (overallOrderConfig?.isCustomCells) {
-      const overallOrderConfigFields = table?.overallOrder.fields
-      if (overallOrderConfigFields?.[1]) {
-        overallOrderConfigFields[1].name = value
+      if (overallOrderConfig?.isCustomCells) {
+        const field = table?.overallOrder.fields?.[1]
+        if (field) {
+          set(field, { name: value })
+        }
       }
     }
   }

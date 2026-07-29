@@ -26,9 +26,7 @@ class EditorCutomizedConfig extends React.Component {
     editStore.setFillIndex(value)
   }
 
-  handleTaxFreeProductRateDisplay = e => {
-    const value = e.target.value
-
+  handleTaxFreeProductRateDisplay = value => {
     const { editStore } = this.props
     // 限制10位以内，如果超过则截断
     const trimmedValue = value.length > 10 ? value.slice(0, 10) : value
