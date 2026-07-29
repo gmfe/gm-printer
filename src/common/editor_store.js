@@ -1934,7 +1934,7 @@ class EditorStore {
 
       if (overallOrderConfig.isCustomCells) {
         const overallOrderConfigFields = table?.overallOrder.fields
-        overallOrderConfigFields[1].name = value
+        overallOrderConfigFields[1].name = value?.target?.value || value
       }
     }
   }
