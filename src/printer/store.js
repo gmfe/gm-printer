@@ -353,15 +353,24 @@ class PrinterStore {
           /** 去最小的tr高度，用于下面的计算compare,(避免特殊情况：一般来说最小tr——height = 23, 比23还小的不考虑计算) */
           const minHeight = Math.max(getArrayMid(heights), 23)
           /* 遍历表格每一行，填充表格内容 */
+          const tableData = this.data._table[dataKey] || []
           while (end < heights.length) {
-            currentTableHeight += heights[end]
+            // 明细行测量高度偏低于实际渲染，统一放大 1.3 倍用于分页判断，让大行能与小行挤在同一页填满
+            const detailCount =
+              (tableData[end] &&
+                tableData[end].__details &&
+                tableData[end].__details.length) ||
+              0
+            const effectiveH =
+              detailCount > 0 ? heights[end] * 1.3 : heights[end]
+            currentTableHeight += effectiveH
             // 用于计算最后一页有footer情况的高度
-            currentPageHeight += heights[end]
+            currentPageHeight += effectiveH
             // 当前页没有多余空间
             if (currentTableHeight > pageAccomodateTableHeight) {
               currentRemainTableHeight = +Big(pageAccomodateTableHeight)
                 .minus(currentTableHeight)
-                .plus(heights[end])
+                .plus(effectiveH)
 
               /**
                * 说明： 1. currentRemainTableHeight至少要是minHeight的 2倍，不然每次到这都进入if，同时留下一点空白距离
@@ -370,8 +379,8 @@ class PrinterStore {
                */
               if (
                 (currentRemainTableHeight / minHeight > 1.5 &&
-                  heights[end] / currentRemainTableHeight > 1) ||
-                heights[end] > pageAccomodateTableHeight
+                  effectiveH / currentRemainTableHeight > 1) ||
+                effectiveH > pageAccomodateTableHeight
               ) {
                 const detailsPageHeight = this.computedData(
                   dataKey,
@@ -402,6 +411,10 @@ class PrinterStore {
                   )
                 )
                 break
+              }
+              // 修复 OOM：某行高度本身超过单页可容纳的表格高度时，end 无法推进会导致 while 死循环
+              if (end === begin) {
+                end = end + 1
               }
               // 第一条极端会有问题
               if (end !== 0) {
