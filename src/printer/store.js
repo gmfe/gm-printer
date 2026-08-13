@@ -353,24 +353,15 @@ class PrinterStore {
           /** 去最小的tr高度，用于下面的计算compare,(避免特殊情况：一般来说最小tr——height = 23, 比23还小的不考虑计算) */
           const minHeight = Math.max(getArrayMid(heights), 23)
           /* 遍历表格每一行，填充表格内容 */
-          const tableData = this.data._table[dataKey] || []
           while (end < heights.length) {
-            // 明细行测量高度偏低于实际渲染，统一放大 1.3 倍用于分页判断，让大行能与小行挤在同一页填满
-            const detailCount =
-              (tableData[end] &&
-                tableData[end].__details &&
-                tableData[end].__details.length) ||
-              0
-            const effectiveH =
-              detailCount > 0 ? heights[end] * 1.3 : heights[end]
-            currentTableHeight += effectiveH
+            currentTableHeight += heights[end]
             // 用于计算最后一页有footer情况的高度
-            currentPageHeight += effectiveH
+            currentPageHeight += heights[end]
             // 当前页没有多余空间
             if (currentTableHeight > pageAccomodateTableHeight) {
               currentRemainTableHeight = +Big(pageAccomodateTableHeight)
                 .minus(currentTableHeight)
-                .plus(effectiveH)
+                .plus(heights[end])
 
               /**
                * 说明： 1. currentRemainTableHeight至少要是minHeight的 2倍，不然每次到这都进入if，同时留下一点空白距离
@@ -379,8 +370,8 @@ class PrinterStore {
                */
               if (
                 (currentRemainTableHeight / minHeight > 1.5 &&
-                  effectiveH / currentRemainTableHeight > 1) ||
-                effectiveH > pageAccomodateTableHeight
+                  heights[end] / currentRemainTableHeight > 1) ||
+                heights[end] > pageAccomodateTableHeight
               ) {
                 const detailsPageHeight = this.computedData(
                   dataKey,
