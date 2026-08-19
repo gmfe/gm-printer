@@ -3,6 +3,8 @@ import { action, observable, computed } from 'mobx'
 import {
   getSumTrHeight,
   isMultiTable,
+  getMultiNumber,
+  getDataKey,
   caclSingleDetailsPageHeight,
   getArrayMid,
   getOverallOrderTrHeight
@@ -10,6 +12,15 @@ import {
 import _ from 'lodash'
 import Big from 'big.js'
 import { Tip } from '../components'
+import {
+  fillEmptyRowIndex,
+  fillPartialLastRow,
+  getMaxSerial,
+  detectColNumber,
+  ensureRowSerialKeys,
+  flattenHorizontalPackedRows,
+  repackVerticalTableByPageRanges
+} from './multi_column'
 
 export const TR_BASE_HEIGHT = 23
 const price = (n, f = 2) => {
@@ -484,6 +495,67 @@ class PrinterStore {
     }
     this.pages.push(page)
     this.remainPageHeight = +Big(this.pageHeight - currentPageHeight).toFixed(0)
+    this.repackVerticalMultiByPages()
+  }
+
+  getTablePageRanges(contentIndex, rows) {
+    const ranges = []
+    this.pages.forEach(page => {
+      page.forEach(panel => {
+        if (panel.type === 'table' && panel.index === contentIndex) {
+          ranges.push({ begin: panel.begin, end: panel.end })
+        }
+      })
+    })
+    if (!ranges.length || !rows?.length) return ranges
+    const last = ranges[ranges.length - 1]
+    let end = last.end
+    while (end < rows.length && rows[end]?._isEmptyData) {
+      end++
+    }
+    last.end = end
+    return ranges
+  }
+
+  @action
+  repackVerticalMultiByPages() {
+    if (!this.pages?.length) return
+    this.config.contents.forEach((content, contentIndex) => {
+      if (content?.type !== 'table' || !isMultiTable(content.dataKey)) {
+        return
+      }
+      const dataKey = content.dataKey
+      const isVertical =
+        content.arrange === 'vertical' || /_vertical$/.test(dataKey)
+      if (!isVertical) return
+
+      const sourceKey = dataKey.replace(/_vertical$/, '')
+      const verticalKey = /_vertical$/.test(dataKey)
+        ? dataKey
+        : `${sourceKey}_vertical`
+      const colNumber = getMultiNumber(sourceKey)
+      const verticalRows = this.data._table[verticalKey]
+      if (!verticalRows?.length) return
+
+      const singleKey = sourceKey.replace(/_multi3?/, '')
+      const sourceRows =
+        this.data._table[singleKey] || this.data._table[sourceKey] || []
+      const sourceColNumber = isMultiTable(singleKey) ? colNumber : 1
+      const sourceItems = flattenHorizontalPackedRows(
+        sourceRows,
+        sourceColNumber
+      )
+      if (!sourceItems.length) return
+
+      const pageRanges = this.getTablePageRanges(contentIndex, verticalRows)
+      this.data._table[verticalKey] = repackVerticalTableByPageRanges(
+        verticalRows,
+        colNumber,
+        pageRanges,
+        this.fillIndex,
+        sourceItems
+      )
+    })
   }
 
   @action
@@ -602,12 +674,21 @@ class PrinterStore {
         list = _.uniqBy(list, '序号')
       }
 
+      const colNumber = detectColNumber(dataKey, list)
+      if (this.fillIndex && !list[index] && this.isAutoFilling) {
+        list = list.slice()
+        while (list.length <= index) {
+          list.push({ _isEmptyData: true })
+        }
+      }
+      const row = ensureRowSerialKeys(list, index, colNumber, this.fillIndex)
+
       return _.template(text, {
         interpolate: /{{([\s\S]+?)}}/g
       })({
         ...this.data.common,
 
-        [i18next.t('列')]: list[index],
+        [i18next.t('列')]: row,
         [i18next.t('当前页码')]: pageIndex + 1,
         [i18next.t('页码总数')]: Math.max(1, this.pages.length),
         price: price // 提供一个价格处理函数
@@ -690,34 +771,38 @@ class PrinterStore {
     _.map(tableData[0], (val, key) => {
       filledData[key] = ''
     })
-    console.log(tr_count, 'tr_count')
 
-    return Array(tr_count).fill(filledData)
+    return Array.from({ length: tr_count }, () => ({ ...filledData }))
+  }
+
+  fillTableEmptyIndex(dataKey) {
+    const tableData = this.data._table[dataKey]
+    if (!tableData) return
+    const colNumber = detectColNumber(dataKey, tableData)
+    const table = tableData.filter(item => !item._isEmptyData)
+    const emptyTable = tableData.filter(item => item._isEmptyData)
+    const withPartial = fillPartialLastRow(table, colNumber, this.fillIndex)
+    const lastKey = getMaxSerial(withPartial, colNumber) + 1
+    const templates =
+      emptyTable.length === 0 ? this.getFilledTableData(table) : emptyTable
+    const fillList = templates.map((item, index) =>
+      fillEmptyRowIndex(item, index, lastKey, colNumber, this.fillIndex)
+    )
+    withPartial.push(...fillList)
+    this.data._table[dataKey] = withPartial
   }
 
   @action.bound
   changeTableData() {
     const { autoFillConfig } = this.config
     if (!this.isAutoFilling) return
-    const dataKey = autoFillConfig?.dataKey
-    const table = this.data._table[dataKey]?.filter(item => !item._isEmptyData)
-    const emptyTable = this.data._table[dataKey]?.filter(
-      item => item._isEmptyData
-    )
-    const lastKey = _.findLast(table, item => item?.序号)?.序号 + 1
-    const fillList = _.map(
-      emptyTable?.length === 0 ? this.getFilledTableData(table) : emptyTable,
-      (item, index) => {
-        if (this.fillIndex) {
-          return { ...item, 序号: index + lastKey }
-        } else {
-          return { ...item, 序号: '' }
-        }
-      }
-    )
-    console.log(fillList, 'fillList')
-    table.push(...fillList)
-    this.data._table[dataKey] = table
+    const dataKey = this.tableConfig?.dataKey || autoFillConfig?.dataKey
+    if (!dataKey) return
+    this.fillTableEmptyIndex(dataKey)
+    if (isMultiTable(dataKey)) {
+      this.fillTableEmptyIndex(getDataKey(dataKey, 'vertical'))
+    }
+    this.repackVerticalMultiByPages()
   }
 }
 

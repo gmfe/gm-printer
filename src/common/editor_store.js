@@ -2,10 +2,23 @@ import i18next from '../../locales'
 import { action, computed, observable, set, toJS } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
-import { dispatchMsg, getBlockName, exchange, getColSpanLength } from '../util'
+import {
+  dispatchMsg,
+  getBlockName,
+  exchange,
+  getColSpanLength,
+  isMultiTable,
+  getDataKey
+} from '../util'
 import { accountRadioList } from './util'
 import React from 'react'
 import { createDiySummaryStoreMethods } from './diy_summary_helper'
+import {
+  detectColNumber,
+  fillEmptyRowIndex,
+  fillPartialLastRow,
+  getMaxSerial
+} from '../printer/multi_column'
 
 class EditorStore {
   @observable
@@ -201,6 +214,7 @@ class EditorStore {
               vv.columns.length +
               vv.className +
               vv.dataKey +
+              (vv.arrange || 'lateral') +
               vv.subtotal.show +
               vv.summaryConfig?.pageSummaryShow +
               vv.customerRowHeight
@@ -247,7 +261,7 @@ class EditorStore {
     _.map(tableData[0], (val, key) => {
       filledData[key] = ''
     })
-    return Array(tr_count).fill(filledData)
+    return Array.from({ length: tr_count }, () => ({ ...filledData }))
   }
 
   @action.bound
@@ -256,9 +270,6 @@ class EditorStore {
     if (!this.selectedRegion && !autoFillConfig?.checked) return
     const dataKey =
       this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
-    // 每次都更新一下？
-    const table = this.mockData._table[dataKey]
-    // 赋值一下
     this.setAutoFillingConfig(isAutoFilling)
     this.setFillIndex(autoFillConfig?.fillIndex || false)
     set(this.config, {
@@ -271,24 +282,53 @@ class EditorStore {
       }
     })
 
-    const hasHadEmptyData = _.some(table, data => data?._isEmptyData)
-
-    // 开关打开，且之前数组不包含空数据，再进行填充
-
-    if (isAutoFilling && !hasHadEmptyData) {
-      table.push(...this.getFilledTableData(table))
+    const syncEmptyRows = key => {
+      if (!this.mockData._table?.[key]) return
+      const list = this.mockData._table[key]
+      const hasHadEmptyData = _.some(list, data => data?._isEmptyData)
+      if (isAutoFilling && !hasHadEmptyData) {
+        list.push(...this.getFilledTableData(list))
+      }
+      if (!isAutoFilling) {
+        this.clearExtraTableData(key)
+        return
+      }
+      this.mockData._table[key] = list
     }
-    if (!isAutoFilling) {
-      this.clearExtraTableData(dataKey)
-      return
+
+    const numberEmptyRows = key => {
+      const list = this.mockData._table?.[key]
+      if (!list) return
+      const colNumber = detectColNumber(key, list)
+      const table = list.filter(item => !item._isEmptyData)
+      const emptyTable = list.filter(item => item._isEmptyData)
+      const withPartial = fillPartialLastRow(table, colNumber, this.fillIndex)
+      const lastKey = getMaxSerial(withPartial, colNumber) + 1
+      this.mockData._table[key] = withPartial.concat(
+        emptyTable.map((item, index) =>
+          fillEmptyRowIndex(item, index, lastKey, colNumber, this.fillIndex)
+        )
+      )
     }
-    this.mockData._table[dataKey] = table
+
+    syncEmptyRows(dataKey)
+    if (dataKey && isMultiTable(dataKey)) {
+      syncEmptyRows(getDataKey(dataKey, 'vertical'))
+    }
+    if (isAutoFilling) {
+      numberEmptyRows(dataKey)
+      if (dataKey && isMultiTable(dataKey)) {
+        numberEmptyRows(getDataKey(dataKey, 'vertical'))
+      }
+    }
   }
 
   @action
   clearExtraTableData(dataKey) {
-    const newTable = this.mockData._table[dataKey].filter(x => !x._isEmptyData)
-    this.mockData._table[dataKey] = newTable
+    if (!this.mockData._table?.[dataKey]) return
+    this.mockData._table[dataKey] = this.mockData._table[dataKey].filter(
+      x => !x._isEmptyData
+    )
   }
 
   @action

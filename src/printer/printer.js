@@ -11,6 +11,7 @@ import Table from './table'
 import LongPrintTable from './long_print_table'
 import MergePage from './merge_page'
 import { LONG_PRINT } from '../config'
+import { getDataKey } from '../util'
 import Big from 'big.js'
 
 // Header Sign Footer 相对特殊，要单独处理
@@ -147,7 +148,10 @@ class Printer extends React.Component {
           switch (content.type) {
             case 'table':
               // eslint-disable-next-line no-case-declarations
-              const list = printerStore.data._table[content.dataKey]
+              const list =
+                printerStore.data._table[
+                  getDataKey(content.dataKey, content.arrange)
+                ] || printerStore.data._table[content.dataKey]
               return (
                 <Table
                   key={`contents.table.${index}`}

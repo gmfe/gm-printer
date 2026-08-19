@@ -24,6 +24,9 @@ class EditorCutomizedConfig extends React.Component {
   handleFillIndex = value => {
     const { editStore } = this.props
     editStore.setFillIndex(value)
+    if (editStore.isAutoFilling) {
+      editStore.handleChangeTableData(true)
+    }
   }
 
   handleTaxFreeProductRateDisplay = e => {
