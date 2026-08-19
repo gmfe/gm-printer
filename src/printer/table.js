@@ -359,15 +359,11 @@ class Table extends React.Component {
             }
 
             // 如果项为空对象展现一个占满一行的td
-            const isItemNone = !_.keys(tableData[i]).length
+            const isItemNone = !_.keys(tableData[i] || {}).length
             return (
               <tr style={{ height: `${customerRowHeight}px` }} key={i}>
-                {isItemNone ? (
-                  !printerStore?.isAutoFilling ? (
-                    <td colSpan='99' />
-                  ) : (
-                    <></>
-                  )
+                {isItemNone && !printerStore?.isAutoFilling ? (
+                  <td colSpan='99' />
                 ) : (
                   _.map(columns, (col, j) => {
                     const rowSpan = printerStore.templateTableRowSpan(
