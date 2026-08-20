@@ -788,6 +788,8 @@ function order(data) {
       orders: kOrders, // 普通
       orders_multi: kOrdersMulti, // 双栏
       orders_multi_vertical: kOrdersMultiVertical, // 双栏（纵向）
+      orders_multi3: kOrdersMulti3, // 三栏
+      orders_multi3_vertical: kOrdersMulti3Vertical, // 三栏（纵向）
       orders_category: kCategory, // 分类
       orders_category_multi: kCategoryMulti, // 分类 + 双栏
       orders_category_multi3: kCategoryMulti3, // 分类 + 三栏
