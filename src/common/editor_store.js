@@ -8,7 +8,8 @@ import {
   exchange,
   getColSpanLength,
   isMultiTable,
-  getDataKey
+  getDataKey,
+  getMultiNumber
 } from '../util'
 import { accountRadioList } from './util'
 import React from 'react'
@@ -17,7 +18,13 @@ import {
   detectColNumber,
   fillEmptyRowIndex,
   fillPartialLastRow,
-  getMaxSerial
+  getMaxSerial,
+  flattenHorizontalPackedRows,
+  packVerticalNewspaper,
+  packHorizontalRowMajor,
+  createEmptyRows,
+  createEmptyRowSkeleton,
+  resolveVerticalEmptyCount
 } from '../printer/multi_column'
 
 class EditorStore {
@@ -254,14 +261,57 @@ class EditorStore {
     tr_count = Math.floor(
       this.remainPageHeihgt / this.computedTableCustomerRowHeight
     )
+    if (tr_count <= 0) return []
 
-    const filledData = {
-      _isEmptyData: true // 表示是填充的空白数据
+    const sample = (tableData || []).find(item => item && !item._isEmptyData)
+    const dataKey =
+      this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
+    const colNumber = detectColNumber(dataKey, tableData)
+    return createEmptyRows(tr_count, sample, colNumber)
+  }
+
+  /** 多栏表缺失时（如双栏切三栏），从单栏/双栏源表现场打包到 mockData */
+  @action
+  ensureMockMultiTable(dataKey) {
+    if (!dataKey || !isMultiTable(dataKey)) return
+    if (!this.mockData._table) {
+      this.mockData._table = {}
     }
-    _.map(tableData[0], (val, key) => {
-      filledData[key] = ''
-    })
-    return Array.from({ length: tr_count }, () => ({ ...filledData }))
+    if (this.mockData._table[dataKey]?.length) return
+
+    const isVertical = /_vertical$/.test(dataKey)
+    const sourceKey = dataKey.replace(/_vertical$/, '')
+    const colNumber = getMultiNumber(sourceKey)
+    const singleKey = sourceKey.replace(/_multi3?/, '')
+
+    let sourceRows = this.mockData._table[singleKey]
+    let sourceColNumber = 1
+    if (!sourceRows?.length && /multi3/.test(sourceKey)) {
+      const dualKey = sourceKey.replace('multi3', 'multi')
+      sourceRows = this.mockData._table[dualKey]
+      sourceColNumber = 2
+    }
+    if (!sourceRows?.length) {
+      sourceRows = this.mockData._table[sourceKey]
+      sourceColNumber = isMultiTable(sourceKey) ? colNumber : 1
+    }
+    if (!sourceRows?.length) {
+      this.mockData._table[dataKey] = []
+      return
+    }
+
+    const sourceItems = flattenHorizontalPackedRows(
+      sourceRows,
+      sourceColNumber
+    )
+    const baseRowCount = sourceItems.length
+      ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
+      : 0
+    this.mockData._table[dataKey] = !baseRowCount
+      ? []
+      : isVertical
+        ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
+        : packHorizontalRowMajor(sourceItems, colNumber)
   }
 
   @action.bound
@@ -282,6 +332,11 @@ class EditorStore {
       }
     })
 
+    if (dataKey && isMultiTable(dataKey)) {
+      this.ensureMockMultiTable(dataKey)
+      this.ensureMockMultiTable(getDataKey(dataKey, 'vertical'))
+    }
+
     const syncEmptyRows = key => {
       if (!this.mockData._table?.[key]) return
       const list = this.mockData._table[key]
@@ -299,21 +354,75 @@ class EditorStore {
     const numberEmptyRows = key => {
       const list = this.mockData._table?.[key]
       if (!list) return
-      const colNumber = detectColNumber(key, list)
       const table = list.filter(item => !item._isEmptyData)
       const emptyTable = list.filter(item => item._isEmptyData)
+      // 纵向表：对半数据行 + 空行占位；左列优先交给 Printer.repack
+      if (/_vertical$/.test(key)) {
+        const sourceKey = key.replace(/_vertical$/, '')
+        const singleKey = sourceKey.replace(/_multi3?/, '')
+        const colNumber = getMultiNumber(sourceKey)
+        const sourceRows =
+          this.mockData._table[singleKey] ||
+          this.mockData._table[sourceKey] ||
+          []
+        const sourceColNumber = isMultiTable(singleKey)
+          ? getMultiNumber(singleKey)
+          : isMultiTable(sourceKey)
+            ? colNumber
+            : 1
+        const sourceItems = flattenHorizontalPackedRows(
+          sourceRows,
+          sourceColNumber
+        )
+        const baseRowCount = sourceItems.length
+          ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
+          : 0
+        // 钉死总行：repack 后 _isEmptyData 会变少，不能再用 emptyTable.length
+        const emptyCount = resolveVerticalEmptyCount(
+          list.length,
+          baseRowCount,
+          emptyTable.length > 0
+            ? emptyTable.length
+            : this.getFilledTableData(list).length,
+          emptyTable.length > 0
+        )
+        const dataRows = baseRowCount
+          ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
+          : []
+        const sample = dataRows[0] || sourceRows[0]
+        this.mockData._table[key] = dataRows.concat(
+          createEmptyRows(emptyCount, sample, colNumber)
+        )
+        return
+      }
+      const colNumber = detectColNumber(key, list)
       const withPartial = fillPartialLastRow(table, colNumber, this.fillIndex)
       const lastKey = getMaxSerial(withPartial, colNumber) + 1
+      const sample = table[0]
       this.mockData._table[key] = withPartial.concat(
         emptyTable.map((item, index) =>
-          fillEmptyRowIndex(item, index, lastKey, colNumber, this.fillIndex)
+          fillEmptyRowIndex(
+            {
+              ...createEmptyRowSkeleton(sample, colNumber),
+              ...item,
+              _isEmptyData: true
+            },
+            index,
+            lastKey,
+            colNumber,
+            this.fillIndex
+          )
         )
       )
     }
 
     syncEmptyRows(dataKey)
     if (dataKey && isMultiTable(dataKey)) {
-      syncEmptyRows(getDataKey(dataKey, 'vertical'))
+      const verticalKey = getDataKey(dataKey, 'vertical')
+      if (!this.mockData._table[verticalKey]) {
+        this.mockData._table[verticalKey] = []
+      }
+      syncEmptyRows(verticalKey)
     }
     if (isAutoFilling) {
       numberEmptyRows(dataKey)
@@ -583,10 +692,42 @@ class EditorStore {
     for (const [key, table] of Object.entries(tableData)) {
       tableData[key] = table.filter(x => !x._isEmptyData)
     }
-    // this.setAutoFillingConfig(false)
+    // 纵向 left-fill 后商品行数 > 对半行且无 _isEmptyData，只滤空行会留下偏多行，
+    // 重挂载测高/remain 偏小，多栏切换后空行补不回来。收回到对半商品行。
+    Object.keys(tableData).forEach(key => {
+      if (!/_vertical$/.test(key) || !isMultiTable(key)) return
+      this.collapseVerticalMultiToBaseRows(key)
+    })
     set(this.mockData, {
       _table: tableData
     })
+  }
+
+  /** 纵向多栏收到「对半」商品行，去掉 left-fill 撑开的多余行 */
+  @action
+  collapseVerticalMultiToBaseRows(key) {
+    const sourceKey = key.replace(/_vertical$/, '')
+    const singleKey = sourceKey.replace(/_multi3?/, '')
+    const colNumber = getMultiNumber(sourceKey)
+    const sourceRows =
+      this.mockData._table[singleKey] ||
+      this.mockData._table[sourceKey] ||
+      []
+    const sourceColNumber = isMultiTable(singleKey)
+      ? getMultiNumber(singleKey)
+      : isMultiTable(sourceKey)
+        ? colNumber
+        : 1
+    const sourceItems = flattenHorizontalPackedRows(
+      sourceRows,
+      sourceColNumber
+    )
+    const baseRowCount = sourceItems.length
+      ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
+      : 0
+    this.mockData._table[key] = baseRowCount
+      ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
+      : []
   }
 
   @action
@@ -973,12 +1114,34 @@ class EditorStore {
 
     this.config.contents[arr[2]].dataKey = newDataKey.join('_')
 
+    // 双栏↔三栏等切换时，mock 可能缺对应 _table，现场兜底生成，避免整表空白
+    const joinedKey = newDataKey.join('_')
+    if (isMultiTable(joinedKey)) {
+      this.ensureMockMultiTable(joinedKey)
+      this.ensureMockMultiTable(getDataKey(joinedKey, 'vertical'))
+    }
+
     // 整单合计不显示
     if (overallOrder?.show) overallOrder.show = false
     // 每页合计不显示
     if (subtotal?.show) subtotal.show = false
     // 自定义每页合计不显示
     if (diyOverallOrder?.show) diyOverallOrder.show = false
+
+    // 分类/多栏切换：清空旧空行并同步 autoFillConfig.dataKey，Printer 重挂载后会重补
+    if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
+      this.clearAllTableEmptyData()
+      this.setAutoFillingConfig(true)
+      set(this.config, {
+        autoFillConfig: {
+          ...(this.config.autoFillConfig || {}),
+          region: this.selectedRegion || this.config.autoFillConfig?.region,
+          dataKey: joinedKey,
+          checked: true,
+          fillIndex: this.fillIndex
+        }
+      })
+    }
   }
 
   @action
@@ -1418,9 +1581,25 @@ class EditorStore {
     if (this.selectedRegion) {
       const arr = this.selectedRegion.split('.')
       if (arr.includes('table')) {
+        const table = this.config.contents[arr[2]]
         this.config.contents[arr[2]] = {
-          ...this.config.contents[arr[2]],
+          ...table,
           arrange: val
+        }
+        // 只改排列并清掉旧空行；保持填充开关，交给 Printer 重挂载后
+        //「先补空 → 再重新分页」恢复空行（勿在此处用旧 remainHeight 立刻补）
+        if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
+          this.clearAllTableEmptyData()
+          this.setAutoFillingConfig(true)
+          set(this.config, {
+            autoFillConfig: {
+              ...(this.config.autoFillConfig || {}),
+              region: this.selectedRegion,
+              dataKey: table.dataKey,
+              checked: true,
+              fillIndex: this.fillIndex
+            }
+          })
         }
       }
     }

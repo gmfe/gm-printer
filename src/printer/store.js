@@ -19,7 +19,12 @@ import {
   detectColNumber,
   ensureRowSerialKeys,
   flattenHorizontalPackedRows,
-  repackVerticalTableByPageRanges
+  repackVerticalTableByPageRanges,
+  packVerticalNewspaper,
+  packHorizontalRowMajor,
+  createEmptyRows,
+  createEmptyRowSkeleton,
+  resolveVerticalEmptyCount
 } from './multi_column'
 
 export const TR_BASE_HEIGHT = 23
@@ -46,6 +51,8 @@ class PrinterStore {
   /** 当前页剩余空白高度 */
   @observable remainPageHeight = 0
   @observable isSave = false
+  /** data._table 非 observable，变更后递增以驱动预览重渲 */
+  @observable dataRevision = 0
 
   data = {}
 
@@ -494,7 +501,17 @@ class PrinterStore {
       }
     }
     this.pages.push(page)
-    this.remainPageHeight = +Big(this.pageHeight - currentPageHeight).toFixed(0)
+
+    // 末页签名：panel 分支会在「最后一项是 panel」时扣 sign；
+    // 最后一项是 table 时上面不会扣，导致 remain 偏大、空行多填溢页
+    const lastContent = this.config.contents[this.config.contents.length - 1]
+    if (lastContent?.type === 'table' && this.height?.sign) {
+      currentPageHeight += this.height.sign
+    }
+
+    this.remainPageHeight = +Big(
+      Math.max(0, this.pageHeight - currentPageHeight)
+    ).toFixed(0)
     this.repackVerticalMultiByPages()
   }
 
@@ -540,12 +557,17 @@ class PrinterStore {
       const singleKey = sourceKey.replace(/_multi3?/, '')
       const sourceRows =
         this.data._table[singleKey] || this.data._table[sourceKey] || []
-      const sourceColNumber = isMultiTable(singleKey) ? colNumber : 1
+      const sourceColNumber = isMultiTable(singleKey)
+        ? getMultiNumber(singleKey)
+        : isMultiTable(sourceKey)
+          ? colNumber
+          : 1
       const sourceItems = flattenHorizontalPackedRows(
         sourceRows,
         sourceColNumber
       )
-      if (!sourceItems.length) return
+      // 无商品时仍可能需要给空行按列编序号
+      if (!sourceItems.length && !this.fillIndex) return
 
       const pageRanges = this.getTablePageRanges(contentIndex, verticalRows)
       this.data._table[verticalKey] = repackVerticalTableByPageRanges(
@@ -555,6 +577,7 @@ class PrinterStore {
         this.fillIndex,
         sourceItems
       )
+      this.dataRevision += 1
     })
   }
 
@@ -665,7 +688,7 @@ class PrinterStore {
   }
 
   templateTable(text, dataKey, index, pageIndex) {
-    // 做好保护，出错就返回 text
+    // 做好保护，出错就返回空串（勿回传原始 {{}}，否则单元格会露出模板）
     try {
       let list = this.data._table[dataKey] || this.data._table.orders
 
@@ -675,13 +698,25 @@ class PrinterStore {
       }
 
       const colNumber = detectColNumber(dataKey, list)
-      if (this.fillIndex && !list[index] && this.isAutoFilling) {
-        list = list.slice()
+      const sample = (list || []).find(item => item && !item._isEmptyData)
+      let row = list?.[index]
+      // 渲染 end 偶发超过数据长度时，用空行骨架兜底，避免 列=undefined 抛错露出 {{列.xxx_MULTI_SUFFIX}}
+      if (!row) {
+        if (!this.isAutoFilling) return ''
+        list = (list || []).slice()
         while (list.length <= index) {
-          list.push({ _isEmptyData: true })
+          list.push(createEmptyRowSkeleton(sample, colNumber))
         }
+        row = list[index]
       }
-      const row = ensureRowSerialKeys(list, index, colNumber, this.fillIndex)
+      row =
+        ensureRowSerialKeys(
+          list,
+          index,
+          colNumber,
+          this.fillIndex,
+          dataKey
+        ) || row
 
       return _.template(text, {
         interpolate: /{{([\s\S]+?)}}/g
@@ -694,7 +729,7 @@ class PrinterStore {
         price: price // 提供一个价格处理函数
       })
     } catch (err) {
-      return text
+      return ''
     }
   }
 
@@ -764,29 +799,157 @@ class PrinterStore {
     const tr_count = Math.floor(
       this.remainPageHeight / this.computedTableCustomerRowHeight
     )
+    if (tr_count <= 0) return []
 
-    const filledData = {
-      _isEmptyData: true // 表示是填充的空白数据
-    }
-    _.map(tableData[0], (val, key) => {
-      filledData[key] = ''
+    const sample = (tableData || []).find(item => item && !item._isEmptyData)
+    const colNumber = detectColNumber(
+      this.tableConfig?.dataKey || autoFillConfig?.dataKey,
+      tableData
+    )
+    return createEmptyRows(tr_count, sample, colNumber)
+  }
+
+  /** 空行高度只由 getNormalTableBodyHeights 虚拟追加，禁止写入 body.heights（会双计溢页） */
+  @action
+  trimTableBodyHeightsToRealRows(dataKey) {
+    if (!dataKey || !this.tablesInfo) return
+    this.config.contents.forEach((content, index) => {
+      if (content?.type !== 'table') return
+      const resolved = getDataKey(content.dataKey, content.arrange)
+      if (resolved !== dataKey && content.dataKey !== dataKey) return
+
+      const name = `contents.table.${index}`
+      const info = this.tablesInfo[name]
+      if (!info?.body?.heights) return
+
+      const rows =
+        this.data._table[resolved] || this.data._table[dataKey] || []
+      const realCount = rows.filter(row => row && !row._isEmptyData).length
+      if (info.body.heights.length > realCount) {
+        info.body.heights = info.body.heights.slice(0, realCount)
+      }
     })
+  }
 
-    return Array.from({ length: tr_count }, () => ({ ...filledData }))
+  /** 多栏表缺失时（如双栏切三栏），从单栏/低栏源表现场打包 */
+  ensureMultiTableData(dataKey) {
+    const existing = this.data._table[dataKey]
+    if (existing?.length) return existing
+    if (!isMultiTable(dataKey)) return existing || null
+
+    const isVertical = /_vertical$/.test(dataKey)
+    const sourceKey = dataKey.replace(/_vertical$/, '')
+    const colNumber = getMultiNumber(sourceKey)
+    const singleKey = sourceKey.replace(/_multi3?/, '')
+
+    let sourceRows = this.data._table[singleKey]
+    let sourceColNumber = 1
+    if (!sourceRows?.length && /multi3/.test(sourceKey)) {
+      const dualKey = sourceKey.replace('multi3', 'multi')
+      sourceRows = this.data._table[dualKey]
+      sourceColNumber = 2
+    }
+    if (!sourceRows?.length) {
+      sourceRows = this.data._table[sourceKey]
+      sourceColNumber = isMultiTable(sourceKey) ? colNumber : 1
+    }
+    if (!sourceRows?.length) {
+      this.data._table[dataKey] = []
+      return []
+    }
+
+    const sourceItems = flattenHorizontalPackedRows(
+      sourceRows,
+      sourceColNumber
+    )
+    const baseRowCount = sourceItems.length
+      ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
+      : 0
+    const packed = !baseRowCount
+      ? []
+      : isVertical
+        ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
+        : packHorizontalRowMajor(sourceItems, colNumber)
+    this.data._table[dataKey] = packed
+    return packed
   }
 
   fillTableEmptyIndex(dataKey) {
-    const tableData = this.data._table[dataKey]
+    let tableData = this.data._table[dataKey]
+    if (!tableData && isMultiTable(dataKey)) {
+      tableData = this.ensureMultiTableData(dataKey)
+    }
     if (!tableData) return
-    const colNumber = detectColNumber(dataKey, tableData)
-    const table = tableData.filter(item => !item._isEmptyData)
     const emptyTable = tableData.filter(item => item._isEmptyData)
+    const table = tableData.filter(item => !item._isEmptyData)
+    const toFillEmptyCount =
+      emptyTable.length === 0 ? this.getFilledTableData(table).length : 0
+    const emptyCount =
+      emptyTable.length > 0 ? emptyTable.length : toFillEmptyCount
+
+    // 纵向多栏：源商品按对半行落位 + 追加空行；左列优先由 repack 按「数据行+空行」整段完成
+    if (/_vertical$/.test(dataKey)) {
+      const sourceKey = dataKey.replace(/_vertical$/, '')
+      const singleKey = sourceKey.replace(/_multi3?/, '')
+      const colNumber = getMultiNumber(sourceKey)
+      // 横向源表缺失时先生成（双栏→三栏常见）
+      if (!this.data._table[sourceKey]?.length) {
+        this.ensureMultiTableData(sourceKey)
+      }
+      const sourceRows =
+        this.data._table[singleKey] || this.data._table[sourceKey] || []
+      const sourceColNumber = isMultiTable(singleKey)
+        ? getMultiNumber(singleKey)
+        : isMultiTable(sourceKey)
+          ? colNumber
+          : 1
+      const sourceItems = flattenHorizontalPackedRows(
+        sourceRows,
+        sourceColNumber
+      )
+      const baseRowCount = sourceItems.length
+        ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
+        : 0
+      // 钉死总行：left-first repack 后 _isEmptyData 变少，不能用 emptyTable.length 回推
+      const emptyCount = resolveVerticalEmptyCount(
+        tableData.length,
+        baseRowCount,
+        emptyTable.length > 0
+          ? emptyTable.length
+          : this.getFilledTableData(table).length,
+        emptyTable.length > 0
+      )
+      const dataRows = baseRowCount
+        ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
+        : []
+      const sample = dataRows[0] || sourceRows[0]
+      const emptyRows = createEmptyRows(emptyCount, sample, colNumber)
+      this.data._table[dataKey] = dataRows.concat(emptyRows)
+      return
+    }
+
+    const colNumber = detectColNumber(dataKey, tableData)
+    const templates =
+      emptyCount === 0
+        ? []
+        : emptyTable.length > 0
+          ? emptyTable
+          : this.getFilledTableData(table)
     const withPartial = fillPartialLastRow(table, colNumber, this.fillIndex)
     const lastKey = getMaxSerial(withPartial, colNumber) + 1
-    const templates =
-      emptyTable.length === 0 ? this.getFilledTableData(table) : emptyTable
+    const sample = table[0]
     const fillList = templates.map((item, index) =>
-      fillEmptyRowIndex(item, index, lastKey, colNumber, this.fillIndex)
+      fillEmptyRowIndex(
+        {
+          ...createEmptyRowSkeleton(sample, colNumber),
+          ...item,
+          _isEmptyData: true
+        },
+        index,
+        lastKey,
+        colNumber,
+        this.fillIndex
+      )
     )
     withPartial.push(...fillList)
     this.data._table[dataKey] = withPartial
@@ -799,8 +962,15 @@ class PrinterStore {
     const dataKey = this.tableConfig?.dataKey || autoFillConfig?.dataKey
     if (!dataKey) return
     this.fillTableEmptyIndex(dataKey)
+    // 测高只含商品行；空行高度交给 getNormalTableBodyHeights，避免写入 heights 双计
+    this.trimTableBodyHeightsToRealRows(dataKey)
     if (isMultiTable(dataKey)) {
-      this.fillTableEmptyIndex(getDataKey(dataKey, 'vertical'))
+      const verticalKey = getDataKey(dataKey, 'vertical')
+      if (!this.data._table[verticalKey]) {
+        this.data._table[verticalKey] = []
+      }
+      this.fillTableEmptyIndex(verticalKey)
+      this.trimTableBodyHeightsToRealRows(verticalKey)
     }
     this.repackVerticalMultiByPages()
   }
