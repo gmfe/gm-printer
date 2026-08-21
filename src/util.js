@@ -2,19 +2,23 @@ import _ from 'lodash'
 import Big from 'big.js'
 
 function getHeight(el) {
-  const styles = window.getComputedStyle(el)
+  // 打印渲染在 iframe 内时，必须用元素所属 document 的 window，
+  // 否则 parent window.getComputedStyle 可能得到错误值、测高为 0
+  const view = (el.ownerDocument && el.ownerDocument.defaultView) || window
+  const styles = view.getComputedStyle(el)
   const height = el.offsetHeight
-  const borderTopWidth = parseFloat(styles.borderTopWidth)
-  const borderBottomWidth = parseFloat(styles.borderBottomWidth)
-  const paddingTop = parseFloat(styles.paddingTop)
-  const paddingBottom = parseFloat(styles.paddingBottom)
+  const borderTopWidth = parseFloat(styles.borderTopWidth) || 0
+  const borderBottomWidth = parseFloat(styles.borderBottomWidth) || 0
+  const paddingTop = parseFloat(styles.paddingTop) || 0
+  const paddingBottom = parseFloat(styles.paddingBottom) || 0
   return (
     height - borderBottomWidth - borderTopWidth - paddingTop - paddingBottom
   )
 }
 
 function getWidth(el) {
-  const styles = window.getComputedStyle(el)
+  const view = (el.ownerDocument && el.ownerDocument.defaultView) || window
+  const styles = view.getComputedStyle(el)
   // 取width保留小数点用 getBoundClientRect
   const style = el.getBoundingClientRect()
   const width = Math.round(style.width * 100) / 100 // 保留两位小数并四舍五入
