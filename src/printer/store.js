@@ -222,6 +222,19 @@ class PrinterStore {
     this.config = config || {}
   }
 
+  /**
+   * 签名区高度：优先 DOM 测高，否则用配置 style.height。
+   * 打印在 iframe 内时测高常为 0，若只用 this.height.sign 会导致末页不扣签名、空行多填。
+   */
+  getSignHeight() {
+    const measured = this.height?.sign
+    if (measured && measured > 0) return measured
+    const raw = this.config?.sign?.style?.height
+    if (raw == null || raw === '') return 0
+    const parsed = parseFloat(raw)
+    return Number.isFinite(parsed) ? parsed : 0
+  }
+
   /** 处理采购单的明细
       一行有多个明细, 并且采购明细是换行展示, 明细数据超多的情况则需要分割到不同页面中
       比如： 一行有20行明细，当前页只能放下17行明细 ,剩下的3行明细需要放到下一页进行展示 */
@@ -347,9 +360,13 @@ class PrinterStore {
         /** 当前page页面的最小高度 */
         const currentPageMinimumHeight =
           allPagesHaveThisHeight + allTableHaveThisHeight
+        // 最后一项是表格时，末页仍要渲染签名：装行可用高度预留签名，避免空行顶进签名区
+        const isLastContent = index === this.config.contents.length - 1
+        const signReserve = isLastContent ? this.getSignHeight() : 0
         /** 当前page可容纳的table高度 */
         let pageAccomodateTableHeight = +new Big(this.pageHeight)
           .minus(currentPageHeight)
+          .minus(signReserve)
           .toFixed(2)
         const heights = this.getNormalTableBodyHeights(
           table.body.heights,
@@ -445,10 +462,11 @@ class PrinterStore {
               }
 
               begin = end
-              // 开启新一页,重置页面高度
-              pageAccomodateTableHeight = +new Big(this.pageHeight).minus(
-                allPagesHaveThisHeight
-              )
+              // 开启新一页,重置页面高度（末项表格仍预留签名）
+              pageAccomodateTableHeight = +new Big(this.pageHeight)
+                .minus(allPagesHaveThisHeight)
+                .minus(signReserve)
+                .toFixed(2)
               currentTableHeight = allTableHaveThisHeight
               currentPageHeight = currentPageMinimumHeight
             } else {
@@ -479,7 +497,7 @@ class PrinterStore {
 
         // 如果是最后一页，必须要加上sign的高度，否则会重叠
         if (index === this.config.contents.length - 1) {
-          currentPageHeight += this.height?.sign
+          currentPageHeight += this.getSignHeight()
         }
 
         if (currentPageHeight <= this.pageHeight) {
@@ -504,9 +522,10 @@ class PrinterStore {
 
     // 末页签名：panel 分支会在「最后一项是 panel」时扣 sign；
     // 最后一项是 table 时上面不会扣，导致 remain 偏大、空行多填溢页
+    // 打印 iframe 内 height.sign 可能为 0，必须用 getSignHeight（含配置兜底）
     const lastContent = this.config.contents[this.config.contents.length - 1]
-    if (lastContent?.type === 'table' && this.height?.sign) {
-      currentPageHeight += this.height.sign
+    if (lastContent?.type === 'table') {
+      currentPageHeight += this.getSignHeight()
     }
 
     this.remainPageHeight = +Big(
