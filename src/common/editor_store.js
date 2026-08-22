@@ -773,6 +773,10 @@ class EditorStore {
       set(table.overallOrder, {
         show: !table.overallOrder.show
       })
+      // 老模板补默认：每页展示默认勾选
+      if (table.overallOrder.showEachPage === undefined) {
+        set(table.overallOrder, { showEachPage: true })
+      }
       table.overallOrder.fields[0].colSpan =
         colSpanLength - (table.overallOrder.fields?.[1]?.colSpan ?? 0)
     } else {
@@ -780,6 +784,7 @@ class EditorStore {
       set(table, {
         overallOrder: {
           show: true,
+          showEachPage: true,
           fields: [
             {
               name: '整单合计：',
@@ -793,6 +798,19 @@ class EditorStore {
         }
       })
     }
+    this.config = toJS(this.config)
+  }
+
+  // 整单合计「每页展示」
+  @action.bound
+  setOverallOrderShowEachPage() {
+    if (!this.selectedRegion) return
+    const arr = this.selectedRegion.split('.')
+    const table = this.config.contents[arr[2]]
+    if (!table?.overallOrder) return
+    this.overallOrderShow = !this.overallOrderShow
+    const next = !(table.overallOrder.showEachPage !== false)
+    set(table.overallOrder, { showEachPage: next })
     this.config = toJS(this.config)
   }
 
@@ -1819,6 +1837,7 @@ class EditorStore {
         set(table, {
           overallOrder: {
             show: true,
+            showEachPage: true,
             fields: [
               {
                 name: '整单合计：',

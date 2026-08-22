@@ -19,7 +19,7 @@ import {
 } from '../common/component'
 import { get, toJS } from 'mobx'
 import PropTypes from 'prop-types'
-import { subtotalRadioList } from './util'
+import { subtotalRadioList, overallOrderRadioList } from './util'
 import { LONG_PRINT } from '../config'
 import _ from 'lodash'
 
@@ -529,7 +529,7 @@ class EditorField extends React.Component {
         {!isSomeSubtotalTr && (
           <div>
             <Flex>{i18next.t('合计栏打印金额')}：</Flex>
-            <Flex style={{ marginLeft: 57 }}>
+            <Flex style={{ marginLeft: 57 }} wrap>
               {subtotalRadioList.map(fields => {
                 // 兼容
                 let subtotalFields = subtotal?.fields?.[0].valueField
@@ -627,8 +627,14 @@ class EditorField extends React.Component {
             onChange={this.handleOverallOrderStyleChange}
           />
         </Flex>
-        <Flex style={{ marginLeft: 57 }}>
-          {subtotalRadioList.map((fields, i) => {
+        <EditorSubtotalCheck
+          subtotalCheckDisabled
+          subtotalChecked={overallOrder?.showEachPage !== false}
+          subtotalCheckOnChange={editStore.setOverallOrderShowEachPage}
+          subtotalCheckText='每页展示'
+        />
+        <Flex style={{ marginLeft: 57 }} wrap>
+          {overallOrderRadioList.map((fields, i) => {
             return (
               <Radio
                 style={{ marginLeft: 5 }}
