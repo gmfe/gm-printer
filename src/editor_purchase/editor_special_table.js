@@ -113,7 +113,7 @@ class TableDetailEditor extends React.Component {
 
   render() {
     const {
-      addFields: { detailFields },
+      addFields: { detailFields, specialTableConfig = {} },
       editStore
     } = this.props
     const {
@@ -123,18 +123,26 @@ class TableDetailEditor extends React.Component {
       specialConfig: { template_text, style }
     } = this.props.config
 
+    const title = specialTableConfig.title || i18next.t('设置采购明细')
+    const label = specialTableConfig.label || i18next.t('采购明细')
+    const hideDataKeys = specialTableConfig.hideDataKeys || []
+    const visibleDataKeyList = _.filter(
+      dataKeyList,
+      v => !hideDataKeys.includes(v.value)
+    )
+
     return (
       <div>
-        <Title title={i18next.t('设置采购明细')} />
+        <Title title={title} />
         <Gap />
         <Flex alignCenter className='gm-padding-top-5'>
-          <div>{i18next.t('采购明细')}：</div>
+          <div>{label}：</div>
           <Select
             className='gm-printer-edit-select'
             value={editStore.computedDataKey}
             onChange={this.handleDataKeyChange}
           >
-            {_.map(dataKeyList, v => (
+            {_.map(visibleDataKeyList, v => (
               <Option key={v.value} value={v.value}>
                 {v.text}
               </Option>
