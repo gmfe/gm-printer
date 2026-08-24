@@ -13,7 +13,7 @@ class Store extends EditorStore {
 
   /* start---------设置采购明细相关--------- */
   @action.bound
-  setPurchaseTableKey(dataKey) {
+  setPurchaseTableKey(dataKey, specialTableConfig) {
     // 先移除选中项,安全第一
     this.selected = null
     this.setTableDataKey(dataKey)
@@ -38,9 +38,12 @@ class Store extends EditorStore {
         separator: '+',
         // detailsType: 'purchase_last_col',
         specialDetailsKey: '__details',
-        text: i18next.t(
-          '{{采购数量_采购单位}}{{采购单位}}*{{商户名}}*{{商品备注}}'
-        )
+        text:
+          specialTableConfig && specialTableConfig.defaultDetailText !== undefined
+            ? specialTableConfig.defaultDetailText
+            : i18next.t(
+                '{{采购数量_采购单位}}{{采购单位}}*{{商户名}}*{{商品备注}}'
+              )
       })
       // 通过detailsType属性区分单列-总表最后一列的数据是否换行展示
       dataKey === 'purchase_last_col'

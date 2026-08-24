@@ -57,8 +57,11 @@ const detailSortOptionsForMerchant = [
 @observer
 class TableDetailEditor extends React.Component {
   handleDataKeyChange = dataKey => {
-    const { editStore } = this.props
-    editStore.setPurchaseTableKey(dataKey)
+    const { editStore, addFields } = this.props
+    editStore.setPurchaseTableKey(
+      dataKey,
+      addFields.specialTableConfig
+    )
   }
 
   handlePurchaseSettingKeyChange = dataKey => {
@@ -74,7 +77,7 @@ class TableDetailEditor extends React.Component {
   }
 
   handleDetailAddField = ({ key, value }) => {
-    const { editStore, config } = this.props
+    const { editStore, config, addFields } = this.props
     if (editStore.computedDataKey === 'purchase_detail_one_row') {
       // 序号 {{列.序号}}
       const transform = str => {
@@ -86,12 +89,18 @@ class TableDetailEditor extends React.Component {
         config.purchaseSettingKey === 'goods' &&
         config.dataKey !== 'purchase_independent_rol_sku'
       ) {
-        editStore.setPurchaseTableKey('purchase_independent_rol_sku')
+        editStore.setPurchaseTableKey(
+          'purchase_independent_rol_sku',
+          addFields.specialTableConfig
+        )
       } else if (
         config.purchaseSettingKey === 'merchant' &&
         config.dataKey !== 'purchase_independent_rol_address'
       ) {
-        editStore.setPurchaseTableKey('purchase_independent_rol_address')
+        editStore.setPurchaseTableKey(
+          'purchase_independent_rol_address',
+          addFields.specialTableConfig
+        )
       }
 
       editStore.addFieldToTable({ key, value: transform(value) })
@@ -125,9 +134,11 @@ class TableDetailEditor extends React.Component {
 
     const title = specialTableConfig.title || i18next.t('设置采购明细')
     const label = specialTableConfig.label || i18next.t('采购明细')
+    // 外部可整体覆盖下拉选项（dataKeyList），否则按 hideDataKeys 过滤默认列表
+    const baseDataKeyList = specialTableConfig.dataKeyList || dataKeyList
     const hideDataKeys = specialTableConfig.hideDataKeys || []
     const visibleDataKeyList = _.filter(
-      dataKeyList,
+      baseDataKeyList,
       v => !hideDataKeys.includes(v.value)
     )
 
