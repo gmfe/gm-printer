@@ -7,7 +7,8 @@ import {
   getDataKey,
   caclSingleDetailsPageHeight,
   getArrayMid,
-  getOverallOrderTrHeight
+  getOverallOrderTrHeight,
+  isMaskedValue
 } from '../util'
 import _ from 'lodash'
 import Big from 'big.js'
@@ -29,6 +30,8 @@ import {
 
 export const TR_BASE_HEIGHT = 23
 const price = (n, f = 2) => {
+  // 脱敏值 '***' 原样返回(不能走 isNaN 判空,空单元格仍需显空)
+  if (isMaskedValue(n)) return n
   if (isNaN(n)) return null
   return Big(n || 0).toFixed(f)
 }

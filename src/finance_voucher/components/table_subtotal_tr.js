@@ -3,8 +3,7 @@ import i18next from '../../../locales'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import { MULTI_SUFFIX } from '../../config'
-import Big from 'big.js'
-import { coverDigit2Uppercase, getDataKey } from '../../util'
+import { coverDigit2Uppercase, getDataKey, maskedSum } from '../../util'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
 
@@ -47,22 +46,17 @@ const SubtotalTr = props => {
   const tableData = printerStore.data._table[getDataKey(dataKey, arrange)] || []
   // 计算合计
   const sumData = (list, field) => {
-    return _.reduce(
-      list,
-      (a, b) => {
-        let result = a
-
-        const _origin = b._origin || {}
-        const _origin2 = b['_origin' + MULTI_SUFFIX] || {}
-
-        result = a.plus(_origin[field] || 0)
-        if (_origin2[field]) {
-          result = result.plus(_origin2[field])
-        }
-        return result
-      },
-      Big(0)
-    ).toFixed(2)
+    // 收集本列所有值(含多栏 _origin),任一脱敏 '***' 则合计显 '***',否则 Big('***') 会崩溃
+    const values = []
+    _.each(list, b => {
+      const _origin = b._origin || {}
+      const _origin2 = b['_origin' + MULTI_SUFFIX] || {}
+      values.push(_origin[field])
+      if (_origin2[field]) {
+        values.push(_origin2[field])
+      }
+    })
+    return maskedSum(values)
   }
 
   // 每页小计

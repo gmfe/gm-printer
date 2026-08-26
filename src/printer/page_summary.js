@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import { getDataKey, isMultiTable } from '../util'
+import { getDataKey, isMultiTable, isMaskedValue, MASKED_VALUE } from '../util'
 import Big from 'big.js'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
@@ -19,6 +19,8 @@ const regExp = text => {
  * @returns {*|string}
  */
 const sumCol = (key, dataList, summaryFieldsResultToNumber = []) => {
+  // 任一值脱敏 '***' 则合计显 '***'(原逻辑 Big('***') 抛异常被 catch,合计显空串)
+  if (dataList.some(item => isMaskedValue(item[key]))) return MASKED_VALUE
   let result
   try {
     result = dataList

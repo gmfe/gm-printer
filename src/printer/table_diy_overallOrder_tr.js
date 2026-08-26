@@ -2,10 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 // import Big from 'big.js'
-import { coverDigit2Uppercase, getDataKey } from '../util'
+import { coverDigit2Uppercase, getDataKey, maskedSum } from '../util'
 import { observer } from 'mobx-react'
 import classNames from 'classnames'
-import Big from 'big.js'
 
 const DiyOverallOrder = props => {
   const {
@@ -15,20 +14,14 @@ const DiyOverallOrder = props => {
   } = props
   const tableData = printerStore.data._table[getDataKey(dataKey)] || []
 
-  // 计算合计
+  // 计算合计:任一渲染结果脱敏 '***' 则合计显 '***'(整格判定假设同 table_diy_summary_tr)
   const sumData = field => {
-    return _.reduce(
-      tableData,
-      (a, b, i) => {
-        let result = a
-        const bRes = printerStore
-          .templateTable(field, dataKey, i, pageIndex)
-          .replace(/\(\)/g, '')
-        result = a.plus(+bRes || 0)
-        return result
-      },
-      Big(0)
-    ).toFixed(2)
+    const values = _.map(tableData, (b, i) =>
+      printerStore
+        .templateTable(field, dataKey, i, pageIndex)
+        .replace(/\(\)/g, '')
+    )
+    return maskedSum(values)
   }
 
   if (!diyOverallOrder?.show || !printerStore?.ready) {

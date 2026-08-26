@@ -121,7 +121,23 @@ function getOverallOrderTrHeight(overallOrder) {
 }
 
 // eslint-disable-next-line
+// 成本权限脱敏值:后端对无成本权限用户的金额字段返回 '***'(商品维度混合脱敏)
+const MASKED_VALUE = '***'
+const isMaskedValue = v => v === MASKED_VALUE
+
+/**
+ * 脱敏感知求和:任一值为 '***' 则整体返回 '***'(口径:合计不能暴露脱敏行的贡献)
+ * 非数字值按 0 容错,同时兼容原始数值字段与渲染后字符串
+ * @param {Array} values 参与求和的值
+ */
+const maskedSum = values => {
+  if (values.some(isMaskedValue)) return MASKED_VALUE
+  return values.reduce((a, b) => a.plus(+b || 0), Big(0)).toFixed(2)
+}
+
 const coverDigit2Uppercase = n => {
+  // 脱敏值直接透传:否则 Math.abs('***') 得 NaN,Big(NaN) 会抛异常
+  if (isMaskedValue(n)) return MASKED_VALUE
   if (_.isNil(n) || _.isNaN(n)) {
     return '-'
   }
@@ -377,5 +393,8 @@ export {
   caclSingleDetailsPageHeight,
   getArrayMid,
   getColSpanLength,
-  getOverallOrderTrHeight
+  getOverallOrderTrHeight,
+  MASKED_VALUE,
+  isMaskedValue,
+  maskedSum
 }

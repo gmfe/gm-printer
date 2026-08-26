@@ -1,11 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import { coverDigit2Uppercase, getDataKey, isMultiTable } from '../util'
+import {
+  coverDigit2Uppercase,
+  getDataKey,
+  isMultiTable,
+  maskedSum
+} from '../util'
 import { MULTI_SUFFIX, MULTI_SUFFIX3 } from '../config'
 import { observer } from 'mobx-react'
 import classNames from 'classnames'
-import Big from 'big.js'
 
 function buildTemplateField(fieldStr, suffix) {
   // 如果 field 是 "{{列.下单数}}"，提取出 "下单数"
@@ -45,39 +49,18 @@ const DiySummary = props => {
 
   // 计算合计
   const sumData = field => {
-    if (isMulti) {
-      return _.reduce(
-        tableData,
-        (a, b, i) => {
-          let result = a
-          // 先通过 templateTable 获取原始字段的值
-          const bRes = getRes(field, i)
-          result = a.plus(+bRes || 0)
-
-          // 双栏
-          const multiField = buildTemplateField(field, MULTI_SUFFIX)
-          result = result.plus(+getRes(multiField, i) || 0)
-
-          // 三栏
-          const multiField3 = buildTemplateField(field, MULTI_SUFFIX3)
-          result = result.plus(+getRes(multiField3, i) || 0)
-
-          return result
-        },
-        Big(0)
-      ).toFixed(2)
-    }
-
-    return _.reduce(
-      tableData,
-      (a, b, i) => {
-        let result = a
-        const bRes = getRes(field, i)
-        result = a.plus(+bRes || 0)
-        return result
-      },
-      Big(0)
-    ).toFixed(2)
+    // 收集本列渲染结果(含多栏后缀列),任一脱敏 '***' 则合计显 '***'
+    // 注意:基于渲染后字符串判定,假设模板整格就是脱敏值;带前后缀的模板(如 '{{列.金额}}元')无法识别
+    const values = []
+    _.each(tableData, (b, i) => {
+      values.push(getRes(field, i))
+      if (isMulti) {
+        // 双栏/三栏取后缀字段
+        values.push(getRes(buildTemplateField(field, MULTI_SUFFIX), i))
+        values.push(getRes(buildTemplateField(field, MULTI_SUFFIX3), i))
+      }
+    })
+    return maskedSum(values)
 
     function getRes(field, i) {
       return printerStore

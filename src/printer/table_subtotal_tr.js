@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import { MULTI_SUFFIX, MULTI_SUFFIX3 } from '../config'
 import Big from 'big.js'
-import { coverDigit2Uppercase, getDataKey } from '../util'
+import { coverDigit2Uppercase, getDataKey, maskedSum } from '../util'
 import { observer } from 'mobx-react'
 import { get } from 'mobx'
 import classNames from 'classnames'
@@ -76,21 +76,18 @@ const SubtotalTr = props => {
     if (field === 'real_item_price') field = '出库金额'
     if (field === 'settle_money2') field = '结算金额'
     if (field === 'total_money2') field = '金额'
-    return _.reduce(
-      list,
-      (a, b) => {
-        let result = a
-        result = a.plus(b[field] || 0)
-        if (b?.[field + MULTI_SUFFIX]) {
-          result = result.plus(b?.[field + MULTI_SUFFIX])
-        }
-        if (b?.[field + MULTI_SUFFIX3]) {
-          result = result.plus(b?.[field + MULTI_SUFFIX3])
-        }
-        return result
-      },
-      Big(0)
-    ).toFixed(2)
+    // 收集本列所有值(含多栏后缀列),任一脱敏 '***' 则合计显 '***',否则 Big('***') 会崩溃
+    const values = []
+    _.each(list, b => {
+      values.push(b[field])
+      if (b?.[field + MULTI_SUFFIX]) {
+        values.push(b[field + MULTI_SUFFIX])
+      }
+      if (b?.[field + MULTI_SUFFIX3]) {
+        values.push(b[field + MULTI_SUFFIX3])
+      }
+    })
+    return maskedSum(values)
   }
 
   const getData = field => {
