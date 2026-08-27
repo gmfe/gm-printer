@@ -118,9 +118,7 @@ class Printer extends React.Component {
   componentDidMount() {
     const { printerStore, config, getremainpageHeight } = this.props
     const batchPrintConfig = config.batchPrintConfig
-    // didMount 代表第一次渲染完成
-    printerStore.setReady(true)
-    // 连续打印不需要分页计算
+    // didMount 代表第一次渲染完成，先分页再 ready，避免空 pages 触发 renderPage
     if (batchPrintConfig !== 2) {
       // 先分页拿到剩余高度，再补空行，最后按补空后的数据重新分页
       // （若先分页后补空却不重算，panel.end 仍是补空前行数，空行/后半数据会被裁掉）
@@ -135,8 +133,10 @@ class Printer extends React.Component {
         printerStore.changeTableData()
         printerStore.computedPages()
       }
+      // 获取剩余空白高度，传到 editor
       getremainpageHeight && getremainpageHeight(printerStore.remainPageHeight)
     }
+    printerStore.setReady(true)
 
     // Printer 不是立马就呈现出最终样式，有个过程。这个过程需要时间，什么 ready，不太清楚，估借 setState 来获取过程结束时刻
     this.setState({}, () => {
