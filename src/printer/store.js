@@ -12,6 +12,18 @@ import Big from 'big.js'
 import { Tip } from '../components'
 
 export const TR_BASE_HEIGHT = 23
+
+/** 分页高度运算：像素精度足够，避免热路径中 Big.js 开销 */
+const roundHeight = n => Math.round(n * 100) / 100
+
+/** 判断行是否含可拆分的采购明细（普通长文本列不可拆分） */
+const canSplitRowDetails = (dataKey, row) => {
+  if (!row || dataKey.includes('noLineBreak')) return false
+  const details = row.__details
+  const detailsMulti = row.__details_MULTI_SUFFIX
+  return !!(details?.length || detailsMulti?.length)
+}
+
 const price = (n, f = 2) => {
   if (isNaN(n)) return null
   return Big(n || 0).toFixed(f)
@@ -262,17 +274,26 @@ class PrinterStore {
 
   @action
   computedPages() {
-    this.setIsSave(false)
-    // 每次先初始化置空
-    this.pages = []
+    // 快照 observable，避免热路径反复触发 MobX依赖追踪
+    const pageHeight = this.pageHeight
+    const heightMap = { ...this.height }
+    const contents = this.config.contents
+    const contentsLength = contents.length
+    const tablesInfo = this.tablesInfo
+    const tableDataMap = this.data._table
+
+    // 使用本地数组累积分页结果，避免循环中反复触发 observable 更新
+    const pages = []
     // 每页必有 页眉header, 页脚footer , 签名
-    const allPagesHaveThisHeight = this.height.header + this.height.footer
+    const allPagesHaveThisHeight = heightMap.header + heightMap.footer
     // 退出计算! 因为页眉 + 页脚 > currentPageHeight,页面装不下其他东西
-    if (allPagesHaveThisHeight > this.pageHeight) {
+    if (allPagesHaveThisHeight > pageHeight) {
+      this.pages = []
+      this.isSave = true
+      this.config.isSave = true
       Tip.warning(
         i18next.t('检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！')
       )
-      this.setIsSave(true)
       return
     }
 
@@ -285,15 +306,19 @@ class PrinterStore {
     /** 处理配送单有多个表格的情况 */
     let tableCount = 0
     /* --- 遍历 contents,将内容动态分配到page --- */
-    while (index < this.config.contents.length) {
-      const content = this.config.contents[index]
+    while (index < contentsLength) {
+      const content = contents[index]
 
       /* 表格内容处理 */
       if (content.type === 'table') {
         // 是表格就++
         tableCount++
         // 表格原始的高度和宽度信息
-        const table = this.tablesInfo[`contents.table.${index}`]
+        const table = tablesInfo[`contents.table.${index}`]
+        if (!table?.body?.heights) {
+          index++
+          continue
+        }
         const {
           subtotal,
           dataKey,
@@ -330,13 +355,14 @@ class PrinterStore {
         const currentPageMinimumHeight =
           allPagesHaveThisHeight + allTableHaveThisHeight
         /** 当前page可容纳的table高度 */
-        let pageAccomodateTableHeight = +new Big(this.pageHeight)
-          .minus(currentPageHeight)
-          .toFixed(2)
-        const heights = this.getNormalTableBodyHeights(
-          table.body.heights,
-          dataKey
+        let pageAccomodateTableHeight = roundHeight(
+          pageHeight - currentPageHeight
         )
+        // 拷贝一份行高数组，避免 splice 触发 observable 副作用
+        const heights = [
+          ...this.getNormalTableBodyHeights(table.body.heights, dataKey)
+        ]
+        const tableData = tableDataMap[dataKey] || []
         // 表格行的索引,用于table.slice(begin, end), 分割到不同页面中
         let begin = 0
         let end = 0
@@ -352,27 +378,41 @@ class PrinterStore {
           let currentRemainTableHeight = 0
           /** 去最小的tr高度，用于下面的计算compare,(避免特殊情况：一般来说最小tr——height = 23, 比23还小的不考虑计算) */
           const minHeight = Math.max(getArrayMid(heights), 23)
+          // 安全阈值：防止极端情况下内层 while 迭代失控
+          const maxIterations = heights.length * 10 + 100
+          let loopCount = 0
           /* 遍历表格每一行，填充表格内容 */
           while (end < heights.length) {
-            currentTableHeight += heights[end]
+            if (++loopCount > maxIterations) {
+              console.warn(
+                '[gm-printer] computedPages: iteration limit exceeded, force break'
+              )
+              break
+            }
+
+            const rowHeight = heights[end]
+            currentTableHeight += rowHeight
             // 用于计算最后一页有footer情况的高度
-            currentPageHeight += heights[end]
+            currentPageHeight += rowHeight
             // 当前页没有多余空间
             if (currentTableHeight > pageAccomodateTableHeight) {
-              currentRemainTableHeight = +Big(pageAccomodateTableHeight)
-                .minus(currentTableHeight)
-                .plus(heights[end])
+              currentRemainTableHeight = roundHeight(
+                pageAccomodateTableHeight - currentTableHeight + rowHeight
+              )
+
+              const row = tableData[end]
+              const isRowOversized = rowHeight > pageAccomodateTableHeight
+              const shouldTrySplitDetails =
+                canSplitRowDetails(dataKey, row) &&
+                ((currentRemainTableHeight / minHeight > 1.5 &&
+                  rowHeight / currentRemainTableHeight > 1) ||
+                  isRowOversized)
 
               /**
-               * 说明： 1. currentRemainTableHeight至少要是minHeight的 2倍，不然每次到这都进入if，同时留下一点空白距离
-               * 2. heights[end]至少要是currentRemainTableHeight的 1倍，怕出现打印时最后一行文字显示一半的情况
-               * 3. heights[end] 高度超过了 pageAccomodateTableHeight
+               * 仅对含 __details 的采购明细行尝试拆分；
+               * 普通长文本列（如规格）超高时直接整行换页，避免无效 computedData 调用
                */
-              if (
-                (currentRemainTableHeight / minHeight > 1.5 &&
-                  heights[end] / currentRemainTableHeight > 1) ||
-                heights[end] > pageAccomodateTableHeight
-              ) {
+              if (shouldTrySplitDetails) {
                 const detailsPageHeight = this.computedData(
                   dataKey,
                   table,
@@ -380,7 +420,7 @@ class PrinterStore {
                   currentRemainTableHeight
                 )
 
-                // 拆分明细后，同时也要更新body.heights 不能影响后续计算
+                // 拆分明细后，同时也要更新 heights 不能影响后续计算
                 if (detailsPageHeight.length > 0) {
                   // 比较剩余高度和minHeight的大小，取最大（防止剩余一条明细时，第二页撑开的高度远大于一条明细的高度）
                   detailsPageHeight[1] = Math.max(
@@ -395,7 +435,8 @@ class PrinterStore {
               if (begin === 0 && end === 0 && index === 0) {
                 index++
                 this.pages = []
-                this.setIsSave(true)
+                this.isSave = true
+                this.config.isSave = true
                 Tip.warning(
                   i18next.t(
                     '检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！'
@@ -403,7 +444,7 @@ class PrinterStore {
                 )
                 break
               }
-              // 修复 OOM：某行高度本身超过单页可容纳的表格高度时，end 无法推进会导致 while 死循环
+              // 行无法拆分（普通长文本列）或拆分失败时，强制推进 end 防止死循环
               if (end === begin) {
                 end = end + 1
               }
@@ -416,27 +457,27 @@ class PrinterStore {
                   end
                 })
                 // 此页完成任务
-                this.pages.push(page)
+                pages.push(page)
                 page = []
               }
               // 页面有多个表格时，当同一页的第二个表格的第一行高度加上第一个表格的高度大于页面的高度，需要生成新的一页
               // 因为是第二个表格，重新走了遍历，end重置0，没有进入到上面的判断（end !== 0），不会生成新的一页
               if (tableCount > 1 && end === 0) {
-                this.pages.push(page)
+                pages.push(page)
                 page = []
               }
 
               begin = end
               // 开启新一页,重置页面高度
-              pageAccomodateTableHeight = +new Big(this.pageHeight).minus(
-                allPagesHaveThisHeight
+              pageAccomodateTableHeight = roundHeight(
+                pageHeight - allPagesHaveThisHeight
               )
               currentTableHeight = allTableHaveThisHeight
               currentPageHeight = currentPageMinimumHeight
             } else {
               // 有空间，继续做下行
               end++
-              // 最后一行，把信息加入 page，并轮下一个contents
+              // 最后一行，把信息加入 page
               if (end === heights.length) {
                 page.push({
                   type: 'table',
@@ -444,27 +485,35 @@ class PrinterStore {
                   begin,
                   end
                 })
-                index++
               }
             }
+          }
+          // 最后一行换页时走 if 分支，内层不会 index++，此处统一推进
+          if (end >= heights.length) {
+            index++
+          } else {
+            console.warn(
+              '[gm-printer] computedPages: table pagination incomplete, force advance'
+            )
+            index++
           }
         }
         /* 非表格内容处理 */
       } else {
-        const panelHeight = this.height[`contents.panel.${index}`]
+        const panelHeight = heightMap[`contents.panel.${index}`]
         currentPageHeight += panelHeight
 
         // 当 panel + allPagesHaveThisHeight > 页高度, 停止. 避免死循环
-        if (panelHeight + allPagesHaveThisHeight > this.pageHeight) {
+        if (panelHeight + allPagesHaveThisHeight > pageHeight) {
           break
         }
 
         // 如果是最后一页，必须要加上sign的高度，否则会重叠
-        if (index === this.config.contents.length - 1) {
-          currentPageHeight += this.height?.sign
+        if (index === contentsLength - 1) {
+          currentPageHeight += heightMap?.sign || 0
         }
 
-        if (currentPageHeight <= this.pageHeight) {
+        if (currentPageHeight <= pageHeight) {
           // 空间充足，把信息加入 page，并轮下一个contents
           page.push({
             type: 'panel',
@@ -474,7 +523,7 @@ class PrinterStore {
           index++
         } else {
           // 此页空间不足，此页完成任务
-          this.pages.push(page)
+          pages.push(page)
 
           // 为下一页做准备
           page = []
@@ -482,8 +531,11 @@ class PrinterStore {
         }
       }
     }
-    this.pages.push(page)
-    this.remainPageHeight = +Big(this.pageHeight - currentPageHeight).toFixed(0)
+    pages.push(page)
+    this.pages = pages
+    this.remainPageHeight = Math.round(pageHeight - currentPageHeight)
+    this.isSave = false
+    this.config.isSave = false
   }
 
   @action

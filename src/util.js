@@ -233,15 +233,23 @@ const caclSingleDetailsPageHeight = (detailsHeights, curRemainPageHeight) => {
  * @param {*} arr
  */
 const getArrayMid = arr => {
+  let majority = 23
+
+  if (arr.length === 0) return majority
+
+  // 行数少时直接取最小行高，跳过多轮 Map 统计
+  if (arr.length <= 30) {
+    const min = Math.min(...arr)
+    if (min / 23 > 10) return 23
+    return min
+  }
+
   /** 数组元素出现次数的集合 */
   const mapArr = []
   const map = new Map()
-  let majority = 23
   /** 次数相同的元素集合 */
   const majorityArr = []
   const min = Math.min(...arr)
-
-  if (arr.length === 0) return majority
 
   _.forEach(arr, (val, key) => {
     if (map.has(val)) {
