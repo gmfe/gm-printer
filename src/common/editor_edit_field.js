@@ -786,11 +786,11 @@ class EditorField extends React.Component {
                   style={specialStyle}
                   onChange={this.handleClassificationAndLabelTally}
                 />
-                <Flex style={{ marginLeft: 0 }}>
+                <Flex style={{ marginLeft: 0 }} wrap>
                   {subtotalRadioList.map((fields, i) => {
                     return (
                       <Radio
-                        style={{ marginLeft: 5 }}
+                        style={{ marginLeft: 5, marginBottom: 4 }}
                         id={`${fields.id}_${i}`}
                         value={fields.value}
                         key={fields.id}
