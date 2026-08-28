@@ -223,8 +223,15 @@ class EditorField extends React.Component {
       specialConfig,
       subtotal,
       overallOrder,
-      diyOverallOrder
+      diyOverallOrder,
+      diySubtotal
     } = editStore.computedTableSpecialConfig
+
+    // 与预览区右键开关联动：未开启时不展示对应编辑配置（避免「点不动却占位」）
+    const pageSubtotalEnabled = !!subtotal?.show
+    const diyPageSubtotalEnabled = !!diySubtotal?.show
+    const overallOrderEnabled = !!overallOrder?.show
+    const diyOverallOrderEnabled = !!diyOverallOrder?.show
 
     // 新分类
     const categoryStyle =
@@ -526,7 +533,7 @@ class EditorField extends React.Component {
           </>
         )}
 
-        {showPageSubtotal && (
+        {showPageSubtotal && pageSubtotalEnabled && (
           <>
             <Flex>
               <Flex>{i18next.t('每页合计设置')}：</Flex>
@@ -625,6 +632,7 @@ class EditorField extends React.Component {
         )}
 
         {showDiyPageSubtotal &&
+          diyPageSubtotalEnabled &&
           this.renderDiySummaryEditor({
             label: '自定义每页合计',
             placeholder: '请输入要每页合计字段',
@@ -633,7 +641,7 @@ class EditorField extends React.Component {
             editStore
           })}
 
-        {showOverallOrder && (
+        {showOverallOrder && overallOrderEnabled && (
           <>
             <Flex>
               <Flex>{i18next.t('整单合计')}：</Flex>
@@ -710,8 +718,8 @@ class EditorField extends React.Component {
             />
           </>
         )}
-        {/* 自定义整单合计 */}
-        {editStore.config.showDiyOverAllOrder && (
+        {/* 自定义整单合计：能力开关 showDiyOverAllOrder + 预览区已开启 */}
+        {editStore.config.showDiyOverAllOrder && diyOverallOrderEnabled && (
           <Flex>
             <Flex>{i18next.t('自定义整单合计')}：</Flex>
             <div>
