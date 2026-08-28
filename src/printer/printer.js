@@ -13,6 +13,20 @@ import MergePage from './merge_page'
 import { LONG_PRINT } from '../config'
 import Big from 'big.js'
 
+/** 当前 panel 是否为该表格 content 在全部分页中的最后一次出现 */
+const isLastTablePanel = (pages, pageIndex, panelIndexInPage, tableIndex) => {
+  for (let pi = pages.length - 1; pi >= 0; pi--) {
+    const page = pages[pi] || []
+    for (let pji = page.length - 1; pji >= 0; pji--) {
+      const p = page[pji]
+      if (p?.type === 'table' && p.index === tableIndex) {
+        return pi === pageIndex && pji === panelIndexInPage
+      }
+    }
+  }
+  return true
+}
+
 // Header Sign Footer 相对特殊，要单独处理
 const Header = props => (
   <Panel {...props} name='header' placeholder={i18next.t('页眉')} />
@@ -272,6 +286,12 @@ class Printer extends React.Component {
                         placeholder={`${i18next.t('区域')} ${panel.index}`}
                         pageIndex={i}
                         isSomeSubtotalTr={isSomeSubtotalTr}
+                        isLastTablePage={isLastTablePanel(
+                          printerStore.pages,
+                          i,
+                          ii,
+                          panel.index
+                        )}
                       />
                     )
 

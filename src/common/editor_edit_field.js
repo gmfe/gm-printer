@@ -19,7 +19,7 @@ import {
 } from '../common/component'
 import { get, toJS } from 'mobx'
 import PropTypes from 'prop-types'
-import { subtotalRadioList } from './util'
+import { subtotalRadioList, overallOrderRadioList } from './util'
 import { LONG_PRINT } from '../config'
 import _ from 'lodash'
 
@@ -207,8 +207,15 @@ class EditorField extends React.Component {
       tableDataKeyList,
       editStore,
       isSomeSubtotalTr,
-      mergeClassificationAndLabel
+      mergeClassificationAndLabel,
+      editFieldConfig = {}
     } = this.props
+    // 业务侧可通过 editFieldConfig 隐藏配送单专属配置；未传则默认全部展示（兼容旧逻辑）
+    const showCategory = editFieldConfig.category !== false
+    const showCategorySubtotal = editFieldConfig.categorySubtotal !== false
+    const showPageSubtotal = editFieldConfig.pageSubtotal !== false
+    const showDiyPageSubtotal = editFieldConfig.diyPageSubtotal !== false
+    const showOverallOrder = editFieldConfig.overallOrder !== false
     const { head, headStyle, text, style } = editStore.computedSelectedInfo
     const { config } = editStore
     const isLongPrint = config?.page?.type === LONG_PRINT
@@ -216,8 +223,15 @@ class EditorField extends React.Component {
       specialConfig,
       subtotal,
       overallOrder,
-      diyOverallOrder
+      diyOverallOrder,
+      diySubtotal
     } = editStore.computedTableSpecialConfig
+
+    // 与预览区右键开关联动：未开启时不展示对应编辑配置（避免「点不动却占位」）
+    const pageSubtotalEnabled = !!subtotal?.show
+    const diyPageSubtotalEnabled = !!diySubtotal?.show
+    const overallOrderEnabled = !!overallOrder?.show
+    const diyOverallOrderEnabled = !!diyOverallOrder?.show
 
     // 新分类
     const categoryStyle =
@@ -477,211 +491,235 @@ class EditorField extends React.Component {
         />
         <Gap />
 
-        {!mergeClassificationAndLabel && (
+        {!mergeClassificationAndLabel && (showCategory || showCategorySubtotal) && (
+          <>
+            {showCategory && (
+              <Flex>
+                <Flex>{i18next.t('分类设置')}：</Flex>
+                <Fonter
+                  style={categoryStyle}
+                  onChange={this.handleCategoryStyleChange}
+                />
+                <Separator />
+                <TextAlign
+                  style={categoryStyle}
+                  onChange={this.handleCategoryStyleChange}
+                />
+              </Flex>
+            )}
+
+            {showCategorySubtotal && (
+              <>
+                <Flex>
+                  <Flex>{i18next.t('小计设置')}：</Flex>
+                  <Fonter
+                    style={specialStyle}
+                    onChange={this.handleSpecialStyleChange}
+                  />
+                  <Separator />
+                  <TextAlign
+                    style={specialStyle}
+                    onChange={this.handleSpecialStyleChange}
+                  />
+                </Flex>
+                <EditorSubtotalCheck
+                  subtotalCheckDisabled
+                  subtotalChecked={specialTrNeedUpperCase}
+                  subtotalCheckOnChange={editStore.setSpecialUpperCase}
+                  subtotalCheckText='显示大写金额'
+                />
+              </>
+            )}
+          </>
+        )}
+
+        {showPageSubtotal && pageSubtotalEnabled && (
           <>
             <Flex>
-              <Flex>{i18next.t('分类设置')}：</Flex>
+              <Flex>{i18next.t('每页合计设置')}：</Flex>
               <Fonter
-                style={categoryStyle}
-                onChange={this.handleCategoryStyleChange}
+                style={subtotalStyle}
+                onChange={this.handleSubtotalStyleChange}
               />
               <Separator />
               <TextAlign
-                style={categoryStyle}
-                onChange={this.handleCategoryStyleChange}
+                style={subtotalStyle}
+                onChange={this.handleSubtotalStyleChange}
               />
             </Flex>
+            <Gap />
+            {!isSomeSubtotalTr && (
+              <div>
+                <Flex>{i18next.t('合计栏打印金额')}：</Flex>
+                <Flex style={{ marginLeft: 57 }} wrap>
+                  {subtotalRadioList.map(fields => {
+                    // 兼容
+                    let subtotalFields = subtotal?.fields?.[0].valueField
+                    if (subtotalFields === 'total_item_price')
+                      subtotalFields = '下单金额'
+                    if (
+                      subtotalFields === 'real_item_price' ||
+                      !subtotal?.fields?.[0].valueField
+                    )
+                      subtotalFields = '出库金额'
+                    return (
+                      <Radio
+                        style={{ marginLeft: 5 }}
+                        id={fields.id}
+                        value={fields.value}
+                        key={fields.id}
+                        inputName='subtotalRadio'
+                        checked={subtotalFields === fields.id}
+                        radioChecked={() => editStore.subtotalRadioCheck(fields)}
+                      />
+                    )
+                  })}
+                </Flex>
+              </div>
+            )}
+            {/* 结款单不需要这个配置 */}
+            {!isSomeSubtotalTr && (
+              <EditorSubtotalCheck
+                subtotalCheckDisabled
+                subtotalChecked={printAccount}
+                subtotalCheckOnChange={editStore.setPrintAccount}
+                subtotalCheckText='打印账户总计金额'
+              />
+            )}
+            <EditorSubtotalCheck
+              subtotalCheckDisabled
+              subtotalChecked={subtotalNeedUpperCase}
+              subtotalCheckOnChange={editStore.setSubtotalUpperCase}
+              subtotalCheckText='显示大写金额'
+            />
+            {/* 结款单不需要这些配置 */}
+            {!isSomeSubtotalTr && (
+              <>
+                <EditorSubtotalCheck
+                  subtotalCheckDisabled={subtotalNeedUpperCase}
+                  subtotalChecked={subtotalUpperCaseBefore}
+                  subtotalCheckOnChange={editStore.setSubtotalUpperCaseBefore}
+                  subtotalCheckText='大写金额在前'
+                />
+                <EditorSubtotalCheck
+                  subtotalCheckDisabled={subtotalNeedUpperCase}
+                  subtotalChecked={subtotalUpperLowerCaseSeparate}
+                  subtotalCheckOnChange={
+                    editStore.setSubtotalUpperLowerCaseSeparate
+                  }
+                  subtotalCheckText='大、小写金额分左右两边展示'
+                />
+                <EditorSubtotalCheck
+                  subtotalCheckDisabled
+                  subtotalChecked={subtotalUpperCustomCell}
+                  subtotalCheckOnChange={editStore.setSubtotalCustomCells}
+                  subtotalCheckText='开启自定义单元格'
+                />
+                <Text
+                  // 只有自定义单元格的valueField值是空的，以后自每页合计，记得加type，之前没加，都无法区分
+                  value={
+                    subtotal && subtotal?.fields?.length > 1
+                      ? _.find(subtotal?.fields, item => !item.valueField)
+                          ?.name ?? ''
+                      : ''
+                  }
+                  onChange={editStore.setSubtotalFields}
+                  style={{ width: '65px', margin: '5px 0 5px 80px' }}
+                />
+              </>
+            )}
+          </>
+        )}
 
+        {showDiyPageSubtotal &&
+          diyPageSubtotalEnabled &&
+          this.renderDiySummaryEditor({
+            label: '自定义每页合计',
+            placeholder: '请输入要每页合计字段',
+            showConfigKey: 'showDiySubtotal',
+            configKey: 'diySubtotal',
+            editStore
+          })}
+
+        {showOverallOrder && overallOrderEnabled && (
+          <>
             <Flex>
-              <Flex>{i18next.t('小计设置')}：</Flex>
+              <Flex>{i18next.t('整单合计')}：</Flex>
               <Fonter
-                style={specialStyle}
-                onChange={this.handleSpecialStyleChange}
+                style={overallOrderStyle}
+                onChange={this.handleOverallOrderStyleChange}
               />
               <Separator />
               <TextAlign
-                style={specialStyle}
-                onChange={this.handleSpecialStyleChange}
+                style={overallOrderStyle}
+                onChange={this.handleOverallOrderStyleChange}
               />
             </Flex>
             <EditorSubtotalCheck
               subtotalCheckDisabled
-              subtotalChecked={specialTrNeedUpperCase}
-              subtotalCheckOnChange={editStore.setSpecialUpperCase}
-              subtotalCheckText='显示大写金额'
+              subtotalChecked={overallOrder?.showEachPage !== false}
+              subtotalCheckOnChange={editStore.setOverallOrderShowEachPage}
+              subtotalCheckText='每页展示'
             />
-          </>
-        )}
-
-        <Flex>
-          <Flex>{i18next.t('每页合计设置')}：</Flex>
-          <Fonter
-            style={subtotalStyle}
-            onChange={this.handleSubtotalStyleChange}
-          />
-          <Separator />
-          <TextAlign
-            style={subtotalStyle}
-            onChange={this.handleSubtotalStyleChange}
-          />
-        </Flex>
-        <Gap />
-        {!isSomeSubtotalTr && (
-          <div>
-            <Flex>{i18next.t('合计栏打印金额')}：</Flex>
-            <Flex style={{ marginLeft: 57 }}>
-              {subtotalRadioList.map(fields => {
-                // 兼容
-                let subtotalFields = subtotal?.fields?.[0].valueField
-                if (subtotalFields === 'total_item_price')
-                  subtotalFields = '下单金额'
-                if (
-                  subtotalFields === 'real_item_price' ||
-                  !subtotal?.fields?.[0].valueField
-                )
-                  subtotalFields = '出库金额'
+            <Flex style={{ marginLeft: 57 }} wrap>
+              {overallOrderRadioList.map((fields, i) => {
                 return (
                   <Radio
                     style={{ marginLeft: 5 }}
-                    id={fields.id}
+                    id={`${fields.id}${i}`}
                     value={fields.value}
                     key={fields.id}
-                    inputName='subtotalRadio'
-                    checked={subtotalFields === fields.id}
-                    radioChecked={() => editStore.subtotalRadioCheck(fields)}
+                    inputName='overallOrderRadio'
+                    checked={
+                      (overallOrder?.fields?.[0]?.valueField ?? '出库金额') ===
+                      fields.id
+                    }
+                    radioChecked={() =>
+                      editStore.setOverallOrderValueField(fields)
+                    }
                   />
                 )
               })}
             </Flex>
-          </div>
-        )}
-        {/* 结款单不需要这个配置 */}
-        {!isSomeSubtotalTr && (
-          <EditorSubtotalCheck
-            subtotalCheckDisabled
-            subtotalChecked={printAccount}
-            subtotalCheckOnChange={editStore.setPrintAccount}
-            subtotalCheckText='打印账户总计金额'
-          />
-        )}
-        <EditorSubtotalCheck
-          subtotalCheckDisabled
-          subtotalChecked={subtotalNeedUpperCase}
-          subtotalCheckOnChange={editStore.setSubtotalUpperCase}
-          subtotalCheckText='显示大写金额'
-        />
-        {/* 结款单不需要这些配置 */}
-        {!isSomeSubtotalTr && (
-          <>
             <EditorSubtotalCheck
-              subtotalCheckDisabled={subtotalNeedUpperCase}
-              subtotalChecked={subtotalUpperCaseBefore}
-              subtotalCheckOnChange={editStore.setSubtotalUpperCaseBefore}
+              subtotalCheckDisabled
+              subtotalChecked={overallOrderNeedUpperCase}
+              subtotalCheckOnChange={editStore.setOverallOrderUpperCase}
+              subtotalCheckText='显示大写金额'
+            />
+            <EditorSubtotalCheck
+              subtotalCheckDisabled={overallOrderNeedUpperCase}
+              subtotalChecked={overallOrderCaseBefore}
+              subtotalCheckOnChange={editStore.setOverallOrderUpperCaseBefore}
               subtotalCheckText='大写金额在前'
             />
             <EditorSubtotalCheck
-              subtotalCheckDisabled={subtotalNeedUpperCase}
-              subtotalChecked={subtotalUpperLowerCaseSeparate}
+              subtotalCheckDisabled={overallOrderNeedUpperCase}
+              subtotalChecked={overallOrderUpperLowerCaseSeparate}
               subtotalCheckOnChange={
-                editStore.setSubtotalUpperLowerCaseSeparate
+                editStore.setOverallOrderUpperLowerCaseSeparate
               }
               subtotalCheckText='大、小写金额分左右两边展示'
             />
             <EditorSubtotalCheck
               subtotalCheckDisabled
-              subtotalChecked={subtotalUpperCustomCell}
-              subtotalCheckOnChange={editStore.setSubtotalCustomCells}
+              subtotalChecked={overallOrderUpperCustomCell}
+              subtotalCheckOnChange={editStore.setOverallOrderCustomCells}
               subtotalCheckText='开启自定义单元格'
             />
             <Text
-              // 只有自定义单元格的valueField值是空的，以后自每页合计，记得加type，之前没加，都无法区分
               value={
-                subtotal && subtotal?.fields?.length > 1
-                  ? _.find(subtotal?.fields, item => !item.valueField)?.name ??
-                    ''
+                overallOrder && overallOrder?.fields?.[1]
+                  ? overallOrder.fields[1].name
                   : ''
               }
-              onChange={editStore.setSubtotalFields}
+              onChange={editStore.setOverallOrderFields}
               style={{ width: '65px', margin: '5px 0 5px 80px' }}
             />
           </>
         )}
-
-        {this.renderDiySummaryEditor({
-          label: '自定义每页合计',
-          placeholder: '请输入要每页合计字段',
-          showConfigKey: 'showDiySubtotal',
-          configKey: 'diySubtotal',
-          editStore
-        })}
-
-        <Flex>
-          <Flex>{i18next.t('整单合计')}：</Flex>
-          <Fonter
-            style={overallOrderStyle}
-            onChange={this.handleOverallOrderStyleChange}
-          />
-          <Separator />
-          <TextAlign
-            style={overallOrderStyle}
-            onChange={this.handleOverallOrderStyleChange}
-          />
-        </Flex>
-        <Flex style={{ marginLeft: 57 }}>
-          {subtotalRadioList.map((fields, i) => {
-            return (
-              <Radio
-                style={{ marginLeft: 5 }}
-                id={`${fields.id}${i}`}
-                value={fields.value}
-                key={fields.id}
-                inputName='overallOrderRadio'
-                checked={
-                  (overallOrder?.fields?.[0]?.valueField ?? '出库金额') ===
-                  fields.id
-                }
-                radioChecked={() => editStore.setOverallOrderValueField(fields)}
-              />
-            )
-          })}
-        </Flex>
-        <EditorSubtotalCheck
-          subtotalCheckDisabled
-          subtotalChecked={overallOrderNeedUpperCase}
-          subtotalCheckOnChange={editStore.setOverallOrderUpperCase}
-          subtotalCheckText='显示大写金额'
-        />
-        <EditorSubtotalCheck
-          subtotalCheckDisabled={overallOrderNeedUpperCase}
-          subtotalChecked={overallOrderCaseBefore}
-          subtotalCheckOnChange={editStore.setOverallOrderUpperCaseBefore}
-          subtotalCheckText='大写金额在前'
-        />
-        <EditorSubtotalCheck
-          subtotalCheckDisabled={overallOrderNeedUpperCase}
-          subtotalChecked={overallOrderUpperLowerCaseSeparate}
-          subtotalCheckOnChange={
-            editStore.setOverallOrderUpperLowerCaseSeparate
-          }
-          subtotalCheckText='大、小写金额分左右两边展示'
-        />
-        <EditorSubtotalCheck
-          subtotalCheckDisabled
-          subtotalChecked={overallOrderUpperCustomCell}
-          subtotalCheckOnChange={editStore.setOverallOrderCustomCells}
-          subtotalCheckText='开启自定义单元格'
-        />
-        <Text
-          value={
-            overallOrder && overallOrder?.fields?.[1]
-              ? overallOrder.fields[1].name
-              : ''
-          }
-          onChange={editStore.setOverallOrderFields}
-          style={{ width: '65px', margin: '5px 0 5px 80px' }}
-        />
-        {/* 自定义整单合计 */}
-        {editStore.config.showDiyOverAllOrder && (
+        {/* 自定义整单合计：能力开关 showDiyOverAllOrder + 预览区已开启 */}
+        {editStore.config.showDiyOverAllOrder && diyOverallOrderEnabled && (
           <Flex>
             <Flex>{i18next.t('自定义整单合计')}：</Flex>
             <div>
@@ -780,11 +818,11 @@ class EditorField extends React.Component {
                   style={specialStyle}
                   onChange={this.handleClassificationAndLabelTally}
                 />
-                <Flex style={{ marginLeft: 0 }}>
+                <Flex style={{ marginLeft: 0 }} wrap>
                   {subtotalRadioList.map((fields, i) => {
                     return (
                       <Radio
-                        style={{ marginLeft: 5 }}
+                        style={{ marginLeft: 5, marginBottom: 4 }}
                         id={`${fields.id}_${i}`}
                         value={fields.value}
                         key={fields.id}
@@ -985,10 +1023,16 @@ EditorField.propTypes = {
   tableDataKeyList: PropTypes.array,
   showNewDate: PropTypes.bool,
   isSomeSubtotalTr: PropTypes.bool,
-  mergeClassificationAndLabel: PropTypes.bool
+  mergeClassificationAndLabel: PropTypes.bool,
+  /**
+   * 控制「编辑字段」区各配置块显隐。未传 / 某项不为 false 时保持展示（默认兼容配送单）。
+   * 可选 key：category / categorySubtotal / pageSubtotal / diyPageSubtotal / overallOrder
+   */
+  editFieldConfig: PropTypes.object
 }
 EditorField.defaultProps = {
-  showNewDate: false
+  showNewDate: false,
+  editFieldConfig: {}
 }
 
 class EditorSubtotalCheck extends React.Component {

@@ -4,6 +4,12 @@ import { pageTypeMap } from '../config'
 import _ from 'lodash'
 import { dispatchMsg, getBlockName, exchange, getColSpanLength } from '../util'
 import { accountRadioList } from './util'
+import {
+  buildDataKey,
+  getDataKeyPrefix,
+  isDetailOneRowSelectKey,
+  isIndependentRolDataKey,
+} from './data_key_util'
 import React from 'react'
 import { createDiySummaryStoreMethods } from './diy_summary_helper'
 
@@ -773,6 +779,10 @@ class EditorStore {
       set(table.overallOrder, {
         show: !table.overallOrder.show
       })
+      // 老模板补默认：每页展示默认勾选
+      if (table.overallOrder.showEachPage === undefined) {
+        set(table.overallOrder, { showEachPage: true })
+      }
       table.overallOrder.fields[0].colSpan =
         colSpanLength - (table.overallOrder.fields?.[1]?.colSpan ?? 0)
     } else {
@@ -780,6 +790,7 @@ class EditorStore {
       set(table, {
         overallOrder: {
           show: true,
+          showEachPage: true,
           fields: [
             {
               name: '整单合计：',
@@ -793,6 +804,19 @@ class EditorStore {
         }
       })
     }
+    this.config = toJS(this.config)
+  }
+
+  // 整单合计「每页展示」
+  @action.bound
+  setOverallOrderShowEachPage() {
+    if (!this.selectedRegion) return
+    const arr = this.selectedRegion.split('.')
+    const table = this.config.contents[arr[2]]
+    if (!table?.overallOrder) return
+    this.overallOrderShow = !this.overallOrderShow
+    const next = !(table.overallOrder.showEachPage !== false)
+    set(table.overallOrder, { showEachPage: next })
     this.config = toJS(this.config)
   }
 
@@ -1251,16 +1275,17 @@ class EditorStore {
       const table = this.config.contents[arr[2]]
 
       const getDataKey = () => {
-        if (dataKey === 'purchase_detail_one_row') {
+        if (isDetailOneRowSelectKey(dataKey)) {
           if (!table.purchaseSettingKey) {
             this.setPurchasePrintSettingKey()
             return dataKey
           }
+          const prefix = getDataKeyPrefix(dataKey)
           if (table.purchaseSettingKey === 'goods') {
-            return 'purchase_independent_rol_sku'
+            return buildDataKey(prefix, 'independent_rol_sku')
           }
           if (table.purchaseSettingKey === 'merchant') {
-            return 'purchase_independent_rol_address'
+            return buildDataKey(prefix, 'independent_rol_address')
           }
         }
         return dataKey
@@ -1280,15 +1305,15 @@ class EditorStore {
   @action.bound setPurchasePrintSettingKey(dataKey = 'goods') {
     const arr = this.selectedRegion.split('.')
     const table = this.config.contents[arr[2]]
+    const prefix = getDataKeyPrefix(table.dataKey)
 
     set(table, {
       purchaseSettingKey: dataKey,
       dataKey:
         dataKey === 'goods'
-          ? 'purchase_independent_rol_sku'
-          : 'purchase_independent_rol_address',
-      // 切换打印设置时，重置明细行排序为默认值（候选值列表会变化）
-      detail_sort_type: 0
+          ? buildDataKey(prefix, 'independent_rol_sku')
+          : buildDataKey(prefix, 'independent_rol_address'),
+      detail_sort_type: 0,
     })
   }
 
@@ -1309,11 +1334,8 @@ class EditorStore {
       const table = this.config.contents[arr[2]]
 
       const { dataKey } = table
-      if (
-        dataKey === 'purchase_independent_rol_sku' ||
-        dataKey === 'purchase_independent_rol_address'
-      ) {
-        return 'purchase_detail_one_row'
+      if (isIndependentRolDataKey(dataKey)) {
+        return buildDataKey(getDataKeyPrefix(dataKey), 'detail_one_row')
       }
       return dataKey
     }
@@ -1819,6 +1841,7 @@ class EditorStore {
         set(table, {
           overallOrder: {
             show: true,
+            showEachPage: true,
             fields: [
               {
                 name: '整单合计：',

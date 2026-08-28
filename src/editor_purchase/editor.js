@@ -21,6 +21,7 @@ import withStore from '../common/hoc_with_store'
 class Editor extends React.Component {
   render() {
     const { onSave, showEditor, addFields, isPurchase } = this.props
+    const editFieldConfig = addFields?.editFieldConfig
 
     return (
       <div className='gm-printer-edit'>
@@ -43,7 +44,7 @@ class Editor extends React.Component {
             <Gap height='10px' />
             <EditorSelect isPurchase={isPurchase} />
             <Gap height='5px' />
-            <EditorField />
+            <EditorField editFieldConfig={editFieldConfig} />
             <Gap height='5px' />
             <EditorAddField addFields={addFields} />
             <Gap height='5px' />

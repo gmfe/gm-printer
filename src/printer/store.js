@@ -7,6 +7,7 @@ import {
   getArrayMid,
   getOverallOrderTrHeight
 } from '../util'
+import { isIndependentRolDataKey } from '../common/data_key_util'
 import _ from 'lodash'
 import Big from 'big.js'
 import { Tip } from '../components'
@@ -604,13 +605,14 @@ class PrinterStore {
    */
   templateTableRowSpan(text, dataKey, index, begin) {
     try {
-      if (
-        dataKey !== 'purchase_detail_one_row' &&
-        dataKey !== 'purchase_independent_rol_sku' &&
-        dataKey !== 'purchase_independent_rol_address' &&
-        dataKey !== 'taxRateSales' &&
-        dataKey !== 'ordinary'
-      ) {
+      // 采购 / 分拣「按明细单行」展开后才做合并单元格（后缀 independent_rol_*）
+      const canMerge =
+        isIndependentRolDataKey(dataKey) ||
+        dataKey === 'taxRateSales' ||
+        dataKey === 'ordinary' ||
+        dataKey === 'purchase_detail_one_row' ||
+        dataKey === 'sorting_detail_detail_one_row'
+      if (!canMerge) {
         return null
       }
       const list = this.data._table[dataKey] || this.data._table.orders
@@ -696,12 +698,15 @@ class PrinterStore {
     }
   }
 
-  templateSpecialDetails(col, dataKey, index) {
-    // 做好保护，出错就返回 text
+  templateSpecialDetails(col, dataKey, index, fallbackText = '') {
     const { specialDetailsKey, text, detailLastColType, separator } = col
+    const templateText = text || fallbackText
+    if (!templateText) return ''
     try {
       const row = this.data._table[dataKey][index]
-      const compiled = _.template(text, { interpolate: /{{([\s\S]+?)}}/g })
+      const compiled = _.template(templateText, {
+        interpolate: /{{([\s\S]+?)}}/g,
+      })
       let detailsList = row[specialDetailsKey] || []
 
       /** 简单处理下数据 */
@@ -724,7 +729,7 @@ class PrinterStore {
 
       return detailsList
     } catch (err) {
-      return text
+      return templateText
     }
   }
 
