@@ -826,12 +826,15 @@ class PrinterStore {
     }
   }
 
-  templateSpecialDetails(col, dataKey, index) {
-    // 做好保护，出错就返回 text
+  templateSpecialDetails(col, dataKey, index, fallbackText = '') {
     const { specialDetailsKey, text, detailLastColType, separator } = col
+    const templateText = text || fallbackText
+    if (!templateText) return ''
     try {
       const row = this.data._table[dataKey][index]
-      const compiled = _.template(text, { interpolate: /{{([\s\S]+?)}}/g })
+      const compiled = _.template(templateText, {
+        interpolate: /{{([\s\S]+?)}}/g,
+      })
       let detailsList = row[specialDetailsKey] || []
 
       /** 简单处理下数据 */
@@ -854,7 +857,7 @@ class PrinterStore {
 
       return detailsList
     } catch (err) {
-      return text
+      return templateText
     }
   }
 

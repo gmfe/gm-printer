@@ -14,6 +14,11 @@ import {
 } from '../common/component'
 import _ from 'lodash'
 import { inject, observer } from 'mobx-react'
+import {
+  buildDataKey,
+  getDataKeyPrefix,
+  isDetailOneRowSelectKey,
+} from '../common/data_key_util'
 
 const dataKeyList = [
   { value: 'purchase_no_detail', text: i18next.t('不打印明细') },
@@ -78,33 +83,31 @@ class TableDetailEditor extends React.Component {
 
   handleDetailAddField = ({ key, value }) => {
     const { editStore, config, addFields } = this.props
-    if (editStore.computedDataKey === 'purchase_detail_one_row') {
-      // 序号 {{列.序号}}
+    if (isDetailOneRowSelectKey(editStore.computedDataKey)) {
       const transform = str => {
         return str
-          .replace(/{{\s*([^}]+)\s*}}/g, '{{$1}}') // 先标准化（去掉多余空格）
+          .replace(/{{\s*([^}]+)\s*}}/g, '{{$1}}')
           .replace(/{{([^.\s}]+)}}/g, '{{列.$1}}')
       }
+      const prefix = getDataKeyPrefix(config.dataKey)
+      const rolSkuKey = buildDataKey(prefix, 'independent_rol_sku')
+      const rolAddressKey = buildDataKey(prefix, 'independent_rol_address')
       if (
         config.purchaseSettingKey === 'goods' &&
-        config.dataKey !== 'purchase_independent_rol_sku'
+        config.dataKey !== rolSkuKey
       ) {
-        editStore.setPurchaseTableKey(
-          'purchase_independent_rol_sku',
-          addFields.specialTableConfig
-        )
+        editStore.setPurchaseTableKey(rolSkuKey, addFields.specialTableConfig)
       } else if (
         config.purchaseSettingKey === 'merchant' &&
-        config.dataKey !== 'purchase_independent_rol_address'
+        config.dataKey !== rolAddressKey
       ) {
         editStore.setPurchaseTableKey(
-          'purchase_independent_rol_address',
+          rolAddressKey,
           addFields.specialTableConfig
         )
       }
 
       editStore.addFieldToTable({ key, value: transform(value) })
-
       return
     }
     editStore.specialTextAddField('*' + value)
@@ -161,7 +164,7 @@ class TableDetailEditor extends React.Component {
           </Select>
         </Flex>
 
-        {editStore.computedDataKey === 'purchase_detail_one_row' && (
+        {isDetailOneRowSelectKey(editStore.computedDataKey) && (
           <>
             <Flex alignCenter className='gm-padding-top-5'>
               <div>{i18next.t('打印设置')}：</div>
@@ -229,7 +232,7 @@ class TableDetailEditor extends React.Component {
               </Flex>
             </div>
 
-            {editStore.computedDataKey !== 'purchase_detail_one_row' && (
+            {!isDetailOneRowSelectKey(editStore.computedDataKey) && (
               <>
                 <div className='gm-padding-top-5'>
                   <div>{i18next.t('字段设置')}：</div>

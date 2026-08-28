@@ -408,7 +408,8 @@ class Table extends React.Component {
                             ? printerStore.templateSpecialDetails(
                                 col,
                                 dataKey,
-                                i
+                                i,
+                                config.specialConfig?.template_text
                               )
                             : printerStore
                                 .templateTable(col.text, dataKey, i, pageIndex)
