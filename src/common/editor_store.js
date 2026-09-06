@@ -16,7 +16,7 @@ import {
   buildDataKey,
   getDataKeyPrefix,
   isDetailOneRowSelectKey,
-  isIndependentRolDataKey,
+  isIndependentRolDataKey
 } from './data_key_util'
 import React from 'react'
 import { createDiySummaryStoreMethods } from './diy_summary_helper'
@@ -1103,6 +1103,54 @@ class EditorStore {
     ) {
       newDataKey = _.without(newDataKey, 'tag', 'tagDiy')
     }
+    // 标签小计和三级分类小计互斥
+    if (
+      newDataKey.includes('category3') &&
+      (key === 'tag' || key === 'tagDiy')
+    ) {
+      newDataKey = _.without(newDataKey, 'category3')
+    } else if (
+      (newDataKey.includes('tag') || newDataKey.includes('tagDiy')) &&
+      key === 'category3'
+    ) {
+      newDataKey = _.without(newDataKey, 'tag', 'tagDiy')
+    }
+    // 标签小计和商品三级分类互斥
+    if (
+      newDataKey.includes('newCategory3') &&
+      (key === 'tag' || key === 'tagDiy')
+    ) {
+      newDataKey = _.without(newDataKey, 'newCategory3')
+    } else if (
+      (newDataKey.includes('tag') || newDataKey.includes('tagDiy')) &&
+      key === 'newCategory3'
+    ) {
+      newDataKey = _.without(newDataKey, 'tag', 'tagDiy')
+    }
+    // 商品三级分类和商品分类互斥（标题维度一级/三级二选一）
+    if (newDataKey.includes('newCategory3') && key === 'newCategory') {
+      newDataKey = _.without(newDataKey, 'newCategory3')
+    } else if (newDataKey.includes('newCategory') && key === 'newCategory3') {
+      newDataKey = _.without(newDataKey, 'newCategory')
+    }
+    // 三级分类小计和分类小计互斥（小计维度一级/三级二选一）
+    if (newDataKey.includes('category3') && key === 'category') {
+      newDataKey = _.without(newDataKey, 'category3')
+    } else if (newDataKey.includes('category') && key === 'category3') {
+      newDataKey = _.without(newDataKey, 'category')
+    }
+    // 跨层级混搭互斥：商品三级分类（三级标题）不配一级分类小计
+    if (newDataKey.includes('newCategory3') && key === 'category') {
+      newDataKey = _.without(newDataKey, 'newCategory3')
+    } else if (newDataKey.includes('category') && key === 'newCategory3') {
+      newDataKey = _.without(newDataKey, 'category')
+    }
+    // 跨层级混搭互斥：三级分类小计（三级小计）不配一级商品分类
+    if (newDataKey.includes('category3') && key === 'newCategory') {
+      newDataKey = _.without(newDataKey, 'category3')
+    } else if (newDataKey.includes('newCategory') && key === 'category3') {
+      newDataKey = _.without(newDataKey, 'newCategory')
+    }
 
     if (newDataKey.includes('categoryDiy')) {
       if (!diyCategorySubtotal?.show) {
@@ -1129,7 +1177,10 @@ class EditorStore {
       o => o === 'tag',
       o => o === 'multi3',
       o => o === 'multi',
+      // 三级 token 紧跟对应一级 token 之后，保证拼串顺序 orders → category → category3 → newCategory → newCategory3 → multi → multi3 → tag → categoryDiy → tagDiy
+      o => o === 'newCategory3',
       o => o === 'newCategory',
+      o => o === 'category3',
       o => o === 'category',
       o => o === 'orders'
     ])
@@ -1516,7 +1567,7 @@ class EditorStore {
         dataKey === 'goods'
           ? buildDataKey(prefix, 'independent_rol_sku')
           : buildDataKey(prefix, 'independent_rol_address'),
-      detail_sort_type: 0,
+      detail_sort_type: 0
     })
   }
 
@@ -1789,6 +1840,42 @@ class EditorStore {
     }
   }
 
+  // 分类/标签 小计 - 显示分类名称（商品分类/商品三级分类小计行是否展示分类名，默认展示）
+  @action.bound setShowCategoryName() {
+    // 作用：触发组件的更新（小计行前缀由渲染层按 specialConfig 实时重拼，需触发预览重渲染）
+    this.overallOrderShow = !this.overallOrderShow
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const tableConfig = this.config.contents[arr[2]]
+
+      set(tableConfig, {
+        specialConfig: {
+          ...tableConfig.specialConfig,
+          showCategoryName: !(
+            tableConfig.specialConfig?.showCategoryName ?? true
+          )
+        }
+      })
+    }
+  }
+
+  // 分类/标签 小计 - 小计文案修改（默认"小计"，允许为空；缺失时由数据层兜底默认值）
+  @action.bound setSubtotalText(value) {
+    // 作用：触发组件的更新（小计行前缀由渲染层按 specialConfig 实时重拼，需触发预览重渲染）
+    this.overallOrderShow = !this.overallOrderShow
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const tableConfig = this.config.contents[arr[2]]
+
+      set(tableConfig, {
+        specialConfig: {
+          ...tableConfig.specialConfig,
+          subtotalText: value
+        }
+      })
+    }
+  }
+
   @action.bound
   setSpecialUpperCase() {
     if (this.selectedRegion) {
@@ -1984,6 +2071,8 @@ class EditorStore {
       }
       // 开启自定义单元格
       if (subtotalConfig?.isCustomCells) {
+        // 互斥：开启自定义单元格时关闭单元格拆分展示
+        set(subtotalConfig, { isSplitCells: false })
         // 同时还开启了自定义单元格选项
         if (subtotalConfig?.fields?.length === 2) {
           // fields添加自定义单元格
@@ -2043,6 +2132,59 @@ class EditorStore {
         subtotalConfig.length === 3
           ? (subtotalConfig[2].name = value)
           : (subtotalConfig[1].name = value)
+      }
+    }
+  }
+
+  // 每页合计单元格拆分展示（"每页合计/数值"拆分为两个单元格，与开启自定义单元格互斥）
+  @action.bound
+  setSubtotalSplitCells() {
+    if (this.selectedRegion) {
+      // 作用：触发组件的更新
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const subtotalConfig = table?.subtotal
+      // 没有显示每页合计的时候不可以设置
+      if (!subtotalConfig?.show) return
+      // 多栏表格情况，计算colSpan
+      const colSpanLength = getColSpanLength(table)
+      const oldSplitCells = subtotalConfig?.isSplitCells
+
+      set(subtotalConfig, {
+        isSplitCells: !oldSplitCells
+      })
+      // 兼容已经存在后端的模板，每页合计配置没有fields，手动补上
+      if (!subtotalConfig.fields) {
+        set(subtotalConfig, {
+          fields: [
+            {
+              name: '每页合计：',
+              valueField: 'real_item_price',
+              colSpan: colSpanLength
+            }
+          ]
+        })
+      }
+      // 互斥：开启拆分展示时关闭自定义单元格（复用其关闭时的 fields 重排逻辑）
+      if (!oldSplitCells && subtotalConfig?.isCustomCells) {
+        this.setSubtotalCustomCells()
+      }
+    }
+  }
+
+  // 每页合计左侧文案修改（默认"每页合计"，允许为空，每页合计统一展示输入框内容）
+  @action.bound
+  setSubtotalLeftText(value) {
+    if (this.selectedRegion) {
+      // 作用：触发组件的更新（预览渲染不直接观察 fields[0].name，需强制重渲染）
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const subtotalConfig = table?.subtotal
+
+      if (subtotalConfig?.fields?.[0]) {
+        set(subtotalConfig.fields[0], { name: value })
       }
     }
   }

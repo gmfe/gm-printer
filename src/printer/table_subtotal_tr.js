@@ -131,6 +131,60 @@ const SubtotalTr = props => {
         </tr>
       )
     } else {
+      // 单元格拆分展示：左侧文案与数值拆分为两个单元格，对齐复用每页合计设置的 textAlign
+      if (get(subtotal, 'isSplitCells') && fields.length === 1) {
+        const item = fields[0]
+        // 总 colSpan 拆一半给左侧文案，剩余给数值（colSpan 缺省 99 表示整行）
+        const totalColSpan = item.colSpan ?? 99
+        const leftColSpan = Math.floor(totalColSpan / 2)
+        const cellStyle = {
+          fontWeight: 'bold',
+          justifyContent: flexStyle[subtotal.style?.textAlign],
+          ...subtotal.style
+        }
+
+        return (
+          <tr>
+            <td colSpan={leftColSpan}>
+              <div style={cellStyle} className='gm-flex-page'>
+                {item.name}
+              </div>
+            </td>
+            <td colSpan={totalColSpan - leftColSpan}>
+              <div style={cellStyle} className='gm-flex-page'>
+                <div
+                  className={classNames('gm-flex-page', {
+                    'gm-flex-justify-between-page': isUpperLowerCaseSeparate,
+                    'gm-flex-grow-page': isUpperLowerCaseSeparate
+                  })}
+                >
+                  <span
+                    className={
+                      isUpperCaseBefore
+                        ? 'gm-printer-subtotal-isUpperCaseBefore-inter'
+                        : ''
+                    }
+                  >
+                    {item.type === 'useSummarize'
+                      ? getData(item.valueField)
+                      : sumData2(list, item.valueField)}
+                  </span>
+                  {subtotal?.needUpperCase && (
+                    <span>
+                      {item.type === 'useSummarize'
+                        ? '大写：' +
+                          coverDigit2Uppercase(getData(item.valueField))
+                        : '大写：' +
+                          coverDigit2Uppercase(sumData2(list, item.valueField))}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </td>
+          </tr>
+        )
+      }
+
       return (
         <tr>
           {_.map(fields, (item, index) => {
