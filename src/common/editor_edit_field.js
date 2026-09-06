@@ -236,6 +236,12 @@ class EditorField extends React.Component {
     // 新分类
     const categoryStyle =
       toJS(editStore.computedTableSpecialConfig)?.categoryConfig?.style || {}
+    // 当前表格 dataKey tokens，用于判断商品分类/商品三级分类是否开启
+    const tableKeyArr = (
+      editStore.computedTableSpecialConfig?.dataKey || ''
+    ).split('_')
+    const isNewCategoryOn = tableKeyArr.includes('newCategory')
+    const isNewCategory3On = tableKeyArr.includes('newCategory3')
     // 小计样式,specialConfig可能是undefined
     const specialStyle =
       toJS(editStore.computedTableSpecialConfig)?.specialConfig?.style || {}
@@ -266,6 +272,11 @@ class EditorField extends React.Component {
     const subtotalUpperCustomCell =
       (editStore.computedTableSpecialConfig?.subtotal &&
         get(subtotal, 'isCustomCells')) ||
+      false
+    // 每页合计单元格拆分展示（与自定义单元格互斥的新配置）
+    const subtotalSplitCell =
+      (editStore.computedTableSpecialConfig?.subtotal &&
+        get(subtotal, 'isSplitCells')) ||
       false
 
     // 打印账户总计金额
@@ -491,47 +502,48 @@ class EditorField extends React.Component {
         />
         <Gap />
 
-        {!mergeClassificationAndLabel && (showCategory || showCategorySubtotal) && (
-          <>
-            {showCategory && (
-              <Flex>
-                <Flex>{i18next.t('分类设置')}：</Flex>
-                <Fonter
-                  style={categoryStyle}
-                  onChange={this.handleCategoryStyleChange}
-                />
-                <Separator />
-                <TextAlign
-                  style={categoryStyle}
-                  onChange={this.handleCategoryStyleChange}
-                />
-              </Flex>
-            )}
-
-            {showCategorySubtotal && (
-              <>
+        {!mergeClassificationAndLabel &&
+          (showCategory || showCategorySubtotal) && (
+            <>
+              {showCategory && (
                 <Flex>
-                  <Flex>{i18next.t('小计设置')}：</Flex>
+                  <Flex>{i18next.t('分类设置')}：</Flex>
                   <Fonter
-                    style={specialStyle}
-                    onChange={this.handleSpecialStyleChange}
+                    style={categoryStyle}
+                    onChange={this.handleCategoryStyleChange}
                   />
                   <Separator />
                   <TextAlign
-                    style={specialStyle}
-                    onChange={this.handleSpecialStyleChange}
+                    style={categoryStyle}
+                    onChange={this.handleCategoryStyleChange}
                   />
                 </Flex>
-                <EditorSubtotalCheck
-                  subtotalCheckDisabled
-                  subtotalChecked={specialTrNeedUpperCase}
-                  subtotalCheckOnChange={editStore.setSpecialUpperCase}
-                  subtotalCheckText='显示大写金额'
-                />
-              </>
-            )}
-          </>
-        )}
+              )}
+
+              {showCategorySubtotal && (
+                <>
+                  <Flex>
+                    <Flex>{i18next.t('小计设置')}：</Flex>
+                    <Fonter
+                      style={specialStyle}
+                      onChange={this.handleSpecialStyleChange}
+                    />
+                    <Separator />
+                    <TextAlign
+                      style={specialStyle}
+                      onChange={this.handleSpecialStyleChange}
+                    />
+                  </Flex>
+                  <EditorSubtotalCheck
+                    subtotalCheckDisabled
+                    subtotalChecked={specialTrNeedUpperCase}
+                    subtotalCheckOnChange={editStore.setSpecialUpperCase}
+                    subtotalCheckText='显示大写金额'
+                  />
+                </>
+              )}
+            </>
+          )}
 
         {showPageSubtotal && pageSubtotalEnabled && (
           <>
@@ -570,7 +582,9 @@ class EditorField extends React.Component {
                         key={fields.id}
                         inputName='subtotalRadio'
                         checked={subtotalFields === fields.id}
-                        radioChecked={() => editStore.subtotalRadioCheck(fields)}
+                        radioChecked={() =>
+                          editStore.subtotalRadioCheck(fields)
+                        }
                       />
                     )
                   })}
@@ -626,6 +640,24 @@ class EditorField extends React.Component {
                   onChange={editStore.setSubtotalFields}
                   style={{ width: '65px', margin: '5px 0 5px 80px' }}
                 />
+                {/* 单元格拆分展示：每页合计/数值拆分为两个单元格，与开启自定义单元格互斥（默认未选） */}
+                <EditorSubtotalCheck
+                  subtotalCheckDisabled
+                  subtotalChecked={subtotalSplitCell}
+                  subtotalCheckOnChange={editStore.setSubtotalSplitCells}
+                  subtotalCheckText={i18next.t('单元格拆分展示')}
+                />
+                {/* 左侧文案修改：默认"每页合计"，允许为空，每页合计统一展示输入框内容 */}
+                <Flex style={{ margin: '5px 0 5px 62px' }} alignCenter>
+                  <EditorText
+                    label={i18next.t('左侧文案修改')}
+                    value={subtotal?.fields?.[0]?.name ?? ''}
+                    // Text 组件的 onChange 实际收到事件对象（handleChange 被 spread 覆盖），需自行取 e.target.value
+                    onChange={e =>
+                      editStore.setSubtotalLeftText(e.target.value)
+                    }
+                  />
+                </Flex>
               </>
             )}
           </>
@@ -804,6 +836,23 @@ class EditorField extends React.Component {
             </div>
           </Flex>
         )}
+        {/* 分类/三级分类设置：选中商品分类或商品三级分类时展示，控制标题行字体及位置（共用 categoryConfig） */}
+        {mergeClassificationAndLabel && (isNewCategoryOn || isNewCategory3On) && (
+          <>
+            <Flex>{i18next.t('分类/三级分类设置')}：</Flex>
+            <Flex style={{ marginLeft: 57 }}>
+              <Fonter
+                style={categoryStyle}
+                onChange={this.handleCategoryStyleChange}
+              />
+              <Separator />
+              <TextAlign
+                style={categoryStyle}
+                onChange={this.handleCategoryStyleChange}
+              />
+            </Flex>
+          </>
+        )}
         {mergeClassificationAndLabel && (
           <>
             <Flex>{i18next.t('分类/标签小计')}：</Flex>
@@ -873,6 +922,29 @@ class EditorField extends React.Component {
                   subtotalCheckText='大、小写金额分左右两边展示'
                   marginLeft
                 />
+                {/* 显示分类名称：选中时小计行展示"分类名+小计文案"，未选中只展示"小计文案"（默认选中） */}
+                <EditorSubtotalCheck
+                  subtotalCheckDisabled
+                  subtotalChecked={
+                    editStore.computedTableSpecialConfig?.specialConfig
+                      ?.showCategoryName ?? true
+                  }
+                  subtotalCheckOnChange={editStore.setShowCategoryName}
+                  subtotalCheckText={i18next.t('显示分类名称')}
+                  marginLeft
+                />
+                {/* 小计文案修改：默认"小计"，允许为空 */}
+                <Flex style={{ margin: '5px 0 5px 17px' }} alignCenter>
+                  <EditorText
+                    label={i18next.t('小计文案修改')}
+                    value={
+                      editStore.computedTableSpecialConfig?.specialConfig
+                        ?.subtotalText ?? '小计'
+                    }
+                    // Text 组件的 onChange 实际收到事件对象（handleChange 被 spread 覆盖），需自行取 e.target.value
+                    onChange={e => editStore.setSubtotalText(e.target.value)}
+                  />
+                </Flex>
               </div>
             </Flex>
 

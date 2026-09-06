@@ -25,6 +25,21 @@ const SpecialTr = ({ data, config }) => {
   } = specialConfig
   const { list, type, fixedSize } = data
 
+  // 「显示分类名称/小计文案修改」实时生效：数据行带 _prefix 原料时，按当前 specialConfig 重拼前缀
+  // 打印时配置与数据层拼前缀所用配置一致，重拼结果不变；编辑器预览改配置时实时刷新；导出（paint.js）不走本组件不受影响
+  const applySubtotalText = html => {
+    if (typeof html !== 'string' || data._prefix === undefined) {
+      return html
+    }
+    const showCategoryName = specialConfig?.showCategoryName ?? true
+    const subtotalText = specialConfig?.subtotalText ?? '小计'
+    const newPrefix = showCategoryName
+      ? `${data._categoryName ?? ''}${subtotalText}：`
+      : `${subtotalText}：`
+    // 前缀位于字符串头部，首次命中即替换；用函数替换避免 newPrefix 含 $ 序列时被特俗解释
+    return html.replace(data._prefix, () => newPrefix)
+  }
+
   let compiled
   try {
     compiled = _.template(template_text, { interpolate: /{{([\s\S]+?)}}/g })
@@ -119,7 +134,7 @@ const SpecialTr = ({ data, config }) => {
                 className='gm-flex-page gm-flex-justify-between-page'
                 style={{ 'justify-content': 'space-between' }}
                 dangerouslySetInnerHTML={{
-                  __html: htmlStr || data.text
+                  __html: applySubtotalText(htmlStr || data.text)
                 }}
               />
             </td>
@@ -145,7 +160,7 @@ const SpecialTr = ({ data, config }) => {
             colSpan={99}
             style={Object.assign({ fontWeight: 'bold' }, style)}
             dangerouslySetInnerHTML={{
-              __html: getHtml() || data.text
+              __html: applySubtotalText(getHtml() || data.text)
             }}
           />
         </tr>

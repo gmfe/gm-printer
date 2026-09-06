@@ -166,8 +166,11 @@ class ContextMenu extends React.Component {
     const isMultiActive = keyArr.includes('multi')
     const isThreeActive = keyArr.includes('multi3')
     const isCategoryActive = keyArr.includes('category')
+    // 三级分类小计（category3）/ 商品三级分类（newCategory3）token 状态
+    const isCategory3Active = keyArr.includes('category3')
     const isTagActive = keyArr.includes('tag')
     const isNewCategoryActive = keyArr.includes('newCategory')
+    const isNewCategory3Active = keyArr.includes('newCategory3')
     const isSubtotalActive = subtotal.show
     const isOverallOrder = overallOrder?.show
     const isDiyOverallOrder = diyOverallOrder?.show
@@ -208,6 +211,13 @@ class ContextMenu extends React.Component {
         >
           {i18next.t('分类小计')}
         </div>
+        {/* 三级分类小计：按三级分类（品类）拆分汇总小计，互斥规则见 changeTableDataKey */}
+        <div
+          onClick={this.handleChangeTableDataKey.bind(this, 'category3', name)}
+          className={isCategory3Active ? 'active' : ''}
+        >
+          {i18next.t('三级分类小计')}
+        </div>
         <div
           // onClick={() =>
           //   this.handleDiySummary(
@@ -243,6 +253,13 @@ class ContextMenu extends React.Component {
           className={isNewCategoryActive ? 'active' : ''}
         >
           {i18next.t('商品分类')}
+        </div>
+        {/* 商品三级分类：按三级分类（品类）拆分并新增列表标题行，复用 categoryConfig 标题样式配置 */}
+        <div
+          onClick={this.handleCategoryConfig.bind(this, 'newCategory3', name)}
+          className={isNewCategory3Active ? 'active' : ''}
+        >
+          {i18next.t('商品三级分类')}
         </div>
         <div
           onClick={this.handleSubtotal.bind(this, name)}
