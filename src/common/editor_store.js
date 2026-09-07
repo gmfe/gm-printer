@@ -2120,7 +2120,8 @@ class EditorStore {
   }
 
   // 每页合计自定义单元格文本输入
-  // Text 组件的 onChange 实际收到事件对象（handleChange 被 spread 覆盖），直接绑定时需防御式取 e.target.value（同 setOverallOrderFields），否则事件对象存进 fields[n].name 会导致页面崩溃
+  // Text 组件的 onChange 实际收到事件对象（handleChange 被 spread 覆盖），直接绑定时需防御式取 e.target.value，否则事件对象存进 fields[n].name 会导致页面崩溃
+  // ⚠️ 不能用 `value?.target?.value || value`：清空输入时 e.target.value 为空串（falsy），|| 会错把事件对象存进去（清空即崩），必须用 value?.target 判别
   @action.bound
   setSubtotalFields(value) {
     if (this.selectedRegion) {
@@ -2129,7 +2130,7 @@ class EditorStore {
       const subtotalConfig = table?.subtotal
 
       if (subtotalConfig.isCustomCells) {
-        const text = value?.target?.value || value
+        const text = value?.target ? value.target.value : value ?? ''
         const subtotalConfig = table?.subtotal.fields
         subtotalConfig.length === 3
           ? (subtotalConfig[2].name = text)
@@ -2322,6 +2323,7 @@ class EditorStore {
   }
 
   // 整单合计自定义单元格文本输入
+  // Text 组件直接绑定时收到事件对象（同 setSubtotalFields）；⚠️ 不能用 `||` 兜底，清空输入时空串 falsy 会错存事件对象导致页面崩溃，用 value?.target 判别
   @action.bound
   setOverallOrderFields(value) {
     if (this.selectedRegion) {
@@ -2330,8 +2332,9 @@ class EditorStore {
       const overallOrderConfig = table?.overallOrder
 
       if (overallOrderConfig.isCustomCells) {
+        const text = value?.target ? value.target.value : value ?? ''
         const overallOrderConfigFields = table?.overallOrder.fields
-        overallOrderConfigFields[1].name = value?.target?.value || value
+        overallOrderConfigFields[1].name = text
       }
     }
   }
