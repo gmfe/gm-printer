@@ -2120,6 +2120,7 @@ class EditorStore {
   }
 
   // 每页合计自定义单元格文本输入
+  // Text 组件的 onChange 实际收到事件对象（handleChange 被 spread 覆盖），直接绑定时需防御式取 e.target.value（同 setOverallOrderFields），否则事件对象存进 fields[n].name 会导致页面崩溃
   @action.bound
   setSubtotalFields(value) {
     if (this.selectedRegion) {
@@ -2128,10 +2129,11 @@ class EditorStore {
       const subtotalConfig = table?.subtotal
 
       if (subtotalConfig.isCustomCells) {
+        const text = value?.target?.value || value
         const subtotalConfig = table?.subtotal.fields
         subtotalConfig.length === 3
-          ? (subtotalConfig[2].name = value)
-          : (subtotalConfig[1].name = value)
+          ? (subtotalConfig[2].name = text)
+          : (subtotalConfig[1].name = text)
       }
     }
   }
