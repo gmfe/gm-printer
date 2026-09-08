@@ -867,7 +867,6 @@ class EditorStore {
     // 切换的时候，要把对应table的多余空数据清掉
     this.clearExtraTableData(table.dataKey)
 
-    this.setAutoFillingConfig(!this.isAutoFilling)
     // 获取td的colSpan
     const colSpanLength = getColSpanLength(table)
     set(table.subtotal, {
@@ -964,8 +963,24 @@ class EditorStore {
       if (table.overallOrder.showEachPage === undefined) {
         set(table.overallOrder, { showEachPage: true })
       }
-      table.overallOrder.fields[0].colSpan =
-        colSpanLength - (table.overallOrder.fields?.[1]?.colSpan ?? 0)
+      // 兼容存量/测试模板 overallOrder 只存了 {show:false} 没有 fields，补默认结构，否则 fields[0] 取值崩溃
+      if (!table.overallOrder.fields?.length) {
+        set(table.overallOrder, {
+          fields: [
+            {
+              name: '整单合计：',
+              valueField: '出库金额',
+              style: {
+                fontWeight: 'bold'
+              },
+              colSpan: colSpanLength
+            }
+          ]
+        })
+      } else {
+        table.overallOrder.fields[0].colSpan =
+          colSpanLength - (table.overallOrder.fields?.[1]?.colSpan ?? 0)
+      }
     } else {
       // 兼容已经存在的配送单据，他们的配置存在后端的，没有overallOrder这个配置，给加上
       set(table, {
@@ -1196,12 +1211,17 @@ class EditorStore {
       this.ensureMockMultiTable(getDataKey(joinedKey, 'vertical'))
     }
 
-    // 整单合计不显示
-    if (overallOrder?.show) overallOrder.show = false
-    // 每页合计不显示
-    if (subtotal?.show) subtotal.show = false
-    // 自定义每页合计不显示
-    if (diyOverallOrder?.show) diyOverallOrder.show = false
+    // 三级分类相关 token（商品三级分类/三级分类小计）是纯分组、标题能力，
+    // 与每页/整单合计可共存，切换时不再强制关闭合计开关；
+    // 其余 token（多栏/一级分类/标签等）保持历史行为：切换时强制关闭
+    if (!['newCategory3', 'category3'].includes(key)) {
+      // 整单合计不显示
+      if (overallOrder?.show) overallOrder.show = false
+      // 每页合计不显示
+      if (subtotal?.show) subtotal.show = false
+      // 自定义每页合计不显示
+      if (diyOverallOrder?.show) diyOverallOrder.show = false
+    }
 
     // 分类/多栏切换：清空旧空行并同步 autoFillConfig.dataKey，Printer 重挂载后会重补
     if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
@@ -1212,6 +1232,23 @@ class EditorStore {
           ...(this.config.autoFillConfig || {}),
           region: this.selectedRegion || this.config.autoFillConfig?.region,
           dataKey: joinedKey,
+          checked: true,
+          fillIndex: this.fillIndex
+        }
+      })
+    }
+  }
+
+    // 行数填充开启时切换 token：清掉旧 key 上的空行，并把 autoFillConfig.dataKey
+    // 同步到新 key（printerStore 按两者相等才追加填充高度），交给 Printer 重挂载后重补
+    if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
+      this.clearAllTableEmptyData()
+      this.setAutoFillingConfig(true)
+      set(this.config, {
+        autoFillConfig: {
+          ...(this.config.autoFillConfig || {}),
+          region: this.selectedRegion || this.config.autoFillConfig?.region,
+          dataKey: newDataKey.join('_'),
           checked: true,
           fillIndex: this.fillIndex
         }
