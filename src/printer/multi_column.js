@@ -5,6 +5,7 @@ export const INDEX_KEY = '序号'
 
 const SPECIAL_ROW_KEYS = [
   '_special',
+  '_specialText', // 分类标题行（三级分类/商品分类的品类名行），漏掉会在多栏重排时被当普通行丢弃
   '_diyCategorySubtotal',
   '_diyTagSubtotal',
   '_customTr'
