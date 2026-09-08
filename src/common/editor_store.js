@@ -306,18 +306,15 @@ class EditorStore {
       return
     }
 
-    const sourceItems = flattenHorizontalPackedRows(
-      sourceRows,
-      sourceColNumber
-    )
+    const sourceItems = flattenHorizontalPackedRows(sourceRows, sourceColNumber)
     const baseRowCount = sourceItems.length
       ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
       : 0
     this.mockData._table[dataKey] = !baseRowCount
       ? []
       : isVertical
-        ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
-        : packHorizontalRowMajor(sourceItems, colNumber)
+      ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
+      : packHorizontalRowMajor(sourceItems, colNumber)
   }
 
   @action.bound
@@ -374,8 +371,8 @@ class EditorStore {
         const sourceColNumber = isMultiTable(singleKey)
           ? getMultiNumber(singleKey)
           : isMultiTable(sourceKey)
-            ? colNumber
-            : 1
+          ? colNumber
+          : 1
         const sourceItems = flattenHorizontalPackedRows(
           sourceRows,
           sourceColNumber
@@ -716,18 +713,13 @@ class EditorStore {
     const singleKey = sourceKey.replace(/_multi3?/, '')
     const colNumber = getMultiNumber(sourceKey)
     const sourceRows =
-      this.mockData._table[singleKey] ||
-      this.mockData._table[sourceKey] ||
-      []
+      this.mockData._table[singleKey] || this.mockData._table[sourceKey] || []
     const sourceColNumber = isMultiTable(singleKey)
       ? getMultiNumber(singleKey)
       : isMultiTable(sourceKey)
-        ? colNumber
-        : 1
-    const sourceItems = flattenHorizontalPackedRows(
-      sourceRows,
-      sourceColNumber
-    )
+      ? colNumber
+      : 1
+    const sourceItems = flattenHorizontalPackedRows(sourceRows, sourceColNumber)
     const baseRowCount = sourceItems.length
       ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
       : 0
@@ -1239,23 +1231,6 @@ class EditorStore {
     }
   }
 
-    // 行数填充开启时切换 token：清掉旧 key 上的空行，并把 autoFillConfig.dataKey
-    // 同步到新 key（printerStore 按两者相等才追加填充高度），交给 Printer 重挂载后重补
-    if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
-      this.clearAllTableEmptyData()
-      this.setAutoFillingConfig(true)
-      set(this.config, {
-        autoFillConfig: {
-          ...(this.config.autoFillConfig || {}),
-          region: this.selectedRegion || this.config.autoFillConfig?.region,
-          dataKey: newDataKey.join('_'),
-          checked: true,
-          fillIndex: this.fillIndex
-        }
-      })
-    }
-  }
-
   @action
   setConfigTableBy(name, who, className) {
     const arr = name.split('.')
@@ -1697,7 +1672,7 @@ class EditorStore {
           arrange: val
         }
         // 只改排列并清掉旧空行；保持填充开关，交给 Printer 重挂载后
-        //「先补空 → 再重新分页」恢复空行（勿在此处用旧 remainHeight 立刻补）
+        // 「先补空 → 再重新分页」恢复空行（勿在此处用旧 remainHeight 立刻补）
         if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
           this.clearAllTableEmptyData()
           this.setAutoFillingConfig(true)
