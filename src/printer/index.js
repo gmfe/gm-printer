@@ -7,6 +7,7 @@ import {
   doBatchFinancePrint,
   setPrintStyle
 } from './do_print'
+import { computePages } from './compute_pages'
 import getCSS from './get_css'
 
 export {
@@ -17,5 +18,6 @@ export {
   getCSS,
   getPrintContainerHTML,
   doBatchFinancePrint,
-  setPrintStyle
+  setPrintStyle,
+  computePages
 }
