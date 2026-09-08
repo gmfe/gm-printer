@@ -5,6 +5,7 @@ import ExaminingReportEditor from './examining_report'
 import PurchaseEditor from './purchase'
 import StockInEditor from './stock_in'
 import SettleEditor from './settle'
+import ComputePagesTest from './compute_pages_test'
 
 import './style.less'
 
@@ -43,6 +44,9 @@ class App extends React.Component {
             <button onClick={this.handleOnClick.bind(this, 'settle')}>
               结款单
             </button>
+            <button onClick={this.handleOnClick.bind(this, 'compute_pages')}>
+              computePages测试
+            </button>
           </div>
         </div>
         {selected === 'delivery' && (
@@ -58,6 +62,7 @@ class App extends React.Component {
           <StockInEditor handleSave={this.handleSave} />
         )}
         {selected === 'settle' && <SettleEditor handleSave={this.handleSave} />}
+        {selected === 'compute_pages' && <ComputePagesTest />}
       </div>
     )
   }
