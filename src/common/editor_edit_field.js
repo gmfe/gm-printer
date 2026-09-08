@@ -266,8 +266,8 @@ class EditorField extends React.Component {
         get(subtotal, 'isUpperLowerCaseSeparate')) ||
       false
     // 每页合计样式
-    const overallOrderStyle =
-      (overallOrder && overallOrder?.fields[0].style) || {}
+    // 兼容 overallOrder 无 fields 的模板（如仅存 {show:false}），链式取值避免渲染崩溃
+    const overallOrderStyle = overallOrder?.fields?.[0]?.style || {}
     // 每页合计自定义单元格
     const subtotalUpperCustomCell =
       (editStore.computedTableSpecialConfig?.subtotal &&
