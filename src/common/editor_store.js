@@ -2135,7 +2135,6 @@ class EditorStore {
         // 切换的时候，要把对应table的多余空数据清掉
         this.clearExtraTableData(config.dataKey)
       }
-      this.config = toJS(this.config)
     }
 
     // 如果只是勾选要展示的合计类目的选项，则不需要执行以下操作， 否则会重复清空数据
