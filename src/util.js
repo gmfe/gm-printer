@@ -82,13 +82,12 @@ function exchange(arr, target, source) {
   return arr
 }
 
-let timer
-
 function afterImgAndSvgLoaded(callback, $printer) {
   const $imgList = $printer.querySelectorAll('img')
   const $svgList = $printer.querySelectorAll('svg')
 
-  clearTimeout(timer)
+  // timer 为函数内局部变量：computePages（导出测高）与 doPrint（打印）可能并发调用本函数，
+  // 若共享模块级 timer，后调用方会 clearTimeout 掉前一方的轮询，导致其 callback 永不执行
 
   const everyThingIsOk =
     _.every($imgList, img => img.complete) &&
@@ -96,7 +95,7 @@ function afterImgAndSvgLoaded(callback, $printer) {
   if (everyThingIsOk) {
     callback()
   } else {
-    timer = setTimeout(afterImgAndSvgLoaded.bind(this, callback, $printer), 300)
+    setTimeout(afterImgAndSvgLoaded.bind(this, callback, $printer), 300)
   }
 }
 
