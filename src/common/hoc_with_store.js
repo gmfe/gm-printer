@@ -1,13 +1,22 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Provider } from 'mobx-react'
 import { getStyleWithDiff } from '../util'
 
 const withStore = store => WrapComponent =>
   class extends React.Component {
+    static propTypes = {
+      config: PropTypes.object,
+      mockData: PropTypes.object,
+      imageConfig: PropTypes.object
+    }
+
     constructor(props) {
       super(props)
       this.store = store
       this.store.init(props.config, props.mockData)
+      // 插入图片增强配置(电子签章):由业务侧 props 传入,不传为 null 保持旧行为
+      this.store.imageConfig = props.imageConfig || null
     }
 
     componentDidMount() {
