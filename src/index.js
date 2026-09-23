@@ -1,6 +1,7 @@
 // ‼️优先初始化语言设置(必须先初始化语言)
 import '../locales'
 import Editor, { Editor2 } from './editor'
+import { imageConfigDelivery } from './editor/store'
 
 import EditorPurchase from './editor_purchase'
 import EditorExaminingReport from './examining_report_editor'
@@ -31,6 +32,7 @@ export { setLocale } from '../locales'
 export {
   Editor,
   Editor2,
+  imageConfigDelivery,
   EditorStockIn,
   EditorStockOut,
   EditorPurchase,

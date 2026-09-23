@@ -1,19 +1,20 @@
 import EditorStore from '../common/editor_store'
 import i18next from '../../locales'
 
-class Store extends EditorStore {
-  // 插入图片增强(电子签章 1056076):2M/指定格式/锁比例/四角拖拽
-  imageConfig = {
-    maxSize: 2 * 1024 * 1024,
-    maxSizeLabel: '2M',
-    accept: 'image/jpeg,image/jpg,image/png',
-    acceptTypes: ['image/jpeg', 'image/jpg', 'image/png'],
-    acceptHint: i18next.t('支持插入2M以内的jpg、jpeg、png格式图片'),
-    overSizeTip: i18next.t('图片大小不能超过2M'),
-    wrongTypeTip: i18next.t('仅支持jpg、jpeg、png格式的图片'),
-    resizable: true
-  }
+// 配送单"电子签章"插入图片增强预设(1056076):2M/指定格式/锁比例/四角拖拽
+// 由业务侧显式传入 <Editor imageConfig={imageConfigDelivery} /> 才生效,不传保持旧行为
+export const imageConfigDelivery = {
+  maxSize: 2 * 1024 * 1024,
+  maxSizeLabel: '2M',
+  accept: 'image/jpeg,image/jpg,image/png',
+  acceptTypes: ['image/jpeg', 'image/jpg', 'image/png'],
+  acceptHint: i18next.t('支持插入2M以内的jpg、jpeg、png格式图片'),
+  overSizeTip: i18next.t('图片大小不能超过2M'),
+  wrongTypeTip: i18next.t('仅支持jpg、jpeg、png格式的图片'),
+  resizable: true
+}
 
+class Store extends EditorStore {
   // 复写父类方法
   setTableDataKeyEffect(target, dataKey) {
     switch (dataKey) {
