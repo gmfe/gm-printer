@@ -403,9 +403,9 @@ class Size extends React.Component {
       const num = parseFloat(value)
       if (!_.isNaN(num) && num > 0) {
         if (type === 'width') {
-          next.height = num / ratio + 'px'
+          next.height = Math.round(num / ratio) + 'px'
         } else {
-          next.width = num * ratio + 'px'
+          next.width = Math.round(num * ratio) + 'px'
         }
       }
     }

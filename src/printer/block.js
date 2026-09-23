@@ -8,7 +8,12 @@ import BarCode from './barcode'
 import QrCode from './qrcode'
 import Tag from './tag'
 
-@inject('printerStore', 'editStore')
+// editStore 用函数形式注入:打印态(do_print 的 iframe)没有 editStore Provider,
+// 字符串形式的 inject 会直接抛错,这里降级为 null 关闭编辑能力
+@inject(({ printerStore, editStore }) => ({
+  printerStore,
+  editStore: editStore || null
+}))
 @observer
 class Block extends React.Component {
   constructor(props) {
@@ -127,7 +132,9 @@ class Block extends React.Component {
 
     const initW = parseFloat(style.width) || 0
     const initH = parseFloat(style.height) || 0
-    // 旧模板无 ratio 时按当前显示宽高锁定
+    // 旧模板无 ratio 时按当前显示宽高锁定;宽或高缺失(存量块无 width)时退回 1,
+    // 避免比例算出 0 导致高度 Infinity
+    const fallbackRatio = initW > 0 && initH > 0 ? initW / initH : 1
     this.resizeState = {
       direction,
       startX: e.clientX,
@@ -137,7 +144,7 @@ class Block extends React.Component {
       initL: parseFloat(style.left) || 0,
       initT: parseFloat(style.top) || 0,
       // ratio = 原始宽/高
-      ratio: ratio || (initH > 0 ? initW / initH : 1),
+      ratio: ratio || fallbackRatio,
       baseStyle: style
     }
 
