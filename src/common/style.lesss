@@ -166,6 +166,18 @@
         color: white;
         background: rgb(82, 146, 247);
       }
+
+      // 电子签章:插入图片菜单项下的格式提示小字
+      .gm-printer-contextmenu-hint {
+        font-size: 10px;
+        color: #f5222d;
+        line-height: 1.4;
+        padding: 0;
+        &:hover {
+          color: #f5222d;
+          background: transparent;
+        }
+      }
     }
   }
 
@@ -243,6 +255,37 @@
       &.active {
         outline: 1px solid rgb(82, 146, 247);
         z-index: 11;
+      }
+
+      // 电子签章:图片四角黑色加粗拖拽手柄
+      .gm-printer-resize-handle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #000;
+        border: 2px solid #fff;
+        z-index: 12;
+
+        &.gm-printer-resize-lt {
+          left: -6px;
+          top: -6px;
+          cursor: nwse-resize;
+        }
+        &.gm-printer-resize-rt {
+          right: -6px;
+          top: -6px;
+          cursor: nesw-resize;
+        }
+        &.gm-printer-resize-lb {
+          left: -6px;
+          bottom: -6px;
+          cursor: nesw-resize;
+        }
+        &.gm-printer-resize-rb {
+          right: -6px;
+          bottom: -6px;
+          cursor: nwse-resize;
+        }
       }
     }
 

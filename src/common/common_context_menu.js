@@ -109,7 +109,7 @@ class CommonContextMenu extends React.Component {
     })
   }
 
-  handleInsertBlock = (type, link) => {
+  handleInsertBlock = (type, link, ratio) => {
     const { editStore } = this.props
     const { name, block } = this.state
 
@@ -120,7 +120,8 @@ class CommonContextMenu extends React.Component {
         left: block.left + 'px',
         top: block.top + 'px'
       },
-      link
+      link,
+      ratio
     )
 
     this.setState({
@@ -160,8 +161,8 @@ class CommonContextMenu extends React.Component {
     })
   }
 
-  handleInsertImage = imgURL => {
-    this.handleInsertBlock('image', imgURL)
+  handleInsertImage = (imgURL, ratio) => {
+    this.handleInsertBlock('image', imgURL, ratio)
   }
 
   handleRemove = () => {
@@ -327,6 +328,7 @@ class CommonContextMenu extends React.Component {
               onSuccess={this.handleInsertImage}
               key={v.value}
               text={v.text}
+              imageConfig={this.props.editStore.imageConfig}
             />
           ) : (
             <div
