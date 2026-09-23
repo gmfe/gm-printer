@@ -17,6 +17,10 @@ class EditorStore {
   @observable
   tableCustomStyle = 'default'
 
+  // 插入图片增强配置(电子签章),null 时保持旧行为(500Kb/image/*)
+  // { maxSize, maxSizeLabel, accept, acceptHint, resizable }
+  imageConfig = null
+
   @observable
   emptyTableData = []
 
@@ -556,7 +560,7 @@ class EditorStore {
   }
 
   @action
-  addConfigBlock(name, type, pos = {}, link = '') {
+  addConfigBlock(name, type, pos = {}, link = '', ratio) {
     let blocks
     const arr = name.split('.')
 
@@ -600,6 +604,8 @@ class EditorStore {
         blocks.push({
           type: 'image',
           link: link,
+          // 电子签章:记录原图宽高比,锁比例用;旧数据无此字段则不锁
+          ratio: ratio,
           style: {
             position: 'absolute',
             left: pos.left || '0px',

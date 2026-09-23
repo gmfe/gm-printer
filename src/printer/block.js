@@ -8,7 +8,7 @@ import BarCode from './barcode'
 import QrCode from './qrcode'
 import Tag from './tag'
 
-@inject('printerStore')
+@inject('printerStore', 'editStore')
 @observer
 class Block extends React.Component {
   constructor(props) {
@@ -16,8 +16,10 @@ class Block extends React.Component {
     this.state = {
       clientX: null,
       clientY: null,
-      isEdit: false
+      isEdit: false,
+      isResizing: false
     }
+    this.resizeState = null
   }
 
   componentDidMount() {
@@ -32,6 +34,7 @@ class Block extends React.Component {
       'gm-printer-block-edit',
       this.handleBlockEdit
     )
+    this.teardownResize()
   }
 
   handleBlockEdit = e => {
@@ -112,6 +115,116 @@ class Block extends React.Component {
     })
   }
 
+  // 电子签章:图片四角等比例拖拽缩放
+  handleResizeStart = (direction, e) => {
+    // 阻止触发块的选中/拖动
+    e.stopPropagation()
+    e.preventDefault()
+
+    const {
+      config: { style, ratio }
+    } = this.props
+
+    const initW = parseFloat(style.width) || 0
+    const initH = parseFloat(style.height) || 0
+    // 旧模板无 ratio 时按当前显示宽高锁定
+    this.resizeState = {
+      direction,
+      startX: e.clientX,
+      startY: e.clientY,
+      initW,
+      initH,
+      initL: parseFloat(style.left) || 0,
+      initT: parseFloat(style.top) || 0,
+      // ratio = 原始宽/高
+      ratio: ratio || (initH > 0 ? initW / initH : 1),
+      baseStyle: style
+    }
+
+    this.setState({
+      isResizing: true
+    })
+
+    window.addEventListener('mousemove', this.handleResizeMove)
+    window.addEventListener('mouseup', this.handleResizeEnd)
+  }
+
+  handleResizeMove = e => {
+    if (!this.resizeState) return
+
+    // rAF 节流,避免高频 mousemove 打爆渲染
+    if (this.resizePending) return
+    this.resizePending = e
+    window.requestAnimationFrame(() => {
+      const evt = this.resizePending
+      this.resizePending = null
+      if (!evt || !this.resizeState) return
+      this.doResize(evt)
+    })
+  }
+
+  doResize = e => {
+    const {
+      direction,
+      startX,
+      initW,
+      initH,
+      initL,
+      initT,
+      ratio,
+      baseStyle
+    } = this.resizeState
+    const dx = e.clientX - startX
+
+    // 右侧角向右放大,左侧角向左放大
+    let width =
+      direction === 'rb' || direction === 'rt' ? initW + dx : initW - dx
+    // 最小尺寸兜底,防止翻转
+    width = Math.max(width, 10)
+    const height = Math.round(width / ratio)
+    width = Math.round(width)
+
+    // 锚定对角:左向角拖拽时右/下边不动,上向角拖拽时下边不动
+    let left = initL
+    let top = initT
+    if (direction === 'lb' || direction === 'lt') {
+      left = initL + initW - width
+    }
+    if (direction === 'rt' || direction === 'lt') {
+      top = initT + initH - height
+    }
+
+    dispatchMsg('gm-printer-block-style-set', {
+      style: {
+        ...baseStyle,
+        width: width + 'px',
+        height: height + 'px',
+        left: left + 'px',
+        top: top + 'px'
+      }
+    })
+  }
+
+  handleResizeEnd = () => {
+    // 先 flush 掉节流里排队中的最后一帧,避免松手回退
+    if (this.resizePending) {
+      const evt = this.resizePending
+      this.resizePending = null
+      this.doResize(evt)
+    }
+    this.teardownResize()
+    this.setState({
+      isResizing: false
+    })
+  }
+
+  teardownResize = () => {
+    window.removeEventListener('mousemove', this.handleResizeMove)
+    window.removeEventListener('mouseup', this.handleResizeEnd)
+    this.resizeState = null
+    this.resizePending = null
+  }
+
   render() {
     let {
       name,
@@ -119,6 +232,7 @@ class Block extends React.Component {
       pageIndex,
       className,
       printerStore,
+      editStore,
       ...rest
     } = this.props
     const { isEdit } = this.state
@@ -186,6 +300,14 @@ class Block extends React.Component {
     }
 
     const active = name === printerStore.selected
+    const { isResizing } = this.state
+    const showResizeHandles = !!(
+      active &&
+      type === 'image' &&
+      editStore &&
+      editStore.imageConfig &&
+      editStore.imageConfig.resizable
+    )
 
     return (
       <div
@@ -193,7 +315,7 @@ class Block extends React.Component {
         className={classNames('gm-printer-block', className, {
           active
         })}
-        draggable
+        draggable={!isResizing}
         onDragStart={this.handleDragStart}
         onDragEnd={this.handleDragEnd}
         onClick={this.handleClick}
@@ -221,6 +343,26 @@ class Block extends React.Component {
           />
         )}
         {content}
+        {showResizeHandles && (
+          <>
+            <div
+              className='gm-printer-resize-handle gm-printer-resize-lt'
+              onMouseDown={this.handleResizeStart.bind(this, 'lt')}
+            />
+            <div
+              className='gm-printer-resize-handle gm-printer-resize-rt'
+              onMouseDown={this.handleResizeStart.bind(this, 'rt')}
+            />
+            <div
+              className='gm-printer-resize-handle gm-printer-resize-lb'
+              onMouseDown={this.handleResizeStart.bind(this, 'lb')}
+            />
+            <div
+              className='gm-printer-resize-handle gm-printer-resize-rb'
+              onMouseDown={this.handleResizeStart.bind(this, 'rb')}
+            />
+          </>
+        )}
       </div>
     )
   }
@@ -231,7 +373,8 @@ Block.propTypes = {
   config: PropTypes.object.isRequired,
   pageIndex: PropTypes.number.isRequired,
   className: PropTypes.string,
-  printerStore: PropTypes.object
+  printerStore: PropTypes.object,
+  editStore: PropTypes.object
 }
 
 export default Block

@@ -100,7 +100,7 @@ class EditorField extends React.Component {
 
   renderBlocks() {
     const { editStore, showNewDate } = this.props
-    const { type, text, style, link } = editStore.computedSelectedInfo
+    const { type, text, style, link, ratio } = editStore.computedSelectedInfo
 
     return (
       <div>
@@ -149,6 +149,11 @@ class EditorField extends React.Component {
             <Size
               style={style}
               onChange={this.handleChangeBlock.bind(this, 'style')}
+              ratio={
+                editStore.imageConfig && editStore.imageConfig.resizable
+                  ? ratio
+                  : undefined
+              }
             />
             <Gap />
 

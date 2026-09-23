@@ -391,12 +391,26 @@ Line.propTypes = {
 
 class Size extends React.Component {
   handleChange = (type, value) => {
-    const { onChange, style } = this.props
+    const { onChange, style, ratio } = this.props
 
-    onChange({
+    const next = {
       ...style,
       [type]: value
-    })
+    }
+
+    // 电子签章:有原始比例时宽高联动,不允许拉变形
+    if (ratio && value !== '' && !value.endsWith('%')) {
+      const num = parseFloat(value)
+      if (!_.isNaN(num) && num > 0) {
+        if (type === 'width') {
+          next.height = num / ratio + 'px'
+        } else {
+          next.width = num * ratio + 'px'
+        }
+      }
+    }
+
+    onChange(next)
   }
 
   render() {
@@ -420,7 +434,8 @@ class Size extends React.Component {
 
 Size.propTypes = {
   style: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  ratio: PropTypes.number
 }
 
 class ImageUploader extends React.Component {
@@ -437,7 +452,26 @@ class ImageUploader extends React.Component {
       : event.target.files
     const file = droppedFiles[0]
 
-    if (file.size > 512 * 1024) {
+    if (!file) return
+
+    const { imageConfig } = this.props
+
+    if (imageConfig) {
+      // 增强模式(电子签章):校验类型与大小,提示文案由配置方给出
+      const acceptTypes = imageConfig.acceptTypes || [
+        'image/jpeg',
+        'image/jpg',
+        'image/png'
+      ]
+      if (!_.includes(acceptTypes, file.type)) {
+        Tip.warning(imageConfig.wrongTypeTip)
+        return
+      }
+      if (file.size > imageConfig.maxSize) {
+        Tip.warning(imageConfig.overSizeTip)
+        return
+      }
+    } else if (file.size > 512 * 1024) {
       Tip.warning(i18next.t('图片大小不能超过500Kb'))
       return
     }
@@ -463,7 +497,21 @@ class ImageUploader extends React.Component {
       .post()
       .then(json => {
         const imgURL = `${url.imgUrl}/${json.data.img_path_id}`
-        this.props.onSuccess(imgURL)
+
+        // 增强模式下加载原图尺寸,记录原始比例供锁比例使用
+        if (imageConfig) {
+          const img = document.createElement('img')
+          img.onload = () => {
+            this.props.onSuccess(imgURL, img.naturalWidth / img.naturalHeight)
+          }
+          img.onerror = () => {
+            // 拿不到尺寸时降级:只插入不锁比例
+            this.props.onSuccess(imgURL)
+          }
+          img.src = imgURL
+        } else {
+          this.props.onSuccess(imgURL)
+        }
       })
   }
 
@@ -473,16 +521,23 @@ class ImageUploader extends React.Component {
   }
 
   render() {
+    const { imageConfig } = this.props
+
     return (
       <>
         <div onClick={this.handleClick} onDrop={this.handleUpload}>
           {this.props.text}
+          {imageConfig && imageConfig.acceptHint && (
+            <div className='gm-printer-contextmenu-hint'>
+              {imageConfig.acceptHint}
+            </div>
+          )}
         </div>
         <input
           style={{ display: 'none' }}
           type='file'
           ref={this.input}
-          accept='image/*'
+          accept={(imageConfig && imageConfig.accept) || 'image/*'}
           onChange={this.handleUpload}
         />
       </>
@@ -492,7 +547,8 @@ class ImageUploader extends React.Component {
 
 ImageUploader.propTypes = {
   onSuccess: PropTypes.func.isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string.isRequired,
+  imageConfig: PropTypes.object
 }
 
 class InputWithUnit extends React.Component {
