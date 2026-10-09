@@ -447,9 +447,30 @@ class PrinterStore {
                 )
                 break
               }
-              // 行无法拆分（普通长文本列）或拆分失败时，强制推进 end 防止死循环
+              // 行无法拆分（普通长文本列）或拆分失败
               if (end === begin) {
-                end = end + 1
+                // 新一页可容纳的 table 高度（页高 - 页眉页脚）
+                const fullPageAccomodateTableHeight = roundHeight(
+                  pageHeight - allPagesHaveThisHeight
+                )
+                // 整页都放不下的超高行（如超长异常描述文本）：只能保留在当前页（裁切不可避免），强制推进 end 防死循环
+                // 此时 currentTableHeight = allTableHaveThisHeight + rowHeight（本行已累加）
+                if (currentTableHeight > fullPageAccomodateTableHeight) {
+                  end = end + 1
+                } else {
+                  // 当前页剩余空间放不下、但整页放得下：
+                  // 先结束当前页（不包含本行），本行挪到新页重试，避免被 overflow:hidden 裁切
+                  if (page.length > 0) {
+                    pages.push(page)
+                    page = []
+                  }
+                  begin = end
+                  pageAccomodateTableHeight = fullPageAccomodateTableHeight
+                  currentTableHeight = allTableHaveThisHeight
+                  currentPageHeight = currentPageMinimumHeight
+                  // 不推进 end，重置高度后在新页重试当前行
+                  continue
+                }
               }
               // 第一条极端会有问题
               if (end !== 0) {
