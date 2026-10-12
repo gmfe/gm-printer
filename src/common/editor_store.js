@@ -2,7 +2,13 @@ import i18next from '../../locales'
 import { action, computed, observable, set, toJS } from 'mobx'
 import { pageTypeMap } from '../config'
 import _ from 'lodash'
-import { dispatchMsg, getBlockName, exchange, getColSpanLength } from '../util'
+import {
+  dispatchMsg,
+  getBlockName,
+  exchange,
+  getColSpanLength,
+  DEFAULT_IMAGE_BLOCK_SIZE
+} from '../util'
 import { accountRadioList } from './util'
 import {
   buildDataKey,
@@ -556,7 +562,7 @@ class EditorStore {
   }
 
   @action
-  addConfigBlock(name, type, pos = {}, link = '') {
+  addConfigBlock(name, type, pos = {}, link = '', size = {}) {
     let blocks
     const arr = name.split('.')
 
@@ -604,8 +610,9 @@ class EditorStore {
             position: 'absolute',
             left: pos.left || '0px',
             top: pos.top || '0px',
-            width: '100px',
-            height: '100px'
+            // size：业务配置了等比初始化时按原图比例给宽高（如检测报告），否则默认 100x100
+            width: size.width || DEFAULT_IMAGE_BLOCK_SIZE + 'px',
+            height: size.height || DEFAULT_IMAGE_BLOCK_SIZE + 'px'
           }
         })
         break

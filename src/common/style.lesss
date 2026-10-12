@@ -167,6 +167,17 @@
         background: rgb(82, 146, 247);
       }
     }
+
+    // 插入图片菜单项下方的红色提示文案（如「支持插入2M以内的jpg、jpeg、png格式图片」）
+    // pointer-events: none：提示不参与点击，也不吃父级 > div 的 hover/cursor 样式
+    .gm-printer-contextmenu-image-tip {
+      padding: 0 10px 4px;
+      color: red;
+      font-size: 12px;
+      line-height: 1.4;
+      white-space: nowrap;
+      pointer-events: none;
+    }
   }
 
   // cover mark
@@ -243,6 +254,41 @@
       &.active {
         outline: 1px solid rgb(82, 146, 247);
         z-index: 11;
+      }
+
+      // 图片块四角等比缩放手柄（黑色加粗方块，仅编辑选中态渲染）
+      .gm-printer-block-resize {
+        position: absolute;
+        z-index: 12;
+        width: 10px;
+        height: 10px;
+        background: black;
+        // 白描边：黑色图片上也能看清角点
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);
+
+        &-nw {
+          left: -5px;
+          top: -5px;
+          cursor: nwse-resize;
+        }
+
+        &-ne {
+          right: -5px;
+          top: -5px;
+          cursor: nesw-resize;
+        }
+
+        &-sw {
+          left: -5px;
+          bottom: -5px;
+          cursor: nesw-resize;
+        }
+
+        &-se {
+          right: -5px;
+          bottom: -5px;
+          cursor: nwse-resize;
+        }
       }
     }
 

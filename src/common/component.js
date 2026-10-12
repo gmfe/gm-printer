@@ -436,9 +436,28 @@ class ImageUploader extends React.Component {
       ? event.dataTransfer.files
       : event.target.files
     const file = droppedFiles[0]
+    const {
+      acceptFormats,
+      formatErrorText,
+      maxSize = 512 * 1024,
+      sizeErrorText
+    } = this.props
 
-    if (file.size > 512 * 1024) {
-      Tip.warning(i18next.t('图片大小不能超过500Kb'))
+    // 格式校验：业务配置了 acceptFormats 时仅放行指定后缀（如检测报告的 jpg/jpeg/png）
+    if (acceptFormats && acceptFormats.length) {
+      const ext = file.name
+        .split('.')
+        .pop()
+        .toLowerCase()
+      if (!acceptFormats.includes(ext)) {
+        Tip.warning(formatErrorText || i18next.t('图片格式不正确'))
+        return
+      }
+    }
+
+    // 大小校验：默认 500Kb，业务可通过 maxSize/sizeErrorText 覆盖（如检测报告 2M）
+    if (file.size > maxSize) {
+      Tip.warning(sizeErrorText || i18next.t('图片大小不能超过500Kb'))
       return
     }
 
@@ -456,15 +475,34 @@ class ImageUploader extends React.Component {
     const isStation = /station/g.test(hostname)
     const url = isStation ? STATION_URL : MANAGE_URL
 
-    Request(url.reqUrl)
-      .data({
-        image_file: file
-      })
-      .post()
-      .then(json => {
-        const imgURL = `${url.imgUrl}/${json.data.img_path_id}`
-        this.props.onSuccess(imgURL)
-      })
+    // 量尺寸与上传并行：读本地文件的原图宽高，省去插入前再从 CDN 下载一次图片
+    const measureSize = new Promise(resolve => {
+      const objectUrl = window.URL.createObjectURL(file)
+      const img = new window.Image()
+      img.onload = () => {
+        window.URL.revokeObjectURL(objectUrl)
+        resolve({ width: img.naturalWidth, height: img.naturalHeight })
+      }
+      // 读取失败不影响上传，插入时按默认尺寸兜底
+      img.onerror = () => {
+        window.URL.revokeObjectURL(objectUrl)
+        resolve(null)
+      }
+      img.src = objectUrl
+    })
+
+    Promise.all([
+      Request(url.reqUrl)
+        .data({
+          image_file: file
+        })
+        .post(),
+      measureSize
+    ]).then(([json, size]) => {
+      const imgURL = `${url.imgUrl}/${json.data.img_path_id}`
+      // size：原图宽高（量取失败为 null），供等比初始化尺寸使用
+      this.props.onSuccess(imgURL, size)
+    })
   }
 
   handleClick = () => {
@@ -473,16 +511,23 @@ class ImageUploader extends React.Component {
   }
 
   render() {
+    const { text, tip, acceptFormats } = this.props
     return (
       <>
         <div onClick={this.handleClick} onDrop={this.handleUpload}>
-          {this.props.text}
+          {text}
         </div>
+        {/* 需求：菜单项下方的红色提示文案（如「支持插入2M以内的jpg、jpeg、png格式图片」） */}
+        {tip && <div className='gm-printer-contextmenu-image-tip'>{tip}</div>}
         <input
           style={{ display: 'none' }}
           type='file'
           ref={this.input}
-          accept='image/*'
+          accept={
+            acceptFormats
+              ? acceptFormats.map(f => '.' + f).join(',')
+              : 'image/*'
+          }
           onChange={this.handleUpload}
         />
       </>
@@ -491,8 +536,19 @@ class ImageUploader extends React.Component {
 }
 
 ImageUploader.propTypes = {
+  // 上传成功回调 (imgURL, naturalSize)：naturalSize 为本地量取的原图宽高 { width, height }，量取失败为 null
   onSuccess: PropTypes.func.isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string.isRequired,
+  // 红色提示文案，展示在菜单项下方
+  tip: PropTypes.string,
+  // 允许的图片大小（字节），默认 512 * 1024
+  maxSize: PropTypes.number,
+  // 超出大小限制时的 toast 文案
+  sizeErrorText: PropTypes.string,
+  // 允许的图片后缀列表（如 ['jpg', 'jpeg', 'png']），不传则不校验格式
+  acceptFormats: PropTypes.arrayOf(PropTypes.string),
+  // 格式不符时的 toast 文案
+  formatErrorText: PropTypes.string
 }
 
 class InputWithUnit extends React.Component {

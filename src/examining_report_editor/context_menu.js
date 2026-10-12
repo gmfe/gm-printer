@@ -9,7 +9,17 @@ import { Printer } from '../printer'
 const blockTypeList = [
   { value: '', text: i18next.t('插入文本') },
   { value: 'line', text: i18next.t('插入线条') },
-  { value: 'image', text: i18next.t('插入图片') }
+  {
+    value: 'image',
+    text: i18next.t('插入图片'),
+    // 需求：支持插入 2M 以内 jpg/jpeg/png 图片；插入后保持原图比例、四角等比缩放
+    tip: i18next.t('支持插入2M以内的jpg、jpeg、png格式图片'),
+    maxSize: 2 * 1024 * 1024,
+    sizeErrorText: i18next.t('图片大小不能超过2M'),
+    acceptFormats: ['jpg', 'jpeg', 'png'],
+    formatErrorText: i18next.t('仅支持插入jpg、jpeg、png格式图片'),
+    keepRatio: true
+  }
 ]
 
 @inject(stores => ({
@@ -76,6 +86,7 @@ class ContextMenu extends React.Component {
           selectedRegion={editStore.selectedRegion}
           config={editStore.config}
           data={mockData}
+          imageResize
         />
       </CommonContextMenu>
     )

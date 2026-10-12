@@ -361,6 +361,29 @@ const collectGroups = (tableData, range, key = '_collect') => {
   }
 }
 
+/** 图片块默认边长（px）：等比插入的最长边、缩放兜底、默认插入尺寸共用 */
+const DEFAULT_IMAGE_BLOCK_SIZE = 100
+
+/**
+ * 按原图宽高比例计算初始显示尺寸：在默认边长范围内等比缩放（最长边 DEFAULT_IMAGE_BLOCK_SIZE px）
+ * @param {Object|null} size 原图宽高 { width, height }，量取失败为 null
+ * @returns {Object|null} 等比后的 { width, height }（px 字符串），入参无效时返回 null
+ */
+function getImageFitSize(size) {
+  const { width, height } = size || {}
+  if (!width || !height) {
+    return null
+  }
+  const scale = Math.min(
+    DEFAULT_IMAGE_BLOCK_SIZE / width,
+    DEFAULT_IMAGE_BLOCK_SIZE / height
+  )
+  return {
+    width: Math.max(1, Math.round(width * scale)) + 'px',
+    height: Math.max(1, Math.round(height * scale)) + 'px'
+  }
+}
+
 export {
   collectGroups,
   getHeight,
@@ -381,5 +404,7 @@ export {
   caclSingleDetailsPageHeight,
   getArrayMid,
   getColSpanLength,
-  getOverallOrderTrHeight
+  getOverallOrderTrHeight,
+  DEFAULT_IMAGE_BLOCK_SIZE,
+  getImageFitSize
 }

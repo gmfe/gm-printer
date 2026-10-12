@@ -145,6 +145,8 @@ class Printer extends React.Component {
     printerStore.init(config, data)
     printerStore.setSelected(selected)
     printerStore.setSelectedRegion(selectedRegion)
+    // 业务开关（如检测报告编辑器）：图片块选中后展示四角等比缩放手柄
+    printerStore.imageResizeEnabled = !!this.props.imageResize
   }
 
   renderBefore() {
@@ -399,6 +401,7 @@ class Printer extends React.Component {
       onReady,
       selectedRegion,
       printerStore,
+      imageResize,
       ...rest
     } = this.props
     const {
@@ -441,7 +444,9 @@ Printer.propTypes = {
   onReady: PropTypes.func,
   isSomeSubtotalTr: PropTypes.bool,
   getremainpageHeight: PropTypes.func,
-  overallorder: PropTypes.bool
+  overallorder: PropTypes.bool,
+  // 业务开关：图片块选中后展示四角等比缩放手柄（如检测报告编辑器）
+  imageResize: PropTypes.bool
 }
 
 Printer.defaultProps = {

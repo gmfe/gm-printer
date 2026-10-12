@@ -51,6 +51,10 @@ class PrinterStore {
 
   data = {}
 
+  // 业务开关：图片块选中后展示四角等比缩放手柄（由 Printer 的 imageResize prop 写入，
+  // 仅编辑器场景使用，打印流程恒为 false；初始化后不变，无需 observable）
+  imageResizeEnabled = false
+
   // 选中某个东西，具体见 edit/store.js 定义
   @observable
   selected = null

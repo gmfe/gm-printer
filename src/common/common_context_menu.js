@@ -9,6 +9,7 @@ import {
 import _ from 'lodash'
 import { Hr, ImageUploader } from '../common/component'
 import { observer, inject } from 'mobx-react'
+import { getImageFitSize } from '../util'
 
 @inject('editStore')
 @observer
@@ -109,7 +110,7 @@ class CommonContextMenu extends React.Component {
     })
   }
 
-  handleInsertBlock = (type, link) => {
+  handleInsertBlock = (type, link, size) => {
     const { editStore } = this.props
     const { name, block } = this.state
 
@@ -120,7 +121,8 @@ class CommonContextMenu extends React.Component {
         left: block.left + 'px',
         top: block.top + 'px'
       },
-      link
+      link,
+      size
     )
 
     this.setState({
@@ -160,8 +162,21 @@ class CommonContextMenu extends React.Component {
     })
   }
 
-  handleInsertImage = imgURL => {
-    this.handleInsertBlock('image', imgURL)
+  // 插入图片：item 为 blockTypeList 中的菜单项配置（各业务编辑器传入），
+  // naturalSize 为上传时量好的原图宽高（量取失败为 null）
+  handleInsertImage = (item, imgURL, naturalSize) => {
+    // 未配置 keepRatio：直接按默认尺寸插入（其他业务编辑器原行为）
+    if (!item || !item.keepRatio) {
+      this.handleInsertBlock('image', imgURL)
+      return
+    }
+    // keepRatio：按原图比例等比计算初始宽高；量取失败时传 undefined，落到默认 100x100
+    // （不能用 null：addConfigBlock 的 size = {} 默认值只对 undefined 生效）
+    this.handleInsertBlock(
+      'image',
+      imgURL,
+      getImageFitSize(naturalSize) || undefined
+    )
   }
 
   handleRemove = () => {
@@ -323,10 +338,12 @@ class CommonContextMenu extends React.Component {
       <>
         {_.map(insertBlockList, v => {
           return v.value === 'image' ? (
+            // spread 透传菜单项上的上传约束配置（tip/maxSize/acceptFormats 等），
+            // ImageUploader 未声明的字段（value/keepRatio）不消费、无害
             <ImageUploader
-              onSuccess={this.handleInsertImage}
+              {...v}
+              onSuccess={this.handleInsertImage.bind(this, v)}
               key={v.value}
-              text={v.text}
             />
           ) : (
             <div

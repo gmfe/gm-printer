@@ -3,10 +3,18 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import Counter from './counter'
 import { inject, observer } from 'mobx-react'
-import { dispatchMsg, getStyleWithDiff } from '../util'
+import {
+  dispatchMsg,
+  getStyleWithDiff,
+  pxAdd,
+  DEFAULT_IMAGE_BLOCK_SIZE
+} from '../util'
 import BarCode from './barcode'
 import QrCode from './qrcode'
 import Tag from './tag'
+
+// 四角缩放手柄方位：nw 左上 / ne 右上 / sw 左下 / se 右下
+const RESIZE_HANDLES = ['nw', 'ne', 'sw', 'se']
 
 @inject('printerStore')
 @observer
@@ -32,6 +40,8 @@ class Block extends React.Component {
       'gm-printer-block-edit',
       this.handleBlockEdit
     )
+    // 缩放拖拽进行中卸载时，清理 document 级监听
+    this.cancelResize && this.cancelResize()
   }
 
   handleBlockEdit = e => {
@@ -82,6 +92,77 @@ class Block extends React.Component {
     dispatchMsg('gm-printer-select', {
       selected: name
     })
+  }
+
+  // 图片块四角等比缩放：拖动角点按初始宽高比联动宽高，对角锚定不动
+  // 仅 printerStore.imageResizeEnabled（检测报告等业务）开启且图片块选中时可用
+  // 注：不用库内 draggable+dragEnd 模式（如块移动/面板高度拖拽），因为缩放需要拖动
+  // 过程中的实时预览；为控制整树重渲染频率，用 rAF 合帧，每帧至多派发一次
+  handleResizeStart = e => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const { config } = this.props
+    // 方位取自手柄 data-pos，保证 handler 引用稳定，render 中无需 bind
+    const position = e.currentTarget.dataset.pos
+    const startWidth =
+      parseFloat(config.style.width) || DEFAULT_IMAGE_BLOCK_SIZE
+    const startHeight =
+      parseFloat(config.style.height) || DEFAULT_IMAGE_BLOCK_SIZE
+    // 锁定原始比例：高度始终按初始宽高比计算
+    const ratio = startHeight / startWidth
+    const startX = e.clientX
+    // 拖动方向：左侧角向左拖为放大，上侧角向上拖为放大
+    const isLeft = position === 'nw' || position === 'sw'
+    const isTop = position === 'nw' || position === 'ne'
+
+    // 最近一次鼠标位置 + 是否已排帧：mousemove 可能高于刷新率，合并到每帧处理一次
+    let lastEv = null
+    let scheduled = false
+
+    const flush = () => {
+      scheduled = false
+      if (!lastEv) {
+        return
+      }
+      let dx = lastEv.clientX - startX
+      if (isLeft) {
+        dx = -dx
+      }
+      // 最小 10px，避免缩没了
+      const newWidth = Math.max(10, Math.round(startWidth + dx))
+      const newHeight = Math.max(10, Math.round(newWidth * ratio))
+      // 对角锚定：拖左/上角时同步平移 left/top，视觉上对角固定不动
+      const style = {
+        ...config.style,
+        width: newWidth + 'px',
+        height: newHeight + 'px',
+        left: pxAdd(config.style.left, isLeft ? startWidth - newWidth : 0),
+        top: pxAdd(config.style.top, isTop ? startHeight - newHeight : 0)
+      }
+
+      dispatchMsg('gm-printer-block-style-set', { style })
+    }
+
+    const handleMouseMove = ev => {
+      lastEv = ev
+      if (!scheduled) {
+        scheduled = true
+        window.requestAnimationFrame(flush)
+      }
+    }
+
+    const handleMouseUp = () => {
+      window.document.removeEventListener('mousemove', handleMouseMove)
+      window.document.removeEventListener('mouseup', handleMouseUp)
+      this.cancelResize = null
+    }
+
+    // 拖拽进行中组件卸载时，经 componentWillUnmount 调用清理
+    this.cancelResize = handleMouseUp
+
+    window.document.addEventListener('mousemove', handleMouseMove)
+    window.document.addEventListener('mouseup', handleMouseUp)
   }
 
   handleDoubleClick = () => {
@@ -186,6 +267,9 @@ class Block extends React.Component {
     }
 
     const active = name === printerStore.selected
+    // 图片块选中且业务开启 imageResize 时展示四角等比缩放手柄（打印无选中态，不会渲染）
+    const showResizeHandles =
+      active && type === 'image' && printerStore.imageResizeEnabled
 
     return (
       <div
@@ -221,6 +305,16 @@ class Block extends React.Component {
           />
         )}
         {content}
+        {/* 四角等比缩放手柄：方位见 RESIZE_HANDLES，位置经 data-pos 传给 handler */}
+        {showResizeHandles &&
+          RESIZE_HANDLES.map(pos => (
+            <div
+              key={pos}
+              data-pos={pos}
+              className={`gm-printer-block-resize gm-printer-block-resize-${pos}`}
+              onMouseDown={this.handleResizeStart}
+            />
+          ))}
       </div>
     )
   }
