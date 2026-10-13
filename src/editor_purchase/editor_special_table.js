@@ -16,7 +16,9 @@ import _ from 'lodash'
 import { inject, observer } from 'mobx-react'
 import {
   buildDataKey,
+  getDataKeyModifierSuffix,
   getDataKeyPrefix,
+  getDataKeySuffix,
   isDetailOneRowSelectKey,
 } from '../common/data_key_util'
 
@@ -90,19 +92,23 @@ class TableDetailEditor extends React.Component {
           .replace(/{{([^.\s}]+)}}/g, '{{列.$1}}')
       }
       const prefix = getDataKeyPrefix(config.dataKey)
-      const rolSkuKey = buildDataKey(prefix, 'independent_rol_sku')
-      const rolAddressKey = buildDataKey(prefix, 'independent_rol_address')
+      const curSuffix = getDataKeySuffix(config.dataKey)
+      const modifier = getDataKeyModifierSuffix(config.dataKey)
+      // 已是对应 independent_rol_*（含 category/multi）则不再重设，避免冲掉商品分类
       if (
         config.purchaseSettingKey === 'goods' &&
-        config.dataKey !== rolSkuKey
-      ) {
-        editStore.setPurchaseTableKey(rolSkuKey, addFields.specialTableConfig)
-      } else if (
-        config.purchaseSettingKey === 'merchant' &&
-        config.dataKey !== rolAddressKey
+        !curSuffix.startsWith('independent_rol_sku')
       ) {
         editStore.setPurchaseTableKey(
-          rolAddressKey,
+          buildDataKey(prefix, `independent_rol_sku${modifier}`),
+          addFields.specialTableConfig
+        )
+      } else if (
+        config.purchaseSettingKey === 'merchant' &&
+        !curSuffix.startsWith('independent_rol_address')
+      ) {
+        editStore.setPurchaseTableKey(
+          buildDataKey(prefix, `independent_rol_address${modifier}`),
           addFields.specialTableConfig
         )
       }
