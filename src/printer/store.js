@@ -232,10 +232,10 @@ class PrinterStore {
       count = details.length + detailsMulti.length + count
     })
 
-    /** 明细data */
-    const detailsData = tableData[end]?.__details
-    // 双栏明细data
-    const detailsDataMulti = tableData[end]?.__details_MULTI_SUFFIX
+    /** 明细data（左栏），兜底空数组避免另一侧缺省时切片报错 */
+    const detailsData = tableData[end]?.__details || []
+    // 双栏明细data（右栏）
+    const detailsDataMulti = tableData[end]?.__details_MULTI_SUFFIX || []
     // 采购单如果使用双栏，取明细最多的那个数据
     const data =
       detailsData?.length > (detailsDataMulti?.length || 0)
@@ -258,10 +258,12 @@ class PrinterStore {
       _.filter(ranges, i => i[0] !== i[1] || (!i[0] && !i[1])), // 过滤掉 {[0,3],[3,3]}这周情况
       range => {
         const _tableData = Object.assign({}, tableData[end])
-        _tableData.__details = data.slice(...range)
+        // 左右两栏各用各的明细切片（slice 超出长度自动截断，明细少的一侧在第一片即展示完），
+        // 修复：此前两栏都塞明细多的一侧数据，导致明细少的一侧（如双栏右栏）明细被替换、自身明细丢失
+        _tableData.__details = detailsData.slice(...range)
         // 双栏中的数据也要做处理
         if (isMultiTable(dataKey)) {
-          _tableData.__details_MULTI_SUFFIX = data.slice(...range)
+          _tableData.__details_MULTI_SUFFIX = detailsDataMulti.slice(...range)
         }
 
         return _tableData
@@ -445,9 +447,30 @@ class PrinterStore {
                 )
                 break
               }
-              // 行无法拆分（普通长文本列）或拆分失败时，强制推进 end 防止死循环
+              // 行无法拆分（普通长文本列）或拆分失败
               if (end === begin) {
-                end = end + 1
+                // 新一页可容纳的 table 高度（页高 - 页眉页脚）
+                const fullPageAccomodateTableHeight = roundHeight(
+                  pageHeight - allPagesHaveThisHeight
+                )
+                // 整页都放不下的超高行（如超长异常描述文本）：只能保留在当前页（裁切不可避免），强制推进 end 防死循环
+                // 此时 currentTableHeight = allTableHaveThisHeight + rowHeight（本行已累加）
+                if (currentTableHeight > fullPageAccomodateTableHeight) {
+                  end = end + 1
+                } else {
+                  // 当前页剩余空间放不下、但整页放得下：
+                  // 先结束当前页（不包含本行），本行挪到新页重试，避免被 overflow:hidden 裁切
+                  if (page.length > 0) {
+                    pages.push(page)
+                    page = []
+                  }
+                  begin = end
+                  pageAccomodateTableHeight = fullPageAccomodateTableHeight
+                  currentTableHeight = allTableHaveThisHeight
+                  currentPageHeight = currentPageMinimumHeight
+                  // 不推进 end，重置高度后在新页重试当前行
+                  continue
+                }
               }
               // 第一条极端会有问题
               if (end !== 0) {
@@ -705,7 +728,7 @@ class PrinterStore {
     try {
       const row = this.data._table[dataKey][index]
       const compiled = _.template(templateText, {
-        interpolate: /{{([\s\S]+?)}}/g,
+        interpolate: /{{([\s\S]+?)}}/g
       })
       let detailsList = row[specialDetailsKey] || []
 
