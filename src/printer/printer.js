@@ -11,7 +11,7 @@ import Table from './table'
 import LongPrintTable from './long_print_table'
 import MergePage from './merge_page'
 import { LONG_PRINT } from '../config'
-import Big from 'big.js'
+import { getDataKey } from '../util'
 
 /** 当前 panel 是否为该表格 content 在全部分页中的最后一次出现 */
 const isLastTablePanel = (pages, pageIndex, panelIndexInPage, tableIndex) => {
@@ -119,6 +119,8 @@ class Printer extends React.Component {
     const batchPrintConfig = config.batchPrintConfig
     // didMount 代表第一次渲染完成，先分页再 ready，避免空 pages 触发 renderPage
     if (batchPrintConfig !== 2) {
+      // 先分页拿到剩余高度，再补空行，最后按补空后的数据重新分页
+      // （若先分页后补空却不重算，panel.end 仍是补空前行数，空行/后半数据会被裁掉）
       printerStore.computedPages()
       if (config.autoFillConfig?.checked) {
         this.props.printerStore.setAutofillConfig(
@@ -128,6 +130,7 @@ class Printer extends React.Component {
           config.autoFillConfig?.fillIndex || false
         )
         printerStore.changeTableData()
+        printerStore.computedPages()
       }
       // 获取剩余空白高度，传到editor
       getremainpageHeight && getremainpageHeight(printerStore.remainPageHeight)
@@ -158,7 +161,10 @@ class Printer extends React.Component {
           switch (content.type) {
             case 'table':
               // eslint-disable-next-line no-case-declarations
-              const list = printerStore.data._table[content.dataKey]
+              const list =
+                printerStore.data._table[
+                  getDataKey(content.dataKey, content.arrange)
+                ] || printerStore.data._table[content.dataKey]
               return (
                 <Table
                   key={`contents.table.${index}`}
@@ -245,7 +251,9 @@ class Printer extends React.Component {
 
   renderPage() {
     const { printerStore, isSomeSubtotalTr } = this.props
-    const { config, remainPageHeight, isAutoFilling } = printerStore
+    const { config, isAutoFilling } = printerStore
+    // 订阅 dataRevision，保证 _table 重排后预览会刷新
+    const dataRevision = printerStore.dataRevision
     return (
       <>
         {_.map(printerStore.pages, (page, i) => {
@@ -254,29 +262,40 @@ class Printer extends React.Component {
             return null
           }
           return (
-            <Page key={i}>
+            <Page key={`${i}-${dataRevision}`}>
               <Header config={config.header} pageIndex={i} />
               {_.map(page, (panel, ii) => {
                 const content = config.contents[panel.index]
                 const autoFillConfig = config?.autoFillConfig || {}
-                const isAutofillConfig =
+                const resolvedDataKey = getDataKey(
+                  content?.dataKey,
+                  content?.arrange
+                )
+                const tableRows =
+                  printerStore.data._table?.[resolvedDataKey] ||
+                  printerStore.data._table?.[content?.dataKey] ||
+                  []
+                const isAutofillTable =
                   isLastPage &&
                   isAutoFilling &&
-                  panel.end &&
-                  content?.dataKey === autoFillConfig?.dataKey
-                const endList = isAutofillConfig
-                  ? Math.floor(
-                      remainPageHeight /
-                        printerStore.computedTableCustomerRowHeight
-                    )
-                  : 0
-                const end = +Big(panel?.end || 0).add(endList)
+                  panel.end != null &&
+                  panel.type === 'table' &&
+                  (content?.dataKey === autoFillConfig?.dataKey ||
+                    content?.dataKey === printerStore.tableConfig?.dataKey ||
+                    autoFillConfig?.region === `contents.table.${panel.index}`)
+                // 空行必须已写入 _table（数据驱动）；渲染不得用剩余高度「虚造」行，
+                // 否则 list[i] 为 undefined → 模板抛错露出 {{列.xxx_MULTI_SUFFIX}}
+                let end = panel.end
+                if (isAutofillTable) {
+                  end = Math.max(panel.end || 0, tableRows.length)
+                }
+                end = Math.min(end || 0, tableRows.length)
 
                 switch (panel.type) {
                   case 'table':
                     return (
                       <Table
-                        key={`contents.table.${panel.index}.${ii}`}
+                        key={`contents.table.${panel.index}.${ii}.${dataRevision}`}
                         name={`contents.table.${panel.index}`}
                         config={content}
                         range={{
