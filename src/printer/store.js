@@ -248,7 +248,9 @@ class PrinterStore {
     const raw = this.config?.sign?.style?.height
     if (raw == null || raw === '') return 0
     const parsed = parseFloat(raw)
-    return Number.isFinite(parsed) ? parsed : 0
+    // 负高度（编辑器历史版本可拖出如 -161px）会让末页签名预留为负，
+    // 单页虚增可容纳高度，固定页脚时表格溢出与页脚重叠；非正值一律按 0
+    return parsed > 0 ? parsed : 0
   }
 
   /** 处理采购单的明细
