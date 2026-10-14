@@ -23,6 +23,7 @@ import {
   detectColNumber,
   ensureRowSerialKeys,
   flattenHorizontalPackedRows,
+  normalizeMultiSerials,
   repackVerticalTableByPageRanges,
   packVerticalNewspaper,
   packHorizontalRowMajor,
@@ -1045,7 +1046,12 @@ class PrinterStore {
       )
     )
     withPartial.push(...fillList)
-    this.data._table[dataKey] = withPartial
+    // 半行续号与空行起始序号统一收敛，防止两处各自计算造成序号重复（如双栏 5 条出现两个 6）
+    this.data._table[dataKey] = normalizeMultiSerials(
+      withPartial,
+      colNumber,
+      this.fillIndex
+    )
   }
 
   @action.bound
