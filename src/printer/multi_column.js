@@ -345,6 +345,58 @@ export const ensureRowSerialKeys = (
   return next
 }
 
+/**
+ * 统一收敛多栏序号，修复「半行续号」与「空行起始序号」两处独立计算导致的序号重复
+ * （如 5 条数据双栏：第三行第二列续号为 6，第四行空行起始又编出 6）。
+ * - 先给最后一个实数据行的右侧空格续号并写回（渲染侧 ensureRowSerialKeys 不再另行补号）
+ * - 空行序号以「全表已用最大序号 + 1」连续重编，与半行续号同源
+ * 幂等，重复执行结果不变；仅 fillIndex 开启时生效
+ */
+export const normalizeMultiSerials = (rows, colNumber, fillIndex) => {
+  if (!fillIndex || !rows?.length || colNumber < 1) return rows
+  const keys = getSerialKeys(colNumber)
+  const isFill = row => row && !row._isEmptyData && !isSpecialTableRow(row)
+
+  const result = rows.slice()
+
+  // 实数据行已用最大序号
+  let max = 0
+  result.forEach(row => {
+    if (!isFill(row)) return
+    keys.forEach(key => {
+      const n = toSerialNumber(row?.[key])
+      if (n != null && n > max) max = n
+    })
+  })
+
+  // 1. 最后一个实数据行的空格续号（写回数据，保证序号只有一处来源）
+  for (let i = result.length - 1; i >= 0; i--) {
+    if (!isFill(result[i])) continue
+    const next = { ...result[i] }
+    keys.forEach(key => {
+      if (!isFilledIndexValue(next[key])) {
+        max += 1
+        next[key] = max
+      }
+    })
+    result[i] = next
+    break
+  }
+
+  // 2. 空行从 max+1 连续重编，不会与实数据序号/半行续号撞号
+  result.forEach((row, i) => {
+    if (!row?._isEmptyData || isSpecialTableRow(row)) return
+    const next = { ...row }
+    keys.forEach(key => {
+      max += 1
+      next[key] = max
+    })
+    result[i] = next
+  })
+
+  return result
+}
+
 /** 最后一行右侧空单元格续编序号 */
 export const fillPartialLastRow = (rows, colNumber, fillIndex) => {
   if (!fillIndex || !rows?.length || colNumber <= 1) return rows
