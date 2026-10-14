@@ -12,7 +12,6 @@ import LongPrintTable from './long_print_table'
 import MergePage from './merge_page'
 import { LONG_PRINT } from '../config'
 import { getDataKey } from '../util'
-import Big from 'big.js'
 
 /** 当前 panel 是否为该表格 content 在全部分页中的最后一次出现 */
 const isLastTablePanel = (pages, pageIndex, panelIndexInPage, tableIndex) => {
@@ -353,7 +352,15 @@ class Printer extends React.Component {
 
     return (
       <MergePage>
-        <Header config={config.header} pageIndex={0} />
+        {/* 批量连续打印(不留白)模式下分页交给浏览器：表头区含绝对定位文字，
+            若表头自身或表头与表格的接缝骑在分页边界，Chrome 对 absolute 元素的
+            fragmentation 渲染会使表头文字错位/重复，叠到其他单据内容上。
+            故禁止表头跨页(breakInside)、并让表头与后续表格同页(breakAfter) */}
+        <Header
+          config={config.header}
+          pageIndex={0}
+          style={{ breakInside: 'avoid', breakAfter: 'avoid' }}
+        />
         {_.map(config.contents, (content, index) => {
           switch (content.type) {
             case 'table':

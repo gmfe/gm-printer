@@ -251,7 +251,9 @@ class PrinterStore {
     const raw = this.config?.sign?.style?.height
     if (raw == null || raw === '') return 0
     const parsed = parseFloat(raw)
-    return Number.isFinite(parsed) ? parsed : 0
+    // 负高度（编辑器历史版本可拖出如 -161px）会让末页签名预留为负，
+    // 单页虚增可容纳高度，固定页脚时表格溢出与页脚重叠；非正值一律按 0
+    return parsed > 0 ? parsed : 0
   }
 
   /** 处理采购单的明细
@@ -489,7 +491,28 @@ class PrinterStore {
               }
               // 行无法拆分（普通长文本列）或拆分失败时，强制推进 end 防止死循环
               if (end === begin) {
-                end = end + 1
+                // 新一页可容纳的 table 高度（页高 - 页眉页脚）
+                const fullPageAccomodateTableHeight = roundHeight(
+                  pageHeight - allPagesHaveThisHeight
+                )
+                // 整页都放不下的超高行（如超长异常描述文本）：只能保留在当前页（裁切不可避免），强制推进 end 防死循环
+                // 此时 currentTableHeight = allTableHaveThisHeight + rowHeight（本行已累加）
+                if (currentTableHeight > fullPageAccomodateTableHeight) {
+                  end = end + 1
+                } else {
+                  // 当前页剩余空间放不下、但整页放得下：
+                  // 先结束当前页（不包含本行），本行挪到新页重试，避免被 overflow:hidden 裁切
+                  if (page.length > 0) {
+                    pages.push(page)
+                    page = []
+                  }
+                  begin = end
+                  pageAccomodateTableHeight = fullPageAccomodateTableHeight
+                  currentTableHeight = allTableHaveThisHeight
+                  currentPageHeight = currentPageMinimumHeight
+                  // 不推进 end，重置高度后在新页重试当前行
+                  continue
+                }
               }
               // 第一条极端会有问题
               if (end !== 0) {
@@ -579,6 +602,7 @@ class PrinterStore {
 
     // 末页签名：panel 分支会在「最后一项是 panel」时扣 sign；
     // 最后一项是 table 时上面不会扣，导致 remain 偏大、空行多填溢页
+    // 打印 iframe 内 height.sign 可能为 0，必须用 getSignHeight（含配置兜底）
     const lastContent = contents[contentsLength - 1]
     if (lastContent?.type === 'table') {
       currentPageHeight += this.getSignHeight()
