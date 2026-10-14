@@ -111,7 +111,8 @@ class Table extends React.Component {
       range,
       pageIndex,
       printerStore,
-      isSomeSubtotalTr
+      isSomeSubtotalTr,
+      isLastTablePage
     } = this.props
     // 数据
     dataKey = getDataKey(dataKey, arrange)
@@ -202,7 +203,8 @@ class Table extends React.Component {
                               ? printerStore.templateSpecialDetails(
                                   col,
                                   dataKey,
-                                  i
+                                  i,
+                                  config.specialConfig?.template_text
                                 )
                               : printerStore
                                   .templateTable(
@@ -227,6 +229,7 @@ class Table extends React.Component {
           range={range}
           config={config}
           printerStore={printerStore}
+          isLastTablePage={isLastTablePage}
         />
         <DiyOverallOrder
           range={range}
@@ -307,7 +310,8 @@ class Table extends React.Component {
                             ? printerStore.templateSpecialDetails(
                                 col,
                                 dataKey,
-                                i
+                                i,
+                                config.specialConfig?.template_text
                               )
                             : printerStore
                                 .templateTable(col.text, dataKey, i, pageIndex)
@@ -327,6 +331,7 @@ class Table extends React.Component {
             range={range}
             config={config}
             printerStore={printerStore}
+            isLastTablePage={isLastTablePage}
           />
           <DiyOverallOrder
             range={range}
@@ -385,7 +390,12 @@ Table.propTypes = {
   pageIndex: PropTypes.number.isRequired,
   placeholder: PropTypes.string,
   printerStore: PropTypes.object,
-  isSomeSubtotalTr: PropTypes.bool
+  isSomeSubtotalTr: PropTypes.bool,
+  isLastTablePage: PropTypes.bool
+}
+
+Table.defaultProps = {
+  isLastTablePage: true
 }
 
 export default Table

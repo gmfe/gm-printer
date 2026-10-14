@@ -12,7 +12,20 @@ import LongPrintTable from './long_print_table'
 import MergePage from './merge_page'
 import { LONG_PRINT } from '../config'
 import { getDataKey } from '../util'
-import Big from 'big.js'
+
+/** 当前 panel 是否为该表格 content 在全部分页中的最后一次出现 */
+const isLastTablePanel = (pages, pageIndex, panelIndexInPage, tableIndex) => {
+  for (let pi = pages.length - 1; pi >= 0; pi--) {
+    const page = pages[pi] || []
+    for (let pji = page.length - 1; pji >= 0; pji--) {
+      const p = page[pji]
+      if (p?.type === 'table' && p.index === tableIndex) {
+        return pi === pageIndex && pji === panelIndexInPage
+      }
+    }
+  }
+  return true
+}
 
 // Header Sign Footer 相对特殊，要单独处理
 const Header = props => (
@@ -104,9 +117,7 @@ class Printer extends React.Component {
   componentDidMount() {
     const { printerStore, config, getremainpageHeight } = this.props
     const batchPrintConfig = config.batchPrintConfig
-    // didMount 代表第一次渲染完成
-    printerStore.setReady(true)
-    // 连续打印不需要分页计算
+    // didMount 代表第一次渲染完成，先分页再 ready，避免空 pages 触发 renderPage
     if (batchPrintConfig !== 2) {
       // 先分页拿到剩余高度，再补空行，最后按补空后的数据重新分页
       // （若先分页后补空却不重算，panel.end 仍是补空前行数，空行/后半数据会被裁掉）
@@ -121,8 +132,10 @@ class Printer extends React.Component {
         printerStore.changeTableData()
         printerStore.computedPages()
       }
+      // 获取剩余空白高度，传到editor
       getremainpageHeight && getremainpageHeight(printerStore.remainPageHeight)
     }
+    printerStore.setReady(true)
 
     // Printer 不是立马就呈现出最终样式，有个过程。这个过程需要时间，什么 ready，不太清楚，估借 setState 来获取过程结束时刻
     this.setState({}, () => {
@@ -292,6 +305,12 @@ class Printer extends React.Component {
                         placeholder={`${i18next.t('区域')} ${panel.index}`}
                         pageIndex={i}
                         isSomeSubtotalTr={isSomeSubtotalTr}
+                        isLastTablePage={isLastTablePanel(
+                          printerStore.pages,
+                          i,
+                          ii,
+                          panel.index
+                        )}
                       />
                     )
 
@@ -333,7 +352,15 @@ class Printer extends React.Component {
 
     return (
       <MergePage>
-        <Header config={config.header} pageIndex={0} />
+        {/* 批量连续打印(不留白)模式下分页交给浏览器：表头区含绝对定位文字，
+            若表头自身或表头与表格的接缝骑在分页边界，Chrome 对 absolute 元素的
+            fragmentation 渲染会使表头文字错位/重复，叠到其他单据内容上。
+            故禁止表头跨页(breakInside)、并让表头与后续表格同页(breakAfter) */}
+        <Header
+          config={config.header}
+          pageIndex={0}
+          style={{ breakInside: 'avoid', breakAfter: 'avoid' }}
+        />
         {_.map(config.contents, (content, index) => {
           switch (content.type) {
             case 'table':

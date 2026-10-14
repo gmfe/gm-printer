@@ -12,6 +12,13 @@ import {
   getMultiNumber
 } from '../util'
 import { accountRadioList } from './util'
+import {
+  buildDataKey,
+  getDataKeyModifierSuffix,
+  getDataKeyPrefix,
+  isDetailOneRowSelectKey,
+  isIndependentRolDataKey
+} from './data_key_util'
 import React from 'react'
 import { createDiySummaryStoreMethods } from './diy_summary_helper'
 import {
@@ -300,18 +307,15 @@ class EditorStore {
       return
     }
 
-    const sourceItems = flattenHorizontalPackedRows(
-      sourceRows,
-      sourceColNumber
-    )
+    const sourceItems = flattenHorizontalPackedRows(sourceRows, sourceColNumber)
     const baseRowCount = sourceItems.length
       ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
       : 0
     this.mockData._table[dataKey] = !baseRowCount
       ? []
       : isVertical
-        ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
-        : packHorizontalRowMajor(sourceItems, colNumber)
+      ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
+      : packHorizontalRowMajor(sourceItems, colNumber)
   }
 
   @action.bound
@@ -368,8 +372,8 @@ class EditorStore {
         const sourceColNumber = isMultiTable(singleKey)
           ? getMultiNumber(singleKey)
           : isMultiTable(sourceKey)
-            ? colNumber
-            : 1
+          ? colNumber
+          : 1
         const sourceItems = flattenHorizontalPackedRows(
           sourceRows,
           sourceColNumber
@@ -710,18 +714,13 @@ class EditorStore {
     const singleKey = sourceKey.replace(/_multi3?/, '')
     const colNumber = getMultiNumber(sourceKey)
     const sourceRows =
-      this.mockData._table[singleKey] ||
-      this.mockData._table[sourceKey] ||
-      []
+      this.mockData._table[singleKey] || this.mockData._table[sourceKey] || []
     const sourceColNumber = isMultiTable(singleKey)
       ? getMultiNumber(singleKey)
       : isMultiTable(sourceKey)
-        ? colNumber
-        : 1
-    const sourceItems = flattenHorizontalPackedRows(
-      sourceRows,
-      sourceColNumber
-    )
+      ? colNumber
+      : 1
+    const sourceItems = flattenHorizontalPackedRows(sourceRows, sourceColNumber)
     const baseRowCount = sourceItems.length
       ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
       : 0
@@ -861,7 +860,6 @@ class EditorStore {
     // 切换的时候，要把对应table的多余空数据清掉
     this.clearExtraTableData(table.dataKey)
 
-    this.setAutoFillingConfig(!this.isAutoFilling)
     // 获取td的colSpan
     const colSpanLength = getColSpanLength(table)
     set(table.subtotal, {
@@ -954,13 +952,34 @@ class EditorStore {
       set(table.overallOrder, {
         show: !table.overallOrder.show
       })
-      table.overallOrder.fields[0].colSpan =
-        colSpanLength - (table.overallOrder.fields?.[1]?.colSpan ?? 0)
+      // 老模板补默认：每页展示默认勾选
+      if (table.overallOrder.showEachPage === undefined) {
+        set(table.overallOrder, { showEachPage: true })
+      }
+      // 兼容存量/测试模板 overallOrder 只存了 {show:false} 没有 fields，补默认结构，否则 fields[0] 取值崩溃
+      if (!table.overallOrder.fields?.length) {
+        set(table.overallOrder, {
+          fields: [
+            {
+              name: '整单合计：',
+              valueField: '出库金额',
+              style: {
+                fontWeight: 'bold'
+              },
+              colSpan: colSpanLength
+            }
+          ]
+        })
+      } else {
+        table.overallOrder.fields[0].colSpan =
+          colSpanLength - (table.overallOrder.fields?.[1]?.colSpan ?? 0)
+      }
     } else {
       // 兼容已经存在的配送单据，他们的配置存在后端的，没有overallOrder这个配置，给加上
       set(table, {
         overallOrder: {
           show: true,
+          showEachPage: true,
           fields: [
             {
               name: '整单合计：',
@@ -974,6 +993,19 @@ class EditorStore {
         }
       })
     }
+    this.config = toJS(this.config)
+  }
+
+  // 整单合计「每页展示」
+  @action.bound
+  setOverallOrderShowEachPage() {
+    if (!this.selectedRegion) return
+    const arr = this.selectedRegion.split('.')
+    const table = this.config.contents[arr[2]]
+    if (!table?.overallOrder) return
+    this.overallOrderShow = !this.overallOrderShow
+    const next = !(table.overallOrder.showEachPage !== false)
+    set(table.overallOrder, { showEachPage: next })
     this.config = toJS(this.config)
   }
 
@@ -1079,6 +1111,54 @@ class EditorStore {
     ) {
       newDataKey = _.without(newDataKey, 'tag', 'tagDiy')
     }
+    // 标签小计和三级分类小计互斥
+    if (
+      newDataKey.includes('category3') &&
+      (key === 'tag' || key === 'tagDiy')
+    ) {
+      newDataKey = _.without(newDataKey, 'category3')
+    } else if (
+      (newDataKey.includes('tag') || newDataKey.includes('tagDiy')) &&
+      key === 'category3'
+    ) {
+      newDataKey = _.without(newDataKey, 'tag', 'tagDiy')
+    }
+    // 标签小计和商品三级分类互斥
+    if (
+      newDataKey.includes('newCategory3') &&
+      (key === 'tag' || key === 'tagDiy')
+    ) {
+      newDataKey = _.without(newDataKey, 'newCategory3')
+    } else if (
+      (newDataKey.includes('tag') || newDataKey.includes('tagDiy')) &&
+      key === 'newCategory3'
+    ) {
+      newDataKey = _.without(newDataKey, 'tag', 'tagDiy')
+    }
+    // 商品三级分类和商品分类互斥（标题维度一级/三级二选一）
+    if (newDataKey.includes('newCategory3') && key === 'newCategory') {
+      newDataKey = _.without(newDataKey, 'newCategory3')
+    } else if (newDataKey.includes('newCategory') && key === 'newCategory3') {
+      newDataKey = _.without(newDataKey, 'newCategory')
+    }
+    // 三级分类小计和分类小计互斥（小计维度一级/三级二选一）
+    if (newDataKey.includes('category3') && key === 'category') {
+      newDataKey = _.without(newDataKey, 'category3')
+    } else if (newDataKey.includes('category') && key === 'category3') {
+      newDataKey = _.without(newDataKey, 'category')
+    }
+    // 跨层级混搭互斥：商品三级分类（三级标题）不配一级分类小计
+    if (newDataKey.includes('newCategory3') && key === 'category') {
+      newDataKey = _.without(newDataKey, 'newCategory3')
+    } else if (newDataKey.includes('category') && key === 'newCategory3') {
+      newDataKey = _.without(newDataKey, 'category')
+    }
+    // 跨层级混搭互斥：三级分类小计（三级小计）不配一级商品分类
+    if (newDataKey.includes('category3') && key === 'newCategory') {
+      newDataKey = _.without(newDataKey, 'category3')
+    } else if (newDataKey.includes('newCategory') && key === 'category3') {
+      newDataKey = _.without(newDataKey, 'newCategory')
+    }
 
     if (newDataKey.includes('categoryDiy')) {
       if (!diyCategorySubtotal?.show) {
@@ -1105,7 +1185,10 @@ class EditorStore {
       o => o === 'tag',
       o => o === 'multi3',
       o => o === 'multi',
+      // 三级 token 紧跟对应一级 token 之后，保证拼串顺序 orders → category → category3 → newCategory → newCategory3 → multi → multi3 → tag → categoryDiy → tagDiy
+      o => o === 'newCategory3',
       o => o === 'newCategory',
+      o => o === 'category3',
       o => o === 'category',
       o => o === 'orders'
     ])
@@ -1121,14 +1204,20 @@ class EditorStore {
       this.ensureMockMultiTable(getDataKey(joinedKey, 'vertical'))
     }
 
-    // 整单合计不显示
-    if (overallOrder?.show) overallOrder.show = false
-    // 每页合计不显示
-    if (subtotal?.show) subtotal.show = false
-    // 自定义每页合计不显示
-    if (diyOverallOrder?.show) diyOverallOrder.show = false
+    // 三级分类相关 token（商品三级分类/三级分类小计）是纯分组、标题能力，
+    // 与每页/整单合计可共存，切换时不再强制关闭合计开关；
+    // 其余 token（多栏/一级分类/标签等）保持历史行为：切换时强制关闭
+    if (!['newCategory3', 'category3'].includes(key)) {
+      // 整单合计不显示
+      if (overallOrder?.show) overallOrder.show = false
+      // 每页合计不显示
+      if (subtotal?.show) subtotal.show = false
+      // 自定义每页合计不显示
+      if (diyOverallOrder?.show) diyOverallOrder.show = false
+    }
 
-    // 分类/多栏切换：清空旧空行并同步 autoFillConfig.dataKey，Printer 重挂载后会重补
+    // 行数填充开启时切换 token：清掉旧 key 上的空行，并把 autoFillConfig.dataKey
+    // 同步到新 key（printerStore 按两者相等才追加填充高度），交给 Printer 重挂载后重补
     if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
       this.clearAllTableEmptyData()
       this.setAutoFillingConfig(true)
@@ -1454,16 +1543,17 @@ class EditorStore {
       const table = this.config.contents[arr[2]]
 
       const getDataKey = () => {
-        if (dataKey === 'purchase_detail_one_row') {
+        if (isDetailOneRowSelectKey(dataKey)) {
           if (!table.purchaseSettingKey) {
             this.setPurchasePrintSettingKey()
             return dataKey
           }
+          const prefix = getDataKeyPrefix(dataKey)
           if (table.purchaseSettingKey === 'goods') {
-            return 'purchase_independent_rol_sku'
+            return buildDataKey(prefix, 'independent_rol_sku')
           }
           if (table.purchaseSettingKey === 'merchant') {
-            return 'purchase_independent_rol_address'
+            return buildDataKey(prefix, 'independent_rol_address')
           }
         }
         return dataKey
@@ -1483,14 +1573,18 @@ class EditorStore {
   @action.bound setPurchasePrintSettingKey(dataKey = 'goods') {
     const arr = this.selectedRegion.split('.')
     const table = this.config.contents[arr[2]]
+    const prefix = getDataKeyPrefix(table.dataKey)
+    // 切换「按商品/按商户排序」时保留已开启的商品分类、双栏后缀，避免点完分类再切排序把 category 冲掉
+    const baseSuffix =
+      dataKey === 'goods' ? 'independent_rol_sku' : 'independent_rol_address'
+    const nextDataKey = buildDataKey(
+      prefix,
+      `${baseSuffix}${getDataKeyModifierSuffix(table.dataKey)}`
+    )
 
     set(table, {
       purchaseSettingKey: dataKey,
-      dataKey:
-        dataKey === 'goods'
-          ? 'purchase_independent_rol_sku'
-          : 'purchase_independent_rol_address',
-      // 切换打印设置时，重置明细行排序为默认值（候选值列表会变化）
+      dataKey: nextDataKey,
       detail_sort_type: 0
     })
   }
@@ -1512,11 +1606,12 @@ class EditorStore {
       const table = this.config.contents[arr[2]]
 
       const { dataKey } = table
+      // independent_rol_* / detail_one_row_*（含 category、multi 后缀）在下拉里都映射回「按采购明细单行」
       if (
-        dataKey === 'purchase_independent_rol_sku' ||
-        dataKey === 'purchase_independent_rol_address'
+        isIndependentRolDataKey(dataKey) ||
+        isDetailOneRowSelectKey(dataKey)
       ) {
-        return 'purchase_detail_one_row'
+        return buildDataKey(getDataKeyPrefix(dataKey), 'detail_one_row')
       }
       return dataKey
     }
@@ -1587,7 +1682,7 @@ class EditorStore {
           arrange: val
         }
         // 只改排列并清掉旧空行；保持填充开关，交给 Printer 重挂载后
-        //「先补空 → 再重新分页」恢复空行（勿在此处用旧 remainHeight 立刻补）
+        // 「先补空 → 再重新分页」恢复空行（勿在此处用旧 remainHeight 立刻补）
         if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
           this.clearAllTableEmptyData()
           this.setAutoFillingConfig(true)
@@ -1762,6 +1857,42 @@ class EditorStore {
               valueField: fields.id
             }
           ]
+        }
+      })
+    }
+  }
+
+  // 分类/标签 小计 - 显示分类名称（商品分类/商品三级分类小计行是否展示分类名，默认展示）
+  @action.bound setShowCategoryName() {
+    // 作用：触发组件的更新（小计行前缀由渲染层按 specialConfig 实时重拼，需触发预览重渲染）
+    this.overallOrderShow = !this.overallOrderShow
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const tableConfig = this.config.contents[arr[2]]
+
+      set(tableConfig, {
+        specialConfig: {
+          ...tableConfig.specialConfig,
+          showCategoryName: !(
+            tableConfig.specialConfig?.showCategoryName ?? true
+          )
+        }
+      })
+    }
+  }
+
+  // 分类/标签 小计 - 小计文案修改（默认"小计"，允许为空；缺失时由数据层兜底默认值）
+  @action.bound setSubtotalText(value) {
+    // 作用：触发组件的更新（小计行前缀由渲染层按 specialConfig 实时重拼，需触发预览重渲染）
+    this.overallOrderShow = !this.overallOrderShow
+    if (this.selectedRegion) {
+      const arr = this.selectedRegion.split('.')
+      const tableConfig = this.config.contents[arr[2]]
+
+      set(tableConfig, {
+        specialConfig: {
+          ...tableConfig.specialConfig,
+          subtotalText: value
         }
       })
     }
@@ -1962,6 +2093,8 @@ class EditorStore {
       }
       // 开启自定义单元格
       if (subtotalConfig?.isCustomCells) {
+        // 互斥：开启自定义单元格时关闭单元格拆分展示
+        set(subtotalConfig, { isSplitCells: false })
         // 同时还开启了自定义单元格选项
         if (subtotalConfig?.fields?.length === 2) {
           // fields添加自定义单元格
@@ -2009,6 +2142,8 @@ class EditorStore {
   }
 
   // 每页合计自定义单元格文本输入
+  // Text 组件的 onChange 实际收到事件对象（handleChange 被 spread 覆盖），直接绑定时需防御式取 e.target.value，否则事件对象存进 fields[n].name 会导致页面崩溃
+  // ⚠️ 不能用 `value?.target?.value || value`：清空输入时 e.target.value 为空串（falsy），|| 会错把事件对象存进去（清空即崩），必须用 value?.target 判别
   @action.bound
   setSubtotalFields(value) {
     if (this.selectedRegion) {
@@ -2017,10 +2152,64 @@ class EditorStore {
       const subtotalConfig = table?.subtotal
 
       if (subtotalConfig.isCustomCells) {
+        const text = value?.target ? value.target.value : value ?? ''
         const subtotalConfig = table?.subtotal.fields
         subtotalConfig.length === 3
-          ? (subtotalConfig[2].name = value)
-          : (subtotalConfig[1].name = value)
+          ? (subtotalConfig[2].name = text)
+          : (subtotalConfig[1].name = text)
+      }
+    }
+  }
+
+  // 每页合计单元格拆分展示（"每页合计/数值"拆分为两个单元格，与开启自定义单元格互斥）
+  @action.bound
+  setSubtotalSplitCells() {
+    if (this.selectedRegion) {
+      // 作用：触发组件的更新
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const subtotalConfig = table?.subtotal
+      // 没有显示每页合计的时候不可以设置
+      if (!subtotalConfig?.show) return
+      // 多栏表格情况，计算colSpan
+      const colSpanLength = getColSpanLength(table)
+      const oldSplitCells = subtotalConfig?.isSplitCells
+
+      set(subtotalConfig, {
+        isSplitCells: !oldSplitCells
+      })
+      // 兼容已经存在后端的模板，每页合计配置没有fields，手动补上
+      if (!subtotalConfig.fields) {
+        set(subtotalConfig, {
+          fields: [
+            {
+              name: '每页合计：',
+              valueField: 'real_item_price',
+              colSpan: colSpanLength
+            }
+          ]
+        })
+      }
+      // 互斥：开启拆分展示时关闭自定义单元格（复用其关闭时的 fields 重排逻辑）
+      if (!oldSplitCells && subtotalConfig?.isCustomCells) {
+        this.setSubtotalCustomCells()
+      }
+    }
+  }
+
+  // 每页合计左侧文案修改（默认"每页合计"，允许为空，每页合计统一展示输入框内容）
+  @action.bound
+  setSubtotalLeftText(value) {
+    if (this.selectedRegion) {
+      // 作用：触发组件的更新（预览渲染不直接观察 fields[0].name，需强制重渲染）
+      this.overallOrderShow = !this.overallOrderShow
+      const arr = this.selectedRegion.split('.')
+      const table = this.config.contents[arr[2]]
+      const subtotalConfig = table?.subtotal
+
+      if (subtotalConfig?.fields?.[0]) {
+        set(subtotalConfig.fields[0], { name: value })
       }
     }
   }
@@ -2038,6 +2227,7 @@ class EditorStore {
         set(table, {
           overallOrder: {
             show: true,
+            showEachPage: true,
             fields: [
               {
                 name: '整单合计：',
@@ -2155,6 +2345,7 @@ class EditorStore {
   }
 
   // 整单合计自定义单元格文本输入
+  // Text 组件直接绑定时收到事件对象（同 setSubtotalFields）；⚠️ 不能用 `||` 兜底，清空输入时空串 falsy 会错存事件对象导致页面崩溃，用 value?.target 判别
   @action.bound
   setOverallOrderFields(value) {
     if (this.selectedRegion) {
@@ -2163,8 +2354,9 @@ class EditorStore {
       const overallOrderConfig = table?.overallOrder
 
       if (overallOrderConfig.isCustomCells) {
+        const text = value?.target ? value.target.value : value ?? ''
         const overallOrderConfigFields = table?.overallOrder.fields
-        overallOrderConfigFields[1].name = value?.target?.value || value
+        overallOrderConfigFields[1].name = text
       }
     }
   }

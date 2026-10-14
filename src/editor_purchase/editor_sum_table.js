@@ -16,10 +16,14 @@ class TableDetailEditor extends Component {
   }
 
   render() {
-    const { editStore } = this.props
     const {
       addFields: { sumTableConfig }
     } = this.props
+    // 业务侧可传 sumTableConfig.hide=true 隐藏「汇总表」开关；默认展示
+    if (sumTableConfig?.hide) {
+      return null
+    }
+    const { editStore } = this.props
     if (editStore.computedRegionIsTable) {
       const arr = editStore.selectedRegion.split('.')
       const tableConfig = editStore.config.contents[arr[2]]

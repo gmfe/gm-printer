@@ -134,6 +134,93 @@ const SubtotalTr = props => {
         </tr>
       )
     } else {
+      // 单元格拆分展示：第一格（左侧文案+数值）拆分为两个单元格，对齐复用每页合计设置的 textAlign；
+      // 与打印账户总计金额支持共存（2026-09 交互确认）：拆分只作用于第一格，其余格按原 colSpan 渲染（与导出侧 paintSubtotal 行为一致）
+      if (get(subtotal, 'isSplitCells')) {
+        const item = fields[0]
+        // 第一格总 colSpan 拆一半给左侧文案，剩余给数值（colSpan 缺省 99 表示整行）；
+        // 宽度分配沿用原有逻辑：各格按 store 侧 fields[n].colSpan 照画，渲染端不调宽度
+        const totalColSpan = item.colSpan ?? 99
+        const leftColSpan = Math.floor(totalColSpan / 2)
+        const cellStyle = {
+          fontWeight: 'bold',
+          justifyContent: flexStyle[subtotal.style?.textAlign],
+          ...subtotal.style
+        }
+
+        return (
+          <tr>
+            <td colSpan={leftColSpan}>
+              <div style={cellStyle} className='gm-flex-page'>
+                {item.name}
+              </div>
+            </td>
+            <td colSpan={totalColSpan - leftColSpan}>
+              <div style={cellStyle} className='gm-flex-page'>
+                <div
+                  className={classNames('gm-flex-page', {
+                    'gm-flex-justify-between-page': isUpperLowerCaseSeparate,
+                    'gm-flex-grow-page': isUpperLowerCaseSeparate
+                  })}
+                >
+                  <span
+                    className={
+                      isUpperCaseBefore
+                        ? 'gm-printer-subtotal-isUpperCaseBefore-inter'
+                        : ''
+                    }
+                  >
+                    {item.type === 'useSummarize'
+                      ? getData(item.valueField)
+                      : sumData2(list, item.valueField)}
+                  </span>
+                  {subtotal?.needUpperCase && (
+                    <span>
+                      {item.type === 'useSummarize'
+                        ? '大写：' +
+                          coverDigit2Uppercase(getData(item.valueField))
+                        : '大写：' +
+                          coverDigit2Uppercase(sumData2(list, item.valueField))}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </td>
+            {/* 拆分只拆第一格；其余格（打印账户总计金额等）沿用普通多格渲染语义 */}
+            {_.map(fields.slice(1), (extra, extraIndex) => (
+              <td
+                colSpan={extra.colSpan ?? 99}
+                key={`split_extra_${extraIndex}`}
+              >
+                <div style={cellStyle} className='gm-flex-page'>
+                  {extra.name}
+                  <div
+                    className={classNames('gm-flex-page', {
+                      'gm-flex-justify-between-page': isUpperLowerCaseSeparate,
+                      'gm-flex-grow-page': isUpperLowerCaseSeparate
+                    })}
+                  >
+                    <span>
+                      {/* 账户总计金额等固定取数字段走 useSummarize；拆分场景其余格不参与当页求和 */}
+                      {extra.type === 'useSummarize'
+                        ? getData(extra.valueField)
+                        : ''}
+                    </span>
+                    {subtotal?.needUpperCase &&
+                      extra.type === 'useSummarize' && (
+                        <span>
+                          {'大写：' +
+                            coverDigit2Uppercase(getData(extra.valueField))}
+                        </span>
+                      )}
+                  </div>
+                </div>
+              </td>
+            ))}
+          </tr>
+        )
+      }
+
       return (
         <tr>
           {_.map(fields, (item, index) => {
