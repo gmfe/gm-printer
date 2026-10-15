@@ -106,7 +106,8 @@ export const flattenHorizontalPackedRows = (rows, colNumber) => {
 export const flattenVerticalSegment = (rows, colNumber) => {
   const columns = Array.from({ length: colNumber }, () => [])
   rows.forEach(row => {
-    if (isSpecialTableRow(row)) return
+    // _isEmptyData 行的序号可能被填充过，必须显式跳过，否则会被当真实商品吸收
+    if (isSpecialTableRow(row) || row._isEmptyData) return
     splitPackedRow(row, colNumber).forEach((item, col) => {
       if (isRealItem(item)) {
         columns[col].push(stripMultiSuffixFields(item))
@@ -115,6 +116,37 @@ export const flattenVerticalSegment = (rows, colNumber) => {
   })
   return columns.reduce((list, col) => list.concat(col), [])
 }
+
+/** 按特殊行（分类小计/标题等）把整表切成若干「组」：相邻非特殊行的 run */
+export const splitRowsIntoGroups = rows => {
+  const groups = []
+  let start = -1
+  for (let i = 0; i <= (rows || []).length; i++) {
+    const isBoundary = i === rows.length || isSpecialTableRow(rows[i])
+    if (!isBoundary && start < 0) {
+      start = i
+    }
+    if (isBoundary) {
+      if (start >= 0) {
+        groups.push({ begin: start, end: i })
+      }
+      start = -1
+    }
+  }
+  return groups
+}
+
+/**
+ * 源表（单栏/横向多栏）按特殊行分组后逐组拍平 → 每组一个商品队列。
+ * 源表不会被 repack 改写，队列是纯函数，重复执行结果不变（幂等）。
+ */
+export const buildSourceGroupQueues = (rows, colNumber) =>
+  splitRowsIntoGroups(rows).map(group =>
+    flattenHorizontalPackedRows(
+      (rows || []).slice(group.begin, group.end),
+      colNumber
+    )
+  )
 
 const assignItemToRow = (row, item, suffix) => {
   const clean = stripMultiSuffixFields(item) || {}
@@ -442,39 +474,34 @@ export const renumberSegmentSerialsColumnMajor = (
 
 /**
  * 按分页区间把纵向多栏数据改成「每页先左后右」。
- * - 商品按序号灌满当前段左列再排右列（含空行的整段行数）
- * - 每一行都是新建对象，清除旧右列残留
- * - fillIndex 时整段按列重编序号，有数据/无数据同一套规则
+ * - 按特殊行（分类小计等）把整表切成若干组，每组一个商品队列：
+ *   商品只从本组队列取数，永不跨组 —— 奇数商品的组余数留在本组末段空格，
+ *   不会挤占下一组（修复分类合并错位）
+ * - 每组队列优先用外部传入的源表顺序（groupQueues；源表不被 repack 改写，
+ *   重复执行幂等）；缺失时按「各页段贡献」从当前行拼接（重排的不动点，
+ *   同样幂等，但首趟不做每页重排）
+ * - 特殊行钉在原地；非特殊行都是新建对象，清除旧右列残留
+ * - fillIndex 时整段按列重编序号，有数据/无数据同一套规则，序号跨段跨组连续
  */
 export const repackVerticalTableByPageRanges = (
   rows,
   colNumber,
   pageRanges,
   fillIndex = false,
-  sourceItems
+  groupQueues = null
 ) => {
   if (!rows?.length || !pageRanges?.length || colNumber < 2) return rows
-  const items = (sourceItems && sourceItems.length
-    ? sourceItems
-    : flattenVerticalSegment(rows, colNumber)
-  ).map(stripMultiSuffixFields)
 
-  if (!items.length && !fillIndex) return rows
+  const groups = splitRowsIntoGroups(rows)
+  // 全新数组，避免与旧行对象共享引用；特殊行沿用原引用（钉原地）
+  const result = rows.slice()
 
-  // 全新数组，避免与旧行对象共享引用
-  const result = new Array(rows.length)
-  for (let k = 0; k < rows.length; k++) {
-    result[k] = rows[k]
-  }
-
-  let consumed = 0
-  let nextSerial = 1
-  pageRanges.forEach(({ begin, end }) => {
+  // 页 range 与组边界取交集得到页段，并记录所属组
+  const segments = pageRanges.reduce((list, { begin, end }) => {
     const packEnd = Math.min(end, rows.length)
     let i = begin
     while (i < packEnd) {
       if (isSpecialTableRow(rows[i])) {
-        result[i] = rows[i]
         i++
         continue
       }
@@ -482,32 +509,60 @@ export const repackVerticalTableByPageRanges = (
       while (j < packEnd && !isSpecialTableRow(rows[j])) {
         j++
       }
-
-      const rowCount = j - i
-      if (rowCount <= 0) {
-        i = j
-        continue
+      if (j > i) {
+        list.push({
+          begin: i,
+          end: j,
+          groupIndex: groups.findIndex(g => i >= g.begin && i < g.end)
+        })
       }
-
-      const capacity = rowCount * colNumber
-      const chunk = items.slice(consumed, consumed + capacity)
-      const packed = packVerticalNewspaper(chunk, colNumber, rowCount, false)
-      packed.forEach((row, offset) => {
-        result[i + offset] = row
-      })
-      consumed += chunk.length
-
-      if (fillIndex) {
-        nextSerial = renumberSegmentSerialsColumnMajor(
-          result,
-          i,
-          j,
-          colNumber,
-          nextSerial
-        )
-      }
-
       i = j
+    }
+    return list
+  }, [])
+
+  const externalQueues = groupQueues || []
+  const queues = groups.map((_, gi) => {
+    const external = externalQueues[gi]
+    if (external && external.length) {
+      return external
+    }
+    return segments
+      .filter(s => s.groupIndex === gi)
+      .reduce(
+        (list, s) =>
+          list.concat(
+            flattenVerticalSegment(rows.slice(s.begin, s.end), colNumber)
+          ),
+        []
+      )
+  })
+
+  if (!queues.some(q => q.length) && !fillIndex) return rows
+
+  const consumed = groups.map(() => 0)
+  let nextSerial = 1
+  segments.forEach(({ begin, end, groupIndex }) => {
+    const rowCount = end - begin
+    const queue = queues[groupIndex]
+    const chunk = queue.slice(
+      consumed[groupIndex],
+      consumed[groupIndex] + rowCount * colNumber
+    )
+    consumed[groupIndex] += chunk.length
+    packVerticalNewspaper(chunk, colNumber, rowCount, false).forEach(
+      (row, offset) => {
+        result[begin + offset] = row
+      }
+    )
+    if (fillIndex) {
+      nextSerial = renumberSegmentSerialsColumnMajor(
+        result,
+        begin,
+        end,
+        colNumber,
+        nextSerial
+      )
     }
   })
   return result
