@@ -29,7 +29,9 @@ import {
   packHorizontalRowMajor,
   createEmptyRows,
   createEmptyRowSkeleton,
-  resolveVerticalEmptyCount
+  isSpecialTableRow,
+  splitRowsIntoGroups,
+  buildSourceGroupQueues
 } from './multi_column'
 
 export const TR_BASE_HEIGHT = 23
@@ -757,13 +759,28 @@ class PrinterStore {
       // 无商品时仍可能需要给空行按列编序号
       if (!sourceItems.length && !this.fillIndex) return
 
+      // 源表按特殊行分组 → 每组一个商品队列：商品永不跨分类小计行
+      const groupQueues = buildSourceGroupQueues(sourceRows, sourceColNumber)
+      const verticalGroups = splitRowsIntoGroups(verticalRows)
+      const lastGroup = verticalGroups[verticalGroups.length - 1]
+      const lastGroupAllEmpty =
+        lastGroup &&
+        verticalRows
+          .slice(lastGroup.begin, lastGroup.end)
+          .every(row => row?._isEmptyData)
+      // 组数对齐（允许纵向表多一个纯空行尾组=行数填充产物）才用源表队列；
+      // 否则退回「按页段贡献」兜底：最坏不做每页重排，绝不会跨组串货
+      const aligned =
+        groupQueues.length === verticalGroups.length ||
+        (groupQueues.length === verticalGroups.length - 1 && lastGroupAllEmpty)
+
       const pageRanges = this.getTablePageRanges(contentIndex, verticalRows)
       this.data._table[verticalKey] = repackVerticalTableByPageRanges(
         verticalRows,
         colNumber,
         pageRanges,
         this.fillIndex,
-        sourceItems
+        aligned ? groupQueues : null
       )
       this.dataRevision += 1
     })
@@ -1069,44 +1086,16 @@ class PrinterStore {
     const emptyCount =
       emptyTable.length > 0 ? emptyTable.length : toFillEmptyCount
 
-    // 纵向多栏：源商品按对半行落位 + 追加空行；左列优先由 repack 按「数据行+空行」整段完成
+    // 纵向多栏：保留真实行（含分类小计等特殊行），仅追加空行补页；
+    // 每页先左后右、按组落位由随后的 repackVerticalMultiByPages 完成
     if (/_vertical$/.test(dataKey)) {
       const sourceKey = dataKey.replace(/_vertical$/, '')
-      const singleKey = sourceKey.replace(/_multi3?/, '')
       const colNumber = getMultiNumber(sourceKey)
-      // 横向源表缺失时先生成（双栏→三栏常见）
-      if (!this.data._table[sourceKey]?.length) {
-        this.ensureMultiTableData(sourceKey)
-      }
-      const sourceRows =
-        this.data._table[singleKey] || this.data._table[sourceKey] || []
-      const sourceColNumber = isMultiTable(singleKey)
-        ? getMultiNumber(singleKey)
-        : isMultiTable(sourceKey)
-        ? colNumber
-        : 1
-      const sourceItems = flattenHorizontalPackedRows(
-        sourceRows,
-        sourceColNumber
+      const sample =
+        table.find(row => row && !isSpecialTableRow(row)) || tableData[0]
+      this.data._table[dataKey] = table.concat(
+        createEmptyRows(emptyCount, sample, colNumber)
       )
-      const baseRowCount = sourceItems.length
-        ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
-        : 0
-      // 钉死总行：left-first repack 后 _isEmptyData 变少，不能用 emptyTable.length 回推
-      const emptyCount = resolveVerticalEmptyCount(
-        tableData.length,
-        baseRowCount,
-        emptyTable.length > 0
-          ? emptyTable.length
-          : this.getFilledTableData(table).length,
-        emptyTable.length > 0
-      )
-      const dataRows = baseRowCount
-        ? packVerticalNewspaper(sourceItems, colNumber, baseRowCount, false)
-        : []
-      const sample = dataRows[0] || sourceRows[0]
-      const emptyRows = createEmptyRows(emptyCount, sample, colNumber)
-      this.data._table[dataKey] = dataRows.concat(emptyRows)
       return
     }
 
