@@ -22,6 +22,10 @@
   },
   "author": "",
   "license": "ISC",
+  "files": [
+    "src",
+    "locales"
+  ],
   "bugs": {
     "url": "https://github.com/gmfe/gm-printer/issues"
   },
