@@ -62,7 +62,8 @@ function init() {
  *                                            影响合计行渲染与行高，进而影响分页边界）
  * @returns {Promise<{pages: Array, remainPageHeight: number, tableCustomerRowHeight: number}>}
  *          pages: [[{type, index, begin, end}, ...], ...] 对 data._table[contents[i].dataKey] 行号的切片
- *          remainPageHeight: 最后一页剩余高度（供行数填充换算）
+ *          remainPageHeight: 行数填充基准高度（填充表格最后一段所在页的剩余高度，
+ *                            无填充表格时为末页剩余；供行数填充换算）
  *          tableCustomerRowHeight: 表格行高（供行数填充换算）
  */
 function computePages({ data, config, isSomeSubtotalTr }) {
