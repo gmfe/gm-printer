@@ -37,18 +37,38 @@ jobs:
       - name: Install
         run: nci
 
-      # 分支推送时自动生成预发布版本号(只用于本次发布,不改分支上的文件;run_number 保证每次推送唯一):
-      # - hotfix 分支: patch+1,如 10.41.9 -> 10.41.10-beta.N,一个 hotfix 分支只对应一个修复版本
-      # - 周期分支: minor+1,如 10.41.9 -> 10.42.0-beta.N,与 hotfix 的 patch 序列隔离
+      # 分支推送时自动生成预发布版本号(只用于本次发布,不改分支上的文件):
+      # - hotfix 分支: patch+1 + 宿主 hotfix 版本,如 10.41.9 -> 10.41.10-beta.1.16.3.1
+      #   末尾序号 = npm 上同前缀已发布版本的最大序号 + 1,首次从 1 开始,每次 push 即一次发版;
+      #   分支名非"数字.数字"形式(如 hotfix/longPrint_0624)时回退全局运行序号保证唯一
+      # - 周期分支: minor+1,如 10.41.9 -> 10.42.0-beta.N(N 为全局运行序号),与 hotfix 的 patch 序列隔离
       - name: Bump pre-release version
         if: startsWith(github.ref, 'refs/heads/')
         run: |
           if [[ ${{ github.ref }} == refs/heads/hotfix* ]]; then
-            VERSION=$(node -p "const p = require('./package.json').version.split('-')[0].split('.'); p[2] = Number(p[2]) + 1; p.join('.')")
+            BASE=$(node -p "const p = require('./package.json').version.split('-')[0].split('.'); p[2] = Number(p[2]) + 1; p.join('.')")
+            HOTFIX=${GITHUB_REF_NAME#hotfix/}
+            if [[ $HOTFIX =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+              COUNT=$(npm view gm-printer versions --json 2>/dev/null | PREFIX="$BASE-beta.$HOTFIX." node -e '
+                let d = ""
+                process.stdin.on("data", c => (d += c)).on("end", () => {
+                  const list = JSON.parse(d || "[]")
+                  const nums = list
+                    .filter(v => v.startsWith(process.env.PREFIX))
+                    .map(v => Number(v.slice(process.env.PREFIX.length)))
+                    .filter(n => Number.isInteger(n))
+                  console.log(nums.length ? Math.max(...nums) : 0)
+                })
+              ')
+              COUNT=${COUNT:-0}
+              VERSION="$BASE-beta.$HOTFIX.$((COUNT + 1))"
+            else
+              VERSION="$BASE-beta.${{ github.run_number }}"
+            fi
           else
             VERSION=$(node -p "const p = require('./package.json').version.split('-')[0].split('.'); p[1] = Number(p[1]) + 1; p[2] = 0; p.join('.')")
+            VERSION="$VERSION-beta.${{ github.run_number }}"
           fi
-          VERSION="$VERSION-beta.${{ github.run_number }}"
           npm version "$VERSION" --no-git-tag-version
           echo "本次分支推送发布版本: $VERSION (dist-tag: beta)" | tee -a "$GITHUB_STEP_SUMMARY"
 
