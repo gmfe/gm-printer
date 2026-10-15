@@ -6,6 +6,7 @@ import { dispatchMsg, getBlockName, exchange, getColSpanLength } from '../util'
 import { accountRadioList } from './util'
 import {
   buildDataKey,
+  getDataKeyModifierSuffix,
   getDataKeyPrefix,
   isDetailOneRowSelectKey,
   isIndependentRolDataKey
@@ -1393,13 +1394,16 @@ class EditorStore {
     const arr = this.selectedRegion.split('.')
     const table = this.config.contents[arr[2]]
     const prefix = getDataKeyPrefix(table.dataKey)
+    // 切换「按商品/按商户排序」时保留已开启的商品分类、双栏后缀，避免点完分类再切排序把 category 冲掉
+    const baseSuffix = dataKey === 'goods' ? 'independent_rol_sku' : 'independent_rol_address'
+    const nextDataKey = buildDataKey(
+      prefix,
+      `${baseSuffix}${getDataKeyModifierSuffix(table.dataKey)}`
+    )
 
     set(table, {
       purchaseSettingKey: dataKey,
-      dataKey:
-        dataKey === 'goods'
-          ? buildDataKey(prefix, 'independent_rol_sku')
-          : buildDataKey(prefix, 'independent_rol_address'),
+      dataKey: nextDataKey,
       detail_sort_type: 0
     })
   }
@@ -1421,7 +1425,8 @@ class EditorStore {
       const table = this.config.contents[arr[2]]
 
       const { dataKey } = table
-      if (isIndependentRolDataKey(dataKey)) {
+      // independent_rol_* / detail_one_row_*（含 category、multi 后缀）在下拉里都映射回「按采购明细单行」
+      if (isIndependentRolDataKey(dataKey) || isDetailOneRowSelectKey(dataKey)) {
         return buildDataKey(getDataKeyPrefix(dataKey), 'detail_one_row')
       }
       return dataKey
