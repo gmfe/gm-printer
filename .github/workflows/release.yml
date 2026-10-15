@@ -52,12 +52,15 @@ jobs:
           npm version "$VERSION" --no-git-tag-version
           echo "本次分支推送发布版本: $VERSION (dist-tag: beta)" | tee -a "$GITHUB_STEP_SUMMARY"
 
-      # hotfix 发布前差异审查:列出包内相对 npm 全量(latest)版本的全部提交,写入 Actions Summary。
+      # hotfix 发布前差异审查:列出包内相对 npm 全量(latest)版本的全部提交,写入 Actions Summary 与运行日志。
       # hotfix 包应只包含目标修复提交;若清单中出现周期需求提交,说明分支基线不对,应停止发布。
       - name: Audit commits vs npm latest
         if: startsWith(github.ref, 'refs/heads/hotfix')
         run: |
           LATEST=$(npm dist-tag ls gm-printer | awk '/^latest:/ {print $2}')
+          if [ -n "$LATEST" ]; then
+            git fetch -q origin "refs/tags/v$LATEST:refs/tags/v$LATEST"
+          fi
           if [ -n "$LATEST" ] && git rev-parse -q --verify "v$LATEST" >/dev/null; then
             {
               echo "## Hotfix 差异审查(npm latest: v$LATEST)"
@@ -66,8 +69,10 @@ jobs:
               git log --oneline "v$LATEST..HEAD"
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
+            echo "Hotfix 差异审查(npm latest: v$LATEST),v$LATEST..HEAD 的全部提交:"
+            git log --oneline "v$LATEST..HEAD"
           else
-            echo "## Hotfix 差异审查:未找到全量版本 v$LATEST 对应的本地 tag,跳过" >> "$GITHUB_STEP_SUMMARY"
+            echo "未找到全量版本 v$LATEST 对应的 tag,跳过差异审查" | tee -a "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: Build
