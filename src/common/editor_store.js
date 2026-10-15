@@ -259,24 +259,6 @@ class EditorStore {
     this.remainPageHeihgt = remainHeight
   }
 
-  @action
-  getFilledTableData(tableData) {
-    const { autoFillConfig } = this.config
-    if (!this.selectedRegion && !autoFillConfig?.checked) return []
-    let tr_count = 0
-
-    tr_count = Math.floor(
-      this.remainPageHeihgt / this.computedTableCustomerRowHeight
-    )
-    if (tr_count <= 0) return []
-
-    const sample = (tableData || []).find(item => item && !item._isEmptyData)
-    const dataKey =
-      this.computedTableSpecialConfig?.dataKey || autoFillConfig?.dataKey
-    const colNumber = detectColNumber(dataKey, tableData)
-    return createEmptyRows(tr_count, sample, colNumber)
-  }
-
   /** 多栏表缺失时（如双栏切三栏），从单栏/双栏源表现场打包到 mockData */
   @action
   ensureMockMultiTable(dataKey) {
@@ -341,18 +323,14 @@ class EditorStore {
       this.ensureMockMultiTable(getDataKey(dataKey, 'vertical'))
     }
 
+    // 开启时不在编辑器侧预推空行：预推依赖挂载时上报的剩余高度，布局（纸张/表格/
+    // 排列）变化后会过期，第一次开启填充会按旧基准多推，把已渲染完的表格撑到下一页。
+    // 空行统一由 Printer 侧「先分页拿基准 → 补空 → 重分页」写入（见 printer.js）
     const syncEmptyRows = key => {
       if (!this.mockData._table?.[key]) return
-      const list = this.mockData._table[key]
-      const hasHadEmptyData = _.some(list, data => data?._isEmptyData)
-      if (isAutoFilling && !hasHadEmptyData) {
-        list.push(...this.getFilledTableData(list))
-      }
       if (!isAutoFilling) {
         this.clearExtraTableData(key)
-        return
       }
-      this.mockData._table[key] = list
     }
 
     const numberEmptyRows = key => {
@@ -381,13 +359,12 @@ class EditorStore {
         const baseRowCount = sourceItems.length
           ? Math.max(1, Math.ceil(sourceItems.length / colNumber))
           : 0
-        // 钉死总行：repack 后 _isEmptyData 会变少，不能再用 emptyTable.length
+        // 钉死总行：repack 后 _isEmptyData 会变少，不能再用 emptyTable.length；
+        // 无空行时不预推，交由 Printer 按当前分页基准补
         const emptyCount = resolveVerticalEmptyCount(
           list.length,
           baseRowCount,
-          emptyTable.length > 0
-            ? emptyTable.length
-            : this.getFilledTableData(list).length,
+          emptyTable.length,
           emptyTable.length > 0
         )
         const dataRows = baseRowCount
@@ -493,6 +470,11 @@ class EditorStore {
   @action.bound
   setPageSize(field, value) {
     this.config.page.size[field] = value
+    // 页面几何变化会让预览 Printer 重挂载；行数填充开启时清掉按旧页高算出的空行，
+    // 重挂载后按新几何重补（对齐切换商品排列时的处理，见 setTableDataKeyEffect）
+    if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
+      this.clearAllTableEmptyData()
+    }
   }
 
   @computed
@@ -544,6 +526,10 @@ class EditorStore {
           height: size.width
         }
       }
+      // 可用页高变了，行数填充开启时清掉按旧方向算出的空行，重挂载后重补
+      if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
+        this.clearAllTableEmptyData()
+      }
     }
   }
 
@@ -583,6 +569,12 @@ class EditorStore {
       size,
       gap,
       name
+    }
+    // 纸张类型/内边距变了，可用页高随之变化；行数填充开启时清掉按旧纸张算出的
+    // 空行（fillTableEmptyIndex 对已有空行沿用旧数量不重算，旧数量会把同页后续
+    // 表格挤到下一页），交给 Printer 重挂载后按新页高重补
+    if (this.isAutoFilling || this.config?.autoFillConfig?.checked) {
+      this.clearAllTableEmptyData()
     }
   }
 
@@ -1575,7 +1567,8 @@ class EditorStore {
     const table = this.config.contents[arr[2]]
     const prefix = getDataKeyPrefix(table.dataKey)
     // 切换「按商品/按商户排序」时保留已开启的商品分类、双栏后缀，避免点完分类再切排序把 category 冲掉
-    const baseSuffix = dataKey === 'goods' ? 'independent_rol_sku' : 'independent_rol_address'
+    const baseSuffix =
+      dataKey === 'goods' ? 'independent_rol_sku' : 'independent_rol_address'
     const nextDataKey = buildDataKey(
       prefix,
       `${baseSuffix}${getDataKeyModifierSuffix(table.dataKey)}`
@@ -1606,7 +1599,10 @@ class EditorStore {
 
       const { dataKey } = table
       // independent_rol_* / detail_one_row_*（含 category、multi 后缀）在下拉里都映射回「按采购明细单行」
-      if (isIndependentRolDataKey(dataKey) || isDetailOneRowSelectKey(dataKey)) {
+      if (
+        isIndependentRolDataKey(dataKey) ||
+        isDetailOneRowSelectKey(dataKey)
+      ) {
         return buildDataKey(getDataKeyPrefix(dataKey), 'detail_one_row')
       }
       return dataKey

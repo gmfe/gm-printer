@@ -65,7 +65,7 @@ class PrinterStore {
 
   @observable pages = [] // [{type, index, begin, end}]
 
-  /** 当前页剩余空白高度 */
+  /** 行数填充基准：填充表格最后一段所在页的剩余空白高度；无填充表格时为末页剩余 */
   @observable remainPageHeight = 0
   @observable isSave = false
   /** data._table 非 observable，变更后递增以驱动预览重渲 */
@@ -324,6 +324,8 @@ class PrinterStore {
 
     // 使用本地数组累积分页结果，避免循环中反复触发 observable 更新
     const pages = []
+    // 各表格的行高数组（含明细拆分 splice 后的结果），供行数填充基准按同一口径复算
+    const splicedHeightsMap = {}
     // 每页必有 页眉header, 页脚footer , 签名
     const allPagesHaveThisHeight = heightMap.header + heightMap.footer
     // 退出计算! 因为页眉 + 页脚 > currentPageHeight,页面装不下其他东西
@@ -359,37 +361,9 @@ class PrinterStore {
           index++
           continue
         }
-        const {
-          subtotal,
-          dataKey,
-          summaryConfig,
-          overallOrder,
-          diySubtotal
-        } = content
-        // 如果显示每页合计,那么table高度多预留一行高度
-        const subtotalTrHeight = subtotal.show ? getSumTrHeight(subtotal) : 0
-        // 如果显示整单合计,那么table高度多预留一行高度
-        const overallOrderTrHeight = overallOrder?.show
-          ? getOverallOrderTrHeight(overallOrder)
-          : 0
-        // 如果每页合计(新的),那么table高度多预留一行高度
-        const pageSummaryTrHeight =
-          summaryConfig?.pageSummaryShow && !isMultiTable(dataKey) // 双栏table没有每页合计
-            ? getSumTrHeight(summaryConfig)
-            : 0
-
-        // 如果显示自定义每页合计,那么table高度多预留一行高度
-        const diySubtotalTrHeight = diySubtotal?.show
-          ? getOverallOrderTrHeight(diySubtotal) // 使用相同的计算方式
-          : 0
-
-        // 每个表格都具有的高度
-        const allTableHaveThisHeight =
-          table.head.height +
-          subtotalTrHeight +
-          pageSummaryTrHeight +
-          overallOrderTrHeight +
-          diySubtotalTrHeight
+        const { dataKey } = content
+        // 每个表格都具有的高度（表头 + 各类合计行），提取成方法供填充基准复用同一口径
+        const allTableHaveThisHeight = this.getTableAllHaveHeight(index)
 
         /** 当前page页面的最小高度 */
         const currentPageMinimumHeight =
@@ -405,6 +379,8 @@ class PrinterStore {
         const heights = [
           ...this.getNormalTableBodyHeights(table.body.heights, dataKey)
         ]
+        // 保留引用：该数组会被明细拆分 splice，填充基准需要用拆分后的行高
+        splicedHeightsMap[index] = heights
         const tableData = tableDataMap[dataKey] || []
         // 表格行的索引,用于table.slice(begin, end), 分割到不同页面中
         let begin = 0
@@ -606,13 +582,125 @@ class PrinterStore {
       currentPageHeight += this.getSignHeight()
     }
 
-    this.remainPageHeight = Math.max(
-      0,
-      Math.round(pageHeight - currentPageHeight)
+    // 行数填充基准：优先取「填充表格最后一段所在页」的剩余高度（表格底部与该页
+    // 可用底边之间的空白）。旧口径固定取末页剩余，当填充表格不在末页（下方内容
+    // 被挤到下一页）时，行数按末页空间换算会超出所在页容量：多出的空行被切到
+    // 下一页渲染成空表格，或把同页后续表格挤到下一页。
+    // 填充基准不做 Math.round 向上取整，避免整行边界多算 ≤1px 导致重分页时溢出
+    const fillRemainHeight = this.computeFillTableRemainHeight(
+      pages,
+      pageHeight,
+      heightMap,
+      splicedHeightsMap
     )
+    this.remainPageHeight =
+      fillRemainHeight != null
+        ? Math.max(0, fillRemainHeight)
+        : Math.max(0, Math.round(pageHeight - currentPageHeight))
     this.isSave = false
     this.config.isSave = false
     this.repackVerticalMultiByPages()
+  }
+
+  /** 表格固定高度：表头 + 每页/整单/自定义合计行（不含数据行），与 computedPages 分页口径一致 */
+  getTableAllHaveHeight(contentIndex) {
+    const table = this.tablesInfo[`contents.table.${contentIndex}`]
+    if (!table?.head) return 0
+    const content = this.config.contents[contentIndex]
+    const {
+      subtotal,
+      dataKey,
+      summaryConfig,
+      overallOrder,
+      diySubtotal
+    } = content
+    // 如果显示每页合计,那么table高度多预留一行高度
+    const subtotalTrHeight = subtotal.show ? getSumTrHeight(subtotal) : 0
+    // 如果显示整单合计,那么table高度多预留一行高度
+    const overallOrderTrHeight = overallOrder?.show
+      ? getOverallOrderTrHeight(overallOrder)
+      : 0
+    // 如果每页合计(新的),那么table高度多预留一行高度
+    const pageSummaryTrHeight =
+      summaryConfig?.pageSummaryShow && !isMultiTable(dataKey) // 双栏table没有每页合计
+        ? getSumTrHeight(summaryConfig)
+        : 0
+    // 如果显示自定义每页合计,那么table高度多预留一行高度
+    const diySubtotalTrHeight = diySubtotal?.show
+      ? getOverallOrderTrHeight(diySubtotal) // 使用相同的计算方式
+      : 0
+
+    return (
+      table.head.height +
+      subtotalTrHeight +
+      pageSummaryTrHeight +
+      overallOrderTrHeight +
+      diySubtotalTrHeight
+    )
+  }
+
+  /** 行数填充目标表格在 contents 中的索引（对齐 tableConfig 的解析口径），无法解析返回 null */
+  getFillTableContentIndex() {
+    const { autoFillConfig } = this.config
+    // checked 为 false 时 region 也保留着（编辑器开关来回切），此时同样能定位，
+    // 让基准在「未开启填充」的分页里也保持正确口径
+    if (!this.selectedRegion && !autoFillConfig?.region) return null
+    const region = this.selectedRegion || autoFillConfig.region
+    const contentIndex = Number(region.split('.')[2])
+    const content = this.config.contents[contentIndex]
+    if (!content || !_.has(content, 'dataKey')) return null
+    return contentIndex
+  }
+
+  /**
+   * 填充表格最后一段所在页的剩余高度（表格底部到该页可用底边的空白）。
+   * 高度口径与 computedPages 一致：页眉页脚 + 该页各内容
+   * （表格固定高度 + 分段行高 / panel 实测高），所在页为末页时再扣签名区。
+   * 定位不到填充表格（未配置 / 表格无数据被跳过）时返回 null，由调用方退回旧口径。
+   */
+  computeFillTableRemainHeight(
+    pages,
+    pageHeight,
+    heightMap,
+    splicedHeightsMap
+  ) {
+    const fillIndex = this.getFillTableContentIndex()
+    if (fillIndex == null || !pages?.length) return null
+
+    // 定位填充表格最后一个分段所在的页（一个表格每页至多一个分段）
+    let pageIndex = -1
+    for (let i = pages.length - 1; i >= 0; i--) {
+      if (
+        (pages[i] || []).some(
+          panel => panel?.type === 'table' && panel.index === fillIndex
+        )
+      ) {
+        pageIndex = i
+        break
+      }
+    }
+    if (pageIndex < 0) return null
+
+    // 按分页同一套口径累计该页已用高度：表格下方还有内容时一并计入，
+    // 填充就只会补「表格与后续内容之间」的空隙，不会把它们挤到下一页
+    let used = heightMap.header + heightMap.footer
+    ;(pages[pageIndex] || []).forEach(panel => {
+      if (panel.type === 'table') {
+        const heights = splicedHeightsMap[panel.index] || []
+        used += this.getTableAllHaveHeight(panel.index)
+        for (let r = panel.begin; r < panel.end; r++) {
+          used += heights[r] || 0
+        }
+      } else {
+        used += heightMap[`contents.panel.${panel.index}`] || 0
+      }
+    })
+
+    // 签名只渲染在最后一页，填充所在页为末页时同样要预留
+    const signReserve =
+      pageIndex === pages.length - 1 ? this.getSignHeight() : 0
+    const remain = pageHeight - used - signReserve
+    return Number.isFinite(remain) ? remain : null
   }
 
   getTablePageRanges(contentIndex, rows) {

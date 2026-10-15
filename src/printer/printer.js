@@ -100,6 +100,13 @@ class Printer extends React.Component {
       await this.props.printerStore.setFillIndex(nextProps.fillIndex)
       await this.props.printerStore.setData(nextProps.data)
       await this.props.printerStore.setReady(true)
+      // 与 componentDidMount 同序：先按当前数据分页拿到行数填充基准，再补空行、
+      // 按补空后的数据重新分页。缺前置分页时 changeTableData 只能用上一轮
+      // （可能已含空行）的 remainPageHeight 换算行数，开关填充时行数会偏小或偏大
+      await this.props.printerStore.computedPages()
+      // 把「未补空」基准回报给编辑器，与挂载流程同口径
+      this.props.getremainpageHeight &&
+        this.props.getremainpageHeight(this.props.printerStore.remainPageHeight)
       await this.props.printerStore.changeTableData()
       await this.props.printerStore.computedPages()
     }
