@@ -19,14 +19,33 @@ export function buildDataKey(prefix, suffix) {
   return `${prefix}${suffix}`
 }
 
-/** 下拉选中「按明细单行」时的 value（detail_one_row） */
+/** 下拉选中「按明细单行」时的 value（detail_one_row），可带 category/multi 等后缀 */
 export function isDetailOneRowSelectKey(dataKey) {
-  return getDataKeySuffix(dataKey) === 'detail_one_row'
+  const suffix = getDataKeySuffix(dataKey)
+  return suffix === 'detail_one_row' || suffix.startsWith('detail_one_row_')
 }
 
+/** 独立滚动明细单行（sku/address），可带 category/multi 等后缀 */
 export function isIndependentRolDataKey(dataKey) {
   const suffix = getDataKeySuffix(dataKey)
-  return suffix === 'independent_rol_sku' || suffix === 'independent_rol_address'
+  return (
+    suffix === 'independent_rol_sku' ||
+    suffix === 'independent_rol_address' ||
+    suffix.startsWith('independent_rol_sku_') ||
+    suffix.startsWith('independent_rol_address_')
+  )
+}
+
+/**
+ * 从现有 dataKey 抽出可叠加修饰后缀（category / multi）
+ * 用于切换 goods/merchant 排序时保留右键「商品分类」「双栏」状态
+ */
+export function getDataKeyModifierSuffix(dataKey) {
+  const parts = getDataKeySuffix(dataKey).split('_').filter(Boolean)
+  const modifiers = []
+  if (parts.includes('category')) modifiers.push('category')
+  if (parts.includes('multi')) modifiers.push('multi')
+  return modifiers.length ? `_${modifiers.join('_')}` : ''
 }
 
 export function isLastColDataKey(dataKey) {

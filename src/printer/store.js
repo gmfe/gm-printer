@@ -7,7 +7,10 @@ import {
   getArrayMid,
   getOverallOrderTrHeight
 } from '../util'
-import { isIndependentRolDataKey } from '../common/data_key_util'
+import {
+  isDetailOneRowSelectKey,
+  isIndependentRolDataKey
+} from '../common/data_key_util'
 import _ from 'lodash'
 import Big from 'big.js'
 import { Tip } from '../components'
@@ -628,13 +631,12 @@ class PrinterStore {
    */
   templateTableRowSpan(text, dataKey, index, begin) {
     try {
-      // 采购 / 分拣「按明细单行」展开后才做合并单元格（后缀 independent_rol_*）
+      // 采购 / 分拣「按明细单行」展开后才做合并单元格（后缀 independent_rol_* / detail_one_row_*，含 category）
       const canMerge =
         isIndependentRolDataKey(dataKey) ||
+        isDetailOneRowSelectKey(dataKey) ||
         dataKey === 'taxRateSales' ||
-        dataKey === 'ordinary' ||
-        dataKey === 'purchase_detail_one_row' ||
-        dataKey === 'sorting_detail_detail_one_row'
+        dataKey === 'ordinary'
       if (!canMerge) {
         return null
       }

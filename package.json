@@ -22,6 +22,11 @@
   },
   "author": "",
   "license": "ISC",
+  "files": [
+    "src",
+    "locales",
+    "postcss.config.js"
+  ],
   "bugs": {
     "url": "https://github.com/gmfe/gm-printer/issues"
   },
