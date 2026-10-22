@@ -766,7 +766,10 @@ class EditorStore {
           }
         })
         break
-      case 'image':
+      case 'image': {
+        // 有原始比例时按比例初始化高度,避免插入即变形;无 ratio(降级/旧链路)保持 100x100
+        const w = 100
+        const h = ratio ? Math.round(w / ratio) : w
         blocks.push({
           type: 'image',
           link: link,
@@ -776,11 +779,12 @@ class EditorStore {
             position: 'absolute',
             left: pos.left || '0px',
             top: pos.top || '0px',
-            width: '100px',
-            height: '100px'
+            width: w + 'px',
+            height: h + 'px'
           }
         })
         break
+      }
       case 'counter':
         blocks.push({
           type: 'counter',
