@@ -7,6 +7,7 @@ import editStore from './store'
 import { observer, inject } from 'mobx-react'
 import EditorTitle from '../common/editor_title'
 import EditorSelect from '../common/editor_select'
+import SortSettingField from '../common/editor_sort_setting'
 import EditorField from '../common/editor_edit_field'
 import EditorAddField from '../common/editor_add_field'
 import EditorCutomizedConfig from '../common/editor_customize_config'
@@ -55,6 +56,7 @@ class Editor extends React.Component {
             <Gap height='10px' />
             <EditorSelect />
             <Gap height='5px' />
+            <SortSettingField addFields={addFields} />
             <EditorCutomizedConfig />
             <Gap height='5px' />
             <EditorField showNewDate={showNewDate} />

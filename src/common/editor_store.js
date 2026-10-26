@@ -238,7 +238,7 @@ class EditorStore {
           }
         }).join('/')
       } else {
-        return v.style ? v.style.height : ''
+        return v && v.style ? v.style.height : ''
       }
     }).join('_')
   }
@@ -1575,7 +1575,8 @@ class EditorStore {
     const table = this.config.contents[arr[2]]
     const prefix = getDataKeyPrefix(table.dataKey)
     // 切换「按商品/按商户排序」时保留已开启的商品分类、双栏后缀，避免点完分类再切排序把 category 冲掉
-    const baseSuffix = dataKey === 'goods' ? 'independent_rol_sku' : 'independent_rol_address'
+    const baseSuffix =
+      dataKey === 'goods' ? 'independent_rol_sku' : 'independent_rol_address'
     const nextDataKey = buildDataKey(
       prefix,
       `${baseSuffix}${getDataKeyModifierSuffix(table.dataKey)}`
@@ -1606,7 +1607,10 @@ class EditorStore {
 
       const { dataKey } = table
       // independent_rol_* / detail_one_row_*（含 category、multi 后缀）在下拉里都映射回「按采购明细单行」
-      if (isIndependentRolDataKey(dataKey) || isDetailOneRowSelectKey(dataKey)) {
+      if (
+        isIndependentRolDataKey(dataKey) ||
+        isDetailOneRowSelectKey(dataKey)
+      ) {
         return buildDataKey(getDataKeyPrefix(dataKey), 'detail_one_row')
       }
       return dataKey
