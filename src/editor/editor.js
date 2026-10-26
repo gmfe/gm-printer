@@ -90,7 +90,7 @@ class Editor extends React.Component {
             <SpecialField addFields={addFields} mockData={mockData} />
             <SpecialOtherField addFields={addFields} mockData={mockData} />
             <Gap height='5px' />
-            <SortSettingField addFields={addFields} showOrderSort />
+            <SortSettingField showOrderSort />
             <EditorCutomizedConfig />
             <Gap height='5px' />
             <EditorField

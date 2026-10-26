@@ -7,12 +7,12 @@ import { Flex, Select, Option } from '../components'
 import { Title, Gap, Radio } from './component'
 
 // 排序方式常量，与宿主 sort_setting_util / 后端 parse_sort_setting 对齐
-// product_row_sort.field：'' 不排序 / tax_rate 税率 / box_num 箱号 / custom 行号（自定义字段）
+// product_row_sort.field：'' 不排序 / tax_rate 税率 / box_num 箱号 / sort_num 行号
 const SORT_FIELD_LIST = [
   { value: '', text: i18next.t('不排序') },
   { value: 'tax_rate', text: i18next.t('税率') },
   { value: 'box_num', text: i18next.t('箱号') },
-  { value: 'custom', text: i18next.t('行号') }
+  { value: 'sort_num', text: i18next.t('行号') }
 ]
 
 const SORT_DIRECTION_LIST = [
@@ -49,15 +49,6 @@ class SortSettingField extends React.Component {
 
   handleFieldChange = field => {
     const productRowSort = { ...this.getProductRowSort(), field }
-    if (field !== 'custom') {
-      // 切离行号排序时清掉脏数据
-      delete productRowSort.custom_field_key
-    } else if (!productRowSort.custom_field_key) {
-      // 选中「行号」默认取第一个自定义字段（行号 1）
-      const customFields =
-        (this.props.addFields && this.props.addFields.sortCustomFields) || []
-      productRowSort.custom_field_key = customFields[0] && customFields[0].id
-    }
     this.setSortSetting({
       ...this.props.editStore.config.sort_setting,
       product_row_sort: {
@@ -141,7 +132,6 @@ class SortSettingField extends React.Component {
 }
 
 SortSettingField.propTypes = {
-  addFields: PropTypes.object.isRequired,
   showOrderSort: PropTypes.bool,
   editStore: PropTypes.object
 }

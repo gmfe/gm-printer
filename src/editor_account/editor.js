@@ -56,7 +56,7 @@ class Editor extends React.Component {
             <Gap height='10px' />
             <EditorSelect />
             <Gap height='5px' />
-            <SortSettingField addFields={addFields} />
+            <SortSettingField />
             <EditorCutomizedConfig />
             <Gap height='5px' />
             <EditorField showNewDate={showNewDate} />
