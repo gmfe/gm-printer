@@ -242,7 +242,7 @@ class EditorStore {
           }
         }).join('/')
       } else {
-        return v.style ? v.style.height : ''
+        return v && v.style ? v.style.height : ''
       }
     }).join('_')
   }
