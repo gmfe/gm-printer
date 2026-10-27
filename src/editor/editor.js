@@ -49,7 +49,8 @@ class Editor extends React.Component {
       showNewDate,
       mockData,
       mergeClassificationAndLabel,
-      customTableConfigs
+      customTableConfigs,
+      fontFamilies
     } = this.props
 
     return (
@@ -85,7 +86,7 @@ class Editor extends React.Component {
               <span>{':' + i18next.t('商户配送单')}</span>
             </>
             <Gap height='10px' />
-            <EditorSelect showFontFamily />
+            <EditorSelect showFontFamily fontFamilies={fontFamilies} />
             <Gap height='5px' />
             <SpecialField addFields={addFields} mockData={mockData} />
             <SpecialOtherField addFields={addFields} mockData={mockData} />
@@ -125,7 +126,10 @@ Editor.propTypes = {
   addFields: PropTypes.object.isRequired,
   showNewDate: PropTypes.bool,
   mergeClassificationAndLabel: PropTypes.bool,
-  customTableConfigs: PropTypes.array
+  customTableConfigs: PropTypes.array,
+  // 自定义打印字体列表（扩展接口）：[{ value: 'KaiTi, Kaiti SC, 楷体', text: '楷体' }]，
+  // 不传用内置 fontFamilyList；value 建议「Windows 名, macOS 名, 中文名」三段 fallback
+  fontFamilies: PropTypes.array
 }
 
 Editor.defaultProps = {
