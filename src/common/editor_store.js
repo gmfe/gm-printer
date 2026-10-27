@@ -238,7 +238,9 @@ class EditorStore {
           }
         }).join('/')
       } else {
-        return v.style ? v.style.height : ''
+        // 空值守卫（同 dev 4d5b401）：station 集成分支会给无配置模板塞 sort_setting: null 等空键，
+        // 无守卫时 null.style 崩（TypeError: Cannot read properties of null）
+        return v && v.style ? v.style.height : ''
       }
     }).join('_')
   }
