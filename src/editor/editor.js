@@ -85,7 +85,7 @@ class Editor extends React.Component {
               <span>{':' + i18next.t('商户配送单')}</span>
             </>
             <Gap height='10px' />
-            <EditorSelect />
+            <EditorSelect showFontFamily />
             <Gap height='5px' />
             <SpecialField addFields={addFields} mockData={mockData} />
             <SpecialOtherField addFields={addFields} mockData={mockData} />
