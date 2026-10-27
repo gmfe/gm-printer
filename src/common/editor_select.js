@@ -56,6 +56,7 @@ class EditorSelector extends React.Component {
       computedSelectedRegionTip,
       selectedRegion
     } = this.props.editStore
+    const { showFontFamily } = this.props
     const isDIY = page.type === 'DIY'
     const isLongPrint = page.type === LONG_PRINT
     return (
@@ -125,20 +126,22 @@ class EditorSelector extends React.Component {
           </Flex>
         )}
 
-        <Flex alignCenter className='gm-padding-top-5'>
-          <div>{i18next.t('打印字体')}：</div>
-          <Select
-            className='gm-printer-edit-select'
-            value={page.fontFamily || ''}
-            onChange={this.handleFontFamily}
-          >
-            {_.map(fontFamilyList, v => (
-              <Option key={v.value} value={v.value}>
-                {v.text}
-              </Option>
-            ))}
-          </Select>
-        </Flex>
+        {showFontFamily && (
+          <Flex alignCenter className='gm-padding-top-5'>
+            <div>{i18next.t('打印字体')}：</div>
+            <Select
+              className='gm-printer-edit-select'
+              value={page.fontFamily || ''}
+              onChange={this.handleFontFamily}
+            >
+              {_.map(fontFamilyList, v => (
+                <Option key={v.value} value={v.value}>
+                  {v.text}
+                </Option>
+              ))}
+            </Select>
+          </Flex>
+        )}
 
         <Flex alignCenter className='gm-padding-top-5'>
           <div>{i18next.t('选择区域')}：</div>
@@ -209,10 +212,12 @@ class EditorSelector extends React.Component {
 
 EditorSelector.propTypes = {
   isPurchase: PropTypes.bool,
+  showFontFamily: PropTypes.bool,
   editStore: PropTypes.object
 }
 EditorSelector.defaultProps = {
-  isPurchase: false
+  isPurchase: false,
+  showFontFamily: false
 }
 
 export default EditorSelector
