@@ -31,6 +31,7 @@ class Page extends React.Component {
     const {
       size: { width, height },
       pageStyle,
+      fontFamily,
       type
     } = printerStore.config.page
     // 统一减2毫米,防止计算误差溢出
@@ -43,6 +44,8 @@ class Page extends React.Component {
         })}
         style={{
           ...pageStyle,
+          // 模板级自定义字体（station 配送单模板 page.fontFamily）：整页生效，未配置时保持浏览器默认
+          ...(fontFamily ? { fontFamily } : undefined),
           boxSizing: 'content-box',
           width: `calc(${width} - ${paddingLeft} - ${paddingRight})`,
           padding: `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`,

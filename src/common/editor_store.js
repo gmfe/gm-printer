@@ -537,6 +537,15 @@ class EditorStore {
     }
   }
 
+  // 模板级打印字体（page.fontFamily），空值清掉字段恢复默认字体
+  @action
+  setPageFontFamily(value) {
+    this.config.page = {
+      ...this.config.page,
+      fontFamily: value || undefined
+    }
+  }
+
   @action
   setSelected(selected = null) {
     this.selected = selected

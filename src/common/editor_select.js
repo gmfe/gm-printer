@@ -3,7 +3,7 @@ import React from 'react'
 import { observer, inject } from 'mobx-react'
 import { Flex, Option, Select, RadioGroup, Radio } from '../components'
 import { InputWithUnit } from '../common/component'
-import { pageTypeMap, printDirectionList, LONG_PRINT } from '../config'
+import { pageTypeMap, printDirectionList, fontFamilyList, LONG_PRINT } from '../config'
 import _ from 'lodash'
 import { dispatchMsg } from '../util'
 import PropTypes from 'prop-types'
@@ -29,6 +29,10 @@ class EditorSelector extends React.Component {
 
   handlePrintDirection = value => {
     this.props.editStore.setPagePrintDirection(value)
+  }
+
+  handleFontFamily = value => {
+    this.props.editStore.setPageFontFamily(value)
   }
 
   handleSelectedRegion = selected => {
@@ -120,6 +124,21 @@ class EditorSelector extends React.Component {
             </Select>
           </Flex>
         )}
+
+        <Flex alignCenter className='gm-padding-top-5'>
+          <div>{i18next.t('打印字体')}：</div>
+          <Select
+            className='gm-printer-edit-select'
+            value={page.fontFamily || ''}
+            onChange={this.handleFontFamily}
+          >
+            {_.map(fontFamilyList, v => (
+              <Option key={v.value} value={v.value}>
+                {v.text}
+              </Option>
+            ))}
+          </Select>
+        </Flex>
 
         <Flex alignCenter className='gm-padding-top-5'>
           <div>{i18next.t('选择区域')}：</div>
