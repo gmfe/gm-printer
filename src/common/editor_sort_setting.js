@@ -23,8 +23,7 @@ const SORT_DIRECTION_LIST = [
 // order_sort.type：仅商户配送单模板提供（账户模板不渲染该组）
 const ORDER_SORT_LIST = [
   { value: 'none', text: i18next.t('不排序') },
-  { value: 'asc', text: i18next.t('按订单时间升序') },
-  { value: 'desc', text: i18next.t('按订单时间降序') }
+  { value: 'asc', text: i18next.t('按订单时间升序') }
 ]
 
 /**
