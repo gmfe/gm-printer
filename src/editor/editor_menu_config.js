@@ -49,7 +49,8 @@ class Editor extends React.Component {
       mockData,
       mergeClassificationAndLabel,
       customTableConfigs,
-      menuConfig
+      menuConfig,
+      fontFamilies
     } = this.props
     return (
       <div className='gm-printer-edit'>
@@ -84,7 +85,7 @@ class Editor extends React.Component {
               <span>{':' + i18next.t('商户配送单')}</span>
             </>
             <Gap height='10px' />
-            <EditorSelect />
+            <EditorSelect showFontFamily fontFamilies={fontFamilies} />
             <Gap height='5px' />
             <SpecialField addFields={addFields} mockData={mockData} />
             <SpecialOtherField addFields={addFields} mockData={mockData} />
@@ -126,6 +127,8 @@ Editor.propTypes = {
   showNewDate: PropTypes.bool,
   mergeClassificationAndLabel: PropTypes.bool,
   customTableConfigs: PropTypes.array,
+  // 自定义打印字体列表（扩展接口），透传给 EditorSelect；不传用内置 fontFamilyList
+  fontFamilies: PropTypes.array,
   menuConfig: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.string),
     PropTypes.object
