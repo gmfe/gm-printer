@@ -13,7 +13,7 @@ import {
 } from '../util'
 import { inject, observer } from 'mobx-react'
 import classNames from 'classnames'
-import { MULTI_SUFFIX } from '../config'
+import { LONG_PRINT, MULTI_SUFFIX } from '../config' // 识别长纸模式，跳过分页重测。
 import SpecialTr from './table_special_tr'
 import CategoryTr from './table_category_tr'
 import SubtotalTr from './table_subtotal_tr'
@@ -22,6 +22,31 @@ import OverallOrder from './table_overallOrder_tr'
 import DiyOverallOrder from './table_diy_overallOrder_tr'
 import DiySummary from './table_diy_summary_tr'
 // import { toJS } from 'mobx'
+
+const getTdStyle = (width, style = {}) => {
+  // 原函数提取共享，测量与输出使用同一套规则。
+  const { fontSize } = style // 沿用单元格字体大小计算最小宽度。
+  let tdStyle = {} // 未取得测量宽度时，保持原来的空样式。
+  let minWidth = 24 // 保留原有的默认最小列宽 24px。
+
+  if (!width) return tdStyle // 首次渲染尚无列宽，不额外约束自动布局。
+  if (fontSize) minWidth = _.parseInt(fontSize) * 2 // 保留原有的双字符最小宽度。
+  if (width >= 150) {
+    // 保留原来的 150px 宽列分支。
+    tdStyle = {
+      // 宽列沿用最小宽度约束。
+      minWidth: width // 以原始实测列宽作为下限。
+    } // 宽列继续不设置 width，保留原布局行为。
+  } else {
+    // 窄列继续使用原有的两项宽度约束。
+    tdStyle = {
+      // 同时保留最小宽度和测量宽度。
+      minWidth, // 使用默认值或按字体计算的下限。
+      width // 沿用原始实测宽度，不重新采集列宽。
+    } // 保持窄列的原有样式结果。
+  } // 两个分支都与提取前的计算规则一致。
+  return tdStyle // 返回基础样式，调用方仍可用模板样式覆盖。
+} // 测量和最终输出共用此函数，避免两份规则不一致。
 
 @inject('printerStore')
 @observer
@@ -43,13 +68,43 @@ class Table extends React.Component {
       const ths = tHead.querySelectorAll('th') || []
       const trs = $table.querySelectorAll('tbody tr') || []
       const detailsDiv = $table.querySelectorAll('tr td .b-table-details')
-      // 问题出现在这里
+      const widths = _.map(ths, th => getWidth(th)) // 先保存原列宽，最终输出仍使用这份数据。
+      // 仅重测多栏分页行高；输出仍使用原始列宽和原有 auto 布局。
+      if (
+        // 下面的样式补齐仅用于多栏的分页测量 DOM。
+        isMultiTable(this.props.config.dataKey) && // 仅双栏、三栏等多栏表格执行。
+        printerStore.config.batchPrintConfig !== 2 && // 连续打印跳过此次重测。
+        printerStore.config.page.type !== LONG_PRINT // 长纸打印跳过此次重测。
+      ) {
+        // 只有多栏普通分页进入；单栏沿用原测量流程。
+        const columns = this.getColumns() // 获取展开后的列，包含双栏、三栏。
+        const applyCellStyle = (cell, index, style = {}) => {
+          // 给测量单元格补齐原打印样式。
+          _.forEach(getTdStyle(widths[index], style), (value, key) => {
+            // 复用原 width/minWidth 规则。
+            if (!(key in style)) cell.style[key] = `${value}px` // 保留模板覆盖，数值转 CSS 像素。
+          }) // 模板显式设置的属性不会被测量样式覆盖。
+        } // 所有单元格都按同一套规则补样式。
+        _.forEach(ths, (th, i) => {
+          // 按展开后的顺序处理表头。
+          applyCellStyle(th, i, columns[i].headStyle) // 让表头测量样式与原输出一致。
+        }) // 补齐表头约束，消除换行造成的高度误差。
+        _.forEach(
+          // 仅处理带测量标记的普通数据单元格。
+          $table.querySelectorAll('tbody td[data-column-index]'), // 避开分类、合计和自定义行。
+          td => {
+            // 使用显式列号，避免多栏和合并单元格导致错位。
+            const i = Number(td.dataset.columnIndex) // 将 DOM 属性还原为展开后的列索引。
+            applyCellStyle(td, i, columns[i].style) // 正文测量也使用对应列的原样式。
+          } // 当前单元格样式补齐完成。
+        ) // 完成所有样式写入后，再统一读取下面的高度。
+      } // 临时测量样式不会带入最终的分页 DOM。
       printerStore.setHeight(name, getHeight($table))
 
       printerStore.setTable(name, {
         head: {
           height: getHeight(tHead),
-          widths: _.map(ths, th => getWidth(th))
+          widths // 保存补样式前的原列宽，避免把重测结果反馈到输出布局。
         },
         body: {
           heights: _.map(trs, tr => getHeight(tr)),
@@ -208,26 +263,6 @@ class Table extends React.Component {
         </>
       )
     }
-    const getTdStyle = (index, style = {}) => {
-      const width = thWidths[index]
-      const { fontSize } = style
-      let tdStyle = {}
-      let minWidth = 24
-
-      if (!width) return tdStyle
-      if (fontSize) minWidth = _.parseInt(fontSize) * 2
-      if (width >= 150) {
-        tdStyle = {
-          minWidth: width
-        }
-      } else {
-        tdStyle = {
-          minWidth,
-          width
-        }
-      }
-      return tdStyle
-    }
 
     const headText = col => {
       if (dataKey === 'taxRateSales') {
@@ -263,7 +298,7 @@ class Table extends React.Component {
                 data-name={getTableColumnName(name, col.index)}
                 draggable
                 style={{
-                  ...getTdStyle(i, col.headStyle),
+                  ...getTdStyle(thWidths[i], col.headStyle), // 显式传原列宽，沿用原表头规则。
                   ...col.headStyle
                 }}
                 className={classNames({
@@ -390,9 +425,15 @@ class Table extends React.Component {
                     return (
                       <td
                         key={j}
+                        data-column-index={
+                          // 仅多栏测量时记录列号，单栏和最终输出都不保留。
+                          isMultiTable(dataKey) && !printerStore.ready
+                            ? j
+                            : undefined
+                        }
                         data-name={getTableColumnName(name, col.index)}
                         style={{
-                          ...getTdStyle(j, col.style),
+                          ...getTdStyle(thWidths[j], col.style), // 显式传原列宽，沿用原正文规则。
                           ...col.style
                         }}
                         {...(rowSpan > 1 && {

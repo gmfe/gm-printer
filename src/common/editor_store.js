@@ -242,7 +242,8 @@ class EditorStore {
           }
         }).join('/')
       } else {
-        return v && v.style ? v.style.height : ''
+        // 可选顶层配置为 null 时按无样式处理，避免计算模板 key 时读取 null.style 崩溃。
+        return v?.style ? v.style.height : ''
       }
     }).join('_')
   }
