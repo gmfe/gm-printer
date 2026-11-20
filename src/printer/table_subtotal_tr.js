@@ -45,17 +45,34 @@ const SubtotalTr = props => {
     isSomeSubtotalTr
   } = props
   const tableData = printerStore.data._table[getDataKey(dataKey, arrange)] || []
-  // 计算合计
+  // 脱敏值常量：无成本权限时后端金额字段返回 '***' 字面量，进 Big 会抛 Invalid number
+  const MASKED = '***'
+  const isMasked = v => v === MASKED
+  // 大写金额：脱敏值返回空串（'***' 转大写会得到错误的「零元整」），小写 '***' 已表明不可见
+  const upperText = v =>
+    v === MASKED ? '' : '大写：' + coverDigit2Uppercase(v)
+
+  // 计算合计（按 _origin 原始字段求和）
+  /// 兼容保留：与 sumData2 平行的旧求和路径，当前无调用
   const sumData = (list, field) => {
-    return _.reduce(
+    const result = _.reduce(
       list,
       (a, b) => {
-        let result = a
-
         const _origin = b._origin || {}
         const _origin2 = b['_origin' + MULTI_SUFFIX] || {}
         const _origin3 = b['_origin' + MULTI_SUFFIX3] || {}
 
+        // 任一行金额（含多单位附加行）被脱敏时小计整体脱敏
+        if (
+          a === MASKED ||
+          isMasked(_origin[field]) ||
+          isMasked(_origin2[field]) ||
+          isMasked(_origin3[field])
+        ) {
+          return MASKED
+        }
+
+        let result = a
         result = a.plus(_origin[field] || 0)
         if (_origin2[field]) {
           result = result.plus(_origin2[field])
@@ -66,19 +83,29 @@ const SubtotalTr = props => {
         return result
       },
       Big(0)
-    ).toFixed(2)
+    )
+    return result === MASKED ? MASKED : result.toFixed(2)
   }
 
-  // 计算合计
+  // 计算合计（按行展示字段求和）
   const sumData2 = (list, field) => {
     // 兼容之前
     if (field === 'total_item_price') field = '下单金额'
     if (field === 'real_item_price') field = '出库金额'
     if (field === 'settle_money2') field = '结算金额'
     if (field === 'total_money2') field = '金额'
-    return _.reduce(
+    const result = _.reduce(
       list,
       (a, b) => {
+        // 任一行金额（含多单位附加列）被脱敏时小计整体脱敏
+        if (
+          a === MASKED ||
+          isMasked(b[field]) ||
+          isMasked(b?.[field + MULTI_SUFFIX]) ||
+          isMasked(b?.[field + MULTI_SUFFIX3])
+        ) {
+          return MASKED
+        }
         let result = a
         result = a.plus(b[field] || 0)
         if (b?.[field + MULTI_SUFFIX]) {
@@ -90,7 +117,8 @@ const SubtotalTr = props => {
         return result
       },
       Big(0)
-    ).toFixed(2)
+    )
+    return result === MASKED ? MASKED : result.toFixed(2)
   }
 
   const getData = field => {
@@ -113,7 +141,7 @@ const SubtotalTr = props => {
       for (const name in sum) {
         const price = sum[name]
         const priceUpperCase = get(subtotal, 'needUpperCase') // needUpperCase在初始模板中undefined,所以必须用这个方法
-          ? '大写：' + coverDigit2Uppercase(price)
+          ? upperText(price)
           : ''
         if (displayName) {
           subtotalStr += `${name}&nbsp;${price}&nbsp;&nbsp;&nbsp;${priceUpperCase}&nbsp;&nbsp;&nbsp;&nbsp;`
@@ -177,10 +205,8 @@ const SubtotalTr = props => {
                   {subtotal?.needUpperCase && (
                     <span>
                       {item.type === 'useSummarize'
-                        ? '大写：' +
-                          coverDigit2Uppercase(getData(item.valueField))
-                        : '大写：' +
-                          coverDigit2Uppercase(sumData2(list, item.valueField))}
+                        ? upperText(getData(item.valueField))
+                        : upperText(sumData2(list, item.valueField))}
                     </span>
                   )}
                 </div>
@@ -208,10 +234,7 @@ const SubtotalTr = props => {
                     </span>
                     {subtotal?.needUpperCase &&
                       extra.type === 'useSummarize' && (
-                        <span>
-                          {'大写：' +
-                            coverDigit2Uppercase(getData(extra.valueField))}
-                        </span>
+                        <span>{upperText(getData(extra.valueField))}</span>
                       )}
                   </div>
                 </div>
@@ -259,13 +282,9 @@ const SubtotalTr = props => {
                     {subtotal?.needUpperCase && ( // 是否需要大写金额
                       <span>
                         {item.type === 'useSummarize'
-                          ? '大写：' +
-                            coverDigit2Uppercase(getData(item.valueField))
+                          ? upperText(getData(item.valueField))
                           : index === 0
-                          ? '大写：' +
-                            coverDigit2Uppercase(
-                              sumData2(list, item.valueField)
-                            )
+                          ? upperText(sumData2(list, item.valueField))
                           : ''}
                       </span>
                     )}

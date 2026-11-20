@@ -49,10 +49,15 @@ class Panel extends React.Component {
       diffY = -diffY
     }
 
+    // 高度不允许拖成负数：负 height 是非法 CSS，浏览器按 0 渲染，
+    // 但分页的配置兜底会取到负值，导致末页预留为负、内容溢出与固定页脚重叠
+    const height =
+      Math.max(0, parseInt(pxAdd(config.style.height, diffY), 10)) + 'px'
+
     dispatchMsg('gm-printer-panel-style-set', {
       name,
       style: {
-        height: pxAdd(config.style.height, diffY)
+        height
       }
     })
   }

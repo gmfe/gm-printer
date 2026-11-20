@@ -3,10 +3,37 @@ import React from 'react'
 import { observer, inject } from 'mobx-react'
 import { Flex, Option, Select, RadioGroup, Radio } from '../components'
 import { InputWithUnit } from '../common/component'
-import { pageTypeMap, printDirectionList, LONG_PRINT } from '../config'
+import { pageTypeMap, printDirectionList, fontFamilyList, LONG_PRINT } from '../config'
 import _ from 'lodash'
 import { dispatchMsg } from '../util'
 import PropTypes from 'prop-types'
+
+/**
+ * 本机字体可用性检测（DOM 宽度法）：
+ * 用同一文本分别以「不存在的字体（强制走浏览器 fallback 默认）」和「目标字体栈」
+ * 离屏渲染量宽，宽度差 >0.5px 说明栈中有字体真实命中（未安装时会 fallback 到与
+ * 假字体相同的系统默认，宽度一致）。基线不能用 monospace：中文等宽字体自身会
+ * fallback 到系统默认，与目标字体栈的 fallback 同源，导致未安装也判 true。
+ */
+const isFontInstalled = (fontFamily) => {
+  if (typeof document === 'undefined' || !fontFamily) return true
+  const host = document.body
+  if (!host) return true
+  const probe = document.createElement('div')
+  probe.textContent = '配送单验收签字汉字测试123'
+  probe.style.cssText =
+    'position:absolute;left:-9999px;top:0;font-size:32px;white-space:nowrap;'
+  const widthOf = (ff) => {
+    probe.style.fontFamily = ff
+    host.appendChild(probe)
+    const w = probe.getBoundingClientRect().width
+    host.removeChild(probe)
+    return w
+  }
+  // 基线：一个肯定不存在的字体名 → 浏览器对中文回落系统默认；目标栈若全未安装，回落结果与之等宽
+  const base = widthOf('GmDefinitelyNotAFont999')
+  return Math.abs(widthOf(fontFamily) - base) > 0.5
+}
 
 @inject('editStore')
 @observer
@@ -31,6 +58,10 @@ class EditorSelector extends React.Component {
     this.props.editStore.setPagePrintDirection(value)
   }
 
+  handleFontFamily = value => {
+    this.props.editStore.setPageFontFamily(value)
+  }
+
   handleSelectedRegion = selected => {
     dispatchMsg('gm-printer-select-region', { selected })
   }
@@ -52,6 +83,7 @@ class EditorSelector extends React.Component {
       computedSelectedRegionTip,
       selectedRegion
     } = this.props.editStore
+    const { showFontFamily, fontFamilies } = this.props
     const isDIY = page.type === 'DIY'
     const isLongPrint = page.type === LONG_PRINT
     return (
@@ -117,6 +149,35 @@ class EditorSelector extends React.Component {
                   {v.text}
                 </Option>
               ))}
+            </Select>
+          </Flex>
+        )}
+
+        {showFontFamily && (
+          <Flex alignCenter className='gm-padding-top-5'>
+            <div>{i18next.t('打印字体')}：</div>
+            <Select
+              className='gm-printer-edit-select'
+              value={page.fontFamily || ''}
+              onChange={this.handleFontFamily}
+            >
+              {_.map(fontFamilies || fontFamilyList, v => {
+                // 非默认字体且本机未安装时，选项标注提示：选中后打印/导出会退化为默认字体
+                const installed = isFontInstalled(v.value)
+                return (
+                  <Option key={v.value} value={v.value}>
+                    {v.text}
+                    {!installed && (
+                      <span
+                        className='gm-text-red gm-padding-left-5'
+                        style={{ fontSize: '11px' }}
+                      >
+                        （本机未安装，将退化默认字体）
+                      </span>
+                    )}
+                  </Option>
+                )
+              })}
             </Select>
           </Flex>
         )}
@@ -190,10 +251,14 @@ class EditorSelector extends React.Component {
 
 EditorSelector.propTypes = {
   isPurchase: PropTypes.bool,
+  showFontFamily: PropTypes.bool,
+  // 自定义打印字体列表（扩展接口）：[{ value, text }]；不传用内置 fontFamilyList
+  fontFamilies: PropTypes.array,
   editStore: PropTypes.object
 }
 EditorSelector.defaultProps = {
-  isPurchase: false
+  isPurchase: false,
+  showFontFamily: false
 }
 
 export default EditorSelector

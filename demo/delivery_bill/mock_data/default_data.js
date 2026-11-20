@@ -1,3 +1,113 @@
+// ⚠️ 临时验证数据（fix_1055068 分类合并错位复现用，勿提交）：
+// 6 个分类按「奇数组 + 偶数组」混合，35 条 + 原熟食类 5 条 = 40 条，足以跨页；
+// 各分类单价不同，串分类时单价即分类指纹，一眼可辨
+const makeDetail = (name, categoryTitle, unitPrice, index) => ({
+  production_time: null,
+  salemenu_price: '1.00',
+  name,
+  real_item_price_without_tax: `${unitPrice.toFixed(2)}`,
+  origin_item_price: unitPrice,
+  outer_id: '',
+  salemenu_id: 'S12731',
+  sale_ratio: 1,
+  remark: null,
+  quantity: 1,
+  category_title_1: categoryTitle,
+  sale_unit_name: '斤',
+  supplier_id: 'T13384',
+  pinlei_title: categoryTitle,
+  desc: '',
+  spu_name: name,
+  total_item_price: unitPrice,
+  std_unit_name: '斤',
+  sale_price_without_tax: `${unitPrice.toFixed(2)}`,
+  tax_rate: 0,
+  org_item_price: unitPrice,
+  saleunit_weighting_quantity: 1,
+  std_sale_price_forsale: unitPrice,
+  std_sale_price: unitPrice,
+  life_time: null,
+  specs: '-',
+  std_unit_name_forsale: '斤',
+  category_title_2: categoryTitle,
+  is_weigh: false,
+  real_is_weight: true,
+  real_item_price: unitPrice,
+  supplier_name: '综合供应商',
+  box_list: [],
+  org_std_sale_price: unitPrice,
+  sale_price: unitPrice,
+  is_price_timing: false,
+  real_weight: 1,
+  purchase_station_id: 'T7936',
+  is_set_tax: 0,
+  id: `D90${String(index).padStart(4, '0')}`,
+  tax: '0.00',
+  org_sale_price: unitPrice,
+  org_std_sale_price_forsale: unitPrice,
+  union_dispatch: true,
+  outstock_quantity: 10,
+  self_pick_money: 20,
+  self_pick_quantity: 30,
+  origin_purchase_quantity: 1,
+  sku_production_date: '2020-12-1',
+  before_change_price_forsale: unitPrice * 2,
+  before_change_price: unitPrice * 2,
+  brand: '品牌',
+  origin_area: '区域',
+  origin_place: '产地',
+  specification_desc: '商品规格',
+  feature_desc: '商品特征',
+  after_sale_desc: '售后标准'
+})
+
+const DRIFT_CASE_CATEGORIES = [
+  // 奇数 1 项：最小触发器（占 2 格，吃掉豆制品第 1 项）
+  { title: '面食类', price: 3.5, names: ['刀削面'] },
+  { title: '豆制品类', price: 4.5, names: ['短中豆', '老豆腐'] },
+  {
+    // 奇数 19 项：跨页大组（占 20 格，吃掉干调前 2 项）
+    title: '蔬菜类',
+    price: 5.5,
+    names: [
+      '大白菜',
+      '上海青',
+      '娃娃菜',
+      '土豆',
+      '黄皮土豆',
+      '洋葱',
+      '红萝卜',
+      '白萝卜',
+      '西兰花',
+      '松花菜',
+      '菜心',
+      '芥兰',
+      '生菜',
+      '油麦菜',
+      '芹菜',
+      '香菜',
+      '韭菜',
+      '蒜苗',
+      '莲藕'
+    ]
+  },
+  {
+    title: '干调类',
+    price: 6.5,
+    names: ['中盐', '莲花味精', '鸡精', '白糖', '生抽', '老抽', '陈醋', '料酒']
+  },
+  // 奇数 3 项（占 4 格，吃掉粮油第 1 项 → 粮油段生出幻影空行）
+  { title: '肉制品类', price: 9.5, names: ['精肉丝', '精肉片', '回民街酱牛肉'] },
+  { title: '粮油类', price: 12.5, names: ['名香古稻大米', '爱菊面粉'] }
+]
+
+const driftCaseDetails = []
+DRIFT_CASE_CATEGORIES.forEach(({ title, price, names }) => {
+  names.forEach(name => {
+    driftCaseDetails.push(makeDetail(name, title, price, driftCaseDetails.length))
+  })
+})
+
 export default {
   signature_image_url: 'https://img.guanmai.cn/order_pic/90f6642568c1e456', // 签名图片
   receive_way: 1,
@@ -35,7 +145,7 @@ export default {
   sale_manager: {
     name: '测试销售经理',
     phone: '13888888888',
-    id: 3676,
+    id: 3676
   },
   id: 'PL8888888',
   refund_money: 0.0,
@@ -49,7 +159,7 @@ export default {
       quantity: 20,
       sale_unit_name: '斤',
       type: 2,
-      unit_price: 98,
+      unit_price: 98
     },
     {
       money: 9998,
@@ -57,7 +167,7 @@ export default {
       quantity: 20,
       sale_unit_name: '斤',
       type: 2,
-      unit_price: 98,
+      unit_price: 98
     },
     {
       money: 66666,
@@ -65,8 +175,8 @@ export default {
       quantity: 20,
       sale_unit_name: '斤',
       type: 3,
-      unit_price: 66,
-    },
+      unit_price: 66
+    }
   ],
   turnovers: [
     {
@@ -76,7 +186,7 @@ export default {
       amount: 100,
       total_price: 123.22,
       unit_name: '框',
-      sku_name: '蒜头',
+      sku_name: '蒜头'
     },
     {
       tname: '框',
@@ -85,7 +195,7 @@ export default {
       amount: 100,
       total_price: 123.22,
       unit_name: '个',
-      sku_name: '南瓜',
+      sku_name: '南瓜'
     },
     {
       tname: '盒子',
@@ -94,8 +204,8 @@ export default {
       amount: 100,
       total_price: 123.22,
       unit_name: '箱',
-      sku_name: '方便面',
-    },
+      sku_name: '方便面'
+    }
   ],
   refund_new: {
     D7557423_4000: [
@@ -106,7 +216,7 @@ export default {
         detail_id: 'D7557423',
         order_detail_id: '4000',
         amount_delta: 253,
-        exception_reason_text: '规格问题',
+        exception_reason_text: '规格问题'
       },
       {
         text: '',
@@ -115,9 +225,9 @@ export default {
         detail_id: 'D7557423',
         order_detail_id: '4000',
         amount_delta: 29,
-        exception_reason_text: '市场缺货',
-      },
-    ],
+        exception_reason_text: '市场缺货'
+      }
+    ]
   },
   no_sku_exceptions: [],
   reward_sku_list: [
@@ -125,8 +235,8 @@ export default {
       sku_name: '商品名',
       sale_unit: '规格',
       quantity: 111,
-      total_cost_point: 222333,
-    },
+      total_cost_point: 222333
+    }
   ],
   details: [
     {
@@ -190,7 +300,7 @@ export default {
       origin_place: '产地',
       specification_desc: '商品规格',
       feature_desc: '商品特征',
-      after_sale_desc: '售后标准',
+      after_sale_desc: '售后标准'
     },
     {
       production_time: null,
@@ -252,7 +362,7 @@ export default {
       origin_place: '产地',
       specification_desc: '商品规格',
       feature_desc: '商品特征',
-      after_sale_desc: '售后标准',
+      after_sale_desc: '售后标准'
     },
     {
       production_time: null,
@@ -312,7 +422,7 @@ export default {
       origin_place: '产地',
       specification_desc: '商品规格',
       feature_desc: '商品特征',
-      after_sale_desc: '售后标准',
+      after_sale_desc: '售后标准'
     },
     {
       production_time: null,
@@ -373,7 +483,7 @@ export default {
       origin_place: '产地',
       specification_desc: '商品规格',
       feature_desc: '商品特征',
-      after_sale_desc: '售后标准',
+      after_sale_desc: '售后标准'
     },
     {
       production_time: null,
@@ -433,9 +543,9 @@ export default {
       origin_place: '产地',
       specification_desc: '商品规格',
       feature_desc: '商品特征',
-      after_sale_desc: '售后标准',
-    },
-  ],
+      after_sale_desc: '售后标准'
+    }
+  ].concat(driftCaseDetails),
   tax_number: 1,
   exception_new: {
     D7557460_5500: [
@@ -445,7 +555,7 @@ export default {
         money_delta: 1,
         detail_id: 'D7557460',
         amount_delta: 2,
-        exception_reason_text: '规格问题',
+        exception_reason_text: '规格问题'
       },
       {
         text: '测试原因',
@@ -453,9 +563,9 @@ export default {
         money_delta: 1,
         detail_id: 'D7557460',
         amount_delta: 3,
-        exception_reason_text: '规格问题',
-      },
-    ],
+        exception_reason_text: '规格问题'
+      }
+    ]
   },
   settle_way: 1,
   bill_address: '收据地址',
@@ -477,7 +587,7 @@ export default {
     cycle_length: null,
     begin_day: null,
     settle_day: null,
-    pay_method: 1,
+    pay_method: 1
   },
-  create_user: '测试下单员',
+  create_user: '测试下单员'
 }

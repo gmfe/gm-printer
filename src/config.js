@@ -116,6 +116,18 @@ export const printDirectionList = [
   { value: 'horizontal', text: i18next.t('横向') }
 ]
 
+// 模板级打印字体（配送单等产品需求：整页字体自定义）。
+// 只收系统字体，避免自定义字体文件的网络加载与打印时机问题。
+// 值为三段 fallback：Windows 名 + macOS 名 + 中文名，双平台都能命中
+export const fontFamilyList = [
+  { value: '', text: i18next.t('默认字体') },
+  { value: 'SimSun, Songti SC, 宋体', text: i18next.t('宋体') },
+  { value: 'KaiTi, Kaiti SC, 楷体', text: i18next.t('楷体') },
+  { value: 'SimHei, Heiti SC, 黑体', text: i18next.t('黑体') },
+  { value: 'Microsoft YaHei, PingFang SC, 微软雅黑', text: i18next.t('微软雅黑') },
+  { value: 'FangSong, STFangsong, 仿宋', text: i18next.t('仿宋') }
+]
+
 export const borderStyleList = [
   { value: 'solid', text: i18next.t('实线') },
   { value: 'dashed', text: i18next.t('虚线') },
