@@ -56,14 +56,22 @@ function toDoPrint({ data, config }, isSomeSubtotalTr) {
   return new window.Promise(resolve => {
     const $app = $printer.contentWindow.document.getElementById('appContainer')
     ReactDOM.unmountComponentAtNode($app)
+    // 拿 PrinterStore 实例判断分页是否失败（页面高度不足），
+    // 失败时跳过 print()，避免向打印机发送空白页浪费纸
+    let printerRef = null
     ReactDOM.render(
       <Printer
+        ref={ref => {
+          printerRef = ref
+        }}
         isSomeSubtotalTr={isSomeSubtotalTr} // 每页合计是否需要展示多个字段
         config={config}
         data={data}
         onReady={() => {
           afterImgAndSvgLoaded(() => {
-            $printer.contentWindow.print()
+            if (!printerRef?.printerStore?.paginationFailed) {
+              $printer.contentWindow.print()
+            }
             resolve()
           }, $app)
         }}

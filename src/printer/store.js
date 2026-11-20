@@ -73,6 +73,11 @@ class PrinterStore {
   /** 行数填充基准：填充表格最后一段所在页的剩余空白高度；无填充表格时为末页剩余 */
   @observable remainPageHeight = 0
   @observable isSave = false
+
+  /** 分页失败（页面高度不足）：渲染层与打印入口据此跳过，避免产出/打印空白页 */
+  @observable paginationFailed = false
+  /** 「页面高度不足」提示去重：一轮分页周期（成功前）只弹一次 */
+  heightWarned = false
   /** data._table 非 observable，变更后递增以驱动预览重渲 */
   @observable dataRevision = 0
 
@@ -119,6 +124,28 @@ class PrinterStore {
     this.pages = [] // [page, page, ...] page 为数组
     this.data = data
     this.selected = null
+    this.paginationFailed = false
+    this.heightWarned = false
+  }
+
+  /**
+   * 页面高度不足，分页失败：
+   * 置失败态（渲染/打印入口据此跳过）并提示；同一轮分页（成功前）只提示一次，
+   * 避免行数填充的「分页→补空行→重分页」或编辑器反复触发时重复弹窗
+   */
+  @action
+  markHeightInsufficient() {
+    this.paginationFailed = true
+    this.pages = []
+    this.remainPageHeight = 0
+    this.isSave = true
+    this.config.isSave = true
+    if (!this.heightWarned) {
+      this.heightWarned = true
+      Tip.warning(
+        i18next.t('检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！')
+      )
+    }
   }
 
   @action
@@ -335,12 +362,7 @@ class PrinterStore {
     const allPagesHaveThisHeight = heightMap.header + heightMap.footer
     // 退出计算! 因为页眉 + 页脚 > currentPageHeight,页面装不下其他东西
     if (allPagesHaveThisHeight > pageHeight) {
-      this.pages = []
-      this.isSave = true
-      this.config.isSave = true
-      Tip.warning(
-        i18next.t('检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！')
-      )
+      this.markHeightInsufficient()
       return
     }
 
@@ -455,18 +477,12 @@ class PrinterStore {
                   end++
                 }
               }
-              // 第一页一点表格都放不下时，什么都不展示
+              // 第一页一点表格都放不下时，终止整次分页（什么都不展示）。
+              // 直接 return 保住失败态：原先 break 后会落回函数尾部，
+              // 把 pages 冲成 [[]]、isSave 冲回 false，导致仍渲染/打印出空白页
               if (begin === 0 && end === 0 && index === 0) {
-                index++
-                this.pages = []
-                this.isSave = true
-                this.config.isSave = true
-                Tip.warning(
-                  i18next.t(
-                    '检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！'
-                  )
-                )
-                break
+                this.markHeightInsufficient()
+                return
               }
               // 行无法拆分（普通长文本列）或拆分失败时，强制推进 end 防止死循环
               if (end === begin) {
@@ -604,6 +620,9 @@ class PrinterStore {
         : Math.max(0, Math.round(pageHeight - currentPageHeight))
     this.isSave = false
     this.config.isSave = false
+    // 成功分页后清失败态与提示去重标记，模板修好后可再次提示
+    this.paginationFailed = false
+    this.heightWarned = false
     this.repackVerticalMultiByPages()
   }
 
