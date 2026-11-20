@@ -5,6 +5,7 @@ import getCSS from './get_css'
 import BatchPrinter from './batch_printer'
 import BatchFinancePrinter from '../finance_voucher/components/finance_batch_printer'
 import { afterImgAndSvgLoaded } from '../util'
+import { LONG_PRINT } from '../config'
 
 const printerId = '_gm-printer_' + Math.random()
 let $printer = window.document.getElementById(printerId)
@@ -56,15 +57,30 @@ function toDoPrint({ data, config }, isSomeSubtotalTr) {
   return new window.Promise(resolve => {
     const $app = $printer.contentWindow.document.getElementById('appContainer')
     ReactDOM.unmountComponentAtNode($app)
+    // 拿 PrinterStore 实例判断分页是否失败（页面高度不足），
+    // 失败时跳过 print()，避免向打印机发送空白页浪费纸
+    let printerRef = null
     ReactDOM.render(
       <Printer
+        ref={ref => {
+          printerRef = ref
+        }}
         isSomeSubtotalTr={isSomeSubtotalTr} // 每页合计是否需要展示多个字段
         config={config}
         data={data}
         onReady={() => {
           afterImgAndSvgLoaded(() => {
-            $printer.contentWindow.print()
-            resolve()
+            const store = printerRef?.printerStore
+            const paginationFailed = !!store?.paginationFailed
+            // 长条打印不消费 pages、renderLongPage 全量渲染，
+            // 失败态沿用旧行为照常打印，避免长条模板打不出（回归）
+            const isLongPrint = store?.config?.page?.type === LONG_PRINT
+            if (!paginationFailed || isLongPrint) {
+              $printer.contentWindow.print()
+            }
+            // 返回失败信号：蓝牙等自取 HTML 的宿主（getPrintContainerHTML）
+            // 据此跳过向打印机发送空内容；原有忽略返回值的调用方不受影响
+            resolve({ paginationFailed })
           }, $app)
         }}
       />,
@@ -80,8 +96,14 @@ function toDoPrintBatch(list, isPrint = true) {
     const templateType = list?.[0]?.config?.page?.type
     // 初始化
     ReactDOM.unmountComponentAtNode($app)
+    // 全部单据分页失败（页面高度不足）时跳过 print()，避免向打印机发送空白页；
+    // 部分失败时失败单据渲染为空（不占页），其余单据正常打印
+    let batchRef = null
     ReactDOM.render(
       <BatchPrinter
+        ref={ref => {
+          batchRef = ref
+        }}
         list={list}
         onReady={() => {
           afterImgAndSvgLoaded(() => {
@@ -90,8 +112,21 @@ function toDoPrintBatch(list, isPrint = true) {
             //   templateType !== 'longPrint' &&
             //   $printer.contentWindow.print()
             // console.log('templateType', templateType)
-            isPrint && $printer.contentWindow.print()
-            resolve()
+            const printers = batchRef?.printers || []
+            // 长条打印单据视同未失败（不消费 pages，全量渲染），防止整批被拦
+            const allPaginationFailed =
+              printers.length === 0 ||
+              printers.every(
+                p =>
+                  p?.printerStore?.paginationFailed &&
+                  p?.printerStore?.config?.page?.type !== LONG_PRINT
+              )
+            if (isPrint && !allPaginationFailed) {
+              $printer.contentWindow.print()
+            }
+            // 返回失败信号：蓝牙等自取 HTML 的宿主（isPrint:false + getPrintContainerHTML）
+            // 据此跳过向打印机发送空内容；原有忽略返回值的调用方不受影响
+            resolve({ paginationFailed: allPaginationFailed })
           }, $app)
         }}
       />,
