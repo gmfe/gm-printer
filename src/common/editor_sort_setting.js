@@ -12,7 +12,7 @@ const SORT_FIELD_LIST = [
   { value: '', text: i18next.t('不排序') },
   { value: 'tax_rate', text: i18next.t('税率') },
   { value: 'box_num', text: i18next.t('箱号') },
-  { value: 'sort_num', text: i18next.t('行号') }
+  { value: 'sort_num', text: i18next.t('订单行号') }
 ]
 
 const SORT_DIRECTION_LIST = [
