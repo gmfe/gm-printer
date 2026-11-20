@@ -40,6 +40,14 @@ export const TR_BASE_HEIGHT = 23
 /** 分页高度运算：像素精度足够，避免热路径中 Big.js 开销 */
 const roundHeight = n => Math.round(n * 100) / 100
 
+/**
+ * 「页面高度不足」提示节流：批量打印中每张单据是独立 PrinterStore 实例，
+ * 实例级 heightWarned 互不可见，同一次 ReactDOM.render 会在毫秒级连续触发
+ * N 次提示；按 1s 时间窗收敛为只弹一次，跨打印动作（人为间隔远大于 1s）不受影响
+ */
+const HEIGHT_INSUFFICIENT_WARN_INTERVAL = 1000
+let lastHeightInsufficientWarnAt = 0
+
 /** 判断行是否含可拆分的采购明细（普通长文本列不可拆分） */
 const canSplitRowDetails = (dataKey, row) => {
   if (!row || dataKey.includes('noLineBreak')) return false
@@ -141,10 +149,20 @@ class PrinterStore {
     this.isSave = true
     this.config.isSave = true
     if (!this.heightWarned) {
-      this.heightWarned = true
-      Tip.warning(
-        i18next.t('检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！')
-      )
+      const now = Date.now()
+      if (
+        now - lastHeightInsufficientWarnAt >
+        HEIGHT_INSUFFICIENT_WARN_INTERVAL
+      ) {
+        // 实际弹窗时才置实例标记与节流时间戳；被节流的批量单据保持未提示态
+        this.heightWarned = true
+        lastHeightInsufficientWarnAt = now
+        Tip.warning(
+          i18next.t(
+            '检测到当前页面高度不足，无法完整渲染，请重新设置页面高度！'
+          )
+        )
+      }
     }
   }
 

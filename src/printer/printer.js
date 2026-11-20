@@ -148,7 +148,9 @@ class Printer extends React.Component {
 
     // Printer 不是立马就呈现出最终样式，有个过程。这个过程需要时间，什么 ready，不太清楚，估借 setState 来获取过程结束时刻
     this.setState({}, () => {
-      this.props.onReady()
+      // 失败信号随 onReady 下发（增量参数）：直接渲染 Printer 的宿主据此感知
+      // 「页面高度不足」分页失败；旧回调忽略参数不受影响
+      this.props.onReady({ paginationFailed: printerStore.paginationFailed })
     })
   }
 

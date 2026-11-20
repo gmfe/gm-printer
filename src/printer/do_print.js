@@ -69,10 +69,14 @@ function toDoPrint({ data, config }, isSomeSubtotalTr) {
         data={data}
         onReady={() => {
           afterImgAndSvgLoaded(() => {
-            if (!printerRef?.printerStore?.paginationFailed) {
+            const paginationFailed = !!printerRef?.printerStore
+              ?.paginationFailed
+            if (!paginationFailed) {
               $printer.contentWindow.print()
             }
-            resolve()
+            // 返回失败信号：蓝牙等自取 HTML 的宿主（getPrintContainerHTML）
+            // 据此跳过向打印机发送空内容；原有忽略返回值的调用方不受影响
+            resolve({ paginationFailed })
           }, $app)
         }}
       />,
@@ -88,8 +92,14 @@ function toDoPrintBatch(list, isPrint = true) {
     const templateType = list?.[0]?.config?.page?.type
     // 初始化
     ReactDOM.unmountComponentAtNode($app)
+    // 全部单据分页失败（页面高度不足）时跳过 print()，避免向打印机发送空白页；
+    // 部分失败时失败单据渲染为空（不占页），其余单据正常打印
+    let batchRef = null
     ReactDOM.render(
       <BatchPrinter
+        ref={ref => {
+          batchRef = ref
+        }}
         list={list}
         onReady={() => {
           afterImgAndSvgLoaded(() => {
@@ -98,8 +108,16 @@ function toDoPrintBatch(list, isPrint = true) {
             //   templateType !== 'longPrint' &&
             //   $printer.contentWindow.print()
             // console.log('templateType', templateType)
-            isPrint && $printer.contentWindow.print()
-            resolve()
+            const printers = batchRef?.printers || []
+            const allPaginationFailed =
+              printers.length === 0 ||
+              printers.every(p => p?.printerStore?.paginationFailed)
+            if (isPrint && !allPaginationFailed) {
+              $printer.contentWindow.print()
+            }
+            // 返回失败信号：蓝牙等自取 HTML 的宿主（isPrint:false + getPrintContainerHTML）
+            // 据此跳过向打印机发送空内容；原有忽略返回值的调用方不受影响
+            resolve({ paginationFailed: allPaginationFailed })
           }, $app)
         }}
       />,
