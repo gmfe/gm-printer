@@ -7,6 +7,15 @@ on:
   push:
     tags:
       - 'v*'
+    # 分支推送自动发 beta 预发布包(供宿主灰度/验证):
+    # - hotfix/**、hotfix-*:hotfix 分支(从全量版本对应 tag 拉出),patch+1 版本
+    # - feature/latest*、release/**、release-*:周期分支,minor+1 版本
+    branches:
+      - 'hotfix/**'
+      - 'hotfix-*'
+      - 'feature/latest*'
+      - 'release/**'
+      - 'release-*'
 
 jobs:
   release:
@@ -22,25 +31,85 @@ jobs:
           node-version: 16.x
           registry-url: 'https://registry.npmjs.org'
 
-  
-
       - name: Setup
         run: npm i -g @antfu/ni@29.0.0
 
       - name: Install
         run: nci
 
+      # 分支推送时自动生成预发布版本号(只用于本次发布,不改分支上的文件):
+      # - hotfix 分支: patch+1 + 宿主 hotfix 版本,如 10.41.9 -> 10.41.10-beta.1.16.3.1
+      #   末尾序号 = npm 上同前缀已发布版本的最大序号 + 1,首次从 1 开始,每次 push 即一次发版;
+      #   分支名非"数字.数字"形式(如 hotfix/longPrint_0624)时回退全局运行序号保证唯一
+      # - 周期分支: minor+1,如 10.41.9 -> 10.42.0-beta.N(N 为全局运行序号),与 hotfix 的 patch 序列隔离
+      - name: Bump pre-release version
+        if: startsWith(github.ref, 'refs/heads/')
+        run: |
+          if [[ ${{ github.ref }} == refs/heads/hotfix* ]]; then
+            BASE=$(node -p "const p = require('./package.json').version.split('-')[0].split('.'); p[2] = Number(p[2]) + 1; p.join('.')")
+            HOTFIX=${GITHUB_REF_NAME#hotfix/}
+            if [[ $HOTFIX =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+              COUNT=$(npm view gm-printer versions --json 2>/dev/null | PREFIX="$BASE-beta.$HOTFIX." node -e '
+                let d = ""
+                process.stdin.on("data", c => (d += c)).on("end", () => {
+                  const list = JSON.parse(d || "[]")
+                  const nums = list
+                    .filter(v => v.startsWith(process.env.PREFIX))
+                    .map(v => Number(v.slice(process.env.PREFIX.length)))
+                    .filter(n => Number.isInteger(n))
+                  console.log(nums.length ? Math.max(...nums) : 0)
+                })
+              ')
+              COUNT=${COUNT:-0}
+              VERSION="$BASE-beta.$HOTFIX.$((COUNT + 1))"
+            else
+              VERSION="$BASE-beta.${{ github.run_number }}"
+            fi
+          else
+            VERSION=$(node -p "const p = require('./package.json').version.split('-')[0].split('.'); p[1] = Number(p[1]) + 1; p[2] = 0; p.join('.')")
+            VERSION="$VERSION-beta.${{ github.run_number }}"
+          fi
+          npm version "$VERSION" --no-git-tag-version
+          echo "本次分支推送发布版本: $VERSION (dist-tag: beta)" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # hotfix 发布前差异审查:列出包内相对 npm 全量(latest)版本的全部提交,写入 Actions Summary 与运行日志。
+      # hotfix 包应只包含目标修复提交;若清单中出现周期需求提交,说明分支基线不对,应停止发布。
+      - name: Audit commits vs npm latest
+        if: startsWith(github.ref, 'refs/heads/hotfix')
+        run: |
+          LATEST=$(npm dist-tag ls gm-printer | awk '/^latest:/ {print $2}')
+          if [ -n "$LATEST" ]; then
+            git fetch -q origin "refs/tags/v$LATEST:refs/tags/v$LATEST"
+          fi
+          if [ -n "$LATEST" ] && git rev-parse -q --verify "v$LATEST" >/dev/null; then
+            {
+              echo "## Hotfix 差异审查(npm latest: v$LATEST)"
+              echo "hotfix 包应只包含目标修复提交,以下为 v$LATEST..HEAD 的全部提交:"
+              echo '```'
+              git log --oneline "v$LATEST..HEAD"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "Hotfix 差异审查(npm latest: v$LATEST),v$LATEST..HEAD 的全部提交:"
+            git log --oneline "v$LATEST..HEAD"
+          else
+            echo "未找到全量版本 v$LATEST 对应的 tag,跳过差异审查" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Build
         run: npm run build
 
       - name: Release
         run: |
-          if [[ ${{ github.ref }} == *refs/tags/*-beta* ]]; then
-            npm publish --tag beta
-          elif [[ ${{ github.ref }} == *refs/tags/*-alpha* ]]; then
-            npm publish --tag alpha
+          if [[ ${{ github.ref }} == refs/tags/* ]]; then
+            if [[ ${{ github.ref }} == *-beta* ]]; then
+              npm publish --tag beta
+            elif [[ ${{ github.ref }} == *-alpha* ]]; then
+              npm publish --tag alpha
+            else
+              npm publish
+            fi
           else
-            npm publish
+            npm publish --tag beta
           fi
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
