@@ -129,7 +129,9 @@ class Printer extends React.Component {
       // 先分页拿到剩余高度，再补空行，最后按补空后的数据重新分页
       // （若先分页后补空却不重算，panel.end 仍是补空前行数，空行/后半数据会被裁掉）
       printerStore.computedPages()
-      if (config.autoFillConfig?.checked) {
+      // 分页失败（页面高度不足）时不再补空行/重分页：保持失败态，
+      // 供渲染层与打印入口跳过（同时避免按失效的填充基准污染 data._table）
+      if (!printerStore.paginationFailed && config.autoFillConfig?.checked) {
         this.props.printerStore.setAutofillConfig(
           config.autoFillConfig?.checked || false
         )
@@ -146,7 +148,9 @@ class Printer extends React.Component {
 
     // Printer 不是立马就呈现出最终样式，有个过程。这个过程需要时间，什么 ready，不太清楚，估借 setState 来获取过程结束时刻
     this.setState({}, () => {
-      this.props.onReady()
+      // 失败信号随 onReady 下发（增量参数）：直接渲染 Printer 的宿主据此感知
+      // 「页面高度不足」分页失败；旧回调忽略参数不受影响
+      this.props.onReady({ paginationFailed: printerStore.paginationFailed })
     })
   }
 
@@ -427,6 +431,15 @@ class Printer extends React.Component {
       printerStore,
       ...rest
     } = this.props
+    // 分页失败（页面高度不足）时整体不渲染：预览与打印都不再产出空白页。
+    // 长条打印（LONG_PRINT）例外：renderLongPage 全量渲染、不消费 pages，
+    // 失败态沿用旧行为照常出内容，避免长条模板因超高行打不出（回归）
+    if (
+      printerStore.paginationFailed &&
+      printerStore.config.page.type !== LONG_PRINT
+    ) {
+      return null
+    }
     const {
       size: { width },
       className,
