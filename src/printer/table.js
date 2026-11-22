@@ -216,9 +216,12 @@ class Table extends React.Component {
 
       if (!width) return tdStyle
       if (fontSize) minWidth = _.parseInt(fontSize) * 2
+      // 宽列也要锁 width:只设 minWidth 时打印阶段列宽会被该页内容重新分配,
+      // 与测量阶段(全量行 auto 布局)不一致,边界文本换行数漂移导致分页后页尾空白/溢出
       if (width >= 150) {
         tdStyle = {
-          minWidth: width
+          minWidth: width,
+          width
         }
       } else {
         tdStyle = {
@@ -246,11 +249,16 @@ class Table extends React.Component {
     const needDiyTag = config.diyTagSubtotal?.show && dataKey.includes('tagDiy')
     const diyTagGroups = needDiyTag ? collectGroups(tableData, range) : []
 
+    // 列宽齐全(走过分页测量)时用 fixed:列宽锁定为测量值,不再随每页内容重新分配,
+    // 保证打印阶段换行/行高与测量阶段一致,分页边界才准确。
+    // 测量阶段自身(renderBefore)与合并打印首渲染(tablesInfo 为空)仍走 auto。
+    const isFixedLayout = thWidths.length === columns.length
+
     return (
       <table
         style={{
           // td会撑开table的宽度
-          tableLayout: 'inherit',
+          tableLayout: isFixedLayout ? 'fixed' : 'inherit',
           wordBreak: 'break-all'
         }}
       >
