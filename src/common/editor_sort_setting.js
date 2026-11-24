@@ -29,7 +29,7 @@ const ORDER_SORT_LIST = [
 /**
  * 「排序方式」配置类：归集「商品行排序」「单据内订单顺序」两组子配置
  * 读写 editStore.config.sort_setting（mobx4 读取不存在的键不建立依赖，
- * 宿主传入 config 前需保证 sort_setting 键存在，无配置时为 null）
+ * EditorStore.init 会预置 sort_setting 键，无配置时为 null）
  */
 @inject('editStore')
 @observer

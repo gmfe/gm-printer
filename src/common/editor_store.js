@@ -34,6 +34,28 @@ import {
   resolveVerticalEmptyCount
 } from '../printer/multi_column'
 
+// 旧版「配送单特殊控制」把排序塞在 specialConfig 单选里，和新版 sort_setting 不是同一字段
+const LEGACY_PRODUCT_ROW_SORT_FIELD = {
+  rateSort: 'tax_rate',
+  boxNumSort: 'box_num'
+}
+
+function migrateLegacySortSetting(config) {
+  // 新版配置存在时完全优先，不读取或修改残留的旧排序字段
+  if (config.sort_setting) return
+
+  const legacyField = LEGACY_PRODUCT_ROW_SORT_FIELD[config.specialConfig]
+  if (!legacyField) return
+
+  config.sort_setting = {
+    product_row_sort: {
+      field: legacyField,
+      direction: 'asc'
+    }
+  }
+  config.specialConfig = 'noSpecail'
+}
+
 class EditorStore {
   @observable
   tableCustomStyle = 'default'
@@ -429,10 +451,13 @@ class EditorStore {
   @action
   init(config, data) {
     // batchPrintConfig: 1 不连续打印（一张采购单不出现多供应商）2 连续打印（一张采购单可能出现多个供应商）
-    this.config = Object.assign(
-      { batchPrintConfig: 1, isFixLastFooter: true },
+    const nextConfig = Object.assign(
+      { batchPrintConfig: 1, isFixLastFooter: true, sort_setting: null },
       config
     )
+    // 赋给 observable 之前写入，保证 sort_setting 从一开始就是可观察字段
+    migrateLegacySortSetting(nextConfig)
+    this.config = nextConfig
     this.defaultTableDataKey = config.defaultTableDataKey || 'orders'
     this.originConfig = config
     this.selected = null
