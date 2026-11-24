@@ -9,6 +9,7 @@ import EditorTitle from '../common/editor_title'
 import EditorSelect from '../common/editor_select'
 import SpecialField from '../common/editor_special_field'
 import SpecialOtherField from '../common/editor_special_other_field'
+import SortSettingField from '../common/editor_sort_setting'
 import EditorField from '../common/editor_edit_field'
 import EditorAddField from '../common/editor_add_field'
 import EditorPageSummary from '../common/editor_page_summary'
@@ -88,6 +89,8 @@ class Editor extends React.Component {
             <Gap height='5px' />
             <SpecialField addFields={addFields} mockData={mockData} />
             <SpecialOtherField addFields={addFields} mockData={mockData} />
+            <Gap height='5px' />
+            <SortSettingField showOrderSort />
             <EditorCutomizedConfig />
             <Gap height='5px' />
             <EditorField

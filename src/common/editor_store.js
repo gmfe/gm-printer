@@ -34,6 +34,28 @@ import {
   resolveVerticalEmptyCount
 } from '../printer/multi_column'
 
+// 旧版「配送单特殊控制」把排序塞在 specialConfig 单选里，和新版 sort_setting 不是同一字段
+const LEGACY_PRODUCT_ROW_SORT_FIELD = {
+  rateSort: 'tax_rate',
+  boxNumSort: 'box_num'
+}
+
+function migrateLegacySortSetting(config) {
+  // 新版配置存在时完全优先，不读取或修改残留的旧排序字段
+  if (config.sort_setting) return
+
+  const legacyField = LEGACY_PRODUCT_ROW_SORT_FIELD[config.specialConfig]
+  if (!legacyField) return
+
+  config.sort_setting = {
+    product_row_sort: {
+      field: legacyField,
+      direction: 'asc'
+    }
+  }
+  config.specialConfig = 'noSpecail'
+}
+
 class EditorStore {
   @observable
   tableCustomStyle = 'default'
@@ -238,7 +260,7 @@ class EditorStore {
           }
         }).join('/')
       } else {
-        return v.style ? v.style.height : ''
+        return v && v.style ? v.style.height : ''
       }
     }).join('_')
   }
@@ -447,10 +469,13 @@ class EditorStore {
   @action
   init(config, data) {
     // batchPrintConfig: 1 不连续打印（一张采购单不出现多供应商）2 连续打印（一张采购单可能出现多个供应商）
-    this.config = Object.assign(
-      { batchPrintConfig: 1, isFixLastFooter: true },
+    const nextConfig = Object.assign(
+      { batchPrintConfig: 1, isFixLastFooter: true, sort_setting: null },
       config
     )
+    // 赋给 observable 之前写入，保证 sort_setting 从一开始就是可观察字段
+    migrateLegacySortSetting(nextConfig)
+    this.config = nextConfig
     this.defaultTableDataKey = config.defaultTableDataKey || 'orders'
     this.originConfig = config
     this.selected = null
@@ -1575,7 +1600,8 @@ class EditorStore {
     const table = this.config.contents[arr[2]]
     const prefix = getDataKeyPrefix(table.dataKey)
     // 切换「按商品/按商户排序」时保留已开启的商品分类、双栏后缀，避免点完分类再切排序把 category 冲掉
-    const baseSuffix = dataKey === 'goods' ? 'independent_rol_sku' : 'independent_rol_address'
+    const baseSuffix =
+      dataKey === 'goods' ? 'independent_rol_sku' : 'independent_rol_address'
     const nextDataKey = buildDataKey(
       prefix,
       `${baseSuffix}${getDataKeyModifierSuffix(table.dataKey)}`
@@ -1606,7 +1632,10 @@ class EditorStore {
 
       const { dataKey } = table
       // independent_rol_* / detail_one_row_*（含 category、multi 后缀）在下拉里都映射回「按采购明细单行」
-      if (isIndependentRolDataKey(dataKey) || isDetailOneRowSelectKey(dataKey)) {
+      if (
+        isIndependentRolDataKey(dataKey) ||
+        isDetailOneRowSelectKey(dataKey)
+      ) {
         return buildDataKey(getDataKeyPrefix(dataKey), 'detail_one_row')
       }
       return dataKey
