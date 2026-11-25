@@ -472,6 +472,28 @@ class EditorStore {
       config?.specialControlConfig?.taxFreeProductRateDisplay || ''
   }
 
+  getConfigForSave() {
+    const config = toJS(this.config)
+    if (!config.sort_setting) return config
+
+    // 旧版特殊控制是单选，保留非排序控制，避免回写排序时覆盖已有配置
+    if (
+      config.specialConfig &&
+      config.specialConfig !== 'noSpecail' &&
+      !LEGACY_PRODUCT_ROW_SORT_FIELD[config.specialConfig]
+    ) {
+      return config
+    }
+
+    // 回退旧版时恢复税率/箱号排序；旧版只支持升序，新版完整配置仍保留
+    config.specialConfig =
+      _.findKey(
+        LEGACY_PRODUCT_ROW_SORT_FIELD,
+        field => field === config.sort_setting.product_row_sort?.field
+      ) || 'noSpecail'
+    return config
+  }
+
   @action
   setInsertPanel(panel) {
     this.insertPanel = panel

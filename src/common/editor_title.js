@@ -57,7 +57,7 @@ class EditorTitle extends React.Component {
     if (!isPurchase && result.batchPrintConfig) {
       delete result.batchPrintConfig
     }
-    this.props.onSave(toJS(result))
+    this.props.onSave(editStore.getConfigForSave())
   }
 
   handleReset = () => {
@@ -96,7 +96,7 @@ class EditorTitle extends React.Component {
       title: i18next.t('另存为'),
       children: <DialogChildren editStore={editStore} />,
       onOK: () => {
-        this.props.onSave(toJS(editStore.config), true)
+        this.props.onSave(editStore.getConfigForSave(), true)
       }
     })
   }
