@@ -47,7 +47,27 @@ const commonFields = {
     { key: i18next.t('运费'), value: i18next.t('{{运费}}') },
     { key: i18next.t('异常金额'), value: i18next.t('{{异常金额}}') },
     { key: i18next.t('销售额(含运税)'), value: i18next.t('{{销售额_含运税}}') },
-    { key: i18next.t('税额'), value: i18next.t('{{税额}}') }
+    { key: i18next.t('税额'), value: i18next.t('{{税额}}') },
+    // TAPD 1057867：字段支持外部传入 tooltip，传入后字段文案后展示“?”icon，悬浮显示说明
+    {
+      key: i18next.t('期初待支付'),
+      value: i18next.t('{{期初待支付}}'),
+      tooltip: i18next.t(
+        '账户维度：“信息平台-对账单：下单日期=范围内最早订单的下单日期T-1 24:00的【期末应收值】”+“范围内最早订单的下单日期T-1 24:00~范围内最早订单的下单时间的【订单差额】”。'
+      )
+    },
+    {
+      key: i18next.t('本期待支付'),
+      value: i18next.t('{{本期待支付}}'),
+      tooltip: i18next.t(
+        '打印范围内配送订单的差额之和，正负相抵。兼容“整单打印”、“按账户分页打印”配置。即汇总配送单中所有关联订单的差额'
+      )
+    },
+    {
+      key: i18next.t('期末待支付'),
+      value: i18next.t('{{期末待支付}}'),
+      tooltip: i18next.t('期末待支付=期初待支付+本期待支付。')
+    }
   ],
   [i18next.t('其他')]: [
     { key: i18next.t('页码'), value: i18next.t('{{当前页码}} / {{页码总数}}') },

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import _ from 'lodash'
 import { borderStyleList } from '../config'
-import { Flex, Tip } from '../components'
+import { Flex, Tip, ToolTip } from '../components'
 import { Request } from 'gm-util'
 import i18next from '../../locales'
 
@@ -648,14 +648,18 @@ Gap.propTypes = {
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 }
 
-const FieldBtn = ({ name, remark, onClick }) => (
+const FieldBtn = ({ name, remark, tooltip, onClick }) => (
   <>
     <Flex alignCenter={!remark} style={{ width: '50%', margin: '3px 0' }}>
       <span className='gm-printer-edit-plus-btn' onClick={onClick}>
         +
       </span>
       <Flex column>
-        <span className='gm-padding-left-5'>{name}</span>
+        {/* 外部在 addFields 字段上传入 tooltip 时，字段文案后展示“?”icon，悬浮显示说明 */}
+        <Flex alignCenter>
+          <span className='gm-padding-left-5'>{name}</span>
+          {tooltip && <ToolTip text={tooltip} />}
+        </Flex>
         {remark && (
           <span style={{ transform: 'scale(0.8) translateX(-20px)' }}>
             {remark}
@@ -668,6 +672,7 @@ const FieldBtn = ({ name, remark, onClick }) => (
 FieldBtn.propTypes = {
   name: PropTypes.string,
   remark: PropTypes.string,
+  tooltip: PropTypes.string,
   onClick: PropTypes.func
 }
 
