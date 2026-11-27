@@ -23,6 +23,7 @@ class FieldList extends React.Component {
                     key={o.key}
                     name={o.key}
                     remark={o.remark}
+                    tooltip={o.tooltip}
                     onClick={handleAddField.bind(this, o)}
                   />
                 ))}

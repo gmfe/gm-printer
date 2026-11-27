@@ -1,11 +1,16 @@
 .b-editor-tooltip {
   position: relative;
   padding: 0px 3px;
+  // inline 时 svg 按基线对齐，底部会多出字体 descender 空隙，导致在 flex 居中容器里 icon 视觉偏上；
+  // 改 inline-flex 让容器紧贴 svg，实现与相邻文字垂直居中
+  display: inline-flex;
+  align-items: center;
   .b-editor-tooltip-text {
     width: 320px;
-    position: absolute;
-    top: 20px;
-    left: -65px;
+    box-sizing: border-box;
+    // fixed + JS 计算 left/top（见 tooltip/index.js）：脱离编辑器侧栏等窄容器的 overflow 裁剪，
+    // 水平方向夹取在视口内；不要改回 absolute，否则窄侧栏里会被截断
+    position: fixed;
     color: #000;
     border-radius: 2px;
     background-color: white;

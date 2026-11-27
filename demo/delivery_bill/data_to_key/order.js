@@ -146,6 +146,11 @@ function generateCommon(data) {
 
     税额: price(data.total_tax), // 商品税额加总
 
+    // TAPD 1057867：客户欠款与本次合计金额（demo 验证字段 tooltip 用）
+    期初待支付: price(data.begin_wait_pay),
+    本期待支付: price(data.current_wait_pay),
+    期末待支付: price(data.end_wait_pay),
+
     商户公司: data.cname,
     承运商: data.carrier,
     结款方式: SETTLE_WAY[data.settle_way],

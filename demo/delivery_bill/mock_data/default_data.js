@@ -140,6 +140,10 @@ export default {
   bill_receiver: '收据人',
   carrier: '测试承运商',
   credit_limit: 100,
+  // TAPD 1057867：客户欠款与本次合计金额（demo 验证字段 tooltip 用）
+  begin_wait_pay: 100,
+  current_wait_pay: 143,
+  end_wait_pay: 243,
   real_address_id: '1001',
   real_resname: '关联分仓名称',
   sale_manager: {
